@@ -1,0 +1,48 @@
+{
+  "name": "bot-rewrite",
+  "version": "0.0.1",
+  "description": "a discord bot made in ts based on an earlier project",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "start:dev": "ts-node-dev src/index.ts",
+    "start:prod": "node dist/index.js",
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": "none"
+  },
+  "keywords": [
+    "discord",
+    "javascript",
+    "discord.js"
+  ],
+  "author": "Ascynx",
+  "license": "MIT",
+  "dependencies": {
+    "@discordjs/opus": "^0.5.3",
+    "@discordjs/voice": "^0.7.5",
+    "discord-akairo": "^8.1.0",
+    "discord.js": "^13.5.0",
+    "dotenv": "^10.0.0",
+    "ffmpeg-static": "^4.4.0",
+    "glob": "^7.2.0",
+    "libsodium-wrappers": "^0.7.9",
+    "lilyweight": "^2.1.0",
+    "lodash": "^4.17.21",
+    "lodash.get": "^4.4.2",
+    "mongoose": "^6.1.4",
+    "opusscript": "^0.0.8",
+    "sodium": "^3.0.2",
+    "tweetnacl": "^1.0.3"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.2.0",
+    "@types/node": "^17.0.5",
+    "ts-node": "^10.4.0",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.5.4"
+  }
+}
