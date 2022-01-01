@@ -72,7 +72,7 @@ const ct = function (array1: string[], array2: string[]): ctResult {
     return result;
   };
   
-const getTimeOfDay = function () {
+const getTimeOfDay = function (): string {
     let event = Date.now();
     let d = new Date(event);
     let sd = d.toTimeString();
@@ -81,7 +81,7 @@ const getTimeOfDay = function () {
   
     return time;
   };
-const e2r = function (timestamp: number) {
+const e2r = function (timestamp: number): string {
     let d = new Date(timestamp);
     let sd = d.toTimeString();
     let fields = sd.split(" ");
@@ -89,7 +89,7 @@ const e2r = function (timestamp: number) {
   
     return time;
   };
-const getTime = function () {
+const getTime = function (): string {
     let event = Date.now();
     let d = new Date(event);
     let sd = d.toDateString();
@@ -97,7 +97,7 @@ const getTime = function () {
     return sd;
   };
   
-const b2a = function (a: string) {
+const b2a = function (a: string): string {
     var c,
       d,
       e,
@@ -131,7 +131,7 @@ const b2a = function (a: string) {
     );
   };
   
-const a2b = function (a) {
+const a2b = function (a: string): string {
     var b,
       c,
       d,
@@ -152,7 +152,7 @@ const a2b = function (a) {
         ((d = 255 & (f >>> (g -= 8))) || j - 2 > c) && (h += i(d));
     return h;
   };
-const isLink = function (potentiallink) {
+const isLink = function (potentiallink): boolean {
     let http = /http:\/\/./;
     let https = /https:\/\/./;
   
@@ -165,13 +165,12 @@ const isLink = function (potentiallink) {
   /**
    * @param  {} message
    */
-const containsLink = function (message) {
-    const mp = require("./testfor");
+const containsLink = function (message): number[] {
     let fields = message.split(" ");
     let result;
     let arrayofresults = [];
-    fields.forEach(function (fields, index) {
-      result = mp.isLink(fields);
+    fields.forEach(function (fields, index: number) {
+      result = isLink(fields);
       if (result == true) {
         arrayofresults.push(index);
       }
