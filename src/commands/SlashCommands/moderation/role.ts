@@ -28,7 +28,7 @@ export default new slashCommand({
 
         const guildMember = interaction.guild.members.cache.get(target.id);
         if (role.managed === true) return interaction.followUp({content: `that role is either managed by a bot or discord`});
-
+        const guildClient = interaction.guild.members.cache.get(client.user.id)
 
         if (!guildMember.roles.cache.has(roleId)) {
             //add role
@@ -36,8 +36,7 @@ export default new slashCommand({
                     interaction.member.id != interaction.guild.ownerId &&
                     interaction.member.id != process.env.developerId) 
                     return interaction.followUp({content: `you do not have the required permission to give this role`});
-                if (role.position <= interaction.guild.members.cache.get(client.user.id).roles.highest.position ||
-                    guildMember.id == interaction.guild.ownerId) return interaction.followUp({content: `I do not have the required permissions to add that role`});
+                if (role.position >= guildClient.roles.highest.position) return interaction.followUp({content: `I do not have the required permissions to add that role`});
 
                 guildMember.roles.add(roleId)
                     .then(() => interaction.followUp({content: `${role} was added to ${target}`, allowedMentions: { parse: []}}))
@@ -49,7 +48,7 @@ export default new slashCommand({
                 interaction.member.id != interaction.guild.ownerId &&
                 interaction.member.id != process.env.developerId) 
                 return interaction.followUp({content: `you do not have the required permission to give this role`});
-            if (role.position <= interaction.guild.members.cache.get(client.user.id).roles.highest.position ||
+            if (role.position >= guildClient.roles.highest.position ||
                 guildMember.id == interaction.guild.ownerId) return interaction.followUp({content: `I do not have the required permissions to add that role`});
 
         guildMember.roles.remove(roleId)

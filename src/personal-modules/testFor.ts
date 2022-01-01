@@ -40,11 +40,15 @@ const compare = function (array1: string[], array2: string[]) {
     }
     return success;
   };
-const ct = function (array1: string[], array2: string[]) {
+  export interface ctResult extends Object {
+    success: boolean,
+    breakingcount?: number,
+  };
+const ct = function (array1: string[], array2: string[]): ctResult {
   
     let success: boolean;
     let breakingpoint = [];
-    let result: object;
+    let result: ctResult;
     array1.forEach(function (array1) {
       let testedvalue = 0;
       do {
