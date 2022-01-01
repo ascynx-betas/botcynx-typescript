@@ -1,3 +1,4 @@
+import { MessageButtonStyleResolvable } from "discord.js";
 import { snowflake } from "../typings/Client";
 
 const permOverride = async function (permissionlist: any) {
@@ -74,5 +75,22 @@ const webhook = function (webhooklink: string) {
     return result;
 }
 
-  export { webhook, isId, isInvite, permOverride, snowflakeToMention };
+const SetActiveButton = async function(activeButton: string, arrayOfCustomId: string[]): Promise<MessageButtonStyleResolvable[]> {
+  let arrOfStyles: MessageButtonStyleResolvable[] = [];
+  arrayOfCustomId.forEach(function (customId, index) {
+    let result: boolean;
+    let fields = customId.split(' ');
+    fields.forEach(function (field) {
+      if (field == activeButton) {
+        return result = true;
+      }
+    })
+    if (result == true) {
+      arrOfStyles[index] = "SUCCESS"
+    } else arrOfStyles[index] = "SECONDARY"
+  })
+  return arrOfStyles;
+}
+
+  export { webhook, isId, isInvite, permOverride, snowflakeToMention, SetActiveButton };
   

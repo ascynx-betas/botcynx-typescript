@@ -6,7 +6,7 @@ import lilyweight from 'lilyweight'
 import { extractWeight, getSpecifiedProfile } from "../personal-modules/senither";
 import { testfor } from "../personal-modules/testFor";
 import { ticketModel } from "../models/ticket";
-import { permOverride } from "../personal-modules/discordPlugin";
+import { permOverride, SetActiveButton } from "../personal-modules/discordPlugin";
 
 
 export default new Event('interactionCreate', async (interaction) => {
@@ -140,7 +140,56 @@ export default new Event('interactionCreate', async (interaction) => {
             }
 
             //info categories
-            return console.log('triggered info button handler')
+            let description: string; //set to category commands
+            let title: string; // set to category name
+            console.log(interaction.customId)
+            if (interaction.customId == "info userContextCommand") {
+                const commands = botcynx.userContextCommands.map(c => c.name);
+                const commandlist = commands.join('\n');
+                description = `**commands**\n${commandlist}`;
+                title = `userContextCommand`;
+            } else if (interaction.customId == "info messageContextCommand") {
+                const commands = botcynx.messageContextCommands.map(c => c.name);
+                const commandlist = commands.join('\n');
+                description = `**commands**\n${commandlist}`;
+                title = `messageContextCommand`;
+            } else if (interaction.customId == "info MessageCommand") {
+                const commands = botcynx.commands.map(c => c.name);
+                const commandlist = commands.join('\n');
+                description = `**commands**\n${commandlist}`;
+                title = `MessageCommand`;
+            } else if (interaction.customId == 'info slashCommand') {
+                const commands = botcynx.slashCommands.map(c => c.name);
+                const commandlist = commands.join('\n');
+                description = `**commands**\n${commandlist}`;
+                title = `slashCommand`
+            }
+            if (!description || !title) return;
+            const embed = new MessageEmbed()
+                .setDescription(description)
+                .setTitle(title)
+
+                const ActiveButton = await SetActiveButton(title, interaction.message.components[0].components.map(b => b.customId));
+                const buttonRow = new MessageActionRow().addComponents(
+                    new MessageButton()
+                        .setCustomId('info userContextCommand')
+                        .setLabel('User context Commands')
+                        .setStyle(ActiveButton[0]),
+                    new MessageButton()
+                        .setCustomId('info messageContextCommand')
+                        .setLabel('Message Context Commands')
+                        .setStyle(ActiveButton[1]),
+                    new MessageButton()
+                        .setCustomId('info MessageCommand')
+                        .setLabel('Message commands')
+                        .setStyle(ActiveButton[2]),
+                    new MessageButton()
+                        .setCustomId('info slashCommand')
+                        .setLabel('Slash Commands')
+                        .setStyle(ActiveButton[3])
+                    );
+            //update embed and set current button to PRIMARY style
+            interaction.update({embeds: [embed], components: [buttonRow]})
 
         } else if (interaction.customId.startsWith('close')) {
             //close ticket button
