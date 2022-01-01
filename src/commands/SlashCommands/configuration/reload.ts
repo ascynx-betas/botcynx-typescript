@@ -7,6 +7,7 @@ import { slashCommand } from "../../../structures/Commands";
 export default new slashCommand({
     name: 'reload',
     description: 'runs the configuration of the current server',
+    require:["mongooseConnectionString"],
     userPermissions: ["MANAGE_ROLES"],
     botPermissions: ["MANAGE_ROLES"],
     options: [

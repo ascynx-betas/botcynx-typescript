@@ -9,7 +9,7 @@ declare global {
             hypixelapikey?: string;
             ticketBlockedNames?: string[];
             mongooseConnectionString?: string;
-            botPrefix: string;
+            botPrefix?: string;
         }
     }
 }

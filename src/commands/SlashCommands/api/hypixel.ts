@@ -8,6 +8,7 @@ import { slashCommand } from "../../../structures/Commands";
 export default new slashCommand({
     name: 'hypixel',
     description: 'send informations about a user',
+    require:["hypixelApiKey", "mongooseConnectionString"],
     options: [
         {
             name: "username",

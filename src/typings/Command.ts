@@ -25,6 +25,12 @@ export interface contextInteraction extends ContextMenuInteraction {
 
 }
 
+export type require = "webhookLogLink" |
+"hypixelApiKey" |
+"ticketBlockedNames" |
+"mongooseConnectionString" |
+"botPrefix"
+
 interface runOptions {
     client: botClient,
     interaction: botcynxInteraction,
@@ -92,6 +98,7 @@ export type permissionResolvable =
 
 
 export type CommandType = {
+    require?: require[];
     userPermissions?: permissionResolvable[];
     botPermissions?: permissionResolvable[];
     devonly?: boolean;
@@ -100,6 +107,7 @@ export type CommandType = {
 } & ChatInputApplicationCommandData //SlashCommands
 
 export type UserContextType = {
+    require?: require[];
     userPermissions?: permissionResolvable[];
     botPermissions?: permissionResolvable[];
     devonly?: boolean;
@@ -107,6 +115,7 @@ export type UserContextType = {
     run: ContextRunFunction;
 }   & UserApplicationCommandData //User Context Commands
 export type MessageContextType = {
+    require?: require[];
     userPermissions?: permissionResolvable[];
     botPermissions?: permissionResolvable[];
     devonly?: boolean;
@@ -115,6 +124,7 @@ export type MessageContextType = {
 } & MessageApplicationCommandData //Chat Context Commands
 
 export type MessageCommandType = {
+    require?: require[];
     name: string;
     userPermissions?: permissionResolvable[];
     botPermissions?: permissionResolvable[];

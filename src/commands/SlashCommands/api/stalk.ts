@@ -7,6 +7,7 @@ import { slashCommand } from "../../../structures/Commands";
 export default new slashCommand({
     name: "stalk",
     description: "Allows to see the activity of a user on hypixel",
+    require:["hypixelApiKey"],
     options: [
       {
         name: "username",

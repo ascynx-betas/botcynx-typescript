@@ -1,6 +1,7 @@
 import { Message } from "discord.js";
 import { botcynx } from "..";
 import { configModel } from "../models/config";
+import { RequireTest } from "../personal-modules/commandHandler";
 import { Event } from "../structures/Event";
 
 export default new Event('messageUpdate', async (oldMessage: Message, newMessage: Message) => {
@@ -19,6 +20,11 @@ export default new Event('messageUpdate', async (oldMessage: Message, newMessage
         if (!command) command = botcynx.commands.find((c) => c.aliases?.includes(cmd.toLowerCase()));
 
         if(!command) return;
+
+        if (command.require) {
+            let RequireValue = await RequireTest(command.require);
+            if (RequireValue == false) return;
+        }
 
         //doesn't respond after 15 minutes elapsed
         let createdAt = newMessage.createdTimestamp;

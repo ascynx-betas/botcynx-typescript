@@ -1,11 +1,8 @@
-const testfor = function (disabledarray, testvalue) {
+const testfor = function (disabledarray: string[], testvalue: string) {
     //test for errors
-    if (typeof disabledarray !== "object") throw "wrong variable type";
-    if (typeof testvalue !== "string") throw "wrong variable type";
-    if (!testvalue || !disabledarray) throw "missing variable";
     //variables
     let testedvalue = 0;
-    let success;
+    let success: boolean;
   
     //function itself
     do {
@@ -22,12 +19,9 @@ const testfor = function (disabledarray, testvalue) {
     return success;
   };
   
-const compare = function (array1, array2) {
-    if (typeof array1 !== "object") throw "parameter 1 is wrong variable type";
-    if (typeof array2 !== "object") throw "parameter 2 is wrong variable type";
-    if (!array1 || !array2) throw "missing variable";
+const compare = function (array1: string[], array2: string[]) {
     //var
-    let success;
+    let success: boolean;
   
     array1.forEach(function (array1) {
       let testedvalue = 0;
@@ -46,14 +40,11 @@ const compare = function (array1, array2) {
     }
     return success;
   };
-const ct = function (array1, array2) {
-    if (typeof array1 !== "object") throw "parameter 1 is wrong variable type";
-    if (typeof array2 !== "object") throw "parameter 2 is wrong variable type";
-    if (!array1 || !array2) throw "missing variable";
+const ct = function (array1: string[], array2: string[]) {
   
-    let success;
+    let success: boolean;
     let breakingpoint = [];
-    let result;
+    let result: object;
     array1.forEach(function (array1) {
       let testedvalue = 0;
       do {
@@ -86,7 +77,7 @@ const getTimeOfDay = function () {
   
     return time;
   };
-const e2r = function (timestamp) {
+const e2r = function (timestamp: number) {
     let d = new Date(timestamp);
     let sd = d.toTimeString();
     let fields = sd.split(" ");
@@ -102,7 +93,7 @@ const getTime = function () {
     return sd;
   };
   
-const b2a = function (a) {
+const b2a = function (a: string) {
     var c,
       d,
       e,

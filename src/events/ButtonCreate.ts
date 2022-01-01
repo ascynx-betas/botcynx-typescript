@@ -1,10 +1,12 @@
 import { botcynx } from "..";
 import { Event } from "../structures/Event";
 import { permissions } from "../personal-modules/bitfieldCalculator"
-import { CommandInteractionOptionResolver, Message, MessageActionRow, MessageButton, MessageEmbed } from "discord.js";
+import { BaseGuildTextChannel, CommandInteractionOptionResolver, GuildChannel, GuildTextBasedChannel, Message, MessageActionRow, MessageButton, MessageEmbed, ThreadChannel } from "discord.js";
 import lilyweight from 'lilyweight'
 import { extractWeight, getSpecifiedProfile } from "../personal-modules/senither";
-import { profile } from "console";
+import { testfor } from "../personal-modules/testFor";
+import { ticketModel } from "../models/ticket";
+import { permOverride } from "../personal-modules/discordPlugin";
 
 
 export default new Event('interactionCreate', async (interaction) => {
@@ -34,8 +36,6 @@ export default new Event('interactionCreate', async (interaction) => {
             //weight lily
             if (interaction.customId == "weight lily") {
                 const lily = new lilyweight(process.env.hypixelapikey);
-
-
                 //extract info from embed
                 var uuid = interaction.message.embeds[0].thumbnail.url;
                 uuid = uuid.slice(28, uuid.length - 4);
@@ -93,7 +93,6 @@ export default new Event('interactionCreate', async (interaction) => {
             }
             //weight senither
             if (interaction.customId == "weight senither") {
-                const senither = require("../personal-modules/senither");
                 //extract from embed
                 let uuid = interaction.message.embeds[0].thumbnail.url;
                 uuid = uuid.slice(28, uuid.length - 4);
@@ -145,11 +144,86 @@ export default new Event('interactionCreate', async (interaction) => {
 
         } else if (interaction.customId.startsWith('close')) {
             //close ticket button
-            return console.log('triggered close ticket button handler')
+            const thread = interaction.channel;
+            if (interaction.channel.type === "GUILD_PRIVATE_THREAD") {
+                interaction.reply({content: `Locking thread...`, ephemeral: true})
+                    .then(() => (thread as ThreadChannel).setLocked())
+                    .then(() => (thread as ThreadChannel).setArchived())
+
+            } else if (interaction.channel.type === "GUILD_PUBLIC_THREAD") {
+                interaction.reply({content: `Locking thread...`, ephemeral: true})
+                    .then(() => (thread as ThreadChannel).setLocked())
+                    .then(() => (thread as ThreadChannel).setArchived())
+
+            } else return interaction.reply({content: `this channel is not a thread`, ephemeral: true});
 
         } else if (interaction.customId.startsWith('ticket')) {
             //ticket open buttons
-            return console.log('triggered open ticket button handler')
+            const guildId = interaction.guild.id;
+            const guild = interaction.guild;
+            const channel = interaction.channel;
+            const customId = interaction.customId;
+            let target = interaction.user;
+
+            const success = testfor(global.bot.ticketBlockedNames, interaction.customId);
+            if (success != true) {
+                let fields = customId.split(' ');
+                const buttonRow = new MessageActionRow().addComponents(
+                    new MessageButton()
+                        .setCustomId('close')
+                        .setLabel('close ticket')
+                        .setStyle("PRIMARY"));
+
+                const config = await ticketModel.find({
+                    guildId: guildId,
+                    name: fields[1],
+                });
+                const permissionOverwrites = (channel as GuildChannel).permissionOverwrites.cache.map(any => any);
+                let blacklisted: string;
+                await permOverride(permissionOverwrites).then((permission) => {
+                    let list = permission.permlist;
+                    let denied = permission.denied;
+                    let result: number;
+                        list.forEach(function (list, index) {
+                            if (list.includes(`<@&${target.id}>`)) return (result = index);
+                        })
+
+                        if (typeof result !== "undefined") {
+                            let userPermissions = permissions(Number(denied[result]));
+                            if (userPermissions.includes("SEND_MESSAGES_IN_THREADS")) return (blacklisted = "blacklisted");
+
+                        }
+                });
+                if (blacklisted == "blacklisted") return;
+                if (guild.features.includes("PRIVATE_THREADS")) {
+                    const thread = await (channel as BaseGuildTextChannel).threads
+                        .create({
+                            name: `${interaction.user.tag}-${fields[1]}`,
+                            autoArchiveDuration: 1440,
+                            type: "GUILD_PRIVATE_THREAD",
+                            reason: 'created new private ticket',
+                        });
+                        (thread as ThreadChannel).send({
+                            content: `${config[0].welcomemessage || "undefined"}`,
+                            components: [buttonRow]
+                        });
+                        (thread as ThreadChannel).members.add(`${interaction.user.id}`);
+
+                } else {
+                    const thread = await (channel as BaseGuildTextChannel).threads.create({
+                        name: `${interaction.user.tag}-${fields[1]}`,
+                        autoArchiveDuration: 1440,
+                        type: "GUILD_PUBLIC_THREAD",
+                        reason: "created new public ticket"
+                    });
+                    (thread as ThreadChannel).send({
+                        content: `${config[0].welcomemessage || "undefined"}`,
+                        components: [buttonRow]
+                    });
+                    (thread as ThreadChannel).members.add(`${interaction.user.id}`);
+
+                }
+            }
 
         }
     }

@@ -6,6 +6,7 @@ import { slashCommand } from "../../../structures/Commands";
 export default new slashCommand({
     name: 'setconfig',
     description: 'store certain informations for uses in the bot',
+    require:["mongooseConnectionString"],
     userPermissions: ["MANAGE_ROLES"],
     options: [
         {

@@ -8,6 +8,7 @@ import { slashCommand } from "../../../structures/Commands";
 export default new slashCommand({
     name: 'setup-ticket',
     description: "create a ticket message",
+    require:["mongooseConnectionString"],
     userPermissions: ["MANAGE_CHANNELS"],
     botPermissions: ["MANAGE_CHANNELS"],
     options: [
@@ -52,7 +53,7 @@ export default new slashCommand({
         !botPermissions.includes("USE_PUBLIC_THREADS") &&
         !botPermissions.includes("ADMINISTRATOR")) return interaction.followUp({content: `Missing permissions to create threads`}).catch(() => null);
 
-        const blacklisted = process.env.ticketBlockedNames;
+        const blacklisted = global.bot.ticketBlockedNames;
         const success = testfor(blacklisted, name);
         if (success == true) return interaction.followUp({content: `You cannot name a ticket ${name}`});
 

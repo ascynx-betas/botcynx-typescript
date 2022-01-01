@@ -3,11 +3,13 @@ import { CommandInteractionOptionResolver } from "discord.js";
 import { Event } from "../structures/Event";
 import { botcynxInteraction } from "../typings/Command";
 import { permissions } from "../personal-modules/bitfieldCalculator"
+import { RequireTest } from "../personal-modules/commandHandler";
 
 export default new Event('interactionCreate', async (interaction: botcynxInteraction) => {
     // slashCommands
     if (interaction.isContextMenu()) return;
     if (interaction.isButton()) return;
+
     if (interaction.isCommand()) {
         await interaction.deferReply();
         const command = botcynx.slashCommands.get(interaction.commandName);
@@ -39,6 +41,11 @@ export default new Event('interactionCreate', async (interaction: botcynxInterac
                interaction.user.id != process.env.developerId
                ) return interaction.followUp({content: `You cannot use this command as you lack ${userRequiredPermission}`});
         };
+
+        if (command.require) {
+            let RequireValue = await RequireTest(command.require);
+            if (RequireValue == false) return interaction.followUp({content: `the client in which this command has been called, doesn't have the required values to execute this command`});
+        }
 
 
         command.run({

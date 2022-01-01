@@ -5,7 +5,9 @@ import * as mp from '../personal-modules/testFor'
 
 process.on("unhandledRejection", async (error: Error) => {
     let stack = error.stack;
-    let fields = stack.split("\n");
+    let fields = stack?.split("\n");
+    if (typeof fields == "undefined") return console.log(error)
+    if (fields[0].startsWith("DiscordAPIError") && global.bot.environment != "dev") return; //returns if DiscordAPIError when it isn't in dev environment
     stack = fields[0] + "\n" + fields[1] + "\n" + fields[2];
     
     const time = mp.getTimeOfDay();

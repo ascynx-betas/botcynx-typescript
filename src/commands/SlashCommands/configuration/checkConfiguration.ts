@@ -6,6 +6,7 @@ import { MessageEmbed } from "discord.js";
 export default new slashCommand({
     name: 'serverconfig',
     description: 'Allows a server administrator to see the configuration of the server',
+    require:["mongooseConnectionString"],
     userPermissions: ["MANAGE_ROLES"],
     
     run: async({ interaction }) => {

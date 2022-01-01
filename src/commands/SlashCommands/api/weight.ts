@@ -8,6 +8,7 @@ import { extractWeight, getFatterProfile, getSpecifiedProfile } from "../../../p
 export default new slashCommand({
     name: 'weight',
     description: 'get the weight of someone',
+    require:["hypixelApiKey", "mongooseConnectionString"],
     options: [
         {
           name: "username",

@@ -3,6 +3,7 @@ import { Event } from "../structures/Event";
 import { contextInteraction, MessageContextType, UserContextType } from "../typings/Command";
 import { permissions } from "../personal-modules/bitfieldCalculator"
 import { CommandInteractionOptionResolver } from "discord.js";
+import { RequireTest } from "../personal-modules/commandHandler";
 
 export default new Event('interactionCreate', async (interaction: contextInteraction) => {
     if (interaction.isCommand()) return;
@@ -42,6 +43,11 @@ export default new Event('interactionCreate', async (interaction: contextInterac
                interaction.user.id != process.env.developerId
                ) return interaction.followUp({content: `You cannot use this command as you lack ${userRequiredPermission}`});
         };
+
+        if (command.require) {
+            let RequireValue = await RequireTest(command.require);
+            if (RequireValue == false) return interaction.followUp({content: `the client in which this command has been called, doesn't have the required values to execute this command`});
+        }
 
 
         command.run({

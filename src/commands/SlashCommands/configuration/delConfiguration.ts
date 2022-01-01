@@ -6,6 +6,7 @@ import { slashCommand } from "../../../structures/Commands";
 export default new slashCommand({
     name: 'delconfig',
     description: 'delete information from server configuration',
+    require:["mongooseConnectionString"],
     userPermissions: ["MANAGE_ROLES"],
     options: [
         {

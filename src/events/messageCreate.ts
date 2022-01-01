@@ -1,6 +1,7 @@
 import { botcynx } from "..";
-import { configModel, config } from "../models/config";
+import { configModel } from "../models/config";
 import { Event } from "../structures/Event";
+import { RequireTest } from "../personal-modules/commandHandler";
 
 export default new Event('messageCreate', async (message) => {
     // MesssageCommands
@@ -18,6 +19,11 @@ export default new Event('messageCreate', async (message) => {
         if (!command) command = botcynx.commands.find((c) => c.aliases?.includes(cmd.toLowerCase()));
 
         if(!command) return;
+
+        if (command.require) {
+            let RequireValue = await RequireTest(command.require);
+            if (RequireValue == false) return;
+        }
 
         const Guildinfo = await configModel.find({
             guildId: message.guildId
