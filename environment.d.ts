@@ -7,7 +7,6 @@ declare global {
             webhookLogLink?: string;
             developerId: string;
             hypixelapikey?: string;
-            ticketBlockedNames?: string[];
             mongooseConnectionString?: string;
             botPrefix?: string;
         }

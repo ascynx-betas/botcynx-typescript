@@ -211,8 +211,8 @@ export default new slashCommand({
           });
           if (existing.length == 0) return interaction.followUp({content: `ticket does not exist`});
           ticketModel.deleteOne({guildId: guildId, name: config})
-            .then(() => {
-              const message = (interaction.guild.channels.cache.get(existing[0].channel) as GuildTextBasedChannel).messages.cache.get(existing[0].linkedmessage)
+            .then(async () => {
+              const message = await (interaction.guild.channels.cache.get(existing[0].channel) as GuildTextBasedChannel).messages.fetch(existing[0].linkedmessage)
               if (!message) return interaction.followUp({content: `I could not delete the linked message, please do it yourself`})
               message.delete().then(() => interaction.followUp({content: `successfully deleted`}))})
         }

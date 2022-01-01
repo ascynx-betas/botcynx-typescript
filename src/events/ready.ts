@@ -12,6 +12,7 @@ export default new Event("ready", async () => {
     console.log('connected to MongoDB')
     global.bot.mongooseconnectionstring = true; //set mongooseConnectionString to valid
     }
+    global.bot.maxTimeout = "28 days";
     global.bot.ticketBlockedNames = ticketBlockedName;
     if (process.env.developerId) global.bot.developerid = true; //set value of developerId
     if (process.env.environment) global.bot.environment = process.env.environment; //set environment
