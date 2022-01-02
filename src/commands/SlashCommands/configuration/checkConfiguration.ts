@@ -33,12 +33,6 @@ export default new slashCommand({
         const guildConfig = config[0];
         const name = interaction.guild.name;
         let {removable, trigger, bypass, su, blocked, logchannel} = guildConfig
-        // let removable = guildConfig.removable;
-        // let trigger = guildConfig.trigger;
-        // let bypass = guildConfig.bypass;
-        // let su = guildConfig.su;
-        // let blocked = guildConfig.blocked;
-        // let logChannel = guildConfig.logchannel;
         // transform snowflake to mention
         if(removable.length >= 1) removable = snowflakeToMention(removable, "ROLE");
         if (removable.length == 0) removable[0] = "**none set**";
