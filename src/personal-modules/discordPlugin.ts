@@ -75,19 +75,10 @@ const webhook = function (webhooklink: string) {
     return result;
 }
 
-const SetActiveButton = async function(activeButton: string, arrayOfCustomId: string[]): Promise<MessageButtonStyleResolvable[]> {
+const SetActiveButton = async function(buttonId: string, arrayOfCustomId: string[]): Promise<MessageButtonStyleResolvable[]> {
   let arrOfStyles: MessageButtonStyleResolvable[] = [];
   arrayOfCustomId.forEach(function (customId, index) {
-    let result: boolean;
-    let fields = customId.split(' ');
-    fields.forEach(function (field) {
-      if (field == activeButton) {
-        return result = true;
-      }
-    })
-    if (result == true) {
-      arrOfStyles[index] = "SUCCESS"
-    } else arrOfStyles[index] = "SECONDARY"
+    if(buttonId == customId) {arrOfStyles[index] = "PRIMARY"} else arrOfStyles[index] = "SECONDARY";
   })
   return arrOfStyles;
 }

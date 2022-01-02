@@ -182,7 +182,7 @@ export default new Event('interactionCreate', async (interaction) => {
                 .setDescription(description)
                 .setTitle(title)
             }
-                const ActiveButton = await SetActiveButton(title, interaction.message.components[0].components.map(b => b.customId));
+                const ActiveButton = await SetActiveButton(interaction.customId, interaction.message.components[0].components.map(b => b.customId));
                 const buttonRow = new MessageActionRow().addComponents(
                     new MessageButton()
                         .setCustomId('info userContextCommand')
