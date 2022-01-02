@@ -1,7 +1,7 @@
 import { botcynx } from "..";
 import { Event } from "../structures/Event";
 import { permissions } from "../personal-modules/bitfieldCalculator"
-import { BaseGuildTextChannel, CommandInteractionOptionResolver, GuildChannel, GuildTextBasedChannel, Message, MessageActionRow, MessageButton, MessageEmbed, ThreadChannel } from "discord.js";
+import { BaseGuildTextChannel, EmbedFieldData, GuildChannel, Message, MessageActionRow, MessageButton, MessageEmbed, ThreadChannel } from "discord.js";
 import lilyweight from 'lilyweight'
 import { extractWeight, getSpecifiedProfile } from "../personal-modules/senither";
 import { testfor } from "../personal-modules/testFor";
@@ -142,7 +142,7 @@ export default new Event('interactionCreate', async (interaction) => {
             //info categories
             let description: string; //set to category commands
             let title: string; // set to category name
-            console.log(interaction.customId)
+            let fields: EmbedFieldData[] = [];
             if (interaction.customId == "info userContextCommand") {
                 const commands = botcynx.userContextCommands.map(c => c.name);
                 const commandlist = commands.join('\n');
@@ -160,15 +160,28 @@ export default new Event('interactionCreate', async (interaction) => {
                 title = `MessageCommand`;
             } else if (interaction.customId == 'info slashCommand') {
                 const commands = botcynx.slashCommands.map(c => c.name);
+                const descriptions = botcynx.slashCommands.map(c => c.description)
+                for (let i: number = 0; i < commands.length; i++) {
+                    let field: EmbedFieldData = {name: ``, value: ``}
+                    field.name = commands[i];
+                    field.value = (descriptions[i] || "not defined")
+                    fields.push(field)
+                }
                 const commandlist = commands.join('\n');
                 description = `**commands**\n${commandlist}`;
                 title = `slashCommand`
             }
             if (!description || !title) return;
-            const embed = new MessageEmbed()
+            let embed: MessageEmbed;
+            if (fields?.length > 0) {
+                embed = new MessageEmbed()
+                    .addFields(fields)
+                    .setTitle(title)
+            } else {
+            embed = new MessageEmbed()
                 .setDescription(description)
                 .setTitle(title)
-
+            }
                 const ActiveButton = await SetActiveButton(title, interaction.message.components[0].components.map(b => b.customId));
                 const buttonRow = new MessageActionRow().addComponents(
                     new MessageButton()
@@ -188,6 +201,8 @@ export default new Event('interactionCreate', async (interaction) => {
                         .setLabel('Slash Commands')
                         .setStyle(ActiveButton[3])
                     );
+
+
             //update embed and set current button to PRIMARY style
             interaction.update({embeds: [embed], components: [buttonRow]})
 

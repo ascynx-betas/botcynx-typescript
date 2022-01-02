@@ -178,5 +178,6 @@ const containsLink = function (message): number[] {
   
     return arrayofresults;
   };
+
   
   export {isLink, containsLink, a2b, b2a, getTime, getTimeOfDay, e2r, compare, ct, testfor};
