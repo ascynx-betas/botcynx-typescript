@@ -1,12 +1,11 @@
 import { TextBasedChannel } from "discord.js";
 import { botcynx } from "..";
 import { configModel } from "../models/config";
-import { permissions } from "../personal-modules/bitfieldCalculator"
 import { compare, ct } from "../personal-modules/testFor";
 import { Event } from "../structures/Event"
 
 export default new Event('guildMemberUpdate', async(oldMember, newMember) => {
-    let botPermissions = permissions(Number(oldMember.guild.me.permissions));
+    let botPermissions = oldMember.guild.me.permissions.toArray();
 
     if (!botPermissions.includes('MANAGE_ROLES') &&
         !botPermissions.includes('ADMINISTRATOR')) return; //permission check

@@ -1,14 +1,13 @@
 import { GuildTextBasedChannel, Message, TextBasedChannel, TextChannel, ThreadChannel } from "discord.js";
 import { botcynx } from "..";
 import { configModel } from "../models/config";
-import { permissions } from "../personal-modules/bitfieldCalculator";
 import { isId } from "../personal-modules/discordPlugin";
 import { containsLink } from "../personal-modules/testFor";
 import { Event } from "../structures/Event";
 
 export default new Event('messageCreate', async (message) => {
     if (message.author.bot || !message.guild) return;
-    let botPermissions = permissions(Number(message.guild.me.permissions));
+    let botPermissions = (message.guild.me.permissions).toArray();
     if (!botPermissions.includes('MANAGE_WEBHOOKS') &&
         !botPermissions.includes('ADMINISTRATOR')) return;
 

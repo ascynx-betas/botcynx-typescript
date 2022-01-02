@@ -1,7 +1,6 @@
 import { botcynx } from "..";
 import { Event } from "../structures/Event";
 import { contextInteraction, MessageContextType, UserContextType } from "../typings/Command";
-import { permissions } from "../personal-modules/bitfieldCalculator"
 import { CommandInteractionOptionResolver } from "discord.js";
 import { RequireTest } from "../personal-modules/commandHandler";
 
@@ -25,7 +24,7 @@ export default new Event('interactionCreate', async (interaction: contextInterac
         // if bot requires permissions
         if (command.botPermissions) {
             const botRequiredPermission = command.botPermissions;
-            let botPermission: String[] = permissions(Number(interaction.guild.me.permissions));
+            let botPermission = (interaction.guild.me.permissions).toArray();
 
             if (!botPermission.includes(botRequiredPermission[0]) &&
              !botPermission.includes("ADMINISTRATOR")
@@ -35,7 +34,7 @@ export default new Event('interactionCreate', async (interaction: contextInterac
         //if user requires permission
         if (command.userPermissions) {
             const userRequiredPermission = command.userPermissions;
-            let userPermissions: String[] = permissions(Number(interaction.guild.members.cache.get(interaction.user.id)));
+            let userPermissions = (interaction.guild.members.cache.get(interaction.user.id).permissions).toArray();
 
             if(!userPermissions.includes(userPermissions[0]) &&
              !userPermissions.includes("ADMINISTRATOR") &&

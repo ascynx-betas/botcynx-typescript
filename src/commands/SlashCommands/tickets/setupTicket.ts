@@ -1,6 +1,5 @@
 import { GuildTextBasedChannel, Message, MessageActionRow, MessageButton, MessageEmbed } from "discord.js";
 import { ticketModel } from "../../../models/ticket";
-import { permissions } from "../../../personal-modules/bitfieldCalculator";
 import { testfor } from "../../../personal-modules/testFor";
 import { slashCommand } from "../../../structures/Commands";
 
@@ -47,7 +46,7 @@ export default new slashCommand({
         const name = interaction.options.getString('config-name');
         const welcomeMessage = interaction.options.getString('welcome-message');
         const welcomeButton = interaction.options.getString('description')
-        let botPermissions = permissions(Number(interaction.guild.me.permissions))
+        let botPermissions = (interaction.guild.me.permissions).toArray()
 
         if(!botPermissions.includes("USE_PRIVATE_THREADS") &&
         !botPermissions.includes("USE_PUBLIC_THREADS") &&
