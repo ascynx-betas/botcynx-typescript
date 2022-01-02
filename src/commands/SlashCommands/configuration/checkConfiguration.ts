@@ -32,12 +32,13 @@ export default new slashCommand({
         //get informations from config
         const guildConfig = config[0];
         const name = interaction.guild.name;
-        let removable = guildConfig.removable;
-        let trigger = guildConfig.trigger;
-        let bypass = guildConfig.bypass;
-        let su = guildConfig.su;
-        let blocked = guildConfig.blocked;
-        let logChannel = guildConfig.logchannel;
+        let {removable, trigger, bypass, su, blocked, logchannel} = guildConfig
+        // let removable = guildConfig.removable;
+        // let trigger = guildConfig.trigger;
+        // let bypass = guildConfig.bypass;
+        // let su = guildConfig.su;
+        // let blocked = guildConfig.blocked;
+        // let logChannel = guildConfig.logchannel;
         // transform snowflake to mention
         if(removable.length >= 1) removable = snowflakeToMention(removable, "ROLE");
         if (removable.length == 0) removable[0] = "**none set**";
@@ -50,7 +51,7 @@ export default new slashCommand({
         if(blocked.length >= 1) blocked = snowflakeToMention(blocked, "CHANNEL");
         if (blocked.length == 0) blocked[0] = "**none set**";
 
-        if (logChannel != "") {logChannel = `<#${logChannel}>`} else logChannel = `**none set**`
+        if (logchannel != "") {logchannel = `<#${logchannel}>`} else logchannel = `**none set**`
 
         //join information together
         removable.join(', ');
@@ -65,7 +66,7 @@ export default new slashCommand({
         trigger roles: ${trigger} \n
         bypass roles: ${bypass} \n
         Elevated Permissions: ${su} \n
-        Log Channel: ${logChannel} \n
+        Log Channel: ${logchannel} \n
         Blocked Channels: ${blocked} \n`; //don't forget to modify in delconfig for slots by setting index-1 instead of index
 
         const embed = new MessageEmbed()
