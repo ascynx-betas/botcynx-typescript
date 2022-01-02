@@ -85,11 +85,6 @@ export class botClient extends Client {
                 guildId: process.env.guildId
             });
 
-            let c1 = slashCommands.map(s => s.name);
-            let c2 = commands.map(c => c.name);
-            let c3 = (userContextCommands.map(c => c.name)).concat(messageContextCommands.map(c => c.name))
-            console.log("----slashCommands----\n" + c1.join('\n') + "\n------Commands-----\n" + c2.join('\n') + "\n----context Command----\n" + c3.join('\n'))
-
         });
 
         //MessageCommands
