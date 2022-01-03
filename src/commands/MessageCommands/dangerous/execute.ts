@@ -1,9 +1,9 @@
 import { MessageEmbed } from "discord.js";
 import { Command } from "../../../structures/Commands";
-import { inspect } from "util"
+import { inspect } from "util";
 
 //!You can access modules using /app/personal-modules/{module}.js
-export default new Command ({
+export default new Command({
   name: "exec",
   aliases: ["eval", "ev", "e", "ex", "execute", "evaluate"],
   devonly: true,
@@ -17,8 +17,7 @@ export default new Command ({
     const clean = async (text: string) => {
       if (text && text.constructor.name == "Promise") text = await text;
 
-      if (typeof text !== "string")
-        text = inspect(text, { depth: 1 });
+      if (typeof text !== "string") text = inspect(text, { depth: 1 });
 
       // Replace symbols with character code alternatives
       text = text
@@ -63,7 +62,7 @@ export default new Command ({
           { name: "**input:**", value: cool },
           { name: "**output:**", value: cleaned },
         ])
-        .setAuthor({name:"Success ✅"});
+        .setAuthor({ name: "Success ✅" });
 
       message.channel.send({ embeds: [embed] });
     } catch (err) {
@@ -77,7 +76,7 @@ export default new Command ({
           { name: "**input:**", value: cool },
           { name: "**output:**", value: err },
         ])
-        .setAuthor({name:"Error ❌"});
+        .setAuthor({ name: "Error ❌" });
       message.channel.send({ embeds: [embed] });
     }
   },

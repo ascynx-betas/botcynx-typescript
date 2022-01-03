@@ -1,58 +1,79 @@
 import { botcynx } from "..";
 import { Event } from "../structures/Event";
-import { contextInteraction, MessageContextType, UserContextType } from "../typings/Command";
+import {
+  contextInteraction,
+  MessageContextType,
+  UserContextType,
+} from "../typings/Command";
 import { CommandInteractionOptionResolver } from "discord.js";
 import { RequireTest } from "../personal-modules/commandHandler";
 
-export default new Event('interactionCreate', async (interaction: contextInteraction) => {
+export default new Event(
+  "interactionCreate",
+  async (interaction: contextInteraction) => {
     if (interaction.isCommand()) return;
     if (interaction.isButton()) return;
     if (interaction.isContextMenu()) {
-        let command: UserContextType | MessageContextType = botcynx.userContextCommands.get(interaction.commandName);
-        if (!command) command = botcynx.messageContextCommands.get(interaction.commandName);
-        if (!command) return interaction.followUp('You have used a non existant command');
+      let command: UserContextType | MessageContextType =
+        botcynx.userContextCommands.get(interaction.commandName);
+      if (!command)
+        command = botcynx.messageContextCommands.get(interaction.commandName);
+      if (!command)
+        return interaction.followUp("You have used a non existant command");
 
-        // if command is ephemeral
-        if (command.invisible) {
-            if (command.invisible == true) {
-                await interaction.deferReply({ ephemeral: true });
-            } 
-        } else {
-            await interaction.deferReply();
+      // if command is ephemeral
+      if (command.invisible) {
+        if (command.invisible == true) {
+          await interaction.deferReply({ ephemeral: true });
         }
-        
-        // if bot requires permissions
-        if (command.botPermissions) {
-            const botRequiredPermission = command.botPermissions;
-            let botPermission = (interaction.guild.me.permissions).toArray();
+      } else {
+        await interaction.deferReply();
+      }
 
-            if (!botPermission.includes(botRequiredPermission[0]) &&
-             !botPermission.includes("ADMINISTRATOR")
-             ) return interaction.followUp({content: `I cannot execute this command due to the lack of ${botRequiredPermission}`});
-            
-        }
-        //if user requires permission
-        if (command.userPermissions) {
-            const userRequiredPermission = command.userPermissions;
-            let userPermissions = (interaction.guild.members.cache.get(interaction.user.id).permissions).toArray();
+      // if bot requires permissions
+      if (command.botPermissions) {
+        const botRequiredPermission = command.botPermissions;
+        let botPermission = interaction.guild.me.permissions.toArray();
 
-            if(!userPermissions.includes(userPermissions[0]) &&
-             !userPermissions.includes("ADMINISTRATOR") &&
-              interaction.user.id != interaction.guild.ownerId &&
-               interaction.user.id != process.env.developerId
-               ) return interaction.followUp({content: `You cannot use this command as you lack ${userRequiredPermission}`});
-        };
+        if (
+          !botPermission.includes(botRequiredPermission[0]) &&
+          !botPermission.includes("ADMINISTRATOR")
+        )
+          return interaction.followUp({
+            content: `I cannot execute this command due to the lack of ${botRequiredPermission}`,
+          });
+      }
+      //if user requires permission
+      if (command.userPermissions) {
+        const userRequiredPermission = command.userPermissions;
+        let userPermissions = interaction.guild.members.cache
+          .get(interaction.user.id)
+          .permissions.toArray();
 
-        if (command.require) {
-            let RequireValue = await RequireTest(command.require);
-            if (RequireValue == false) return interaction.followUp({content: `the client in which this command has been called, doesn't have the required values to execute this command`});
-        }
+        if (
+          !userPermissions.includes(userPermissions[0]) &&
+          !userPermissions.includes("ADMINISTRATOR") &&
+          interaction.user.id != interaction.guild.ownerId &&
+          interaction.user.id != process.env.developerId
+        )
+          return interaction.followUp({
+            content: `You cannot use this command as you lack ${userRequiredPermission}`,
+          });
+      }
 
+      if (command.require) {
+        let RequireValue = await RequireTest(command.require);
+        if (RequireValue == false)
+          return interaction.followUp({
+            content: `the client in which this command has been called, doesn't have the required values to execute this command`,
+          });
+      }
 
-        command.run({
-            args: interaction.options as CommandInteractionOptionResolver,
-            client: botcynx,
-            interaction: interaction as contextInteraction,
-        })
-    } else return
-})
+      command.run({
+        args: interaction.options as CommandInteractionOptionResolver,
+        client: botcynx,
+        interaction: interaction as contextInteraction,
+      });
+    } else return;
+  }
+);

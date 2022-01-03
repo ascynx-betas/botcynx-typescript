@@ -1,9 +1,8 @@
 import { TextChannel } from "discord.js";
 import { slashCommand } from "../../../structures/Commands";
 
-
 export default new slashCommand({
-    name: "echo",
+  name: "echo",
   description: "allows the person to send a message via the bot",
   userPermissions: ["MANAGE_MESSAGES"],
   options: [
@@ -32,25 +31,26 @@ export default new slashCommand({
     const message = interaction.options.getString("message");
     const user = interaction.options.getUser("target");
     const channel = interaction.options.getChannel("channel");
-      if (user) {
-        user
-          .send({ content: message })
-          .catch(() => interaction.followUp("Can't send DM to specified user"));
-        interaction
-          .followUp({ content: `sent message '${message}' to ${user.tag}` })
-          .catch(() => null);
-      } else if (channel) {
-          (channel as TextChannel).send({ content: message, allowedMentions: { parse: [] } })
-            .catch(() =>
-              interaction.editReply(
-                "I don't have permission to send a message in the specified channel"
-              )
-            );
-          interaction
-            .followUp({ content: `sent message in ${channel}` })
-            .catch(() => null);
-      } else {
-        interaction.followUp({ content: message });
-      }
+    if (user) {
+      user
+        .send({ content: message })
+        .catch(() => interaction.followUp("Can't send DM to specified user"));
+      interaction
+        .followUp({ content: `sent message '${message}' to ${user.tag}` })
+        .catch(() => null);
+    } else if (channel) {
+      (channel as TextChannel)
+        .send({ content: message, allowedMentions: { parse: [] } })
+        .catch(() =>
+          interaction.editReply(
+            "I don't have permission to send a message in the specified channel"
+          )
+        );
+      interaction
+        .followUp({ content: `sent message in ${channel}` })
+        .catch(() => null);
+    } else {
+      interaction.followUp({ content: message });
+    }
   },
-})
+});

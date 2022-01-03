@@ -1,5 +1,5 @@
 import { UserContextCommand } from "../../../structures/Commands";
-import { MessageEmbed } from 'discord.js'
+import { MessageEmbed } from "discord.js";
 
 export default new UserContextCommand({
   name: "getAvatar",
@@ -9,7 +9,10 @@ export default new UserContextCommand({
     const user = await client.users.fetch(interaction.targetId);
 
     const embed = new MessageEmbed()
-      .setAuthor({name: user.tag, iconURL: user.displayAvatarURL({ dynamic: true })})
+      .setAuthor({
+        name: user.tag,
+        iconURL: user.displayAvatarURL({ dynamic: true }),
+      })
       .setImage(user.displayAvatarURL({ dynamic: true }));
 
     interaction

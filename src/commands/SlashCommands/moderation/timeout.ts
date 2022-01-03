@@ -1,66 +1,91 @@
 import { slashCommand } from "../../../structures/Commands";
-import ms from 'ms'
+import ms from "ms";
 
 export default new slashCommand({
-    name: 'timeout',
-    description: 'timeout a user for a specified amount of time',
-    userPermissions: ["MODERATE_MEMBERS"],
-    botPermissions: ["MODERATE_MEMBERS"],
-    options: [
-        {
-          name: "user",
-          type: "USER",
-          description: "target to timeout",
-          required: true,
-        },
-        {
-          name: "time",
-          type: "STRING",
-          description: "time for timeout",
-          required: false,
-        },
-        {
-          name: "reason",
-          type: "STRING",
-          description: "reason for timeout",
-          required: false,
-        },
-      ],
-    
-    run: async({ interaction }) => {
-        let target = interaction.options.getUser("user");
-        let time: string | number = interaction.options.getString('time');
-        let reason = interaction.options.getString('reason');
-        if (time === null) time = "1 hour";
+  name: "timeout",
+  description: "timeout a user for a specified amount of time",
+  userPermissions: ["MODERATE_MEMBERS"],
+  botPermissions: ["MODERATE_MEMBERS"],
+  options: [
+    {
+      name: "user",
+      type: "USER",
+      description: "target to timeout",
+      required: true,
+    },
+    {
+      name: "time",
+      type: "STRING",
+      description: "time for timeout",
+      required: false,
+    },
+    {
+      name: "reason",
+      type: "STRING",
+      description: "reason for timeout",
+      required: false,
+    },
+  ],
 
-        let timeForTimeout = ms(time);
-        const guildMember = interaction.guild.members.cache.get(target.id);
+  run: async ({ interaction }) => {
+    let target = interaction.options.getUser("user");
+    let time: string | number = interaction.options.getString("time");
+    let reason = interaction.options.getString("reason");
+    if (time === null) time = "1 hour";
 
-        let date = Date.now();
-        time = Math.floor((date + timeForTimeout) / 1000);
-        // if the timeout time is under 60 seconds then do a :T instead of :F
-        date = Math.floor(date / 1000);
-        if (time-60 <= date) {
-            time = `<t:${time}:T>`;
-        } else {
-            time = `<t:${time}:F>`;
-        };
+    let timeForTimeout = ms(time);
+    const guildMember = interaction.guild.members.cache.get(target.id);
 
-        if (interaction.user.id == target.id) return interaction.followUp({content: `You cannot timeout yourself !`});
-        if (typeof guildMember === "undefined" || !guildMember) return interaction.followUp({content: `the user you're trying to timeout isn't in this server`});
-
-        if (guildMember.roles.highest.position >=
-             interaction.guild.members.cache.get(interaction.user.id).roles.highest.position &&
-              interaction.user.id != interaction.guild.ownerId &&
-               interaction.user.id != process.env.developerId ||
-                guildMember.id == interaction.guild.ownerId) return interaction.followUp({content: `You cannot timeout this user as they have higher permission than you do`});
-
-                guildMember.timeout(timeForTimeout, (reason || "reason not provided"))
-                    .then(() => interaction.followUp({content: `success, ${target} i now muted until ${time}`, allowedMentions: { parse: []}}))
-                    .catch((error) => {
-                        if (error.httpStatus == 403) return interaction.followUp({content: `I cannot timeout this user as it has a higher role than myself`});
-                        if (error.httpStatus == 400) return interaction.followUp({content: `You cannot timeout a member for more than ${global.bot.maxTimeout} !`});
-                        if (error.httpStatus != 400 && error.httpStatus != 403) return interaction.followUp({content: `encountered an unknown error while executing this command`});
-                    });
+    let date = Date.now();
+    time = Math.floor((date + timeForTimeout) / 1000);
+    // if the timeout time is under 60 seconds then do a :T instead of :F
+    date = Math.floor(date / 1000);
+    if (time - 60 <= date) {
+      time = `<t:${time}:T>`;
+    } else {
+      time = `<t:${time}:F>`;
     }
-})
+
+    if (interaction.user.id == target.id)
+      return interaction.followUp({ content: `You cannot timeout yourself !` });
+    if (typeof guildMember === "undefined" || !guildMember)
+      return interaction.followUp({
+        content: `the user you're trying to timeout isn't in this server`,
+      });
+
+    if (
+      (guildMember.roles.highest.position >=
+        interaction.guild.members.cache.get(interaction.user.id).roles.highest
+          .position &&
+        interaction.user.id != interaction.guild.ownerId &&
+        interaction.user.id != process.env.developerId) ||
+      guildMember.id == interaction.guild.ownerId
+    )
+      return interaction.followUp({
+        content: `You cannot timeout this user as they have higher permission than you do`,
+      });
+
+    guildMember
+      .timeout(timeForTimeout, reason || "reason not provided")
+      .then(() =>
+        interaction.followUp({
+          content: `success, ${target} i now muted until ${time}`,
+          allowedMentions: { parse: [] },
+        })
+      )
+      .catch((error) => {
+        if (error.httpStatus == 403)
+          return interaction.followUp({
+            content: `I cannot timeout this user as it has a higher role than myself`,
+          });
+        if (error.httpStatus == 400)
+          return interaction.followUp({
+            content: `You cannot timeout a member for more than ${global.bot.maxTimeout} !`,
+          });
+        if (error.httpStatus != 400 && error.httpStatus != 403)
+          return interaction.followUp({
+            content: `encountered an unknown error while executing this command`,
+          });
+      });
+  },
+});

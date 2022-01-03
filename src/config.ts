@@ -1,1 +1,1 @@
-export const ticketBlockedName = ["info", "weight", "close", "config"]
+export const ticketBlockedName = ["info", "weight", "close", "config"];

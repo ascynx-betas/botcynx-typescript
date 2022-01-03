@@ -1,30 +1,27 @@
-import fetch from 'node-fetch';
-import { profile, uuid } from '../typings/ApiInterface';
+import fetch from "node-fetch";
+import { profile, uuid } from "../typings/ApiInterface";
 
 const getUuidbyUsername = async function (username: string) {
-    username = username.toUpperCase();
-    let Url = `https://api.mojang.com/users/profiles/minecraft/${username}`;
+  username = username.toUpperCase();
+  let Url = `https://api.mojang.com/users/profiles/minecraft/${username}`;
 
-    //GET request
-    return fetch(Url).then(async (body) => {
-        let data: any = await body.text();
-        let result: uuid = JSON.parse(data);
-        return result;
-
-    });
-}
+  //GET request
+  return fetch(Url).then(async (body) => {
+    let data: any = await body.text();
+    let result: uuid = JSON.parse(data);
+    return result;
+  });
+};
 
 const getProfilebyUuid = async function (uuid: string) {
-    let Url = `https://sessionserver.mojang.com/session/minecraft/profile/${uuid}`;
+  let Url = `https://sessionserver.mojang.com/session/minecraft/profile/${uuid}`;
 
-    //GET request
-    return fetch(Url).then(async (body) => {
-        let data: any = await body.text();
-        let result: profile = JSON.parse(data);
-        return result;
-
-    });
-}
-
+  //GET request
+  return fetch(Url).then(async (body) => {
+    let data: any = await body.text();
+    let result: profile = JSON.parse(data);
+    return result;
+  });
+};
 
 export { getProfilebyUuid, getUuidbyUsername };
