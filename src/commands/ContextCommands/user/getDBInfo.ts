@@ -6,6 +6,7 @@ import * as hypixel from "../../../personal-modules/hypixel";
 export default new UserContextCommand({
   name: "getUUID",
   type: "USER",
+  category: "information",
   invisible: true,
   run: async ({ client, interaction }) => {
     //TODO make it work

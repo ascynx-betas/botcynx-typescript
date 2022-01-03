@@ -69,6 +69,7 @@ export type CommandType = {
   botPermissions?: PermissionString[];
   devonly?: boolean;
   invisible?: boolean;
+  category?: string;
   run: RunFunction;
 } & ChatInputApplicationCommandData; //SlashCommands
 
@@ -78,6 +79,7 @@ export type UserContextType = {
   botPermissions?: PermissionString[];
   devonly?: boolean;
   invisible?: boolean;
+  category?: string;
   run: ContextRunFunction;
 } & UserApplicationCommandData; //User Context Commands
 export type MessageContextType = {
@@ -86,6 +88,7 @@ export type MessageContextType = {
   botPermissions?: PermissionString[];
   devonly?: boolean;
   invisible?: boolean;
+  category?: string;
   run: ContextRunFunction;
 } & MessageApplicationCommandData; //Chat Context Commands
 
@@ -96,5 +99,6 @@ export type MessageCommandType = {
   botPermissions?: PermissionString[];
   devonly?: boolean;
   aliases?: String[];
+  category?: string;
   run: MessageRunFunction;
 }; // MessageCommands

@@ -15,6 +15,7 @@ export default new slashCommand({
   require: ["mongooseConnectionString"],
   userPermissions: ["MANAGE_CHANNELS"],
   botPermissions: ["MANAGE_CHANNELS"],
+  category: "ticket",
   options: [
     {
       name: "channel",

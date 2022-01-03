@@ -8,6 +8,7 @@ export default new slashCommand({
   name: "hypixel",
   description: "send informations about a user",
   require: ["hypixelApiKey", "mongooseConnectionString"],
+  category: "hypixel",
   options: [
     {
       name: "username",

@@ -7,6 +7,7 @@ export default new slashCommand({
   name: "stalk",
   description: "Allows to see the activity of a user on hypixel",
   require: ["hypixelApiKey"],
+  category: "hypixel",
   options: [
     {
       name: "username",

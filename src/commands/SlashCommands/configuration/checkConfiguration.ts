@@ -9,6 +9,7 @@ export default new slashCommand({
     "Allows a server administrator to see the configuration of the server",
   require: ["mongooseConnectionString"],
   userPermissions: ["MANAGE_ROLES"],
+  category: "configuration",
 
   run: async ({ interaction }) => {
     const guildId = interaction.guildId;

@@ -7,7 +7,9 @@ import {
   GuildChannel,
   Message,
   MessageActionRow,
+  MessageActionRowComponent,
   MessageButton,
+  MessageButtonStyle,
   MessageEmbed,
   ThreadChannel,
 } from "discord.js";
@@ -19,8 +21,10 @@ import {
 import { testfor } from "../personal-modules/testFor";
 import { ticketModel } from "../models/ticket";
 import {
+  infoEmbedCreation,
   permOverride,
   SetActiveButton,
+  setButtonRows,
 } from "../personal-modules/discordPlugin";
 
 export default new Event("interactionCreate", async (interaction) => {
@@ -167,69 +171,43 @@ export default new Event("interactionCreate", async (interaction) => {
       }
 
       //info categories
-      let description: string; //set to category commands
-      let title: string; // set to category name
-      let fields: EmbedFieldData[] = [];
-      if (interaction.customId == "info userContextCommand") {
-        const commands = botcynx.userContextCommands.map((c) => c.name);
-        const commandlist = commands.join("\n");
-        description = `**commands**\n${commandlist}`;
-        title = `userContextCommand`;
-      } else if (interaction.customId == "info messageContextCommand") {
-        const commands = botcynx.messageContextCommands.map((c) => c.name);
-        const commandlist = commands.join("\n");
-        description = `**commands**\n${commandlist}`;
-        title = `messageContextCommand`;
-      } else if (interaction.customId == "info MessageCommand") {
-        const commands = botcynx.commands.map((c) => c.name);
-        const commandlist = commands.join("\n");
-        description = `**commands**\n${commandlist}`;
-        title = `MessageCommand`;
-      } else if (interaction.customId == "info slashCommand") {
-        const commands = botcynx.slashCommands.map((c) => c.name);
-        const descriptions = botcynx.slashCommands.map((c) => c.description);
-        for (let i: number = 0; i < commands.length; i++) {
-          let field: EmbedFieldData = { name: ``, value: `` };
-          field.name = commands[i];
-          field.value = descriptions[i] || "not defined";
-          fields.push(field);
-        }
-        const commandlist = commands.join("\n");
-        description = `**commands**\n${commandlist}`;
-        title = `slashCommand`;
-      }
-      if (!description || !title) return;
+      const interactionCommands: any = botcynx.ArrayOfSlashCommands.concat(
+        botcynx.commands
+      );
+      let types: string[] = interactionCommands.map(
+        (c) => c.category || "other"
+      );
+      types = [...new Set(types)];
+      let category: string[] | string = interaction.customId.split(" ");
+      category = category[1];
+      let arrayOfButtons: MessageActionRowComponent[] = [];
+      let messageComponents = interaction.message.components.map(
+        (c) => c.components
+      );
+      messageComponents = messageComponents[0].concat(messageComponents[1]);
+      let idArray = messageComponents.map((c) => c.customId);
+      const buttonStyles = await SetActiveButton(interaction.customId, idArray);
+      types.forEach(function (type, index) {
+        const button = new MessageButton()
+          .setCustomId(`info ${type}`)
+          .setLabel(`${type}`)
+          .setStyle(buttonStyles[index]);
+
+        arrayOfButtons.push(button);
+      });
+      if (arrayOfButtons.length >= 25)
+        return interaction.followUp({
+          content: `there are too many categories to create enough buttons`,
+        });
+      let components: MessageActionRow[] = await setButtonRows(arrayOfButtons);
+
+      let beans = infoEmbedCreation(category);
+      let { fields, title } = beans;
       let embed: MessageEmbed;
-      if (fields?.length > 0) {
-        embed = new MessageEmbed().addFields(fields).setTitle(title);
-      } else {
-        embed = new MessageEmbed().setDescription(description).setTitle(title);
-      }
-      const ActiveButton = await SetActiveButton(
-        interaction.customId,
-        interaction.message.components[0].components.map((b) => b.customId)
-      );
-      const buttonRow = new MessageActionRow().addComponents(
-        new MessageButton()
-          .setCustomId("info userContextCommand")
-          .setLabel("User context Commands")
-          .setStyle(ActiveButton[0]),
-        new MessageButton()
-          .setCustomId("info messageContextCommand")
-          .setLabel("Message Context Commands")
-          .setStyle(ActiveButton[1]),
-        new MessageButton()
-          .setCustomId("info MessageCommand")
-          .setLabel("Message commands")
-          .setStyle(ActiveButton[2]),
-        new MessageButton()
-          .setCustomId("info slashCommand")
-          .setLabel("Slash Commands")
-          .setStyle(ActiveButton[3])
-      );
+      embed = new MessageEmbed().addFields(fields).setTitle(title);
 
       //update embed and set current button to PRIMARY style
-      interaction.update({ embeds: [embed], components: [buttonRow] });
+      interaction.update({ embeds: [embed], components: components });
     } else if (interaction.customId.startsWith("close")) {
       //close ticket button
       const thread = interaction.channel;

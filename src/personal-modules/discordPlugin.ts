@@ -1,4 +1,10 @@
-import { MessageButtonStyleResolvable } from "discord.js";
+import {
+  EmbedFieldData,
+  MessageActionRow,
+  MessageActionRowComponent,
+  MessageButtonStyleResolvable,
+} from "discord.js";
+import { botcynx } from "..";
 import { snowflake } from "../typings/Client";
 
 const permOverride = async function (permissionlist: any) {
@@ -87,6 +93,71 @@ const SetActiveButton = async function (
   });
   return arrOfStyles;
 };
+const setButtonRows = async function (
+  arrayOfButtons: MessageActionRowComponent[]
+): Promise<MessageActionRow[]> {
+  let arrayOfComponents: MessageActionRow[] = [];
+  if (arrayOfButtons.length > 1) {
+    let component = new MessageActionRow();
+    for (let i = 0; i < 5; i++) {
+      component.addComponents(arrayOfButtons[i]);
+      if (typeof arrayOfButtons[i + 1] == "undefined") break;
+    }
+    arrayOfComponents.push(component);
+  }
+  if (arrayOfButtons.length > 5) {
+    let component = new MessageActionRow();
+    for (let i = 5; i < 10; i++) {
+      if (typeof arrayOfButtons[i] == "undefined") break;
+      component.addComponents(arrayOfButtons[i]);
+    }
+    arrayOfComponents.push(component);
+  }
+  if (arrayOfButtons.length > 10) {
+    let component = new MessageActionRow();
+    for (let i = 10; i < 15; i++) {
+      if (typeof arrayOfButtons[i] == "undefined") break;
+      component.addComponents(arrayOfButtons[i]);
+    }
+    arrayOfComponents.push(component);
+  }
+  if (arrayOfButtons.length > 15) {
+    let component = new MessageActionRow();
+    for (let i = 15; i < 20; i++) {
+      if (typeof arrayOfButtons[i] == "undefined") break;
+      component.addComponents(arrayOfButtons[i]);
+    }
+    arrayOfComponents.push(component);
+  }
+  if (arrayOfButtons.length > 20) {
+    let component = new MessageActionRow();
+    for (let i = 20; i < 25; i++) {
+      if (typeof arrayOfButtons[i] == "undefined") break;
+      component.addComponents(arrayOfButtons[i]);
+    }
+    arrayOfComponents.push(component);
+  }
+  return arrayOfComponents;
+};
+
+const infoEmbedCreation = function (category: string) {
+  const commands = botcynx.ArrayOfSlashCommands.concat(botcynx.commands)
+    .filter((c: any) => c.category === category)
+    .map((c: any) => c.name);
+  const descriptions = botcynx.ArrayOfSlashCommands.concat(botcynx.commands)
+    .filter((c: any) => c.category === category)
+    .map((c: any) => c.description || "not defined");
+  let fields: EmbedFieldData[] = [];
+  for (let i: number = 0; i < commands.length; i++) {
+    let field: EmbedFieldData = { name: ``, value: `` };
+    field.name = commands[i];
+    field.value = descriptions[i];
+    fields.push(field);
+  }
+
+  let title = category;
+  return { title, fields };
+};
 
 export {
   webhook,
@@ -95,4 +166,6 @@ export {
   permOverride,
   snowflakeToMention,
   SetActiveButton,
+  setButtonRows,
+  infoEmbedCreation,
 };

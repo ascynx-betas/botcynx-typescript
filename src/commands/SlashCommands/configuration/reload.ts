@@ -9,6 +9,7 @@ export default new slashCommand({
   require: ["mongooseConnectionString"],
   userPermissions: ["MANAGE_ROLES"],
   botPermissions: ["MANAGE_ROLES"],
+  category: "configuration",
   options: [
     {
       name: "testrun",

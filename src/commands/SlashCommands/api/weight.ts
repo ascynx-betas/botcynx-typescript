@@ -13,6 +13,7 @@ export default new slashCommand({
   name: "weight",
   description: "get the weight of someone",
   require: ["hypixelApiKey", "mongooseConnectionString"],
+  category: "hypixel",
   options: [
     {
       name: "username",

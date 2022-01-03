@@ -6,6 +6,7 @@ export default new slashCommand({
   description: "timeout a user for a specified amount of time",
   userPermissions: ["MODERATE_MEMBERS"],
   botPermissions: ["MODERATE_MEMBERS"],
+  category: "moderation",
   options: [
     {
       name: "user",

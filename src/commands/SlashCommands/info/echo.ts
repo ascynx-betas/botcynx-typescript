@@ -5,6 +5,7 @@ export default new slashCommand({
   name: "echo",
   description: "allows the person to send a message via the bot",
   userPermissions: ["MANAGE_MESSAGES"],
+  category: "moderation",
   options: [
     {
       name: "message",

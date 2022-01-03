@@ -7,6 +7,7 @@ export default new Command({
   name: "exec",
   aliases: ["eval", "ev", "e", "ex", "execute", "evaluate"],
   devonly: true,
+  category: "other",
 
   run: async ({ client, message, args }) => {
     const token = process.env.botToken;

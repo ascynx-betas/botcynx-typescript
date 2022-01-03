@@ -4,6 +4,7 @@ import { GuildTextBasedChannel, MessageEmbed } from "discord.js";
 export default new MessageContextCommand({
   name: "reply",
   type: "MESSAGE",
+  category: "other",
 
   run: async ({ interaction }) => {
     interaction.followUp({

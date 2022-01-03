@@ -7,6 +7,7 @@ export default new slashCommand({
   description: "store certain informations for uses in the bot",
   require: ["mongooseConnectionString"],
   userPermissions: ["MANAGE_ROLES"],
+  category: "configuration",
   options: [
     {
       name: "type",

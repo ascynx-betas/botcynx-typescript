@@ -17,6 +17,7 @@ export default new slashCommand({
   require: ["mongooseConnectionString"],
   userPermissions: ["MANAGE_THREADS"],
   botPermissions: ["MANAGE_THREADS"],
+  category: "ticket",
   options: [
     {
       name: "sub-command",
@@ -111,13 +112,11 @@ export default new slashCommand({
             return interaction.followUp({
               content: `please enter a valid user`,
             });
-          (thread as ThreadChannel).members
-            .add(target.id)
-            .then(() =>
-              interaction.followUp({
-                content: `successfully added ${target.tag} to the current thread`,
-              })
-            );
+          (thread as ThreadChannel).members.add(target.id).then(() =>
+            interaction.followUp({
+              content: `successfully added ${target.tag} to the current thread`,
+            })
+          );
         } else if (action == "block") {
           if (!target || typeof target === "undefined") {
             //if no target specified

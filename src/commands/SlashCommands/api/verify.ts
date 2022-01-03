@@ -7,6 +7,7 @@ export default new slashCommand({
   name: "verify",
   description: "verifies or update the user's discord info into the database",
   require: ["hypixelApiKey", "mongooseConnectionString"],
+  category: "hypixel",
   options: [
     {
       name: "username",

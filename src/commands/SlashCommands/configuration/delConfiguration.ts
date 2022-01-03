@@ -7,6 +7,7 @@ export default new slashCommand({
   description: "delete information from server configuration",
   require: ["mongooseConnectionString"],
   userPermissions: ["MANAGE_ROLES"],
+  category: "configuration",
   options: [
     {
       name: "type",

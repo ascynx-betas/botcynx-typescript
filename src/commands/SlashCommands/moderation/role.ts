@@ -5,6 +5,7 @@ export default new slashCommand({
   description: "adds or removes a role from the target",
   userPermissions: ["MANAGE_ROLES"],
   botPermissions: ["MANAGE_ROLES"],
+  category: "moderation",
   options: [
     {
       name: "role",

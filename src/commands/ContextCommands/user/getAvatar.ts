@@ -4,6 +4,7 @@ import { MessageEmbed } from "discord.js";
 export default new UserContextCommand({
   name: "getAvatar",
   type: "USER",
+  category: "information",
 
   run: async ({ client, interaction }) => {
     const user = await client.users.fetch(interaction.targetId);
