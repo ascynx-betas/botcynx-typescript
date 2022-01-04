@@ -4,6 +4,7 @@ import {
   TextBasedChannel,
   TextChannel,
   ThreadChannel,
+  Webhook,
 } from "discord.js";
 import { botcynx } from "..";
 import { configModel } from "../models/config";
@@ -82,7 +83,7 @@ export default new Event("messageCreate", async (message) => {
   if (isThread == true) {
     webhook = await (message.channel as ThreadChannel).parent.fetchWebhooks();
   } else
-    webhook = await (message.channel as ThreadChannel).parent.fetchWebhooks();
+    webhook = await (message.channel as TextChannel).fetchWebhooks();
   webhook = webhook.filter((webhook) => webhook.owner.id === botcynx.user.id);
 
   if (typeof webhook === "undefined" || webhook.size == 0) {
@@ -93,14 +94,15 @@ export default new Event("messageCreate", async (message) => {
         reason: "request for non existing webhook",
       }
     );
-    message.react("💀"); //webhook didn't exist
+    return message.react("💀"); //webhook didn't exist
   }
   let id: any;
   id = webhook.map((w) => w.id);
-  webhook.get(id[0]);
-  const webhookClient = await botcynx.fetchWebhook(webhook.id, webhook.token);
+  webhook = webhook.get(id[0]);
+  const webhookClient: Webhook = await botcynx.fetchWebhook(webhook.id, webhook.token).catch(() => null);
+  if (webhookClient == null) return;
   if (isThread == true) {
-    if (typeof attachmentsUrls !== "undefined") {
+    if (typeof attachmentsUrls[0] !== "undefined") {
       webhookClient
         .send({
           content: content,
@@ -110,7 +112,7 @@ export default new Event("messageCreate", async (message) => {
           embeds: embeds,
           components: (source as Message<boolean>).components,
           allowedMentions: { parse: [] },
-          files: [attachmentsUrls],
+          files: attachmentsUrls,
         })
         .catch(() => message.react("🔇")); //empty message
     } else {
@@ -127,7 +129,7 @@ export default new Event("messageCreate", async (message) => {
         .catch(() => message.react("🔇")); //empty message
     }
   } else {
-    if (typeof attachmentsUrls !== "undefined") {
+    if (typeof attachmentsUrls[0] !== "undefined") {
       webhookClient
         .send({
           content: content,
@@ -136,7 +138,7 @@ export default new Event("messageCreate", async (message) => {
           embeds: embeds,
           components: (source as Message<boolean>).components,
           allowedMentions: { parse: [] },
-          files: [attachmentsUrls],
+          files: attachmentsUrls,
         })
         .catch(() => message.react("🔇")); //empty message
     } else {
