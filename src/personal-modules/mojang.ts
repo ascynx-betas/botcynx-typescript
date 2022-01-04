@@ -8,6 +8,7 @@ const getUuidbyUsername = async function (username: string) {
   //GET request
   return fetch(Url).then(async (body) => {
     let data: any = await body.text();
+    if (typeof data === "undefined" || !data) return null;
     let result: uuid = JSON.parse(data);
     return result;
   });
@@ -19,6 +20,7 @@ const getProfilebyUuid = async function (uuid: string) {
   //GET request
   return fetch(Url).then(async (body) => {
     let data: any = await body.text();
+    if (typeof data === "undefined" || !data) return null;
     let result: profile = JSON.parse(data);
     return result;
   });
