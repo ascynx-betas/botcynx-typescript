@@ -8,7 +8,7 @@ import {
   getFatterProfile,
   getSpecifiedProfile,
 } from "../../../personal-modules/senither";
-import { uuid } from '../../../typings/ApiInterface'
+import { uuid } from "../../../typings/ApiInterface";
 
 export default new slashCommand({
   name: "weight",
@@ -54,7 +54,7 @@ export default new slashCommand({
         return interaction.followUp({
           content: `please enter the username of the person you want to see the weight of`,
         });
-        uuid = uuid.id
+      uuid = uuid.id;
     } else {
       const data = await getPlayerByUuid(uuid as string).catch(() => null);
 
@@ -102,7 +102,9 @@ export default new slashCommand({
         return interaction.followUp({ embeds: [embed] });
       }
 
-      data = await getSpecifiedProfile((uuid as string), profile).catch(() => null);
+      data = await getSpecifiedProfile(uuid as string, profile).catch(
+        () => null
+      );
 
       if (typeof data == "undefined" || !data) {
         const embed = new MessageEmbed()

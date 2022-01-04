@@ -82,8 +82,7 @@ export default new Event("messageCreate", async (message) => {
 
   if (isThread == true) {
     webhook = await (message.channel as ThreadChannel).parent.fetchWebhooks();
-  } else
-    webhook = await (message.channel as TextChannel).fetchWebhooks();
+  } else webhook = await (message.channel as TextChannel).fetchWebhooks();
   webhook = webhook.filter((webhook) => webhook.owner.id === botcynx.user.id);
 
   if (typeof webhook === "undefined" || webhook.size == 0) {
@@ -99,7 +98,9 @@ export default new Event("messageCreate", async (message) => {
   let id: any;
   id = webhook.map((w) => w.id);
   webhook = webhook.get(id[0]);
-  const webhookClient: Webhook = await botcynx.fetchWebhook(webhook.id, webhook.token).catch(() => null);
+  const webhookClient: Webhook = await botcynx
+    .fetchWebhook(webhook.id, webhook.token)
+    .catch(() => null);
   if (webhookClient == null) return;
   if (isThread == true) {
     if (typeof attachmentsUrls[0] !== "undefined") {

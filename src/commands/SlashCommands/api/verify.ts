@@ -40,7 +40,8 @@ export default new slashCommand({
     const action = interaction.options.getString("action");
 
     let uuid: any = await getUuidbyUsername(username).catch(() => null);
-    if (uuid == null) return interaction.followUp({content: `username is not valid`})
+    if (uuid == null)
+      return interaction.followUp({ content: `username is not valid` });
     uuid = uuid.id;
 
     if (!uuid)

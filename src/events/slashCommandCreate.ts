@@ -1,8 +1,9 @@
 import { botcynx } from "..";
-import { CommandInteractionOptionResolver } from "discord.js";
+import { Collection, CommandInteractionOptionResolver } from "discord.js";
 import { Event } from "../structures/Event";
-import { botcynxInteraction } from "../typings/Command";
+import { botcynxInteraction, CommandType } from "../typings/Command";
 import { RequireTest } from "../personal-modules/commandHandler";
+import { tagModel } from "../models/tag";
 
 export default new Event(
   "interactionCreate",
@@ -13,7 +14,26 @@ export default new Event(
 
     if (interaction.isCommand()) {
       await interaction.deferReply();
-      const command = botcynx.slashCommands.get(interaction.commandName);
+      let command = botcynx.slashCommands.get(interaction.commandName);
+      if (!command) {
+        const tag = await tagModel.find({
+          guilId: interaction.guild.id,
+          name: interaction.commandName,
+        });
+        let commandReCreate: CommandType = {
+          name: tag[0].name,
+          description: tag[0].description,
+          run: async ({ interaction, client }) => {
+            interaction.followUp({
+              content: tag[0].text,
+              allowedMentions: { parse: [] },
+            });
+          },
+        };
+        let commands: Collection<string, CommandType> = new Collection();
+        commands.set(commandReCreate.name, commandReCreate);
+        command = commands.get(commandReCreate.name);
+      }
       if (!command)
         return interaction.followUp("You have used a non existant command");
 

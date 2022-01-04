@@ -14,6 +14,8 @@ import glob from "glob";
 import { promisify } from "util";
 import { RegisterCommandsOptions } from "../typings/Client";
 import { Event } from "./Event";
+import { connect } from "mongoose";
+import { tagModel } from "../models/tag";
 
 const globPromise = promisify(glob);
 
@@ -29,6 +31,9 @@ export class botClient extends Client {
   }
 
   start() {
+    if (process.env.mongooseConnectionString) {
+      connect(process.env.mongooseConnectionString);
+    }
     this.registerModules();
     this.login(process.env.botToken);
   }
@@ -87,8 +92,13 @@ export class botClient extends Client {
       ArrayOfSlashCommands.push(command);
     });
 
-    this.on("ready", () => {
-      //Registering all commands
+    this.on("ready", async () => {
+      //register tags
+      let guildsWithTags: any = await tagModel.find();
+      guildsWithTags = guildsWithTags.map((g) => g.guildId);
+      guildsWithTags = [...new Set(guildsWithTags)];
+      guildsWithTags.forEach((guild) => this.registerTags(guild));
+      //register commands
       this.registerCommands({
         commands: this.ArrayOfSlashCommands,
         guildId: process.env.guildId,
@@ -126,6 +136,37 @@ export class botClient extends Client {
     } else {
       this.application?.commands.set(commands);
       console.log(`Registering global commands`);
+    }
+  }
+  async registerTags(guildId: string) {
+    const tags: any = new Collection();
+    let guildTags = await tagModel.find({
+      guildId: guildId,
+    });
+    if (guildTags.length == 0) return;
+    guildTags.forEach((tag) => {
+      let command: CommandType = {
+        name: tag.name,
+        description: tag.description,
+        run: async ({ interaction, client }) => {
+          interaction.followUp({
+            content: tag.text,
+            allowedMentions: { parse: [] },
+          });
+        },
+      };
+      tags.set(command.name, command);
+    });
+    if (process.env.guildId) {
+      if (guildId != process.env.guildId) {
+        this.guilds.cache.get(guildId)?.commands.set(tags);
+      }
+      this.ArrayOfSlashCommands.forEach((command: any) =>
+        tags.set(command.name, command)
+      );
+      this.guilds.cache.get(guildId)?.commands.set(tags);
+    } else {
+      this.guilds.cache.get(guildId)?.commands.set(tags);
     }
   }
 }
