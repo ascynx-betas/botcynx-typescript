@@ -7,9 +7,9 @@ export default new Event("ready", async () => {
   console.log("Bot is now online");
   global.bot = {}; //set value of global.bot
   global.bot.maxTimeout = "28 days";
-  global.bot.ticketBlockedNames = ticketBlockedName;
+  global.bot.ticketblockedNnames = ticketBlockedName;
   if (process.env.mongooseConnectionString) {
-    global.bot.mongooseConnectionString = true;
+    global.bot.mongooseconnectionstring = true;
   }
   if (process.env.developerId) global.bot.developerid = true; //set value of developerId
   if (process.env.environment) global.bot.environment = process.env.environment; //set environment

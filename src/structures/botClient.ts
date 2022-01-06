@@ -97,7 +97,6 @@ export class botClient extends Client {
       let guildsWithTags: any = await tagModel.find();
       guildsWithTags = guildsWithTags.map((g) => g.guildId);
       guildsWithTags = [...new Set(guildsWithTags)];
-      console.log(guildsWithTags);
       guildsWithTags.forEach((guild) => this.registerTags(guild));
       //register commands
       this.registerCommands({

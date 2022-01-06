@@ -19,7 +19,7 @@ export default new slashCommand({
     );
     let types: string[] = interactionCommands.map((c) => c.category || "other");
     types = [...new Set(types)];
-    const description = `bot Mention: ${client.user} developer: ${process.env.developerId}\nin ${client.guilds.cache.size} guilds\n serving ${client.users.cache.size} users`;
+    const description = `bot Mention: ${client.user} developer: ${client.users.cache.get(process.env.developerId).tag}(${process.env.developerId})\nin ${client.guilds.cache.size} guilds\n serving ${client.users.cache.size} users`;
     let arrayOfButtons: MessageActionRowComponent[] = [];
     types.forEach(function (type) {
       const button = new MessageButton()
