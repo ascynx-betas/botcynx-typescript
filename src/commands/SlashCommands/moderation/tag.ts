@@ -8,6 +8,7 @@ export default new slashCommand({
   name: "tag",
   description: "manage tags",
   userPermissions: ["ADMINISTRATOR"],
+  category: "other",
   options: [
     {
       name: "name",
@@ -54,6 +55,7 @@ export default new slashCommand({
       const TagCommand: CommandType = {
         name: name,
         description: description,
+        category: "tag",
         run: async ({ interaction }) => {
           interaction.followUp({
             content: response,
@@ -67,7 +69,16 @@ export default new slashCommand({
         .commands.cache.forEach(function (command) {
           slashCommands.set(command.name, command);
         });
+      client.ArrayOfSlashCommands.set(TagCommand.name, TagCommand);
       slashCommands.set(TagCommand.name, TagCommand);
+      let numberOfTags: any = await tagModel.find({
+        guildId: guild.id,
+      });
+      numberOfTags = numberOfTags.length;
+      if (numberOfTags >= 2)
+        return interaction.followUp({
+          content: `you reached the maximum tag limit per server`,
+        });
 
       const existing = await tagModel.find({
         guildId: guild.id,
@@ -84,19 +95,28 @@ export default new slashCommand({
           description: description,
           text: response,
         }).save();
+
+        return client.guilds.cache
+          .get(guild.id)
+          .commands.create(slashCommands)
+          .then(() =>
+            interaction.followUp({ content: `created new tag ${name}` })
+          );
       } else {
         tagModel.updateOne(
           { guildId: guild.id, name: name },
           { $set: { text: response, description: description } }
         );
+        const commandId = client.guilds.cache
+          .get(guild.id)
+          .commands.cache.get(name).id;
+        return client.guilds.cache
+          .get(guild.id)
+          .commands.edit(commandId, slashCommands)
+          .then(() =>
+            interaction.followUp({ content: `modified tag ${name}` })
+          );
       }
-
-      client.guilds.cache
-        .get(guild.id)
-        .commands.set(slashCommands)
-        .then(() =>
-          interaction.followUp({ content: `created new tag ${name}` })
-        );
     } else {
       //isDelete == true
       interaction.followUp({ content: `this operation may take a while` });
@@ -111,23 +131,21 @@ export default new slashCommand({
         return interaction.followUp({
           content: `You cannot delete a non-tag command`,
         });
-      tagModel.deleteOne({
+      await tagModel.deleteOne({
         guildId: guild.id,
         name: name,
       });
 
-      const slashCommands: any = new Collection();
+      const commandId = client.guilds.cache
+        .get(guild.id)
+        .commands.cache.get(name)?.id;
+      if (typeof commandId == "undefined")
+        return interaction.followUp({ content: `command isn't registered` });
       client.guilds.cache
         .get(guild.id)
-        .commands.cache.forEach(function (command) {
-          if (command.name != name) slashCommands.set(command.name, command);
-        });
-
-      client.guilds.cache
-        .get(guild.id)
-        .commands.set(slashCommands)
+        .commands.delete(commandId)
         .then(() =>
-          interaction.editReply({ content: `successfully deleted tag ${name}` })
+          interaction.followUp({ content: `successfully deleted ${name}` })
         );
     }
   },

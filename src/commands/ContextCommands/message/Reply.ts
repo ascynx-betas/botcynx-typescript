@@ -5,6 +5,7 @@ export default new MessageContextCommand({
   name: "reply",
   type: "MESSAGE",
   category: "other",
+  userPermissions: ["MANAGE_MESSAGES"],
 
   run: async ({ interaction }) => {
     interaction.followUp({

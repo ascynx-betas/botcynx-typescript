@@ -97,11 +97,11 @@ export class botClient extends Client {
       let guildsWithTags: any = await tagModel.find();
       guildsWithTags = guildsWithTags.map((g) => g.guildId);
       guildsWithTags = [...new Set(guildsWithTags)];
+      console.log(guildsWithTags);
       guildsWithTags.forEach((guild) => this.registerTags(guild));
       //register commands
       this.registerCommands({
         commands: this.ArrayOfSlashCommands,
-        guildId: process.env.guildId,
       });
     });
 
@@ -148,6 +148,8 @@ export class botClient extends Client {
       let command: CommandType = {
         name: tag.name,
         description: tag.description,
+        category: "tag",
+
         run: async ({ interaction, client }) => {
           interaction.followUp({
             content: tag.text,
@@ -155,18 +157,9 @@ export class botClient extends Client {
           });
         },
       };
+      this.ArrayOfSlashCommands.set(command.name, command);
       tags.set(command.name, command);
     });
-    if (process.env.guildId) {
-      if (guildId != process.env.guildId) {
-        this.guilds.cache.get(guildId)?.commands.set(tags);
-      }
-      this.ArrayOfSlashCommands.forEach((command: any) =>
-        tags.set(command.name, command)
-      );
-      this.guilds.cache.get(guildId)?.commands.set(tags);
-    } else {
-      this.guilds.cache.get(guildId)?.commands.set(tags);
-    }
+    this.guilds.cache.get(guildId).commands.set(tags);
   }
 }

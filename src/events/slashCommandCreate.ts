@@ -20,9 +20,12 @@ export default new Event(
           guilId: interaction.guild.id,
           name: interaction.commandName,
         });
+        if (tag.length == 0)
+          return interaction.followUp("You have used a non existant command");
         let commandReCreate: CommandType = {
           name: tag[0].name,
           description: tag[0].description,
+          category: "tag",
           run: async ({ interaction, client }) => {
             interaction.followUp({
               content: tag[0].text,
