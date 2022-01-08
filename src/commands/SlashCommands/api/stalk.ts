@@ -119,7 +119,7 @@ export default new slashCommand({
           }
 
           description = `${uuid.name} is currently online\n in Skyblock in ${gameModeTranslated}`;
-        } else if (typeof gameType == "undefined" && !offline && offline == true) {
+        } else if (typeof gameType == "undefined" || typeof offline == undefined || offline == true) {
           description = `${uuid.name} is offline, their last time online seems to be ${timeSince} ${time} ago`;
         } else if (typeof gameType == "undefined" && offline == false) {
           description = `${uuid.name} has their status set to offline but isn't actually offline.`
