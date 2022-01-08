@@ -3,13 +3,11 @@ import { Event } from "../structures/Event";
 import { permissions } from "../personal-modules/bitfieldCalculator";
 import {
   BaseGuildTextChannel,
-  EmbedFieldData,
   GuildChannel,
   Message,
   MessageActionRow,
   MessageActionRowComponent,
   MessageButton,
-  MessageButtonStyle,
   MessageEmbed,
   ThreadChannel,
 } from "discord.js";
