@@ -80,7 +80,7 @@ export default new Event("interactionCreate", async (interaction) => {
       let user = interaction.user.id;
       let author = interaction.message.interaction.user.id;
 
-      if (user != author) return;
+      if (user != author) return interaction.update({components:(interaction.message.components as MessageActionRow[])});
     }
 
     button.run({
