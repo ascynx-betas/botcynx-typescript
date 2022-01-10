@@ -1,7 +1,6 @@
 import {
   GuildTextBasedChannel,
   Message,
-  TextBasedChannel,
   TextChannel,
   ThreadChannel,
   Webhook,

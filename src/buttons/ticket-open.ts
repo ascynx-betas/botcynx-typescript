@@ -14,6 +14,7 @@ import { ButtonResponse } from "../structures/Commands";
 export default new ButtonResponse({
   category: "ticket",
   require: ["mongooseConnectionString"],
+  botPermissions: ["MANAGE_THREADS"],
   run: async ({ interaction, client }) => {
     //ticket open buttons
     const guildId = interaction.guild.id;

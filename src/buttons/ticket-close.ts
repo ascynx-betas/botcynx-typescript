@@ -3,6 +3,7 @@ import { ButtonResponse } from "../structures/Commands";
 
 export default new ButtonResponse({
   category: "close",
+  botPermissions: ["MANAGE_THREADS"],
   run: async ({ interaction, client }) => {
     //close ticket button
     const thread = interaction.channel;

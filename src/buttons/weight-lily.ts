@@ -7,6 +7,7 @@ export default new ButtonResponse({
   customId: "lily",
   temporary: true,
   require: ["hypixelApiKey"],
+  onlyAuthor: true,
   run: async ({ interaction, client }) => {
     const lily = new lilyweight(process.env.hypixelapikey);
     //extract info from embed

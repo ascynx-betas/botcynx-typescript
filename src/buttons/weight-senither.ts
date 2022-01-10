@@ -10,6 +10,7 @@ export default new ButtonResponse({
   customId: "senither",
   temporary: true,
   require: ["hypixelApiKey"],
+  onlyAuthor: true,
   run: async ({ interaction, client }) => {
     let uuid = interaction.message.embeds[0].thumbnail.url;
     uuid = uuid.slice(28, uuid.length - 4);

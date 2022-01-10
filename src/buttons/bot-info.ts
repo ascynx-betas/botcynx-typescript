@@ -15,6 +15,7 @@ export default new ButtonResponse({
   category: "info",
   temporary: true,
   require: ["mongooseConnectionString"],
+  onlyAuthor: true,
   run: async ({ interaction, client }) => {
     //info categories
     const interactionCommands: any = client.ArrayOfSlashCommands.concat(

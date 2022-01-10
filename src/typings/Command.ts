@@ -113,6 +113,7 @@ export type ButtonResponseType = {
   category: string; //1st field of customId
   customId?: string; //2nd field of customId //if multiple choices for 1st field
   temporary?: boolean;
+  onlyAuthor?: boolean;
   userPermissions?: PermissionString[];
   botPermissions?: PermissionString[];
   run: updateRunFunction;

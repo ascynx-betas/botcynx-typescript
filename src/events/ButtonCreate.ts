@@ -6,7 +6,6 @@ import { RequireTest } from "../personal-modules/commandHandler";
 export default new Event("interactionCreate", async (interaction) => {
   if (interaction.isCommand()) return;
   if (interaction.isContextMenu()) return;
-  //don't forget to add buttonInteraction once it's necessary
   if (interaction.isButton()) {
     //fetch button from client
     const fields = interaction.customId.split(":");
@@ -75,6 +74,13 @@ export default new Event("interactionCreate", async (interaction) => {
         return interaction.followUp({
           content: `the client in which this command has been called, doesn't have the required values to execute this command`,
         });
+    }
+
+    if (button.onlyAuthor) {
+      let user = interaction.user.id;
+      let author = interaction.message.interaction.user.id;
+
+      if (user != author) return;
     }
 
     button.run({
