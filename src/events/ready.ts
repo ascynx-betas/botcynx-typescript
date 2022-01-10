@@ -7,7 +7,7 @@ export default new Event("ready", async () => {
   console.log("Bot is now online");
   global.bot = {}; //set value of global.bot
   global.bot.maxTimeout = "28 days";
-  global.bot.ticketblockedNnames = ticketBlockedName;
+  global.bot.ticketblockedNames = ticketBlockedName;
   if (process.env.mongooseConnectionString) {
     global.bot.mongooseconnectionstring = true;
   }
@@ -20,5 +20,8 @@ export default new Event("ready", async () => {
     if (data.success === true) global.bot.hypixelapikey = true; //set value of hypixelApiKey to valid
     if (data.success === false) global.bot.hypixelapikey = false; //set value of hypixelApiKey to invalid
   }
-  if (process.env.webhookLogLink) global.bot.LogLink = true; //set value of LogLink to valid
+  if (process.env.webhookLogLink) global.bot.loglink = true; //set value of LogLink to valid
+  if (process.env.githubToken) {
+    global.bot.githubtoken = true;
+  }
 });

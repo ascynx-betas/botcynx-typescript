@@ -3,3 +3,5 @@ templateCommand.ts
 .vscode
 dist
 node_modules/
+.json
+WIP/

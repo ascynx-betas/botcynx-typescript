@@ -1,5 +1,12 @@
+import { Collection } from "discord.js";
 import fetch from "node-fetch";
-import { key, player, skyblockProfiles, status } from "../typings/Hypixel";
+import {
+  key,
+  player,
+  Profile,
+  skyblockProfiles,
+  status,
+} from "../typings/Hypixel";
 const key = process.env.hypixelapikey;
 /**
  *
@@ -41,6 +48,7 @@ const getKeyInfo = async function () {
 };
 /**
  * @param  {String} uuid
+ * @returns {Collection<string, Profile>} Profiles
  */
 const getProfiles = async function (uuid: string) {
   let Url = `https://api.hypixel.net/skyblock/profiles?key=${key}&uuid=${uuid}`;
@@ -49,7 +57,12 @@ const getProfiles = async function (uuid: string) {
   return fetch(Url).then(async (body) => {
     let data: any = await body.text();
     let result: skyblockProfiles = JSON.parse(data);
-    return result;
+    let Profiles: Collection<string, Profile> = new Collection();
+    result.profiles.forEach((profile) =>
+      Profiles.set(profile.cute_name, profile)
+    );
+    return Profiles;
   });
 };
+
 export { getPlayerByUuid, getStatus, getKeyInfo, getProfiles };

@@ -9,6 +9,7 @@ import {
   UserContextType,
   MessageCommandType,
   MessageContextType,
+  ButtonResponseType,
 } from "../typings/Command";
 import glob from "glob";
 import { promisify } from "util";
@@ -26,6 +27,7 @@ export class botClient extends Client {
     new Collection();
   commands: Collection<string, MessageCommandType> = new Collection();
   ArrayOfSlashCommands = new Collection();
+  buttonCommands: Collection<string, ButtonResponseType> = new Collection();
   constructor() {
     super({ intents: 32767 });
   }
@@ -90,6 +92,22 @@ export class botClient extends Client {
       slashCommands.push(command);
       this.ArrayOfSlashCommands.set(command.name, command);
       ArrayOfSlashCommands.push(command);
+    });
+
+    //Button
+    const buttonFiles = await globPromise(`${__dirname}/../buttons/*{.ts,.js}`);
+
+    buttonFiles.forEach(async (filePath) => {
+      const buttons: ButtonResponseType = await this.importFile(filePath);
+      if (!buttons.category) return;
+      if (!buttons.customId) {
+        this.buttonCommands.set(buttons.category, buttons);
+      } else {
+        this.buttonCommands.set(
+          `${buttons.category}:${buttons.customId}`,
+          buttons
+        );
+      }
     });
 
     this.on("ready", async () => {

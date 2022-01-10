@@ -73,7 +73,7 @@ export default new slashCommand({
       timeSince = Math.round(timeSince * 10) / 10;
     }
     let offline: boolean;
-    if (isNaN(timeSince) == true) offline = false
+    if (isNaN(timeSince) == true) offline = false;
     if (data.session != null) {
       const gameType = data.session.gameType;
       const gameMode = data.session.mode;
@@ -119,11 +119,15 @@ export default new slashCommand({
           }
 
           description = `${uuid.name} is currently online\n in Skyblock in ${gameModeTranslated}`;
-        } else if (typeof gameType == "undefined" || typeof offline == undefined || offline == true) {
+        } else if (
+          typeof gameType == "undefined" ||
+          typeof offline == undefined ||
+          offline == true
+        ) {
           description = `${uuid.name} is offline, their last time online seems to be ${timeSince} ${time} ago`;
         } else if (typeof gameType == "undefined" && offline == false) {
-          description = `${uuid.name} has their status set to offline but isn't actually offline.`
-        }else
+          description = `${uuid.name} has their status set to offline but isn't actually offline.`;
+        } else
           description = `${uuid.name} is currently online\n Is in ${gameType} in the gamemode ${gameMode}`;
       } else
         description = `${uuid.name} is currently online\n in the game ${gameType} in the gamemode ${gameMode} in the map ${map}`;

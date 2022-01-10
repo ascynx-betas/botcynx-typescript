@@ -9,6 +9,7 @@ declare global {
       hypixelapikey?: string;
       mongooseConnectionString?: string;
       botPrefix?: string;
+      githubToken?: string;
     }
   }
 }

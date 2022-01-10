@@ -157,7 +157,7 @@ export default new slashCommand({
 
     const buttonRow = new MessageActionRow().addComponents(
       new MessageButton()
-        .setCustomId(`weight lily`)
+        .setCustomId(`weight:lily`)
         .setLabel("Press to get lily weight (WIP)")
         .setStyle("SECONDARY")
     );

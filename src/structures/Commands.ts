@@ -1,4 +1,5 @@
 import {
+  ButtonResponseType,
   CommandType,
   MessageCommandType,
   MessageContextType,
@@ -25,3 +26,8 @@ export class MessageContextCommand {
     Object.assign(this, commandOptions);
   }
 } //Message Context Commands
+export class ButtonResponse {
+  constructor(commandOptions: ButtonResponseType) {
+    Object.assign(this, commandOptions);
+  }
+} //Buttons

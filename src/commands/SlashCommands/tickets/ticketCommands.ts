@@ -1,9 +1,7 @@
 import {
   GuildChannel,
   GuildTextBasedChannel,
-  Message,
   MessageEmbed,
-  TextChannel,
   ThreadChannel,
 } from "discord.js";
 import { permOverride } from "../../../personal-modules/discordPlugin";
@@ -20,59 +18,77 @@ export default new slashCommand({
   category: "ticket",
   options: [
     {
-      name: "sub-command",
-      description: "the sub-command to execute",
-      required: true,
-      type: "STRING",
-      choices: [
+      name: "del",
+      description: "delete a configuration",
+      type: "SUB_COMMAND",
+      options: [
         {
-          name: "del",
-          value: "del",
-        },
-        {
-          name: "add",
-          value: "add",
-        },
-        {
-          name: "close",
-          value: "close",
-        },
-        {
-          name: "block",
-          value: "block",
-        },
-        {
-          name: "modify",
-          value: "modify",
+          name: "config-name",
+          description:
+            "the name of the config, only needed for the del sub-command",
+          required: true,
+          type: "STRING",
         },
       ],
     },
     {
-      name: "config-name",
-      description:
-        "the name of the config, only needed for the del sub-command",
-      required: false,
-      type: "STRING",
-    },
-    {
-      name: "user",
-      description: "target of the action",
-      required: false,
-      type: "USER",
-    },
-    {
-      name: "edit",
-      description: "what will be modified",
-      required: false,
-      type: "STRING",
-      choices: [
+      name: "add",
+      description: "add a user to the current thread",
+      type: "SUB_COMMAND",
+      options: [
         {
-          name: "description",
-          value: "description",
+          name: "user",
+          description: "target of the action",
+          required: true,
+          type: "USER",
+        },
+      ],
+    },
+    {
+      name: "block",
+      description:
+        "block a user from speaking in any of the current channel's threads",
+      type: "SUB_COMMAND",
+      options: [
+        {
+          name: "user",
+          description: "target of the action",
+          required: true,
+          type: "USER",
+        },
+      ],
+    },
+    {
+      name: "close",
+      description: "closes a thread",
+      type: "SUB_COMMAND",
+    },
+    {
+      name: "modify",
+      description: "modify a ticket message",
+      type: "SUB_COMMAND",
+      options: [
+        {
+          name: "edit",
+          description: "what will be modified",
+          required: true,
+          type: "STRING",
+          choices: [
+            {
+              name: "description",
+              value: "description",
+            },
+            {
+              name: "welcome message",
+              value: "welcome_message",
+            },
+          ],
         },
         {
-          name: "welcome message",
-          value: "welcome_message",
+          name: "change",
+          description: "to what will it be changed",
+          required: true,
+          type: "STRING",
         },
       ],
     },
@@ -85,7 +101,7 @@ export default new slashCommand({
   ],
 
   run: async ({ interaction, client }) => {
-    const action = interaction.options.getString("sub-command");
+    const action = interaction.options.getSubcommand();
     const config = interaction.options.getString("config-name");
     const target = interaction.options.getUser("user");
     const change = interaction.options.getString("change");

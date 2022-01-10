@@ -4,12 +4,12 @@ import {
   CommandInteractionOptionResolver,
   ContextMenuInteraction,
   GuildMember,
+  Interaction,
   Message,
   MessageApplicationCommandData,
-  MessageContextMenuInteraction,
+  MessageComponentInteraction,
   PermissionString,
   UserApplicationCommandData,
-  UserContextMenuInteraction,
 } from "discord.js";
 import { botClient } from "../structures/botClient";
 
@@ -46,6 +46,10 @@ interface runOptions {
   interaction: botcynxInteraction;
   args: CommandInteractionOptionResolver;
 } //SlashCommands
+interface updateRunOptions {
+  client: botClient;
+  interaction: MessageComponentInteraction;
+}
 
 interface runContextOptions {
   client: botClient;
@@ -59,6 +63,7 @@ interface runOptionsMessage {
   args: any;
 } //MessageCommands
 
+type updateRunFunction = (options: updateRunOptions) => any;
 type RunFunction = (options: runOptions) => any;
 type MessageRunFunction = (options: runOptionsMessage) => any;
 type ContextRunFunction = (options: runContextOptions) => any;
@@ -102,3 +107,13 @@ export type MessageCommandType = {
   category?: string;
   run: MessageRunFunction;
 }; // MessageCommands
+
+export type ButtonResponseType = {
+  require?: require[];
+  category: string; //1st field of customId
+  customId?: string; //2nd field of customId //if multiple choices for 1st field
+  temporary?: boolean;
+  userPermissions?: PermissionString[];
+  botPermissions?: PermissionString[];
+  run: updateRunFunction;
+};

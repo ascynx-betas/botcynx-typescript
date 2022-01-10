@@ -178,6 +178,12 @@ const containsLink = function (message): number[] {
   return arrayofresults;
 };
 
+const TimeCheck = (timeToCheckFor: number, time: number) => {
+  const currentDate = Date.now();
+  if (timeToCheckFor - currentDate <= time) return true;
+  return false;
+};
+
 export {
   isLink,
   containsLink,
@@ -189,4 +195,5 @@ export {
   compare,
   ct,
   testfor,
+  TimeCheck,
 };

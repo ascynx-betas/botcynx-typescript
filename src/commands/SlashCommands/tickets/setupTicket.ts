@@ -63,7 +63,7 @@ export default new slashCommand({
         .followUp({ content: `Missing permissions to create threads` })
         .catch(() => null);
 
-    const blacklisted = global.bot.ticketBlockedNames;
+    const blacklisted = global.bot.ticketblockedNames;
     const success = testfor(blacklisted, name);
     if (success == true)
       return interaction.followUp({
@@ -72,7 +72,7 @@ export default new slashCommand({
 
     const buttonRow = new MessageActionRow().addComponents(
       new MessageButton()
-        .setCustomId(`ticket ${name}`)
+        .setCustomId(`ticket:${name}`)
         .setLabel("create ticket")
         .setStyle("SUCCESS")
     );
