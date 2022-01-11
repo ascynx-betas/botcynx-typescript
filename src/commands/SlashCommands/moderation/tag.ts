@@ -11,47 +11,81 @@ export default new slashCommand({
   category: "other",
   options: [
     {
-      name: "name",
-      type: "STRING",
-      required: true,
-      description: "the name of the tag",
-    },
-    {
-      name: "response",
-      type: "STRING",
-      required: false,
-      description: "what will be said when the command is executed",
-    },
-    {
-      name: "description",
-      type: "STRING",
-      required: false,
-      description: "the description of the command",
-    },
-    {
       name: "delete",
-      type: "BOOLEAN",
-      description: "if it deletes the tag or not",
-      required: false,
+      type: "SUB_COMMAND",
+      description: "delete a tag",
+      options: [
+        {
+          name: "name",
+          type: "STRING",
+          required: true,
+          description: "the name of the tag",
+        },
+      ],
+    },
+    {
+      name: "create",
+      type: "SUB_COMMAND",
+      description: "create a new tag",
+      options: [
+        {
+          name: "name",
+          type: "STRING",
+          required: true,
+          description: "the name of the tag",
+        },
+        {
+          name: "response",
+          type: "STRING",
+          required: true,
+          description: "what will be said when the command is executed",
+        },
+        {
+          name: "description",
+          type: "STRING",
+          required: true,
+          description: "the description of the command",
+        },
+      ]
+    },
+    {
+      name: "modify",
+      type: "SUB_COMMAND",
+      description: "modify a tag",
+      options: [
+        {
+          name: "name",
+          type: "STRING",
+          required: true,
+          description: "the name of the tag",
+        },
+        {
+          name: "response",
+          type: "STRING",
+          required: false,
+          description: "what will be said when the command is executed",
+        },
+        {
+          name: "description",
+          type: "STRING",
+          required: false,
+          description: "the description of the command",
+        },
+      ]
     },
   ],
 
   run: async ({ interaction, client }) => {
     const response = interaction.options.getString("response");
-    const description =
-      interaction.options.getString("description") || "no description";
+    let description = interaction.options.getString("description");
     const name = interaction.options.getString("name");
-    const isDeleteCommand = interaction.options.getBoolean("delete") || false;
+    const subCommand = interaction.options.getSubcommand();
     const guild = interaction.guild;
 
     const blacklistedNames = client.ArrayOfSlashCommands.map(
       (c: any) => c.name
     );
-    if (isDeleteCommand == false) {
-      if (!response)
-        return interaction.followUp({
-          content: `if you want to create a new tag please specify it's response`,
-        });
+    if (subCommand == "create") {
       const TagCommand: CommandType = {
         name: name,
         description: description,
@@ -63,14 +97,7 @@ export default new slashCommand({
           });
         },
       };
-      const slashCommands: any = new Collection();
-      client.guilds.cache
-        .get(guild.id)
-        .commands.cache.forEach(function (command) {
-          slashCommands.set(command.name, command);
-        });
       client.ArrayOfSlashCommands.set(TagCommand.name, TagCommand);
-      slashCommands.set(TagCommand.name, TagCommand);
       let numberOfTags: any = await tagModel.find({
         guildId: guild.id,
       });
@@ -102,22 +129,8 @@ export default new slashCommand({
           .then(() =>
             interaction.followUp({ content: `created new tag ${name}` })
           ).catch(() => interaction.followUp({content: `I failed to create the tag, please try again later, if it keeps repeating the error contact the developer.`}))
-      } else {
-        tagModel.updateOne(
-          { guildId: guild.id, name: name },
-          { $set: { text: response, description: description } }
-        );
-        const commandId = client.guilds.cache
-          .get(guild.id)
-          .commands.cache.get(name).id;
-        return client.guilds.cache
-          .get(guild.id)
-          .commands.edit(commandId, slashCommands)
-          .then(() =>
-            interaction.followUp({ content: `modified tag ${name}` })
-          );
       }
-    } else {
+    } else if (subCommand == "delete") {
       //isDelete == true
       interaction.followUp({ content: `this operation may take a while` });
       const existing = await tagModel.find({
@@ -136,9 +149,9 @@ export default new slashCommand({
         name: name,
       });
 
-      const commandId = client.guilds.cache
-        .get(guild.id)
-        .commands.cache.get(name)?.id;
+      const command = interaction.guild
+        .commands.cache.filter(c => c.name === name);
+      const commandId = command.map(c => c.id)[0];
       if (typeof commandId == "undefined")
         return interaction.followUp({ content: `command isn't registered` });
       client.guilds.cache
@@ -146,6 +159,30 @@ export default new slashCommand({
         .commands.delete(commandId)
         .then(() =>
           interaction.followUp({ content: `successfully deleted ${name}` })
+        );
+    } else if (subCommand == "modify") {
+      if (!description) {
+        description = await tagModel.find({
+          guildID: guild.id,
+          name: name
+        })[0].description
+      }
+      const command = {
+        name: name,
+        description: description,
+      }
+      tagModel.updateOne(
+        { guildId: guild.id, name: name },
+        { $set: { text: response, description: description } }
+      );
+      const commandId = client.guilds.cache
+        .get(guild.id)
+        .commands.cache.get(name).id;
+      return client.guilds.cache
+        .get(guild.id)
+        .commands.edit(commandId, command)
+        .then(() =>
+          interaction.followUp({ content: `modified tag ${name}` })
         );
     }
   },
