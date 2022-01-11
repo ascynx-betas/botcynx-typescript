@@ -1,4 +1,3 @@
-import { Collection } from "discord.js";
 import { ticketBlockedName } from "../../../config";
 import { tagModel } from "../../../models/tag";
 import { slashCommand } from "../../../structures/Commands";
@@ -78,10 +77,13 @@ export default new slashCommand({
   run: async ({ interaction, client }) => {
     const response = interaction.options.getString("response");
     let description = interaction.options.getString("description");
-    const name = interaction.options.getString("name");
+    let name: string = interaction.options.getString("name");
     const subCommand = interaction.options.getSubcommand();
     const guild = interaction.guild;
-
+    name.toLowerCase();
+    const allowedCharacters = /^[\w-]{1,32}$/u
+    const accepted = allowedCharacters.test(name);
+    if (accepted == false) return interaction.followUp({content: `an application command name must be all lowercase\nunder 32 characters\ncannot contain white spaces\nand must not contains special characters`})
     const blacklistedNames = client.ArrayOfSlashCommands.map(
       (c: any) => c.name
     );

@@ -23,7 +23,7 @@ export default new ButtonResponse({
     );
     let types: string[] = interactionCommands.map((c) => c.category || "other");
     types = [...new Set(types)];
-    let category: string[] | string = interaction.customId.split(" ");
+    let category: string[] | string = interaction.customId.split(":");
     category = category[1];
     let arrayOfButtons: MessageActionRowComponent[] = [];
     let messageComponents = interaction.message.components.map(
@@ -46,10 +46,10 @@ export default new ButtonResponse({
       });
     let components: MessageActionRow[] = await setButtonRows(arrayOfButtons);
 
-    let beans = infoEmbedCreation(category);
-    let { fields, title } = beans;
+    let infoEmbed = infoEmbedCreation(category);
+    let { fields, title } = infoEmbed;
     let embed: MessageEmbed;
-    embed = new MessageEmbed().addFields(fields).setTitle(title);
+    embed = new MessageEmbed().addFields(fields).setTitle(title || "error");
 
     //update embed and set current button to PRIMARY style
     interaction.update({ embeds: [embed], components: components });
