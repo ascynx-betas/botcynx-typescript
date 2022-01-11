@@ -1,5 +1,5 @@
 import { MessageContextCommand } from "../../../structures/Commands";
-import { GuildTextBasedChannel, MessageEmbed } from "discord.js";
+import { GuildTextBasedChannel } from "discord.js";
 
 export default new MessageContextCommand({
   name: "reply",

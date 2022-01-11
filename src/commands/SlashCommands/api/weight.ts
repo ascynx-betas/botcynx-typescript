@@ -15,6 +15,7 @@ export default new slashCommand({
   description: "get the weight of someone",
   require: ["hypixelApiKey", "mongooseConnectionString"],
   category: "hypixel",
+  cooldown: 10,
   options: [
     {
       name: "username",

@@ -2,6 +2,7 @@ import { botcynx } from "..";
 import { configModel } from "../models/config";
 import { Event } from "../structures/Event";
 import { RequireTest } from "../personal-modules/commandHandler";
+import { commandCooldown } from "../typings/Command";
 
 export default new Event("messageCreate", async (message) => {
   // MesssageCommands
@@ -25,6 +26,38 @@ export default new Event("messageCreate", async (message) => {
 
   if (!command) return;
 
+  //cooldown
+  if (command.cooldown) {
+    const time = command.cooldown * 1000; //set seconds to milliseconds
+    let userCooldowns = botcynx.cooldowns.get(`${message.author.id}-${command.name}`);
+
+
+    if (typeof userCooldowns != "undefined") {
+    let cooldown = userCooldowns.timestamp;
+
+    if (cooldown > Date.now()) {
+      //still in cooldown
+
+      return message.reply({content: `chill out, you're currently on cooldown from using the ${command.name} command`});
+    
+    } else {
+      //ended
+
+      botcynx.cooldowns.delete(`${message.author.id}-${command.name}`);
+      const newCoolDown = new commandCooldown(message.author.id, time, command.name);
+      botcynx.cooldowns.set(`${message.author.id}-${command.name}`, newCoolDown);
+    
+    }
+  } else {
+    //doesn't exist
+
+    const newCoolDown = new commandCooldown(message.author.id, time, command.name);
+    botcynx.cooldowns.set(`${message.author.id}-${command.name}`, newCoolDown);
+    } 
+  }
+
+
+  //require values
   if (command.require) {
     let RequireValue = await RequireTest(command.require);
     if (RequireValue == false) return;

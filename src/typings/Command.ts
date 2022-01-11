@@ -1,3 +1,4 @@
+import { time } from "console";
 import {
   ChatInputApplicationCommandData,
   CommandInteraction,
@@ -75,6 +76,7 @@ export type CommandType = {
   devonly?: boolean;
   invisible?: boolean;
   category?: string;
+  cooldown?: number; //seconds
   run: RunFunction;
 } & ChatInputApplicationCommandData; //SlashCommands
 
@@ -85,6 +87,7 @@ export type UserContextType = {
   devonly?: boolean;
   invisible?: boolean;
   category?: string;
+  cooldown?: number; //seconds
   run: ContextRunFunction;
 } & UserApplicationCommandData; //User Context Commands
 export type MessageContextType = {
@@ -94,6 +97,7 @@ export type MessageContextType = {
   devonly?: boolean;
   invisible?: boolean;
   category?: string;
+  cooldown?: number; //seconds
   run: ContextRunFunction;
 } & MessageApplicationCommandData; //Chat Context Commands
 
@@ -105,6 +109,7 @@ export type MessageCommandType = {
   devonly?: boolean;
   aliases?: String[];
   category?: string;
+  cooldown?: number; //seconds
   run: MessageRunFunction;
 }; // MessageCommands
 
@@ -114,7 +119,36 @@ export type ButtonResponseType = {
   customId?: string; //2nd field of customId //if multiple choices for 1st field
   temporary?: boolean;
   onlyAuthor?: boolean;
+  cooldown?: number; //seconds
   userPermissions?: PermissionString[];
   botPermissions?: PermissionString[];
   run: updateRunFunction;
 };
+
+export class commandCooldown {
+  command: string;
+  user: string;
+  timestamp: number;
+  constructor(userId: string, time: number, commandName: string) {
+    this.command = commandName;
+    this.user = userId;
+    this.timestamp = Date.now() + time
+  }
+
+  reset() {
+    this.timestamp = Date.now();
+  }
+  toInfinite() {
+    this.timestamp = 0;
+  }
+  toSpecifiedTime(time: number) {
+    this.timestamp = time;
+  }
+  changeCommand(commandName: string) {
+    this.command = commandName
+  };
+  time() {
+    return new Date(this.timestamp)
+  }
+
+}

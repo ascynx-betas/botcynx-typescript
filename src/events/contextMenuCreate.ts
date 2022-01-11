@@ -1,13 +1,13 @@
 import { botcynx } from "..";
 import { Event } from "../structures/Event";
 import {
+  commandCooldown,
   contextInteraction,
   MessageContextType,
   UserContextType,
 } from "../typings/Command";
 import { CommandInteractionOptionResolver } from "discord.js";
 import { RequireTest } from "../personal-modules/commandHandler";
-
 export default new Event(
   "interactionCreate",
   async (interaction: contextInteraction) => {
@@ -29,6 +29,38 @@ export default new Event(
       } else {
         await interaction.deferReply();
       }
+
+      //cooldown
+      if (command.cooldown) {
+        const time = command.cooldown * 1000; //set seconds to milliseconds
+        let userCooldowns = botcynx.cooldowns.get(`${interaction.user.id}-${command.name}`);
+
+
+        if (typeof userCooldowns != "undefined") {
+        let cooldown = userCooldowns.timestamp;
+        const currentTime = Date.now() + time;
+
+        if (cooldown > Date.now()) {
+          //still in cooldown
+
+          return interaction.followUp({content: `chill out, you're currently on cooldown from using the ${command.name} command`});
+        
+        } else {
+          //ended
+
+          botcynx.cooldowns.delete(`${interaction.user.id}-${command.name}`);
+          const newCoolDown = new commandCooldown(interaction.user.id, time, command.name);
+          botcynx.cooldowns.set(`${interaction.user.id}-${command.name}`, newCoolDown);
+        
+        }
+      } else {
+        //doesn't exist
+
+        const newCoolDown = new commandCooldown(interaction.user.id, time, command.name);
+        botcynx.cooldowns.set(`${interaction.user.id}-${command.name}`, newCoolDown);
+        } 
+      }
+
 
       // if bot requires permissions
       if (command.botPermissions) {

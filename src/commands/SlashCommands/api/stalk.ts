@@ -8,6 +8,7 @@ export default new slashCommand({
   description: "Allows to see the activity of a user on hypixel",
   require: ["hypixelApiKey"],
   category: "hypixel",
+  cooldown: 10,
   options: [
     {
       name: "username",

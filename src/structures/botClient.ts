@@ -10,6 +10,7 @@ import {
   MessageCommandType,
   MessageContextType,
   ButtonResponseType,
+  commandCooldown,
 } from "../typings/Command";
 import glob from "glob";
 import { promisify } from "util";
@@ -28,6 +29,7 @@ export class botClient extends Client {
   commands: Collection<string, MessageCommandType> = new Collection();
   ArrayOfSlashCommands = new Collection();
   buttonCommands: Collection<string, ButtonResponseType> = new Collection();
+  cooldowns: Collection<string, commandCooldown> = new Collection();
   constructor() {
     super({ intents: 32767 });
   }
@@ -177,6 +179,6 @@ export class botClient extends Client {
       this.ArrayOfSlashCommands.set(command.name, command);
       tags.set(command.name, command);
     });
-    this.guilds.cache.get(guildId).commands.set(tags);
+    this.guilds.cache.get(guildId)?.commands.set(tags);
   }
 }

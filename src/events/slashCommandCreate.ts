@@ -1,7 +1,7 @@
 import { botcynx } from "..";
 import { Collection, CommandInteractionOptionResolver } from "discord.js";
 import { Event } from "../structures/Event";
-import { botcynxInteraction, CommandType } from "../typings/Command";
+import { botcynxInteraction, commandCooldown, CommandType } from "../typings/Command";
 import { RequireTest } from "../personal-modules/commandHandler";
 import { tagModel } from "../models/tag";
 
@@ -47,6 +47,37 @@ export default new Event(
           });
         }
       }
+
+      //cooldown
+      if (command.cooldown) {
+        const time = command.cooldown * 1000; //set seconds to milliseconds
+        let userCooldowns = botcynx.cooldowns.get(`${interaction.user.id}-${command.name}`);
+
+
+        if (typeof userCooldowns != "undefined") {
+        let cooldown = userCooldowns.timestamp;
+
+        if (cooldown > Date.now()) {
+          //still in cooldown
+
+          return interaction.followUp({content: `chill out, you're currently on cooldown from using the ${command.name} command`});
+        
+        } else {
+          //ended
+
+          botcynx.cooldowns.delete(`${interaction.user.id}-${command.name}`);
+          const newCoolDown = new commandCooldown(interaction.user.id, time, command.name);
+          botcynx.cooldowns.set(`${interaction.user.id}-${command.name}`, newCoolDown);
+        
+        }
+      } else {
+        //doesn't exist
+
+        const newCoolDown = new commandCooldown(interaction.user.id, time, command.name);
+        botcynx.cooldowns.set(`${interaction.user.id}-${command.name}`, newCoolDown);
+        } 
+      }
+
       // if bot requires permissions
       if (command.botPermissions) {
         const botRequiredPermission = command.botPermissions;
