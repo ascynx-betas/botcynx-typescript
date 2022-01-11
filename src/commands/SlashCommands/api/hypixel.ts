@@ -9,7 +9,7 @@ export default new slashCommand({
   description: "send informations about a user",
   require: ["hypixelApiKey", "mongooseConnectionString"],
   category: "hypixel",
-  cooldown: 10,
+  cooldown: 2,
   options: [
     {
       name: "username",
@@ -68,6 +68,7 @@ export default new slashCommand({
     } else isVerified = true;
 
     let discord: any = await getPlayerByUuid(uuid).catch(() => null);
+    if (!discord) discord = "couldn't fetch discord";
     discord = discord?.player.socialMedia.links.DISCORD;
 
     if (!discord) discord = "couldn't fetch discord";
