@@ -98,10 +98,10 @@ export default new slashCommand({
 
         return client.guilds.cache
           .get(guild.id)
-          .commands.create(slashCommands)
+          .commands.create({name: name, description: description})
           .then(() =>
             interaction.followUp({ content: `created new tag ${name}` })
-          );
+          ).catch(() => interaction.followUp({content: `I failed to create the tag, please try again later, if it keeps repeating the error contact the developer.`}))
       } else {
         tagModel.updateOne(
           { guildId: guild.id, name: name },
