@@ -27,7 +27,7 @@ export default new Event("messageCreate", async (message) => {
   if (!command) return;
 
   //cooldown
-  if (command.cooldown) {
+  if (command.cooldown && message.author.id != process.env.developerId) {
     const time = command.cooldown * 1000; //set seconds to milliseconds
     let userCooldowns = botcynx.cooldowns.get(`${message.author.id}-${command.name}`);
 

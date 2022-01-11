@@ -49,7 +49,7 @@ export default new Event(
       }
 
       //cooldown
-      if (command.cooldown) {
+      if (command.cooldown && interaction.user.id != process.env.developerId) {
         const time = command.cooldown * 1000; //set seconds to milliseconds
         let userCooldowns = botcynx.cooldowns.get(`${interaction.user.id}-${command.name}`);
 
