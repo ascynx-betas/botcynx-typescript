@@ -5,7 +5,6 @@ import {
   CommandInteractionOptionResolver,
   ContextMenuInteraction,
   GuildMember,
-  Interaction,
   Message,
   MessageApplicationCommandData,
   MessageComponentInteraction,
@@ -132,7 +131,7 @@ export class commandCooldown {
   constructor(userId: string, time: number, commandName: string) {
     this.command = commandName;
     this.user = userId;
-    this.timestamp = Date.now() + time
+    this.timestamp = Date.now() + time;
   }
 
   reset() {
@@ -145,10 +144,9 @@ export class commandCooldown {
     this.timestamp = time;
   }
   changeCommand(commandName: string) {
-    this.command = commandName
-  };
-  time() {
-    return new Date(this.timestamp)
+    this.command = commandName;
   }
-
+  time() {
+    return new Date(this.timestamp);
+  }
 }

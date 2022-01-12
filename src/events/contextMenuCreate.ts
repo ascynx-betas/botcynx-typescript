@@ -33,33 +33,47 @@ export default new Event(
       //cooldown
       if (command.cooldown && interaction.user.id != process.env.developerId) {
         const time = command.cooldown * 1000; //set seconds to milliseconds
-        let userCooldowns = botcynx.cooldowns.get(`${interaction.user.id}-${command.name}`);
-
+        let userCooldowns = botcynx.cooldowns.get(
+          `${interaction.user.id}-${command.name}`
+        );
 
         if (typeof userCooldowns != "undefined") {
-        let cooldown = userCooldowns.timestamp;
+          let cooldown = userCooldowns.timestamp;
 
-        if (cooldown > Date.now()) {
-          //still in cooldown
+          if (cooldown > Date.now()) {
+            //still in cooldown
 
-          return interaction.followUp({content: `chill out, you're currently on cooldown from using the ${command.name} command`});
-        
+            return interaction.followUp({
+              content: `chill out, you're currently on cooldown from using the ${command.name} command`,
+            });
+          } else {
+            //ended
+
+            botcynx.cooldowns.delete(`${interaction.user.id}-${command.name}`);
+            const newCoolDown = new commandCooldown(
+              interaction.user.id,
+              time,
+              command.name
+            );
+            botcynx.cooldowns.set(
+              `${interaction.user.id}-${command.name}`,
+              newCoolDown
+            );
+          }
         } else {
-          //ended
+          //doesn't exist
 
-          botcynx.cooldowns.delete(`${interaction.user.id}-${command.name}`);
-          const newCoolDown = new commandCooldown(interaction.user.id, time, command.name);
-          botcynx.cooldowns.set(`${interaction.user.id}-${command.name}`, newCoolDown);
-        
+          const newCoolDown = new commandCooldown(
+            interaction.user.id,
+            time,
+            command.name
+          );
+          botcynx.cooldowns.set(
+            `${interaction.user.id}-${command.name}`,
+            newCoolDown
+          );
         }
-      } else {
-        //doesn't exist
-
-        const newCoolDown = new commandCooldown(interaction.user.id, time, command.name);
-        botcynx.cooldowns.set(`${interaction.user.id}-${command.name}`, newCoolDown);
-        } 
       }
-
 
       // if bot requires permissions
       if (command.botPermissions) {

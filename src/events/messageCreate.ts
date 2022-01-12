@@ -29,33 +29,47 @@ export default new Event("messageCreate", async (message) => {
   //cooldown
   if (command.cooldown && message.author.id != process.env.developerId) {
     const time = command.cooldown * 1000; //set seconds to milliseconds
-    let userCooldowns = botcynx.cooldowns.get(`${message.author.id}-${command.name}`);
-
+    let userCooldowns = botcynx.cooldowns.get(
+      `${message.author.id}-${command.name}`
+    );
 
     if (typeof userCooldowns != "undefined") {
-    let cooldown = userCooldowns.timestamp;
+      let cooldown = userCooldowns.timestamp;
 
-    if (cooldown > Date.now()) {
-      //still in cooldown
+      if (cooldown > Date.now()) {
+        //still in cooldown
 
-      return message.reply({content: `chill out, you're currently on cooldown from using the ${command.name} command`});
-    
+        return message.reply({
+          content: `chill out, you're currently on cooldown from using the ${command.name} command`,
+        });
+      } else {
+        //ended
+
+        botcynx.cooldowns.delete(`${message.author.id}-${command.name}`);
+        const newCoolDown = new commandCooldown(
+          message.author.id,
+          time,
+          command.name
+        );
+        botcynx.cooldowns.set(
+          `${message.author.id}-${command.name}`,
+          newCoolDown
+        );
+      }
     } else {
-      //ended
+      //doesn't exist
 
-      botcynx.cooldowns.delete(`${message.author.id}-${command.name}`);
-      const newCoolDown = new commandCooldown(message.author.id, time, command.name);
-      botcynx.cooldowns.set(`${message.author.id}-${command.name}`, newCoolDown);
-    
+      const newCoolDown = new commandCooldown(
+        message.author.id,
+        time,
+        command.name
+      );
+      botcynx.cooldowns.set(
+        `${message.author.id}-${command.name}`,
+        newCoolDown
+      );
     }
-  } else {
-    //doesn't exist
-
-    const newCoolDown = new commandCooldown(message.author.id, time, command.name);
-    botcynx.cooldowns.set(`${message.author.id}-${command.name}`, newCoolDown);
-    } 
   }
-
 
   //require values
   if (command.require) {

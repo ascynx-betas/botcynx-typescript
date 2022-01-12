@@ -68,9 +68,9 @@ export default new slashCommand({
     } else isVerified = true;
 
     let discord: any = await getPlayerByUuid(uuid).catch(() => null);
-    if (!discord) discord = "couldn't fetch discord";
-    discord = discord?.player.socialMedia.links.DISCORD;
-
+    if (discord) {
+      discord = discord?.player.socialMedia.links.DISCORD;
+    }
     if (!discord) discord = "couldn't fetch discord";
 
     let status = await getStatus(uuid).catch(() => null);

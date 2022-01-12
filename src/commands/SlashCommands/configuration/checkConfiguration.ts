@@ -1,7 +1,7 @@
 import { configModel } from "../../../models/config";
 import { slashCommand } from "../../../structures/Commands";
 import { snowflakeToMention } from "../../../personal-modules/discordPlugin";
-import { MessageEmbed } from "discord.js";
+import { MessageActionRow, MessageEmbed, MessageSelectMenu } from "discord.js";
 
 export default new slashCommand({
   name: "serverconfig",
@@ -12,71 +12,44 @@ export default new slashCommand({
   category: "configuration",
 
   run: async ({ interaction }) => {
-    const guildId = interaction.guildId;
-    const config = await configModel.find({
-      guildId: guildId,
-    });
-    if (!config || config.length == 0) {
-      new configModel({
-        name: interaction.guild.name,
-        guildId: guildId,
-        trigger: [],
-        bypass: [],
-        removable: [],
-        logchannel: "",
-        su: [],
-        blocked: [],
-      }).save();
-      return interaction.followUp({
-        content: `Configuration was missing, please re-use the command`,
-      });
-    }
-    //get informations from config
-    const guildConfig = config[0];
-    const name = interaction.guild.name;
-    let { removable, trigger, bypass, su, blocked, logchannel } = guildConfig;
-    // transform snowflake to mention
-    if (removable.length >= 1)
-      removable = snowflakeToMention(removable, "ROLE");
-    if (removable.length == 0) removable[0] = "**none set**";
-    if (trigger.length >= 1) trigger = snowflakeToMention(trigger, "ROLE");
-    if (trigger.length == 0) trigger[0] = "**none set**";
-    if (bypass.length >= 1) bypass = snowflakeToMention(bypass, "ROLE");
-    if (bypass.length == 0) bypass[0] = "**none set**";
-    if (su.length >= 1) su = snowflakeToMention(su, "USER");
-    if (su.length == 0) su[0] = "**none set**";
-    if (blocked.length >= 1) blocked = snowflakeToMention(blocked, "CHANNEL");
-    if (blocked.length == 0) blocked[0] = "**none set**";
-
-    if (logchannel != "") {
-      logchannel = `<#${logchannel}>`;
-    } else logchannel = `**none set**`;
-
-    //join information together
-    removable.join(", ");
-    trigger.join(", ");
-    bypass.join(", ");
-    su.join(", ");
-    blocked.join(", ");
-
-    const description = `${name || "unset"}'s config \n
-        guild id: ${guildId || "unknown"} \n
-        removable roles: ${removable} \n
-        trigger roles: ${trigger} \n
-        bypass roles: ${bypass} \n
-        Elevated Permissions: ${su} \n
-        Log Channel: ${logchannel} \n
-        Blocked Channels: ${blocked} \n`; //don't forget to modify in delconfig for slots by setting index-1 instead of index
-
+    const description = `use the select menu under this message to choose which category of settings you want to see`;
     const embed = new MessageEmbed()
-      .setAuthor({ name: `${name || "unknown"} server's configuration` })
+      .setAuthor({ name: `configuration` })
       .setDescription(description)
       .setColor(`BLUE`)
       .setTimestamp(Date.now());
 
+    const row = new MessageActionRow().addComponents(
+      new MessageSelectMenu()
+        .addOptions([
+          {
+            label: "roleLinked configuration",
+            description: "see configuration for the server about roleLinked",
+            value: "roleLinked",
+            emoji: "<:role:930783993991933993>",
+          },
+          {
+            label: "Link reader configuration",
+            description:
+              "see the configuration for this server about the link reader feature",
+            value: "linkReader",
+            emoji: "<:read:930784208048242708>",
+          },
+          {
+            label: "other configurations",
+            description:
+              "configurations that are not classified under the other categories",
+            value: "other",
+            emoji: "🔧",
+          },
+        ])
+        .setCustomId(`settings`)
+    );
+
     interaction.followUp({
       embeds: [embed],
       allowedMentions: { parse: [] },
+      components: [row],
     });
   },
 });

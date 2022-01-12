@@ -45,7 +45,7 @@ export default new slashCommand({
           required: true,
           description: "the description of the command",
         },
-      ]
+      ],
     },
     {
       name: "modify",
@@ -70,7 +70,7 @@ export default new slashCommand({
           required: false,
           description: "the description of the command",
         },
-      ]
+      ],
     },
   ],
 
@@ -81,9 +81,12 @@ export default new slashCommand({
     const subCommand = interaction.options.getSubcommand();
     const guild = interaction.guild;
     name.toLowerCase();
-    const allowedCharacters = /^[\w-]{1,32}$/u
+    const allowedCharacters = /^[\w-]{1,32}$/u;
     const accepted = allowedCharacters.test(name);
-    if (accepted == false) return interaction.followUp({content: `an application command name must be all lowercase\nunder 32 characters\ncannot contain white spaces\nand must not contains special characters`})
+    if (accepted == false)
+      return interaction.followUp({
+        content: `an application command name must be all lowercase\nunder 32 characters\ncannot contain white spaces\nand must not contains special characters`,
+      });
     const blacklistedNames = client.ArrayOfSlashCommands.map(
       (c: any) => c.name
     );
@@ -127,10 +130,15 @@ export default new slashCommand({
 
         return client.guilds.cache
           .get(guild.id)
-          .commands.create({name: name, description: description})
+          .commands.create({ name: name, description: description })
           .then(() =>
             interaction.followUp({ content: `created new tag ${name}` })
-          ).catch(() => interaction.followUp({content: `I failed to create the tag, please try again later, if it keeps repeating the error contact the developer.`}))
+          )
+          .catch(() =>
+            interaction.followUp({
+              content: `I failed to create the tag, please try again later, if it keeps repeating the error contact the developer.`,
+            })
+          );
       }
     } else if (subCommand == "delete") {
       //isDelete == true
@@ -151,9 +159,10 @@ export default new slashCommand({
         name: name,
       });
 
-      const command = interaction.guild
-        .commands.cache.filter(c => c.name === name);
-      const commandId = command.map(c => c.id)[0];
+      const command = interaction.guild.commands.cache.filter(
+        (c) => c.name === name
+      );
+      const commandId = command.map((c) => c.id)[0];
       if (typeof commandId == "undefined")
         return interaction.followUp({ content: `command isn't registered` });
       client.guilds.cache
@@ -166,13 +175,13 @@ export default new slashCommand({
       if (!description) {
         description = await tagModel.find({
           guildID: guild.id,
-          name: name
-        })[0].description
+          name: name,
+        })[0].description;
       }
       const command = {
         name: name,
         description: description,
-      }
+      };
       tagModel.updateOne(
         { guildId: guild.id, name: name },
         { $set: { text: response, description: description } }
@@ -183,9 +192,7 @@ export default new slashCommand({
       return client.guilds.cache
         .get(guild.id)
         .commands.edit(commandId, command)
-        .then(() =>
-          interaction.followUp({ content: `modified tag ${name}` })
-        );
+        .then(() => interaction.followUp({ content: `modified tag ${name}` }));
     }
   },
 });

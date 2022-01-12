@@ -7,7 +7,7 @@ import { Event } from "../structures/Event";
 export default new Event(
   "messageUpdate",
   async (oldMessage: Message, newMessage: Message) => {
-    // MesssageCommands
+    // MessageCommands
     if (
       newMessage.author.bot ||
       !newMessage.guild ||
