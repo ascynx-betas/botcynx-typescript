@@ -16,22 +16,18 @@ export default new ButtonResponse({
       });
 
     if (member.roles.cache.has(roleId)) {
-      member.roles
-        .remove(roleId)
-        .then((member) =>
-          interaction.reply({
-            content: `${member.nickname}, you lost ${role}`,
-            ephemeral: true,
-          })
-        );
+      member.roles.remove(roleId).then((member) =>
+        interaction.reply({
+          content: `${member.nickname}, you lost ${role}`,
+          ephemeral: true,
+        })
+      );
     } else
-      member.roles
-        .add(roleId)
-        .then((member) =>
-          interaction.reply({
-            content: `${member.nickname}, you gained ${role}`,
-            ephemeral: true,
-          })
-        );
+      member.roles.add(roleId).then((member) =>
+        interaction.reply({
+          content: `${member.nickname}, you gained ${role}`,
+          ephemeral: true,
+        })
+      );
   },
 });

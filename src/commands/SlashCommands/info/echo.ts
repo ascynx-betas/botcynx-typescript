@@ -35,7 +35,7 @@ export default new slashCommand({
     if (user) {
       user
         .send({ content: message })
-        .catch(() => interaction.followUp("Can't send DM to specified user"));
+        .catch(() => interaction.followUp("Cannot send DM to specified user"));
       interaction
         .followUp({ content: `sent message '${message}' to ${user.tag}` })
         .catch(() => null);

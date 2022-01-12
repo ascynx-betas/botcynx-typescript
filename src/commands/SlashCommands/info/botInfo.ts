@@ -19,11 +19,13 @@ export default new slashCommand({
     );
     let types: string[] = interactionCommands.map((c) => c.category || "other");
     types = [...new Set(types)];
-    const description = `bot Mention: ${client.user} developer: ${
+    const description = `
+    **bot Mention**: ${client.user} **developer**: ${
       client.users.cache.get(process.env.developerId).tag
-    }(${process.env.developerId})\nin ${
+    } (${process.env.developerId})\nin ${
       client.guilds.cache.size
-    } guilds\n serving ${client.users.cache.size} users`;
+    } guilds, serving ${client.users.cache.size} users\n
+    [**support server**](https://discord.gg/XSnGDtzqJU) - [**ToS and privacy policy**](https://gist.github.com/Ascynx/027502723bc0e5eaf278b0ac48e566c6)`;
     let arrayOfButtons: MessageActionRowComponent[] = [];
     types.forEach(function (type) {
       const button = new MessageButton()

@@ -1,6 +1,6 @@
 {
   "name": "bot-rewrite",
-  "version": "1.0",
+  "version": "1.1",
   "description": "a discord bot made in ts based on an earlier project",
   "main": "index.js",
   "scripts": {

@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { Collection, EmbedFieldData, MessageEmbed } from "discord.js";
 import { configModel } from "../models/config";
 import { snowflakeToMention } from "../personal-modules/discordPlugin";
 import { ButtonResponse } from "../structures/Commands";
@@ -10,7 +10,8 @@ export default new ButtonResponse({
   run: async ({ interaction, client }) => {
     let fields = interaction.customId.split(":");
     const type = fields[1];
-    let description: string;
+    let name: string;
+    let embedFields: EmbedFieldData[] = [];
 
     const config = await configModel.find({
       guildId: interaction.guild.id,
@@ -33,41 +34,78 @@ export default new ButtonResponse({
       if (logchannel != "") {
         logchannel = `<#${logchannel}>`;
       } else logchannel = `**none set**`;
+      let activity: string;
 
-      //join information together
-      removable.join(", ");
-      trigger.join(", ");
-      bypass.join(", ");
+      if (removable.length >= 1) {
+        activity = "🟢";
+      } else {
+        activity = "🔴";
+      }
 
-      description = `roleLink configuration\n
-            server: ${interaction.guild.name}/${interaction.guild.id}\n
-            removable roles: ${removable}\n
-            trigger roles: ${trigger}\n
-            bypass roles: ${bypass}\n
-            Logging channel: ${logchannel}`;
+      //name
+      name = "roleLinked configuration";
+
+      //fields
+      embedFields.push({
+        name: `**Server**:`,
+        value: `${interaction.guild.name} (${interaction.guild.id})`,
+      });
+      embedFields.push({
+        name: `**Removable roles**:`,
+        value: removable.join(", "),
+      });
+      embedFields.push({
+        name: `**Trigger roles**:`,
+        value: trigger.join(", "),
+      });
+      embedFields.push({ name: `**Bypass roles**:`, value: bypass.join(", ") });
+      embedFields.push({ name: `**Logging channel**:`, value: logchannel });
+      embedFields.push({ name: `**Active**:`, value: activity });
     } else if (type == "linkReader") {
       let { blocked } = guildConfig;
       if (blocked.length >= 1) blocked = snowflakeToMention(blocked, "CHANNEL");
       if (blocked.length == 0) blocked[0] = "**none set**";
-      blocked.join(", ");
 
-      description = `link reader configuration\n
-            server: ${interaction.guild.name}/${interaction.guild.id}\n
-            blocked channels: ${blocked}`;
+      let activity: string;
+
+      if (interaction.guild.me.permissions.has("MANAGE_WEBHOOKS")) {
+        activity = "🟢";
+      } else {
+        activity = "🔴";
+      }
+
+      //name
+      name = "linkReader configuration";
+
+      //fields
+      embedFields.push({
+        name: `**Server**:`,
+        value: `${interaction.guild.name} (${interaction.guild.id})`,
+      });
+      embedFields.push({
+        name: `**Blocked channels**:`,
+        value: blocked.join(", "),
+      });
+      embedFields.push({ name: `**Active**:`, value: activity });
     } else if (type == "other") {
       let { su } = guildConfig;
       if (su.length >= 1) su = snowflakeToMention(su, "USER");
       if (su.length == 0) su[0] = "**none set**";
-      su.join(", ");
 
-      description = `non-categorized configuration\n
-            server: ${interaction.guild.name}/${interaction.guild.id}\n
-            super users: ${su}`;
+      //name
+      name = "other configurations";
+
+      //fields
+      embedFields.push({
+        name: `**Server**:`,
+        value: `${interaction.guild.name} (${interaction.guild.id})`,
+      });
+      embedFields.push({ name: "**Super-users**:", value: su.join(", ") });
     }
 
     const embed = new MessageEmbed()
-      .setDescription(description)
-      .setTitle("configuration")
+      .setFields(embedFields)
+      .setTitle(name)
       .setFooter({ text: `requested by ${interaction.user.tag}` });
 
     interaction.update({ embeds: [embed] });
