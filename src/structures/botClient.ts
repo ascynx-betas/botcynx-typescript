@@ -38,8 +38,9 @@ export class botClient extends Client {
     if (process.env.mongooseConnectionString) {
       connect(process.env.mongooseConnectionString);
     }
+    
     this.registerModules();
-    this.login(process.env.botToken);
+    this.login(process.env.botToken).then(() => console.log(`successfully logged in`))
   }
 
   async importFile(filePath: string) {
@@ -113,6 +114,7 @@ export class botClient extends Client {
     });
 
     this.on("ready", async () => {
+
       //register tags
       let guildsWithTags: any = await tagModel.find();
       guildsWithTags = guildsWithTags.map((g) => g.guildId);
@@ -142,8 +144,9 @@ export class botClient extends Client {
     const eventFiles = await globPromise(`${__dirname}/../events/*{.ts,.js}`);
     eventFiles.forEach(async (filePath) => {
       const event: Event<keyof ClientEvents> = await this.importFile(filePath);
+
       if (event) {
-        this.on(event.event, event.run);
+        this.on(event.event, event.run); //add Listener
       }
     });
   }
@@ -158,6 +161,9 @@ export class botClient extends Client {
     }
   }
   async registerTags(guildId: string) {
+    const guild = this.guilds.cache.get(guildId);
+    if (!guild) return;
+
     const tags: any = new Collection();
     let guildTags = await tagModel.find({
       guildId: guildId,

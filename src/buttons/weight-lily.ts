@@ -61,7 +61,7 @@ export default new ButtonResponse({
     const buttonrow = new MessageActionRow().addComponents(
       new MessageButton()
         .setCustomId(`weight:senither`)
-        .setLabel("Press to get senither weight (WIP)")
+        .setLabel("Press to get senither weight")
         .setStyle("SECONDARY")
     );
     interaction.update({ embeds: [embed], components: [buttonrow] });

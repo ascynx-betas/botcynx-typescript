@@ -20,6 +20,9 @@ export default new Event("messageCreate", async (message) => {
   )
     return;
 
+    const config = await configModel.find({guildId: message.guild.id});
+    if (config[0].disabledCommands.includes('linkReader')) return;
+
   let results = containsLink(message.content);
   if (results.length == 0) return;
   let linkfield = message.content.split(" ");

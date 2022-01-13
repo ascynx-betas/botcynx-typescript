@@ -36,7 +36,7 @@ export default new ButtonResponse({
       } else logchannel = `**none set**`;
       let activity: string;
 
-      if (removable.length >= 1) {
+      if (removable.length >= 1 && !guildConfig.disabledCommands.includes('roleLinked')) {
         activity = "🟢";
       } else {
         activity = "🔴";
@@ -68,7 +68,7 @@ export default new ButtonResponse({
 
       let activity: string;
 
-      if (interaction.guild.me.permissions.has("MANAGE_WEBHOOKS")) {
+      if (interaction.guild.me.permissions.has("MANAGE_WEBHOOKS") && !guildConfig.disabledCommands.includes('linkReader')) {
         activity = "🟢";
       } else {
         activity = "🔴";

@@ -15,6 +15,6 @@
     "resolveJsonModule": true,
     "importHelpers": true
   },
-  "include": ["src", "environment.d.ts", "WIP/reviewProfile.ts"],
+  "include": ["src", "environment.d.ts"],
   "exclude": ["node-modules", "**/*.spec.ts"]
 }

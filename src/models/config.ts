@@ -10,6 +10,7 @@ export interface config {
   su: Array<string>;
   verify: string;
   blocked: Array<string>;
+  disabledCommands: Array<string>;
 }
 
 const schema = new mongoose.Schema<config>({
@@ -22,6 +23,7 @@ const schema = new mongoose.Schema<config>({
   su: Array,
   verify: String,
   blocked: Array,
+  disabledCommands: Array,
 });
 const configModel = mongoose.model<config>("config", schema);
 

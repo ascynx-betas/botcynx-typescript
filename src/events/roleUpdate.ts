@@ -17,6 +17,7 @@ export default new Event("guildMemberUpdate", async (oldMember, newMember) => {
   const config = await configModel.find({
     guildId: guild.id,
   });
+  if (config[0].disabledCommands.includes('roleLinked')) return;
 
   let trigger = config[0].trigger;
   let removable = config[0].removable;

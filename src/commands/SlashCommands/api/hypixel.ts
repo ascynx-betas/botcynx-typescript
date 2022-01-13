@@ -19,7 +19,7 @@ export default new slashCommand({
     },
   ],
 
-  run: async ({ interaction }) => {
+  run: async ({ interaction, client }) => {
     let username = interaction.options.getString("username");
     let uuid: any;
     if (!username) {
@@ -70,6 +70,11 @@ export default new slashCommand({
     let discord: any = await getPlayerByUuid(uuid).catch(() => null);
     if (discord) {
       discord = discord?.player.socialMedia.links.DISCORD;
+      let isInCache = (client.users.cache.filter(u => u.tag === discord));
+      if (isInCache.size > 0) {
+        let user = isInCache.map(u => u.toString());
+        discord = discord + " - " + user;
+      }
     }
     if (!discord) discord = "couldn't fetch discord";
 
