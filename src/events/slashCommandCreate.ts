@@ -142,8 +142,10 @@ export default new Event(
 
       if (isDisabled == true) {
         if (command.name == "weight") {
+          await interaction.deferReply();
           return interaction.followUp({content: `we don't have that command, smh`})
         }
+        await interaction.deferReply({ephemeral: true})
         return interaction.reply({content: `this command has been disabled`, ephemeral: true})
       };
 
