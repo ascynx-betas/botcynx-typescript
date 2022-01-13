@@ -25,7 +25,7 @@ export default new slashCommand({
     } (${process.env.developerId})\nin ${
       client.guilds.cache.size
     } guilds, serving ${client.users.cache.size} users\n
-    [**support server**](https://discord.gg/XSnGDtzqJU) - [**ToS and privacy policy**](https://gist.github.com/Ascynx/027502723bc0e5eaf278b0ac48e566c6)`;
+    [**ToS and privacy policy**](https://gist.github.com/Ascynx/027502723bc0e5eaf278b0ac48e566c6)`;
     let arrayOfButtons: MessageActionRowComponent[] = [];
     types.forEach(function (type) {
       const button = new MessageButton()

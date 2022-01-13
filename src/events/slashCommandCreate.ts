@@ -8,6 +8,7 @@ import {
 } from "../typings/Command";
 import { RequireTest } from "../personal-modules/commandHandler";
 import { tagModel } from "../models/tag";
+import { configModel } from "../models/config";
 
 export default new Event(
   "interactionCreate",
@@ -17,7 +18,6 @@ export default new Event(
     if (interaction.isButton()) return;
 
     if (interaction.isCommand()) {
-      await interaction.deferReply();
       let command = botcynx.slashCommands.get(interaction.commandName);
       if (!command) {
         const tag = await tagModel.find({
@@ -135,6 +135,19 @@ export default new Event(
             content: `the client in which this command has been called, doesn't have the required values to execute this command`,
           });
       }
+
+      //disabled commands
+      const config = await configModel.find({guildId: interaction.guild.id});
+      const isDisabled = (config[0].disabledCommands.includes(command.name));
+
+      if (isDisabled == true) {
+        if (command.name == "weight") {
+          return interaction.followUp({content: `we don't have that command, smh`})
+        }
+        return interaction.reply({content: `this command has been disabled`, ephemeral: true})
+      };
+
+      await interaction.deferReply();
 
       command.run({
         args: interaction.options as CommandInteractionOptionResolver,

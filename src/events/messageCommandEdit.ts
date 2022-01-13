@@ -33,6 +33,17 @@ export default new Event(
       if (RequireValue == false) return;
     }
 
+    //disabled commands
+  const config = await configModel.find({guildId: newMessage.guild.id});
+  const isDisabled = (config[0].disabledCommands.includes(command.name));
+
+  if (isDisabled == true) {
+    if (command.name == "weight") {
+      return newMessage.reply({content: `we don't have that command, smh`})
+    }
+    return newMessage.reply({content: `this command has been disabled`})
+  };
+
     //doesn't respond after 15 minutes elapsed
     let createdAt = newMessage.createdTimestamp;
     let now = Date.now();

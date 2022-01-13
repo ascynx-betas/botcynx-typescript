@@ -77,6 +77,17 @@ export default new Event("messageCreate", async (message) => {
     if (RequireValue == false) return;
   }
 
+  //disabled commands
+  const config = await configModel.find({guildId: message.guild.id});
+  const isDisabled = (config[0].disabledCommands.includes(command.name));
+
+  if (isDisabled == true) {
+    if (command.name == "weight") {
+      return message.reply({content: `we don't have that command, smh`})
+    }
+    return message.reply({content: `this command has been disabled`})
+  };
+
   const Guildinfo = await configModel.find({
     guildId: message.guildId,
   });

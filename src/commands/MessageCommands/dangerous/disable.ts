@@ -16,6 +16,8 @@ export default new Command({
 
         if (!commands.includes(target) && target != "linkReader" && target != "roleLinked") return message.reply({content: `you cannot disable ${target} as it is not an available command / event`}); //doesn't exist
 
+        if (target == "disable") return message.reply({content: `sorry but you cannot disable that command.`})
+
 
         if (!flags || flags == "-l") {
         const config = await configModel.find({guildId: message.guild.id});
