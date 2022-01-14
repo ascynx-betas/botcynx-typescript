@@ -143,7 +143,9 @@ export default new Event(
       if (isDisabled == true) {
         if (command.name == "weight") {
           await interaction.deferReply();
-          return interaction.followUp({content: `we don't have that command, smh`})
+          const weight = Math.floor(Math.random() * 10000);
+
+          return interaction.followUp({content: `your weight is ${weight} kg !`})
         }
         await interaction.deferReply({ephemeral: true})
         return interaction.reply({content: `this command has been disabled`, ephemeral: true})

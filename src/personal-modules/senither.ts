@@ -57,15 +57,15 @@ const getSpecifiedProfile = async function (uuid: string, profile: string) {
 const extractWeight = async function (data: senitherProfileSingular) {
   const dataprofile = data.data;
   //profile informations
-  if (!dataprofile || dataprofile.skills.apiEnabled == false) return null;
+  if (!dataprofile || dataprofile.skills?.apiEnabled == false) return null;
 
   const profilename = dataprofile.name;
-  const skillweight = dataprofile.skills.weight;
-  const skilloweight = dataprofile.skills.weight_overflow;
-  const slayerweight = dataprofile.slayers.weight;
-  const slayeroweight = dataprofile.slayers.weight_overflow;
-  const dungeonweight = dataprofile.dungeons.weight;
-  const dungeonoweight = dataprofile.dungeons.weight_overflow;
+  const skillweight = (dataprofile.skills?.weight || 0);
+  const skilloweight = (dataprofile.skills?.weight_overflow || 0);
+  const slayerweight = (dataprofile.slayers?.weight || 0);
+  const slayeroweight = (dataprofile.slayers?.weight_overflow || 0);
+  const dungeonweight = (dataprofile.dungeons?.weight || 0);
+  const dungeonoweight = (dataprofile.dungeons?.weight_overflow || 0);
 
   //calculations
   const fdungeonweight = dungeonweight + dungeonoweight;

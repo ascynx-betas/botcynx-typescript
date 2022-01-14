@@ -88,9 +88,11 @@ export default new ButtonResponse({
       });
       embedFields.push({ name: `**Active**:`, value: activity });
     } else if (type == "other") {
-      let { su } = guildConfig;
+      let { su, disabledCommands } = guildConfig;
       if (su.length >= 1) su = snowflakeToMention(su, "USER");
       if (su.length == 0) su[0] = "**none set**";
+
+      if (disabledCommands.length == 0) disabledCommands[0] = "no commands or events were disabled on this server";
 
       //name
       name = "other configurations";
@@ -101,6 +103,7 @@ export default new ButtonResponse({
         value: `${interaction.guild.name} (${interaction.guild.id})`,
       });
       embedFields.push({ name: "**Super-users**:", value: su.join(", ") });
+      embedFields.push({ name: "**disabled features**:", value: disabledCommands.join(", ")})
     }
 
     const embed = new MessageEmbed()

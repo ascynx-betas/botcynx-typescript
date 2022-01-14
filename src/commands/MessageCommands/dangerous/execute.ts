@@ -14,9 +14,10 @@ export default new Command({
     let mongooseConnectionString = process.env.mongooseConnectionString;
     const hypixelapikey = process.env.hypixelapikey;
     const logwb = process.env.webhookLogLink;
+    const badPhrases = ["delete", "destroy"];
 
     const clean = async (text: string) => {
-      if (text && text.constructor.name == "Promise") text = await text;
+      if (text && text.constructor.name == "Promise") text = await text; //don't remove the await
 
       if (typeof text !== "string") text = inspect(text, { depth: 1 });
 
@@ -28,7 +29,7 @@ export default new Command({
       // Send off the cleaned up result
       return text;
     };
-    const c = function (text: string) {
+    const cut = function (text: string) {
       let length = text.length;
       length = length - 998;
       text = text.slice(0, 998);
@@ -36,11 +37,32 @@ export default new Command({
       return text;
     };
 
+    let activeFlags: string[] = [];
+      let code: string[] | string = args;
+      let possibleFlags: string = args.at(args.length-1);
+      if (possibleFlags.startsWith("-")) {
+        (code as string[]).splice(code.length-1, 1);
+        let flagList = ["async", "sudo", "silent"];
+        let flags = possibleFlags.split('-');
+        flags.forEach((flag: string) => {
+          if (flagList.includes(flag)) activeFlags.push(flag)
+        })
+      }
+      if (badPhrases.some((p) => code.includes(p)) && !activeFlags.includes('sudo')) {
+        return await message.reply({content: `This eval has been blocked by smooth brain protection™️`});
+      }
+
+      code = (code as string[]).join(" ")
+
+      if (activeFlags.includes('async')) code = "(async () => {" + code + "})()";
+
     try {
+
+
       let Cregexp = /process\.env\.?/gim;
-      let r = Cregexp.test(args.join(" "));
+      let r = Cregexp.test(code);
       if (r === true) throw Error("not happening m8");
-      let evaled = eval(args.join(" "));
+      let evaled = eval(code);
       let cleaned = await clean(evaled);
       cleaned = cleaned.replace(
         new RegExp(
@@ -49,35 +71,37 @@ export default new Command({
         ),
         ""
       );
-      let cool = args.join(" ");
+      let cool = code;
       if (cool.includes("client") && cool.includes("config"))
         throw Error("nope");
       cool = `\`\`\`js\n ${cool}\n\`\`\``;
       cleaned = `\`\`\`js\n ${cleaned}\n\`\`\``;
 
-      if (cool.length > 1000) cool = c(cool);
-      if (cleaned.length > 1000) cleaned = c(cleaned);
-
+      if (cool.length > 1000) cool = cut(cool);
+      if (cleaned.length > 1000) cleaned = cut(cleaned);
+      if (!activeFlags.includes('silent'))  {
       const embed = new MessageEmbed()
         .setFields([
           { name: "**input:**", value: cool },
           { name: "**output:**", value: cleaned },
         ])
-        .setAuthor({ name: "Success ✅" });
+        .setAuthor({ name: "Success ✅" + " - Active flags: " + activeFlags.join(", ")});
 
       message.channel.send({ embeds: [embed] });
+        }
+
     } catch (err) {
-      let cool = args.join(" ");
+      let cool = code;
       cool = `\`\`\`js\n${cool}\n\`\`\``;
       err = `\`\`\`\n${err}\n\`\`\``;
-      if (cool.length > 1000) cool = c(cool);
-      if (err.length > 1000) err = c(err);
+      if (cool.length > 1000) cool = cut(cool);
+      if (err.length > 1000) err = cut(err);
       const embed = new MessageEmbed()
         .setFields([
           { name: "**input:**", value: cool },
           { name: "**output:**", value: err },
         ])
-        .setAuthor({ name: "Error ❌" });
+        .setAuthor({ name: "Error ❌" + " - Active flags: " + activeFlags.join(", ")});
       message.channel.send({ embeds: [embed] });
     }
   },

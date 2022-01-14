@@ -3,7 +3,7 @@ import { Command } from "../../../structures/Commands";
 
 export default new Command({
     name: "disable",
-    aliases: ["d"],
+    aliases: ["d", "enable"],
     
     run: async({ message, client, args }) => {
         const target = (args[0]);
@@ -16,7 +16,7 @@ export default new Command({
 
         if (!commands.includes(target) && target != "linkReader" && target != "roleLinked") return message.reply({content: `you cannot disable ${target} as it is not an available command / event`}); //doesn't exist
 
-        if (target == "disable") return message.reply({content: `sorry but you cannot disable that command.`})
+        if (target == "disable" || target == "exec") return message.reply({content: `sorry but you cannot disable that command.`})
 
 
         if (!flags || flags == "-l") {
@@ -28,7 +28,7 @@ export default new Command({
                 if (err) return message.reply({content: `there was an error while removing the command from disabled commands`})
             })
 
-            message.reply({content: `successfully removed ${target} to disabled commands, currently only events are disabled from usage`})
+            message.reply({content: `successfully removed ${target} from disabled commands`})
         } else {
 
             configModel.updateOne({
@@ -37,7 +37,7 @@ export default new Command({
                 if (err) return message.reply({content: `there was an error while disabling that command`})
             });
         
-            message.reply({content: `successfully added ${target} to disabled commands, currently only events are disabled from usage`})
+            message.reply({content: `successfully added ${target} to disabled commands`})
         }
     } else if (flags == "-g") {
         return message.reply({content: `global config is not currently available`})

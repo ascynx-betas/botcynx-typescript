@@ -82,9 +82,6 @@ export default new Event("messageCreate", async (message) => {
   const isDisabled = (config[0].disabledCommands.includes(command.name));
 
   if (isDisabled == true) {
-    if (command.name == "weight") {
-      return message.reply({content: `we don't have that command, smh`})
-    }
     return message.reply({content: `this command has been disabled`})
   };
 

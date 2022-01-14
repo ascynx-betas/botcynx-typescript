@@ -107,7 +107,7 @@ export default new slashCommand({
         () => null
       );
 
-      if (typeof data == "undefined" || !data) {
+      if (typeof data == "undefined" || !data || data == null) {
         const embed = new MessageEmbed()
           .setDescription(`player not found or profile provided does not exist`)
           .setFooter({ text: `requested by ${interaction.user.tag}` })
@@ -118,7 +118,7 @@ export default new slashCommand({
     } else {
       data = await getFatterProfile(uuid as string).catch(() => null);
 
-      if (typeof data == "undefined" || !data) {
+      if (typeof data == "undefined" || !data || data == null) {
         const embed = new MessageEmbed()
           .setDescription(`player not found or profile provided does not exist`)
           .setFooter({ text: `requested by ${interaction.user.tag}` })

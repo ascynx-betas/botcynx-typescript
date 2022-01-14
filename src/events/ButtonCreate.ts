@@ -33,20 +33,12 @@ export default new Event("interactionCreate", async (interaction) => {
 
       //Timeout
       if (time >= 900000) {
-        const buttonRow = new MessageActionRow().addComponents(
-          new MessageSelectMenu()
-            .setOptions([
-              {
-                label: "timed out",
-                description: "this interaction timed out",
-                value: "disabled",
-              },
-            ])
-            .setCustomId(interaction.customId)
-            .setDisabled(true)
-        );
+        //const components = interaction.message.components
+        //components.forEach((component) => component.components.forEach(sub => {
+        //  sub.setDisabled(true);
+        //}))
 
-        return interaction.update({ components: [buttonRow] });
+        return interaction.update({ components: [] }); //(components as MessageActionRow[])
       }
     } //temp check
 
@@ -124,16 +116,14 @@ export default new Event("interactionCreate", async (interaction) => {
       let time = current - creation;
 
       //Timeout
-      if (time >= 900000) {
-        const buttonRow = new MessageActionRow().addComponents(
-          new MessageButton()
-            .setCustomId(interaction.customId)
-            .setLabel("Timed out")
-            .setStyle("DANGER")
-            .setDisabled(true)
-        );
+      if (time >= 3000) { //900000
+        //const components = interaction.message.components;
+        //components.forEach((components) => components.components.forEach((button: MessageButton) => {
+        //  button.setDisabled(true);
+        //  button.setStyle('DANGER');
+        //}))
 
-        return interaction.update({ components: [buttonRow] });
+        return interaction.update({ components: [] }); //(components as MessageActionRow[])
       }
     } //temp check
 
