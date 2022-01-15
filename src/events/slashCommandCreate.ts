@@ -25,7 +25,7 @@ export default new Event(
           name: interaction.commandName,
         });
         if (tag.length == 0)
-          return interaction.followUp("You have used a non existant command");
+          return interaction.reply("You have used a non existant command");
         let commandReCreate: CommandType = {
           name: tag[0].name,
           description: tag[0].description,
@@ -42,11 +42,24 @@ export default new Event(
         command = commands.get(commandReCreate.name);
       }
       if (!command)
-        return interaction.followUp("You have used a non existant command");
+        return interaction.reply("You have used a non existant command");
+
+      //disabled commands
+      const config = await configModel.find({guildId: interaction.guild.id});
+      const isDisabled = (config[0].disabledCommands.includes(command.name));
+
+      if (isDisabled == true) {
+        if (command.name == "weight") {
+          const weight = Math.floor(Math.random() * 10000);
+
+          return interaction.reply({content: `your weight is ${weight} kg !`})
+        }
+        return interaction.reply({content: `this command has been disabled`, ephemeral: true})
+      };
 
       if (command.devonly) {
         if (interaction.member.id != process.env.developerId) {
-          return interaction.followUp({
+          return interaction.reply({
             content: `Command is a dev only command, and is currently not available to other users.`,
           });
         }
@@ -54,6 +67,7 @@ export default new Event(
 
       //cooldown
       if (command.cooldown && interaction.user.id != process.env.developerId) {
+        await interaction.deferReply();
         const time = command.cooldown * 1000; //set seconds to milliseconds
         let userCooldowns = botcynx.cooldowns.get(
           `${interaction.user.id}-${command.name}`
@@ -68,6 +82,7 @@ export default new Event(
             return interaction.followUp({
               content: `chill out, you're currently on cooldown from using the ${command.name} command`,
             });
+
           } else {
             //ended
 
@@ -106,7 +121,7 @@ export default new Event(
           !botPermission.includes(botRequiredPermission[0]) &&
           !botPermission.includes("ADMINISTRATOR")
         )
-          return interaction.followUp({
+          return interaction.reply({
             content: `I cannot execute this command due to the lack of ${botRequiredPermission}`,
           });
       }
@@ -123,7 +138,7 @@ export default new Event(
           interaction.user.id != interaction.guild.ownerId &&
           interaction.user.id != process.env.developerId
         )
-          return interaction.followUp({
+          return interaction.reply({
             content: `You cannot use this command as you lack ${userRequiredPermission}`,
           });
       }
@@ -131,25 +146,10 @@ export default new Event(
       if (command.require) {
         let RequireValue = await RequireTest(command.require);
         if (RequireValue == false)
-          return interaction.followUp({
+          return interaction.reply({
             content: `the client in which this command has been called, doesn't have the required values to execute this command`,
           });
       }
-
-      //disabled commands
-      const config = await configModel.find({guildId: interaction.guild.id});
-      const isDisabled = (config[0].disabledCommands.includes(command.name));
-
-      if (isDisabled == true) {
-        if (command.name == "weight") {
-          await interaction.deferReply();
-          const weight = Math.floor(Math.random() * 10000);
-
-          return interaction.followUp({content: `your weight is ${weight} kg !`})
-        }
-        await interaction.deferReply({ephemeral: true})
-        return interaction.followUp({content: `this command has been disabled`, ephemeral: true})
-      };
 
       await interaction.deferReply();
 
