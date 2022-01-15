@@ -148,7 +148,7 @@ export default new Event(
           return interaction.followUp({content: `your weight is ${weight} kg !`})
         }
         await interaction.deferReply({ephemeral: true})
-        return interaction.reply({content: `this command has been disabled`, ephemeral: true})
+        return interaction.followUp({content: `this command has been disabled`, ephemeral: true})
       };
 
       await interaction.deferReply();

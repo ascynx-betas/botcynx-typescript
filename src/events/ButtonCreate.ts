@@ -116,7 +116,7 @@ export default new Event("interactionCreate", async (interaction) => {
       let time = current - creation;
 
       //Timeout
-      if (time >= 3000) { //900000
+      if (time >= 900000) {
         //const components = interaction.message.components;
         //components.forEach((components) => components.components.forEach((button: MessageButton) => {
         //  button.setDisabled(true);
