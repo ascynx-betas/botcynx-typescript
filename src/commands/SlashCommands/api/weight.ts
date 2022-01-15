@@ -141,11 +141,12 @@ export default new slashCommand({
       });
     }
 
-    const description = result.description;
+    const embedFields = result.embedFields;
     const profilename = result.profilename;
+    const gameStage = result.gamestage
 
     const embed = new MessageEmbed()
-      .setDescription(description)
+      .setFields(embedFields)
       .setFooter({ text: `requested by ${interaction.user.tag}` })
       .setAuthor({
         name: `${username}'s senither weight`,
@@ -153,7 +154,7 @@ export default new slashCommand({
       })
       .setThumbnail(`https://mc-heads.net/avatar/${uuid}/100`)
       .setTitle(
-        `profile: **\`\`${profilename}\`\`** username: **\`\`${username}\`\`**`
+        `profile: **\`\`${profilename}\`\`** username: **\`\`${username}\`\`**\ncurrent stage: **\`\`${gameStage}\`\`**`
       );
 
     const buttonRow = new MessageActionRow().addComponents(

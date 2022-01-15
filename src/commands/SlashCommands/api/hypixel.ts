@@ -1,4 +1,5 @@
-import { MessageEmbed } from "discord.js";
+import { EmbedFieldData, MessageEmbed } from "discord.js";
+import { coolPeopleUUId, coolTypeToEmojis } from "../../../lib/coolPeople";
 import { verifyModel } from "../../../models/verifyModel";
 import { getPlayerByUuid, getStatus } from "../../../personal-modules/hypixel";
 import { getUuidbyUsername } from "../../../personal-modules/mojang";
@@ -77,7 +78,14 @@ export default new slashCommand({
       }
     }
     if (!discord) discord = "couldn't fetch discord";
+    let coolRank: string;
+    
+    if (typeof coolPeopleUUId[uuid] != "undefined") {
+      coolRank = coolPeopleUUId[uuid];
+      coolRank = coolTypeToEmojis[coolRank];
+      username = coolRank + username
 
+    }
     let status = await getStatus(uuid).catch(() => null);
     status = status.session.online;
     if (status == false) status = `🔴`;
@@ -86,17 +94,24 @@ export default new slashCommand({
     if (uuid === null || username === null)
       return interaction.followUp({ content: `player not found` });
 
-    let description: string;
+    let embedFields: EmbedFieldData[] = [];
+      embedFields.push({name: 'username:', value: username});
+      embedFields.push({name: 'Linked discord account:', value: discord});
+      embedFields.push({name: "online:", value: status});
+      embedFields.push({name: "verified", value: `${isVerified}`});
+
     if (uuid) {
-      description = `username: ${username}\n UUID: ${uuid}\n Linked discord account: ${discord}\n online: ${status}\n verified: ${isVerified}`;
+      embedFields.splice(1, 0, {name: "UUID:", value: uuid});
+
     } else {
-      description = `username: ${username}\n UUID: ${verified[0].minecraftuuid}\n Linked discord account: ${discord}\n online: ${status}\n verified: ${isVerified}`;
+      embedFields.splice(1, 0, {name: "UUID:", value: verified[0].minecraftuuid});
+
     }
 
     let embed = new MessageEmbed()
       .setTitle(`Informations about ${username}`)
       .setColor("RANDOM")
-      .setDescription(description)
+      .setFields(embedFields)
       .setFooter({ text: `requested by ${interaction.user.tag}` })
       .setThumbnail(`https://mc-heads.net/avatar/${username}/100`);
 

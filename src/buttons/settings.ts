@@ -87,6 +87,7 @@ export default new ButtonResponse({
         value: blocked.join(", "),
       });
       embedFields.push({ name: `**Active**:`, value: activity });
+      
     } else if (type == "other") {
       let { su, disabledCommands } = guildConfig;
       if (su.length >= 1) su = snowflakeToMention(su, "USER");

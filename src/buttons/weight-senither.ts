@@ -18,7 +18,7 @@ export default new ButtonResponse({
     profilename = profilename.slice(29, profilename.length);
     const fields = profilename.split("/");
     const speprofile = fields[1];
-    const username = fields[0];
+    let username = fields[0];
     const profile = await getSpecifiedProfile(uuid, speprofile).catch(
       () => null
     );
@@ -26,11 +26,12 @@ export default new ButtonResponse({
 
     const data = await extractWeight(profile);
 
-    const description = data.description;
+    const embedFields = data.embedFields;
     const profileName = data.profilename;
+    const gameStage = data.gamestage
 
     const embed = new MessageEmbed()
-      .setDescription(description)
+      .setFields(embedFields)
       .setFooter({
         text: `requested by ${interaction.message.interaction.user.username}`,
       })
@@ -41,7 +42,7 @@ export default new ButtonResponse({
       })
       .setThumbnail(`https://mc-heads.net/avatar/${uuid}/100`)
       .setTitle(
-        `profile: **\`\`${profileName}\`\`** username: **\`\`${username}\`\`**`
+        `profile: **\`\`${profileName}\`\`** username: **\`\`${username}\`\`**\ncurrent stage: **\`\`${gameStage}\`\`**`
       );
 
     const buttonRow = new MessageActionRow().addComponents(

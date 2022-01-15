@@ -18,6 +18,7 @@ import { RegisterCommandsOptions } from "../typings/Client";
 import { Event } from "./Event";
 import { connect } from "mongoose";
 import { tagModel } from "../models/tag";
+import { reload } from "../lib/coolPeople";
 
 const globPromise = promisify(glob);
 
@@ -124,6 +125,7 @@ export class botClient extends Client {
       this.registerCommands({
         commands: this.ArrayOfSlashCommands,
       });
+      reload(); //reload coolPeople list
     });
 
     //MessageCommands

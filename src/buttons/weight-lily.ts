@@ -1,6 +1,7 @@
 import { MessageActionRow, MessageButton, MessageEmbed } from "discord.js";
 import { ButtonResponse } from "../structures/Commands";
 import lilyweight from "lilyweight";
+import { EmbedFieldData } from "discord.js";
 
 export default new ButtonResponse({
   category: "weight",
@@ -23,7 +24,7 @@ export default new ButtonResponse({
       console.log(profileName[1]);
       profile = profileName[1];
     }
-    const username = fields[0];
+    let username = fields[0];
     const weight = await lily.getWeight(uuid).catch(() => console.log());
     //calculations
     const skillb = Math.round(weight.skill.base * 10) / 10;
@@ -37,21 +38,20 @@ export default new ButtonResponse({
     const tcata = catab + catam + catae;
 
     let tslayer = Math.round(weight.slayer * 10) / 10;
+
+    let embedFields: EmbedFieldData[] = [];
+      embedFields.push({name: "Total weight: ", value: String(Math.round(weight.total * 10) / 10)});
+      embedFields.push({name: "<:catacombs:914860327978532874> Dungeon weight: ", value: `\`\`${tcata}\`\` Total\n\`\`${catab}\`\` from F completion\n\`\`${catam}\`\` from MM completion\n\`\`${catae}\`\` from cata level`});
+      embedFields.push({name: "<:beheaded:914859571351269447> Slayer weight: ", value: `\`\`${tslayer}\`\``});
+      embedFields.push({name: "<:skill:914859774187814932> Skill weight: ", value: `\`\`${tskill}\`\`(\`\`${skillb}\`\`/\`\`${skillo}\`\` overflow)`});
     const embed = new MessageEmbed()
-      .setDescription(
-        `Total weight is **\`\`${
-          Math.round(weight.total * 10) / 10
-        }\`\`** Current stage is: **\`\`unknown\`\`**\n
-                  <:catacombs:914860327978532874> Dungeon weight is \`\`${tcata}\`\`(\`\`${catab}\`\` from F completion, \`\`${catam}\`\` from MM completion and \`\`${catae}\`\` from cata level)
-                  <:beheaded:914859571351269447> Slayer weight is \`\`${tslayer}\`\`
-                          <:skill:914859774187814932> Skill weight is \`\`${tskill}\`\`(\`\`${skillb}\`\`/\`\`${skillo}\`\` overflow)`
-      )
+      .setFields(embedFields)
       .setFooter({
         text: `requested by ${interaction.message.interaction.user.username}`,
       })
       .setThumbnail(`https://mc-heads.net/avatar/${uuid}/100`)
       .setTitle(
-        `profile: **\`\`${profile}\`\`** username: **\`\`${username}\`\`**`
+        `profile: **\`\`${profile}\`\`** username: **\`\`${username}\`\`**\nCurrent Stage: **\`\`unknown\`\`**`
       )
       .setColor(`RED`)
       .setAuthor({

@@ -123,7 +123,8 @@ export default new Event(
         )
           return interaction.reply({
             content: `I cannot execute this command due to the lack of ${botRequiredPermission}`,
-          });
+          })
+          .catch(() => interaction.followUp({content: `I cannot execute this command due to the lack of ${botRequiredPermission}`}))
       }
       //if user requires permission
       if (command.userPermissions) {
@@ -140,7 +141,8 @@ export default new Event(
         )
           return interaction.reply({
             content: `You cannot use this command as you lack ${userRequiredPermission}`,
-          });
+          })
+          .catch(() => interaction.followUp({content: `You cannot use this command as you lack ${userRequiredPermission}`}))
       }
 
       if (command.require) {
@@ -148,7 +150,8 @@ export default new Event(
         if (RequireValue == false)
           return interaction.reply({
             content: `the client in which this command has been called, doesn't have the required values to execute this command`,
-          });
+          })
+          .catch(() => interaction.followUp({content: `the client in which this command has been called, doesn't have the required values to execute this command`}))
       }
 
       await interaction.deferReply();

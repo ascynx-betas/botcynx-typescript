@@ -1,3 +1,4 @@
+import { EmbedFieldData } from "discord.js";
 import fetch from "node-fetch";
 import {
   senitherProfile,
@@ -99,13 +100,13 @@ const extractWeight = async function (data: senitherProfileSingular) {
   } else {
     gamestage = null;
   }
+  let embedFields: EmbedFieldData[] = [];
+    embedFields.push({name: "Total weight:", value: `${rf}`});
+    embedFields.push({name: "<:catacombs:914860327978532874> Dungeon weight", value: `\`\`${rfdungeon}\`\`(\`\`${rdungeon}\`\`/\`\`${rodungeon}\`\` overflow)`});
+    embedFields.push({name: "<:beheaded:914859571351269447> Slayer weight:", value: `\`\`${rfslayer}\`\`(\`\`${rslayer}\`\`/\`\`${roslayer}\`\` overflow)`});
+    embedFields.push({name: `<:skill:914859774187814932> Skill weight`, value: `\`\`${rfskill}\`\`(\`\`${rskill}\`\`/\`\`${roskill}\`\` overflow)`});
 
-  const description = `Total weight is **\`\`${rf}\`\`** Current stage is: **\`\`${gamestage}\`\`**\n
-      <:catacombs:914860327978532874> Dungeon weight is \`\`${rfdungeon}\`\`(\`\`${rdungeon}\`\`/\`\`${rodungeon}\`\` overflow)
-      <:beheaded:914859571351269447> Slayer weight is \`\`${rfslayer}\`\`(\`\`${rslayer}\`\`/\`\`${roslayer}\`\` overflow)
-    <:skill:914859774187814932> Skill weight is \`\`${rfskill}\`\`(\`\`${rskill}\`\`/\`\`${roskill}\`\` overflow)`;
-
-  let result = { description: description, profilename: profilename };
+  let result = { embedFields: embedFields, profilename: profilename, gamestage: gamestage };
   return result;
 };
 
