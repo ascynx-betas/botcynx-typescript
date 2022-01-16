@@ -84,7 +84,7 @@ export default new Event("interactionCreate", async (interaction) => {
 
     if (command.onlyAuthor) {
       let user = interaction.user.id;
-      let author = interaction.message.interaction.user.id;
+      let author = (interaction.message.interaction?.user?.id || (interaction.message as Message).mentions.repliedUser?.id);
 
       if (user != author)
         return interaction.update({
@@ -169,7 +169,7 @@ export default new Event("interactionCreate", async (interaction) => {
 
     if (button.onlyAuthor) {
       let user = interaction.user.id;
-      let author = interaction.message.interaction.user.id;
+      let author = (interaction.message.interaction?.user?.id || (interaction.message as Message).mentions.repliedUser?.id);
 
       if (user != author)
         return interaction.update({

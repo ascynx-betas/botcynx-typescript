@@ -1,4 +1,4 @@
-import { configModel } from "../../../models/config";
+import { Message, MessageActionRow, MessageButton, MessageEmbed } from "discord.js";
 import { Command } from "../../../structures/Commands";
 
 export default new Command({
@@ -11,39 +11,42 @@ export default new Command({
         //available flags: -l local(current guild) -g global(every guild)
 
         //events that can be disabled: linkReader and roleLinked
-        //commands that can be disabled: all
+        //commands that can be disabled: all except exec and disable
         const commands = (client.ArrayOfSlashCommands.concat(client.commands)).map((c: any) => c.name);
+
+        if (!target || typeof target == "undefined") return message.reply({content: `please specify the command you want to disable`})
 
         if (!commands.includes(target) && target != "linkReader" && target != "roleLinked") return message.reply({content: `you cannot disable ${target} as it is not an available command / event`}); //doesn't exist
 
         if (target == "disable" || target == "exec") return message.reply({content: `sorry but you cannot disable that command.`})
 
 
-        if (!flags || flags == "-l") {
-        const config = await configModel.find({guildId: message.guild.id});
-        const guildConfig = config[0]
-        if (guildConfig.disabledCommands.includes(target)) {
+        if (!flags || flags == "-l" || flags == "-g") {
+            let flag: string;
+            if (flags == "-l" || !flag) flag = "local";
+            if (flags == "-g") flag = "global";
 
-            configModel.updateOne({guildId: message.guild.id}, {$pull: { disabledCommands: target}}, function(err) {
-                if (err) return message.reply({content: `there was an error while removing the command from disabled commands`})
-            })
+            const embed = new MessageEmbed()
+                .setDescription(`are you sure you want to disable/enable ${target}`)
+                .setFooter({text: `requested by ${message.author.tag}`});
 
-            message.reply({content: `successfully removed ${target} from disabled commands`})
+            const buttonRow = new MessageActionRow().addComponents(
+                new MessageButton()
+                    .setCustomId(`disable:${target}:${flag}`)
+                    .setLabel('Yes')
+                    .setStyle('SUCCESS'),
+                new MessageButton()
+                    .setCustomId(`clear`)
+                    .setLabel('cancel')
+                    .setStyle('DANGER')
+                );
+
+
+                message.reply({embeds: [embed], components: [buttonRow]});
+
         } else {
-
-            configModel.updateOne({
-                guildId: message.guild.id,
-            }, {$addToSet: { disabledCommands: target}}, function(err) {
-                if (err) return message.reply({content: `there was an error while disabling that command`})
-            });
-        
-            message.reply({content: `successfully added ${target} to disabled commands`})
+            return message.reply({content: `there is no such command flag`})
         }
-    } else if (flags == "-g") {
-        return message.reply({content: `global config is not currently available`})
-    } else {
-        return message.reply({content: `there is no such command flag`})
-    }
 
     }
 })

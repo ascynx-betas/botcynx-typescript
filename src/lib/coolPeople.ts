@@ -1,4 +1,4 @@
-import { gistPull, updateCoolPeople } from "./gistPull";
+import { updateCoolPeople } from "./gistPull";
 
 export type coolPeopleType = | "developer" | "youtube rank" | "cool person" | "other developer" | "friend" | "staff"
 
