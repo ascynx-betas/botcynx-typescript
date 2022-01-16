@@ -79,11 +79,11 @@ export default new slashCommand({
     }
     if (!discord) discord = "couldn't fetch discord";
     let coolRank: string;
-    
+    let displayName: string;
     if (typeof coolPeopleUUId[uuid] != "undefined") {
       coolRank = coolPeopleUUId[uuid];
       coolRank = coolTypeToEmojis[coolRank];
-      username = coolRank + " " + username
+      displayName = coolRank + " " + username
 
     }
     let status = await getStatus(uuid).catch(() => null);
@@ -95,7 +95,7 @@ export default new slashCommand({
       return interaction.followUp({ content: `player not found` });
 
     let embedFields: EmbedFieldData[] = [];
-      embedFields.push({name: 'username:', value: username});
+      embedFields.push({name: 'username:', value: displayName});
       embedFields.push({name: 'Linked discord account:', value: discord});
       embedFields.push({name: "online:", value: status});
       embedFields.push({name: "verified", value: `${isVerified}`});
@@ -109,7 +109,7 @@ export default new slashCommand({
     }
 
     let embed = new MessageEmbed()
-      .setTitle(`Informations about ${username}`)
+      .setTitle(`Informations about ${displayName}`)
       .setColor("RANDOM")
       .setFields(embedFields)
       .setFooter({ text: `requested by ${interaction.user.tag}` })
