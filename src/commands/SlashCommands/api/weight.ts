@@ -9,6 +9,7 @@ import {
   getSpecifiedProfile,
 } from "../../../personal-modules/senither";
 import { uuid } from "../../../typings/ApiInterface";
+import { coolPeopleUUId, coolTypeToEmojis } from "../../../lib/coolPeople";
 
 export default new slashCommand({
   name: "weight",
@@ -145,6 +146,16 @@ export default new slashCommand({
     const profilename = result.profilename;
     const gameStage = result.gamestage
 
+    let coolRank: string;
+    
+    let displayName: string = username;
+    if (typeof coolPeopleUUId[(uuid as string)] != "undefined") {
+      coolRank = coolPeopleUUId[(uuid as string)];
+      coolRank = coolTypeToEmojis[coolRank];
+      displayName = coolRank
+
+    }
+
     const embed = new MessageEmbed()
       .setFields(embedFields)
       .setFooter({ text: `requested by ${interaction.user.tag}` })
@@ -154,7 +165,7 @@ export default new slashCommand({
       })
       .setThumbnail(`https://mc-heads.net/avatar/${uuid}/100`)
       .setTitle(
-        `profile: **\`\`${profilename}\`\`** username: **\`\`${username}\`\`**\ncurrent stage: **\`\`${gameStage}\`\`**`
+        `profile: **\`\`${profilename}\`\`** username: ${displayName} **\`\`${username}\`\`**\ncurrent stage: **\`\`${gameStage}\`\`**`
       );
 
     const buttonRow = new MessageActionRow().addComponents(

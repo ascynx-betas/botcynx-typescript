@@ -83,7 +83,7 @@ export default new slashCommand({
     if (typeof coolPeopleUUId[uuid] != "undefined") {
       coolRank = coolPeopleUUId[uuid];
       coolRank = coolTypeToEmojis[coolRank];
-      username = coolRank + username
+      username = coolRank + " " + username
 
     }
     let status = await getStatus(uuid).catch(() => null);

@@ -154,7 +154,7 @@ export default new Event(
           .catch(() => interaction.followUp({content: `the client in which this command has been called, doesn't have the required values to execute this command`}))
       }
 
-      if (!command.cooldown) await interaction.deferReply();
+      if (!command.cooldown || interaction.user.id == process.env.developerId) await interaction.deferReply();
 
       command.run({
         args: interaction.options as CommandInteractionOptionResolver,
