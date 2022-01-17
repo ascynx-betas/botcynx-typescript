@@ -1,5 +1,5 @@
 import { botcynx } from "..";
-import { Collection, CommandInteractionOptionResolver } from "discord.js";
+import { Collection, CommandInteractionOptionResolver, Message } from "discord.js";
 import { Event } from "../structures/Event";
 import {
   botcynxInteraction,
@@ -155,8 +155,9 @@ export default new Event(
       }
 
       if (!command.cooldown || interaction.user.id == process.env.developerId) await interaction.deferReply();
+      botcynx.emit('interactioncommandCreate', interaction);
 
-      command.run({
+      await command.run({
         args: interaction.options as CommandInteractionOptionResolver,
         client: botcynx,
         interaction: interaction as botcynxInteraction,

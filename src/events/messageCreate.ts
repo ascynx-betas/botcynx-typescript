@@ -98,5 +98,7 @@ export default new Event("messageCreate", async (message) => {
   if (command.devonly === true && message.author.id != process.env.developerId)
     return; //In message commands, devonly means that it can only be used by the set developer.
 
+    botcynx.emit('messageCommandCreate', message)
+    
   await command.run({ client: botcynx, message, args });
 });

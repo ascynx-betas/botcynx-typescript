@@ -31,6 +31,7 @@ export class botClient extends Client {
   ArrayOfSlashCommands = new Collection();
   buttonCommands: Collection<string, ButtonResponseType> = new Collection();
   cooldowns: Collection<string, commandCooldown> = new Collection();
+  tasks: Collection<string, any> = new Collection(); //!CHANGE THE ANY TO THE TASK TYPE ONCE IT'S MADE
   constructor() {
     super({ intents: 32767 });
   }
@@ -149,6 +150,17 @@ export class botClient extends Client {
 
       if (event) {
         this.on(event.event, event.run); //add Listener
+      }
+    });
+
+    //Custom Events
+
+    const customEventFiles = await globPromise(`${__dirname}/../lib/customEvents/*{.ts,.js}`);
+    customEventFiles.forEach(async (filePath) => {
+      const event = await this.importFile(filePath)
+
+      if (event) {
+        this.on(event.event, event.run)
       }
     });
   }

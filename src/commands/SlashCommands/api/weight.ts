@@ -148,7 +148,7 @@ export default new slashCommand({
 
     let coolRank: string;
     
-    let displayName: string = username;
+    let displayName: string;
     if (typeof coolPeopleUUId[(uuid as string)] != "undefined") {
       coolRank = coolPeopleUUId[(uuid as string)];
       coolRank = coolTypeToEmojis[coolRank];
