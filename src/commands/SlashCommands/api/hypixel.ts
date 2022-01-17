@@ -86,6 +86,7 @@ export default new slashCommand({
       displayName = coolRank + " " + username
 
     }
+
     let status = await getStatus(uuid).catch(() => null);
     status = status.session.online;
     if (status == false) status = `🔴`;
@@ -95,21 +96,21 @@ export default new slashCommand({
       return interaction.followUp({ content: `player not found` });
 
     let embedFields: EmbedFieldData[] = [];
-      embedFields.push({name: 'username:', value: displayName});
-      embedFields.push({name: 'Linked discord account:', value: discord});
-      embedFields.push({name: "online:", value: status});
-      embedFields.push({name: "verified", value: `${isVerified}`});
+      embedFields.push({name: 'username:', value: (displayName || username || "Error")});
+      embedFields.push({name: 'Linked discord account:', value: (discord || "no linked accounts")});
+      embedFields.push({name: "online:", value: (status || "Error")});
+      embedFields.push({name: "verified", value: (`${isVerified}` || "Error")});
 
     if (uuid) {
-      embedFields.splice(1, 0, {name: "UUID:", value: uuid});
+      embedFields.splice(1, 0, {name: "UUID:", value: (uuid || "Error")});
 
     } else {
-      embedFields.splice(1, 0, {name: "UUID:", value: verified[0].minecraftuuid});
+      embedFields.splice(1, 0, {name: "UUID:", value: (verified[0].minecraftuuid || "Error")});
 
     }
 
     let embed = new MessageEmbed()
-      .setTitle(`Informations about ${displayName}`)
+      .setTitle(`Informations about ${displayName || username ||"Error"}`)
       .setColor("RANDOM")
       .setFields(embedFields)
       .setFooter({ text: `requested by ${interaction.user.tag}` })
