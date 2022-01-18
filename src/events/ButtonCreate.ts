@@ -63,7 +63,7 @@ export default new Event("interactionCreate", async (interaction) => {
         .permissions.toArray();
 
       if (
-        !userPermissions.includes(userPermissions[0]) &&
+        !userPermissions.includes(userRequiredPermission[0]) &&
         !userPermissions.includes("ADMINISTRATOR") &&
         interaction.user.id != interaction.guild.ownerId &&
         interaction.user.id != process.env.developerId
@@ -148,7 +148,7 @@ export default new Event("interactionCreate", async (interaction) => {
         .permissions.toArray();
 
       if (
-        !userPermissions.includes(userPermissions[0]) &&
+        !userPermissions.includes(userRequiredPermission[0]) &&
         !userPermissions.includes("ADMINISTRATOR") &&
         interaction.user.id != interaction.guild.ownerId &&
         interaction.user.id != process.env.developerId

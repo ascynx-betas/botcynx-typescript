@@ -7,7 +7,7 @@ export default new Event('messageCommandCreate', message => {
 
     const createdAt = message.createdTimestamp;
     const filter = i => i.message.reference.messageId === message.id; //see if the interaction is linked to the created collector
-    const collector = message.channel.createMessageComponentCollector({filter, time: 30000});
+    const collector = message.channel.createMessageComponentCollector({filter, time: 300000});
     
     collector.on('end', async collected => {
         let messages = collected.map(i => i.message.id);

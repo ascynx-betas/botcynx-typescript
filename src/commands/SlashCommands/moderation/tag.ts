@@ -6,7 +6,7 @@ import { CommandType } from "../../../typings/Command";
 export default new slashCommand({
   name: "tag",
   description: "manage tags",
-  userPermissions: ["ADMINISTRATOR"],
+  userPermissions: ["MANAGE_MESSAGES"],
   category: "other",
   options: [
     {
