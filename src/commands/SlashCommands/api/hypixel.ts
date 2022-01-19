@@ -70,7 +70,7 @@ export default new slashCommand({
 
     let discord: any = await getPlayerByUuid(uuid).catch(() => null);
     if (discord) {
-      discord = discord?.player.socialMedia.links.DISCORD;
+      discord = discord?.player?.socialMedia?.links?.DISCORD;
       let isInCache = (client.users.cache.filter(u => u.tag === discord));
       if (isInCache.size > 0) {
         let user = isInCache.map(u => u.toString());

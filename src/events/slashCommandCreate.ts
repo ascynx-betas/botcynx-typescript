@@ -132,7 +132,7 @@ export default new Event(
         let userPermissions = interaction.guild.members.cache
           .get(interaction.user.id)
           .permissions.toArray();
-        console.log(userPermissions)
+          
         if (
           !userPermissions.includes(userRequiredPermission[0]) &&
           !userPermissions.includes("ADMINISTRATOR") &&

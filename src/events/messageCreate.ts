@@ -5,7 +5,7 @@ import { RequireTest } from "../personal-modules/commandHandler";
 import { commandCooldown } from "../typings/Command";
 
 export default new Event("messageCreate", async (message) => {
-  // MesssageCommands
+  // MessageCommands
   if (
     message.author.bot ||
     !message.guild ||

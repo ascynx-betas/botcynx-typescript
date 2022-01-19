@@ -4,9 +4,8 @@ import { Event } from "../../structures/Event";
 import { ButtonResponseType } from "../../typings/Command";
 
 export default new Event('messageCommandCreate', message => {
-
-    const createdAt = message.createdTimestamp;
     const filter = i => i.message.reference.messageId === message.id; //see if the interaction is linked to the created collector
+    if (message == null) return;
     const collector = message.channel.createMessageComponentCollector({filter, time: 300000});
     
     collector.on('end', async collected => {
@@ -49,7 +48,7 @@ export default new Event('messageCommandCreate', message => {
 
             if (!messages || typeof messagesArr[0] == "undefined") return;
 
-            message.channel.messages.cache.get(messagesArr[0]).edit({components: []});
+            message.channel.messages.cache.get(messagesArr[0])?.edit({components: []}).catch(null);
 
         }
 
@@ -66,7 +65,7 @@ export default new Event('messageCommandCreate', message => {
         
         
             if (button.temporary) {
-                if (button.temporary == true) message.channel.messages.cache.get(messageId).edit({components: []});
+                if (button.temporary == true) message.channel.messages.cache.get(messageId)?.edit({components: []}).catch(null);
             }
     })
 })

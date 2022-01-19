@@ -1,10 +1,11 @@
-import { Collection, Message } from "discord.js";
+import { Collection,  Message } from "discord.js";
 import { botcynx } from "../..";
 import { Event } from "../../structures/Event";
 import { botcynxInteraction, ButtonResponseType } from "../../typings/Command";
 
 export default new Event('interactioncommandCreate', (interaction: botcynxInteraction) => {
     const filter = i => i.message.interaction.id === interaction.id;
+    if (interaction == null) return;
     const collector = interaction.channel.createMessageComponentCollector({filter, time: 300000});
 
     collector.on('end', async collected => {
@@ -45,7 +46,7 @@ export default new Event('interactioncommandCreate', (interaction: botcynxIntera
 
             if (!messages || typeof messagesArr[0] == "undefined") return;
 
-            interaction.channel.messages.cache.get(messagesArr[0]).edit({components: []});
+            interaction.channel.messages.cache.get(messagesArr[0])?.edit({components: []}).catch(null);
 
         }
 
@@ -62,7 +63,7 @@ export default new Event('interactioncommandCreate', (interaction: botcynxIntera
         
         
             if (button.temporary) {
-                if (button.temporary == true) interaction.channel.messages.cache.get(messageId).edit({components: []});
+                if (button.temporary == true) interaction.channel.messages.cache.get(messageId)?.edit({components: []}).catch(null);
             }
     })
 })

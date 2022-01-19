@@ -444,7 +444,7 @@ export type Profile = {
     balance: number;
     transactions: transation[];
   };
-  game_mode?: string;
+  game_mode?: "island" | "ironman" | "bingo"; //if none then it's normal gamemode
 };
 type bid = {
   auction_id: string;
