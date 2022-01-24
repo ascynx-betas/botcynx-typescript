@@ -1,4 +1,5 @@
 import { MessageActionRow, MessageButton, MessageEmbed } from "discord.js";
+import { getUuidbyUsername } from "../personal-modules/mojang";
 import {
   extractWeight,
   getSpecifiedProfile,
@@ -12,13 +13,12 @@ export default new ButtonResponse({
   require: ["hypixelApiKey"],
   onlyAuthor: true,
   run: async ({ interaction, client }) => {
-    let uuid = interaction.message.embeds[0].thumbnail.url;
-    uuid = uuid.slice(28, uuid.length - 4);
-    let profilename = interaction.message.embeds[0].author.url;
-    profilename = profilename.slice(29, profilename.length);
-    const fields = profilename.split("/");
-    const speprofile = fields[1];
-    let username = fields[0];
+
+    const IdFields = interaction.customId.split(':');
+
+    let uuid = IdFields[2];
+    let speprofile = IdFields[3]
+    let username = (await getUuidbyUsername(uuid)).name;
     const profile = await getSpecifiedProfile(uuid, speprofile).catch(
       () => null
     );
@@ -47,7 +47,7 @@ export default new ButtonResponse({
 
     const buttonRow = new MessageActionRow().addComponents(
       new MessageButton()
-        .setCustomId("weight:lily")
+        .setCustomId(`weight:lily:${uuid}:${speprofile}`)
         .setLabel("Press to get lily weight")
         .setStyle("SECONDARY")
     );

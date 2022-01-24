@@ -53,10 +53,49 @@ export default new ButtonResponse({
 
             }
         } else if (flag == "global") {
+            if (interaction.user.id != process.env.developerId) return interaction.update({content: `You cannot modify the global configuration`})
+
+            const config = await configModel.find({guildId: "global"});
+            const globalConfig = config[0];
+
+            if (globalConfig.disabledCommands.includes(command)) {
+                //remove command
+
+                configModel.updateOne({guildId: 'global'}, {$pull: { disabledCommands: command}}, function (err) {
+                    if (err) {
+                        const embed = new MessageEmbed()
+                        .setDescription('there was an error while removing the command from disabled commands')
+                        .setTitle('Error')
+                        .setFooter({text: `E`})
+                        return interaction.update({embeds: [embed], components: []})
+                }
+            })
+
             const embed = new MessageEmbed()
-                .setTitle('Error')
-                .setDescription('global config is not currently available');
-            return interaction.update({embeds: [embed], components: []})
+                    .setTitle('Success')
+                    .setDescription(`successfully removed ${command} from global disabled commands`)
+
+            interaction.update({embeds: [embed], components: []});
+
+            } else {
+                //add command
+
+                configModel.updateOne({guildId: 'global'}, {$addToSet: { disabledCommands: command}}, function (err) {
+                    if (err) {
+                        const embed = new MessageEmbed()
+                            .setDescription('there was an error while disabling that command')
+                            .setTitle('Error')
+                            .setFooter({text: `E`})
+                        return interaction.update({embeds: [embed], components: []})
+                    }
+                })
+
+                const embed = new MessageEmbed()
+                    .setTitle('Success')
+                    .setDescription(`successfully added ${command} to global disabled commands`)
+
+            interaction.update({embeds: [embed], components: []});
+            }
         }
         
     }

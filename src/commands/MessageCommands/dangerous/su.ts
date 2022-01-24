@@ -53,7 +53,33 @@ export default new Command({
 
             }
         } else if (flags == "-g") {
-            return message.reply({content: `this flag hasn't been coded in yet`})
+
+            if (message.author.id != process.env.developerId) return;
+
+            const config = await configModel.findOne({guildId: "global"});
+            if (config.su.includes(Id)) {
+                //remove
+
+                configModel.updateOne({
+                    guildId: 'global',
+                }, {$pull: {su: `${Id}`}}, function (err) {
+                    if (err) return message.reply({content: `there was an error while removing super user from <@${Id}>`, allowedMentions: { parse: [ ]}});
+                })
+
+                message.reply({content: `successfully removed <@${Id}> from global super user list`});
+
+            } else {
+                //add
+
+                configModel.updateOne({
+                    guildId: 'global',
+                }, {$addToSet: {su: `${Id}`}}, function (err) {
+                    if (err) return message.reply({content: `there was an error while giving super user to <@${Id}>`, allowedMentions: { parse: [ ]}});
+                })
+
+                message.reply({content: `successfully added <@${Id}> to global super user list`});
+
+            }
         } else {
             return message.reply({content: `I cannot process that flag`})
         }

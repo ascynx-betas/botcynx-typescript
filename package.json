@@ -21,6 +21,7 @@
     "javascript",
     "discord.js"
   ],
+  "engines": {"node": ">=16.8.0"},
   "author": "Ascynx",
   "license": "MIT",
   "dependencies": {

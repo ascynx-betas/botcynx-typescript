@@ -35,7 +35,8 @@ export default new Event(
 
     //disabled commands
   const config = await configModel.find({guildId: newMessage.guild.id});
-  const isDisabled = (config[0].disabledCommands.includes(command.name));
+  const globalConfig = await configModel.findOne({guildId: "global"});
+  const isDisabled = (config[0].disabledCommands.includes(command.name) || globalConfig.disabledCommands.includes(command.name));
 
   if (isDisabled == true) {
     if (command.name == "weight") {
@@ -54,12 +55,14 @@ export default new Event(
       guildId: newMessage.guildId,
     });
     let info = Guildinfo[0];
-    const su = info.su;
+
+    const su = (info.su).concat(globalConfig.su);
     if (
       !su.includes(newMessage.author.id) &&
-      newMessage.author.id != process.env.developerId
+      newMessage.author.id != process.env.developerId &&
+      newMessage.author.id != newMessage.guild.ownerId
     )
-      return; //message commands can only be used by super-users or the developer
+      return; //message commands can only be used by super-users, guild owners or the developer
     if (
       command.devonly === true &&
       newMessage.author.id != process.env.developerId

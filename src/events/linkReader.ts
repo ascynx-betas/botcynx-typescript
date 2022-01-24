@@ -78,9 +78,11 @@ export default new Event("messageCreate", async (message) => {
   let attachmentsUrls: any = (source as Message<boolean>).attachments.map(
     (a) => a.url
   );
+  
+  //deprecated using deprecated property, might fail at any time
   let embeds = (source as Message<boolean>).embeds.filter(
     (embed) => embed.type === "rich"
-  ); //! using deprecated property, might fail at any time
+  );
 
   if (isThread == true) {
     webhook = await (message.channel as ThreadChannel).parent.fetchWebhooks();

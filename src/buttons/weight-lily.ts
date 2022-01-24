@@ -2,6 +2,7 @@ import { MessageActionRow, MessageButton, MessageEmbed } from "discord.js";
 import { ButtonResponse } from "../structures/Commands";
 import lilyweight from "lilyweight";
 import { EmbedFieldData } from "discord.js";
+import { getUuidbyUsername } from "../personal-modules/mojang";
 
 export default new ButtonResponse({
   category: "weight",
@@ -10,21 +11,15 @@ export default new ButtonResponse({
   require: ["hypixelApiKey"],
   onlyAuthor: true,
   run: async ({ interaction, client }) => {
+
+    let IdFields = interaction.customId.split(":");
+    const uuid = IdFields[2];
+    const profile = IdFields[3];
+    const username = (await getUuidbyUsername(uuid)).name;
+
+
     const lily = new lilyweight(process.env.hypixelapikey);
-    //extract info from embed
-    var uuid = interaction.message.embeds[0].thumbnail.url;
-    uuid = uuid.slice(28, uuid.length - 4);
-    var profilename = interaction.message.embeds[0].author.url;
-    profilename = profilename.slice(29, profilename.length);
-    const fields = profilename.split("/");
-    let profile = fields[1];
-    if (profile === "null") {
-      let profileName: any = interaction.message.embeds[0].title;
-      profileName = profileName.split("``");
-      console.log(profileName[1]);
-      profile = profileName[1];
-    }
-    let username = fields[0];
+    
     const weight = await lily.getWeight(uuid).catch(() => console.log());
     //calculations
     const skillb = Math.round(weight.skill.base * 10) / 10;
@@ -60,7 +55,7 @@ export default new ButtonResponse({
       });
     const buttonrow = new MessageActionRow().addComponents(
       new MessageButton()
-        .setCustomId(`weight:senither`)
+        .setCustomId(`weight:senither:${uuid}:${profile}`)
         .setLabel("Press to get senither weight")
         .setStyle("SECONDARY")
     );

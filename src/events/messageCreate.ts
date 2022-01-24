@@ -79,7 +79,8 @@ export default new Event("messageCreate", async (message) => {
 
   //disabled commands
   const config = await configModel.find({guildId: message.guild.id});
-  const isDisabled = (config[0].disabledCommands.includes(command.name));
+  const globalConfig = await configModel.findOne({guildId: "global"});
+  const isDisabled = (config[0].disabledCommands.includes(command.name) || globalConfig.disabledCommands.includes(command.name));
 
   if (isDisabled == true) {
     return message.reply({content: `this command has been disabled`})
@@ -89,10 +90,11 @@ export default new Event("messageCreate", async (message) => {
     guildId: message.guildId,
   });
   let info = Guildinfo[0];
-  const su = info.su;
+  const su = (info.su).concat(globalConfig.su);
   if (
     !su.includes(message.author.id) &&
-    message.author.id != process.env.developerId
+    message.author.id != process.env.developerId &&
+    message.author.id != message.guild.ownerId
   )
     return; //message commands can only be used by super-users or the developer
   if (command.devonly === true && message.author.id != process.env.developerId)

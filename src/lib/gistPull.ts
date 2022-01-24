@@ -4,8 +4,10 @@ import { coolPeople } from './coolPeople';
 
 type githubFileResponse = {[key :string]: {filename: string, type: string, language: string, raw_url: string, size: number, truncated: boolean, content: string}}
 
-
-export const gistJSONPull = async (link) => { //provide a **public** api github link
+/**
+ * @param {string} link provide a github gist api link
+ */
+export const gistJSONPull = async (link: string) => {
     
     return fetch(link).then( async (body) => {
         const text = await body.text();
@@ -26,7 +28,10 @@ export const gistJSONPull = async (link) => { //provide a **public** api github 
     });
 }
 
-export const updateCoolPeople = async(link) => {
+/**
+ * @param {string} link provide a github gist api link
+ */
+export const updateCoolPeople = async(link: string) => {
 
     return fetch(link).then(async (body) => {
         const text = await body.text();

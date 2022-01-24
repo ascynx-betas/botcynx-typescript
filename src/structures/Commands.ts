@@ -4,6 +4,7 @@ import {
   MessageCommandType,
   MessageContextType,
   UserContextType,
+  WhitelistedCommands,
 } from "../typings/Command";
 
 export class slashCommand {
@@ -31,3 +32,9 @@ export class ButtonResponse {
     Object.assign(this, commandOptions);
   }
 } //Buttons
+
+export class WhitelistedCommand {
+  constructor(commandOptions: WhitelistedCommands) {
+    Object.assign(this, commandOptions)
+  }
+}

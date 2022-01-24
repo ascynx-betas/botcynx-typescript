@@ -4,7 +4,7 @@ import { Event } from "../../structures/Event";
 import { ButtonResponseType } from "../../typings/Command";
 
 export default new Event('messageCommandCreate', message => {
-    const filter = i => i.message.reference.messageId === message.id; //see if the interaction is linked to the created collector
+    const filter = i => i?.message?.reference?.messageId === message.id; //see if the interaction is linked to the created collector
     if (message == null) return;
     const collector = message.channel.createMessageComponentCollector({filter, time: 300000});
     
@@ -16,9 +16,9 @@ export default new Event('messageCommandCreate', message => {
 
         if (collected.size == 0) {
             let messages: Collection<string, Message> = await message.channel.messages.fetch({limit: 20});
-            messages = messages.filter(m => m.author.id == message.guild.me.id);
-            messages = messages.filter(m => m.type == "REPLY");
-            messages = messages.filter(m => m.reference?.messageId == message.id);
+            messages = messages.filter(m => m?.author?.id == message.guild.me.id);
+            messages = messages.filter(m => m?.type == "REPLY");
+            messages = messages.filter(m => m?.reference?.messageId == message.id);
 
             const components = messages.map(m => m.components);
             let customIds: string[] = [];

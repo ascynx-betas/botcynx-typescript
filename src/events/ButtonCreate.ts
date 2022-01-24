@@ -31,6 +31,7 @@ export default new Event("interactionCreate", async (interaction) => {
       let creation = (interaction.message as Message).createdTimestamp;
       let time = current - creation;
 
+      //deprecated
       //Timeout
       if (time >= 900000) {
         //const components = interaction.message.components
@@ -115,6 +116,7 @@ export default new Event("interactionCreate", async (interaction) => {
       let creation = (interaction.message as Message).createdTimestamp;
       let time = current - creation;
 
+      //deprecated
       //Timeout
       if (time >= 900000) {
         //const components = interaction.message.components;

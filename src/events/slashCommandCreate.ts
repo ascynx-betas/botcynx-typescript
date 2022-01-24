@@ -46,7 +46,8 @@ export default new Event(
 
       //disabled commands
       const config = await configModel.find({guildId: interaction.guild.id});
-      const isDisabled = (config[0].disabledCommands.includes(command.name));
+      const globalConfig = await configModel.findOne({guildId: "global"});
+      const isDisabled = (config[0].disabledCommands.includes(command.name) || globalConfig.disabledCommands.includes(command.name));
 
       if (isDisabled == true) {
         if (command.name == "weight") {

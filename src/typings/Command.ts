@@ -79,6 +79,10 @@ export type CommandType = {
   run: RunFunction;
 } & ChatInputApplicationCommandData; //SlashCommands
 
+export type WhitelistedCommands = {
+  pack?: string;
+} & CommandType & ChatInputApplicationCommandData //Whitelisted Interaction Commands (slash)
+
 export type UserContextType = {
   require?: require[];
   userPermissions?: PermissionString[];
