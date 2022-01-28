@@ -84,9 +84,11 @@ export default new Event(
           !botPermission.includes(botRequiredPermission[0]) &&
           !botPermission.includes("ADMINISTRATOR")
         )
-          return interaction.followUp({
+          return interaction.reply({
             content: `I cannot execute this command due to the lack of ${botRequiredPermission}`,
-          });
+            ephemeral: true
+          })
+          .catch(() => interaction.followUp({content: `I cannot execute this command due to the lack of ${botRequiredPermission}`}))
       }
       //if user requires permission
       if (command.userPermissions) {
@@ -94,16 +96,21 @@ export default new Event(
         let userPermissions = interaction.guild.members.cache
           .get(interaction.user.id)
           .permissions.toArray();
-
+          
         if (
-          !userPermissions.includes(userPermissions[0]) &&
+          !userPermissions.includes(userRequiredPermission[0]) &&
           !userPermissions.includes("ADMINISTRATOR") &&
           interaction.user.id != interaction.guild.ownerId &&
           interaction.user.id != process.env.developerId
         )
-          return interaction.followUp({
+          return interaction.reply({
             content: `You cannot use this command as you lack ${userRequiredPermission}`,
-          });
+            ephemeral: true
+          })
+          .catch(() => interaction.followUp({content: `You cannot use this command as you lack ${userRequiredPermission}`,
+          ephemeral: true
+          })
+          )
       }
 
       if (command.require) {
