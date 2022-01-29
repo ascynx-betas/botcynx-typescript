@@ -1,6 +1,7 @@
 import { MessageEmbed } from "discord.js";
 import { Command } from "../../../structures/Commands";
 import { inspect } from "util";
+import { haste } from "../../../lib/haste";
 
 //!You can access modules using /app/personal-modules/{module}.js
 export default new Command({
@@ -19,7 +20,7 @@ export default new Command({
     const clean = async (text: string) => {
       if (text && text.constructor.name == "Promise") text = await text; //don't remove the await
 
-      if (typeof text !== "string") text = inspect(text, { depth: 1 });
+      if (typeof text !== "string") text = inspect(text, { depth: 5 });
 
       // Replace symbols with character code alternatives
       text = text
@@ -76,32 +77,34 @@ export default new Command({
         throw Error("nope");
       cool = `\`\`\`js\n ${cool}\n\`\`\``;
       cleaned = `\`\`\`js\n ${cleaned}\n\`\`\``;
-
+        let hastebin;
       if (cool.length > 1000) cool = cut(cool);
-      if (cleaned.length > 1000) cleaned = cut(cleaned);
+      if (cleaned.length > 1000) {hastebin = await haste(cleaned); cleaned = cut(cleaned)};
       if (!activeFlags.includes('silent'))  {
       const embed = new MessageEmbed()
         .setFields([
           { name: "**input:**", value: cool },
           { name: "**output:**", value: cleaned },
         ])
-        .setAuthor({ name: "Success ✅" + " - Active flags: " + activeFlags.join(", ")});
-
+        .setAuthor({ name: "Success ✅" + " - Active flags: " + activeFlags.join(", ")})
+        .setFooter({text: (hastebin || `beans`)});
       message.channel.send({ embeds: [embed] });
         }
 
     } catch (err) {
+      let hastebin;
       let cool = code;
       cool = `\`\`\`js\n${cool}\n\`\`\``;
       err = `\`\`\`\n${err}\n\`\`\``;
       if (cool.length > 1000) cool = cut(cool);
-      if (err.length > 1000) err = cut(err);
+      if (err.length > 1000) {hastebin = await haste(err); err = cut(err)};
       const embed = new MessageEmbed()
         .setFields([
           { name: "**input:**", value: cool },
           { name: "**output:**", value: err },
         ])
-        .setAuthor({ name: "Error ❌" + " - Active flags: " + activeFlags.join(", ")});
+        .setAuthor({ name: "Error ❌" + " - Active flags: " + activeFlags.join(", ")})
+        .setFooter({text: (hastebin || `beans`)});
       message.channel.send({ embeds: [embed] });
     }
   },

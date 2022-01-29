@@ -44,12 +44,14 @@ export default new slashCommand({
     }
 
     let timeSince: number;
+    let Logout: number | undefined;
     let time: string;
     if (data.session.online == false) {
       const PlayerData = await getPlayerByUuid(uuid.id).catch(() => null);
 
       const LastLogout = PlayerData.player.lastLogout;
       const CurrentTime = Date.now();
+      Logout = LastLogout;
 
       timeSince = CurrentTime - LastLogout;
       time = "";
@@ -74,7 +76,8 @@ export default new slashCommand({
       timeSince = Math.round(timeSince * 10) / 10;
     }
     let offline: boolean;
-    if (isNaN(timeSince) == true) offline = false;
+    if (typeof Logout == "undefined") offline = false;
+
     if (data.session != null) {
       const gameType = data.session.gameType;
       const gameMode = data.session.mode;
@@ -121,12 +124,12 @@ export default new slashCommand({
 
           description = `${uuid.name} is currently online\n in Skyblock in ${gameModeTranslated}`;
         } else if (
-          typeof gameType == "undefined" ||
+          typeof gameType == "undefined" &&
           typeof offline == undefined ||
           offline == true
         ) {
           description = `${uuid.name} is offline, their last time online seems to be ${timeSince} ${time} ago`;
-        } else if (typeof gameType == "undefined" && offline == false) {
+        } else if (typeof gameType == "undefined" || offline == false) {
           description = `${uuid.name} has their status set to offline but isn't actually offline.`;
         } else
           description = `${uuid.name} is currently online\n Is in ${gameType} in the gamemode ${gameMode}`;

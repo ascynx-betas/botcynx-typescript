@@ -1,6 +1,6 @@
 {
   "name": "bot-rewrite",
-  "version": "1.1.2",
+  "version": "1.3",
   "description": "a discord bot made in ts based on an earlier project",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,8 @@
     "start:prod": "node dist/index.js",
     "build": "tsc",
     "watch": "tsc -w",
-    "quickstart": "tsc && node dist/index.js"
+    "quickstart": "tsc && node dist/index.js",
+    "test:api": "node dist/lib/test/gitPull.js"
   },
   "repository": {
     "type": "git",

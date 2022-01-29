@@ -2,7 +2,7 @@ import { MessageActionRow, MessageButton, MessageEmbed } from "discord.js";
 import { ButtonResponse } from "../structures/Commands";
 import lilyweight from "lilyweight";
 import { EmbedFieldData } from "discord.js";
-import { getUuidbyUsername } from "../personal-modules/mojang";
+import { getUsername } from "../personal-modules/mojang";
 
 export default new ButtonResponse({
   category: "weight",
@@ -15,7 +15,7 @@ export default new ButtonResponse({
     let IdFields = interaction.customId.split(":");
     const uuid = IdFields[2];
     const profile = IdFields[3];
-    const username = (await getUuidbyUsername(uuid)).name;
+    const username = await getUsername(uuid);
 
 
     const lily = new lilyweight(process.env.hypixelapikey);

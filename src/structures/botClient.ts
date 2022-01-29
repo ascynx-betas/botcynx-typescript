@@ -4,6 +4,7 @@ import {
   ClientEvents,
   Collection,
 } from "discord.js";
+import * as fs from 'fs';
 import {
   CommandType,
   UserContextType,
@@ -32,8 +33,11 @@ export class botClient extends Client {
   buttonCommands: Collection<string, ButtonResponseType> = new Collection();
   cooldowns: Collection<string, commandCooldown> = new Collection();
   tasks: Collection<string, any> = new Collection(); //!CHANGE THE ANY TO THE TASK TYPE ONCE IT'S MADE
+  package: any;
   constructor() {
     super({ intents: 32767 });
+    this.package = JSON.parse(fs.readFileSync('package.json', 'utf-8'));
+    
   }
 
   start() {

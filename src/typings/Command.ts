@@ -13,19 +13,6 @@ import {
 } from "discord.js";
 import { botClient } from "../structures/botClient";
 
-/**
- * {
- * name: "String",
- * aliases?: "Array of string"
- * description: "String",
- * userPermissions?: "Array of permissions",
- * botPermissions?: "Array of permissions",
- * devonly?: "boolean"
- * run: async({ botClient, interaction}) => {
- * }
- * }
- */
-
 export interface botcynxInteraction extends CommandInteraction {
   member: GuildMember;
 }
@@ -34,6 +21,10 @@ export interface contextInteraction extends ContextMenuInteraction {
   message: Message;
 }
 
+
+/**
+ * required values.
+ */
 export type require =
   | "webhookLogLink"
   | "hypixelApiKey"
@@ -41,33 +32,60 @@ export type require =
   | "mongooseConnectionString"
   | "botPrefix";
 
+  /**
+   * client - the client that will run this interaction
+   * interaction - the informations linked to this interaction
+   * args - the interaction options
+   */
 interface runOptions {
   client: botClient;
   interaction: botcynxInteraction;
   args: CommandInteractionOptionResolver;
 } //SlashCommands
+
+/**
+ * client - the client that will run this interaction update
+ * interaction - the informations linked to this interaction
+ */
 interface updateRunOptions {
   client: botClient;
   interaction: MessageComponentInteraction;
 }
 
+/**
+  * client - the client that will run this interaction
+  * interaction - the informations linked to this interaction
+  * args - the interaction options 
+  */
 interface runContextOptions {
   client: botClient;
   interaction: contextInteraction;
   args: CommandInteractionOptionResolver;
 } //ContextCommands
 
+/**
+  * client - the client that will run this interaction
+  * message - the informations linked to this message
+  * args - the interaction options  
+  */
 interface runOptionsMessage {
   client: botClient;
   message: Message;
   args: any;
 } //MessageCommands
 
+/**
+ * all run functions
+ */
 type updateRunFunction = (options: updateRunOptions) => any;
 type RunFunction = (options: runOptions) => any;
 type MessageRunFunction = (options: runOptionsMessage) => any;
 type ContextRunFunction = (options: runContextOptions) => any;
 
+
+/**
+ * all arguments for the environment in which the commands will be executed
+ */
 export type CommandType = {
   require?: require[];
   userPermissions?: PermissionString[];
@@ -79,6 +97,9 @@ export type CommandType = {
   run: RunFunction;
 } & ChatInputApplicationCommandData; //SlashCommands
 
+/**
+ * interaction commands that are whitelisted
+ */
 export type WhitelistedCommands = {
   pack?: string;
 } & CommandType & ChatInputApplicationCommandData //Whitelisted Interaction Commands (slash)
@@ -128,6 +149,9 @@ export type ButtonResponseType = {
   run: updateRunFunction;
 };
 
+/**
+ * Cooldowns linked to commands
+ */
 export class commandCooldown {
   command: string;
   user: string;

@@ -1,5 +1,5 @@
 import { MessageActionRow, MessageButton, MessageEmbed } from "discord.js";
-import { getUuidbyUsername } from "../personal-modules/mojang";
+import { getUsername } from "../personal-modules/mojang";
 import {
   extractWeight,
   getSpecifiedProfile,
@@ -18,7 +18,7 @@ export default new ButtonResponse({
 
     let uuid = IdFields[2];
     let speprofile = IdFields[3]
-    let username = (await getUuidbyUsername(uuid)).name;
+    let username = await getUsername(uuid);
     const profile = await getSpecifiedProfile(uuid, speprofile).catch(
       () => null
     );

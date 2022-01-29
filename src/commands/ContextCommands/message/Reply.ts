@@ -9,11 +9,11 @@ export default new MessageContextCommand({
 
   run: async ({ interaction }) => {
     interaction.followUp({
-      content: `${
+      content: `${(
         (interaction.channel as GuildTextBasedChannel).messages.cache.get(
           interaction.targetId
         ).content
-      }`,
+      || "no content")}`,
     });
   },
 });
