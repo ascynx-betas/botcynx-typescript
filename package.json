@@ -1,7 +1,7 @@
 {
-  "name": "bot-rewrite",
+  "name": "botcynx-typescript",
   "version": "1.3",
-  "description": "a discord bot made in ts based on an earlier project",
+  "description": "a discord bot made in typescript based on an earlier project",
   "main": "index.js",
   "scripts": {
     "pretest": "eslint --ignore-path .gitignore",
@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "none"
+    "url": "https://github.com/ascynx-betas/botcynx-typescript"
   },
   "keywords": [
     "discord",
