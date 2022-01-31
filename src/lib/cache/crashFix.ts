@@ -15,10 +15,10 @@ export class jsonCache extends cache {
     }
 
     /**
-     * - import data into the current data cache (currently overrides data)
+     * - Import data into the current data cache (currently overrides data)
      * @param data - Data to import (currently overrides the internal data)
      */
-    importData(data) {
+    importData(data: any) {
         this.data = data;
     }
 }

@@ -17,10 +17,9 @@ export default new ButtonResponse({
     const profile = IdFields[3];
     const username = await getUsername(uuid);
 
-
     const lily = new lilyweight(process.env.hypixelapikey);
-    
-    const weight = await lily.getWeight(uuid).catch(() => console.log());
+ 
+    const weight = await lily.getProfileWeight(uuid, profile);
     //calculations
     const skillb = Math.round(weight.skill.base * 10) / 10;
     const skillo = Math.round(weight.skill.overflow * 10) / 10;

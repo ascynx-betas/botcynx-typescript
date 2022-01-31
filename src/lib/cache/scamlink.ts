@@ -3,7 +3,7 @@ import { repoLink } from "./cache";
 import { jsonCache } from "./crashFix";
 
 //! ALL OF THE LINKS IN THERE AREN'T NECESSARELY SCAM LINKS
-export const scamLinks = new jsonCache(new repoLink('nacrt', 'SkyblockClient-REPO', 'files/scamlinks.json'));
+export const scamLinks = new jsonCache(new repoLink('ascynx', 'botcynx-data', 'scamlinks.json'));
 
 export function hasScamLink(message: string) {
     let hasScamLink: boolean = false;
