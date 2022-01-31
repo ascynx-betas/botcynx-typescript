@@ -11,7 +11,7 @@ export default new Event('messageCreate', (message) => {
     
     //if in scamLink database
     Data.isScamLink = hasScamLink(message.content);
-    if (Data.isScamLink = true) Data.cause = 'Link detected in known database';
+    if (Data.isScamLink == true) Data.cause = 'Link detected in known database';
 
 
     //common server scam method
