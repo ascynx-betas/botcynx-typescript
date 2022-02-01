@@ -3,6 +3,7 @@ import { configModel } from "../models/config";
 import { Event } from "../structures/Event";
 import { RequireTest } from "../personal-modules/commandHandler";
 import { commandCooldown } from "../typings/Command";
+import { botPermissionInhibitor, isDisabled, isOnCooldown, userPermissionInhibitor } from "../lib/command/commandInhibitors";
 
 export default new Event("messageCreate", async (message) => {
   // MessageCommands
@@ -26,49 +27,20 @@ export default new Event("messageCreate", async (message) => {
 
   if (!command) return;
 
+  if (!isDisabled(command, message.guild)) return message.reply('This command is disabled');
+  
   //cooldown
-  if (command.cooldown && message.author.id != process.env.developerId) {
-    const time = command.cooldown * 1000; //set seconds to milliseconds
-    let userCooldowns = botcynx.cooldowns.get(
-      `${message.author.id}-${command.name}`
-    );
+ if (command.cooldown && message.author.id != process.env.developerId) {
+   if (!isOnCooldown(command, message.author)) return message.reply('You are currently in cooldown');
+ }
 
-    if (typeof userCooldowns != "undefined") {
-      let cooldown = userCooldowns.timestamp;
-
-      if (cooldown > Date.now()) {
-        //still in cooldown
-
-        return message.reply({
-          content: `chill out, you're currently on cooldown from using the ${command.name} command`,
-        });
-      } else {
-        //ended
-
-        botcynx.cooldowns.delete(`${message.author.id}-${command.name}`);
-        const newCoolDown = new commandCooldown(
-          message.author.id,
-          time,
-          command.name
-        );
-        botcynx.cooldowns.set(
-          `${message.author.id}-${command.name}`,
-          newCoolDown
-        );
-      }
-    } else {
-      //doesn't exist
-
-      const newCoolDown = new commandCooldown(
-        message.author.id,
-        time,
-        command.name
-      );
-      botcynx.cooldowns.set(
-        `${message.author.id}-${command.name}`,
-        newCoolDown
-      );
-    }
+  // if bot requires permissions
+  if (command.botPermissions) {
+    if (!botPermissionInhibitor(command, message.guild)) return message.reply('I do not have the permissions required to run that command !')
+  }
+  //if user requires permission
+  if (command.userPermissions) {
+    if (!userPermissionInhibitor(command, {member: message.member, guild: message.guild})) return message.reply('You do not have the required permissions to run that command !')
   }
 
   //require values
@@ -77,14 +49,7 @@ export default new Event("messageCreate", async (message) => {
     if (RequireValue == false) return;
   }
 
-  //disabled commands
-  const config = await configModel.find({guildId: message.guild.id});
   const globalConfig = await configModel.findOne({guildId: "global"});
-  const isDisabled = (config[0].disabledCommands.includes(command.name) || globalConfig.disabledCommands.includes(command.name));
-
-  if (isDisabled == true) {
-    return message.reply({content: `this command has been disabled`})
-  };
 
   const Guildinfo = await configModel.find({
     guildId: message.guildId,

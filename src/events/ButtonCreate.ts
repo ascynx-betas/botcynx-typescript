@@ -1,12 +1,14 @@
 import { botcynx } from "..";
 import { Event } from "../structures/Event";
 import {
+  GuildMember,
   Message,
   MessageActionRow,
   MessageButton,
   MessageSelectMenu,
 } from "discord.js";
 import { RequireTest } from "../personal-modules/commandHandler";
+import { botPermissionInhibitor, userPermissionInhibitor } from "../lib/command/commandInhibitors";
 
 export default new Event("interactionCreate", async (interaction) => {
   if (interaction.isCommand()) return;
@@ -130,33 +132,17 @@ export default new Event("interactionCreate", async (interaction) => {
     } //temp check
 
     if (button.botPermissions) {
-      const botRequiredPermission = button.botPermissions;
-      let botPermission = interaction.guild.me.permissions.toArray();
-
-      if (
-        !botPermission.includes(botRequiredPermission[0]) &&
-        !botPermission.includes("ADMINISTRATOR")
-      )
+      if (!botPermissionInhibitor(button, interaction.guild))
         return interaction.followUp({
-          content: `I cannot execute this command due to the lack of ${botRequiredPermission}`,
+          content: `I am missing the required permissions to run this command`,
           ephemeral: true,
         });
     }
 
     if (button.userPermissions) {
-      const userRequiredPermission = button.userPermissions;
-      let userPermissions = interaction.guild.members.cache
-        .get(interaction.user.id)
-        .permissions.toArray();
-
-      if (
-        !userPermissions.includes(userRequiredPermission[0]) &&
-        !userPermissions.includes("ADMINISTRATOR") &&
-        interaction.user.id != interaction.guild.ownerId &&
-        interaction.user.id != process.env.developerId
-      )
+      if (!userPermissionInhibitor(button, {member: (interaction.member as GuildMember), guild: interaction.guild}))
         return interaction.followUp({
-          content: `You cannot use this command as you lack ${userRequiredPermission}`,
+          content: `You do not have the required permissions to run this command`,
           ephemeral: true,
         });
     }

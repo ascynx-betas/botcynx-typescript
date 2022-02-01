@@ -1,5 +1,6 @@
 import { Message } from "discord.js";
 import { botcynx } from "..";
+import { botPermissionInhibitor, isDisabled, isOnCooldown, userPermissionInhibitor } from "../lib/command/commandInhibitors";
 import { configModel } from "../models/config";
 import { RequireTest } from "../personal-modules/commandHandler";
 import { Event } from "../structures/Event";
@@ -32,24 +33,22 @@ export default new Event(
       let RequireValue = await RequireTest(command.require);
       if (RequireValue == false) return;
     }
-
-    //disabled commands
-  const config = await configModel.find({guildId: newMessage.guild.id});
   const globalConfig = await configModel.findOne({guildId: "global"});
-  const isDisabled = (config[0].disabledCommands.includes(command.name) || globalConfig.disabledCommands.includes(command.name));
+  if (!isDisabled(command, newMessage.guild)) return newMessage.reply('This command is disabled');
+  
+  //cooldown
+ if (command.cooldown && newMessage.author.id != process.env.developerId) {
+   if (!isOnCooldown(command, newMessage.author)) return newMessage.reply('You are currently in cooldown');
+ }
 
-  if (isDisabled == true) {
-    if (command.name == "weight") {
-      return newMessage.reply({content: `we don't have that command, smh`})
-    }
-    return newMessage.reply({content: `this command has been disabled`})
-  };
-
-    //doesn't respond after 15 minutes elapsed
-    let createdAt = newMessage.createdTimestamp;
-    let now = Date.now();
-    let time = now - createdAt;
-    if (time >= 900000) return;
+  // if bot requires permissions
+  if (command.botPermissions) {
+    if (!botPermissionInhibitor(command, newMessage.guild)) return newMessage.reply('I do not have the permissions required to run that command !')
+  }
+  //if user requires permission
+  if (command.userPermissions) {
+    if (!userPermissionInhibitor(command, {member: newMessage.member, guild: newMessage.guild})) return newMessage.reply('You do not have the required permissions to run that command !')
+  }
 
     const Guildinfo = await configModel.find({
       guildId: newMessage.guildId,

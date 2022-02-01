@@ -43,40 +43,7 @@ export default new slashCommand({
       return interaction.followUp({ embeds: [embed] });
     }
 
-    let timeSince: number;
-    let Logout: number | undefined;
-    let time: string;
-    if (data.session.online == false) {
-      const PlayerData = await getPlayerByUuid(uuid.id).catch(() => null);
-
-      const LastLogout = PlayerData.player.lastLogout;
-      const CurrentTime = Date.now();
-      Logout = LastLogout;
-
-      timeSince = CurrentTime - LastLogout;
-      time = "";
-      timeSince = timeSince / 1000;
-      time = " seconds";
-      if (timeSince > 60) {
-        timeSince = timeSince / 60; // seconds to minutes
-        time = " minutes";
-        if (timeSince > 60) {
-          timeSince = timeSince / 60; // minutes to hours
-          time = " hours";
-          if (timeSince > 24) {
-            timeSince = timeSince / 24; // hours to days
-            time = " days";
-            if (timeSince > 7) {
-              timeSince = timeSince / 7; // days to weeks
-              time = " weeks";
-            }
-          }
-        }
-      }
-      timeSince = Math.round(timeSince * 10) / 10;
-    }
-    let offline: boolean;
-    if (typeof Logout == "undefined") offline = false;
+    let offline = !data.session.online;
 
     if (data.session != null) {
       const gameType = data.session.gameType;
@@ -128,9 +95,7 @@ export default new slashCommand({
           typeof offline == undefined ||
           offline == true
         ) {
-          description = `${uuid.name} is offline, their last time online seems to be ${timeSince} ${time} ago`;
-        } else if (typeof gameType == "undefined" || offline == false) {
-          description = `${uuid.name} has their status set to offline but isn't actually offline.`;
+          description = `${uuid.name} is offline`;
         } else
           description = `${uuid.name} is currently online\n Is in ${gameType} in the gamemode ${gameMode}`;
       } else
