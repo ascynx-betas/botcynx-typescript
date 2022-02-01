@@ -1,4 +1,5 @@
 import { MessageEmbed } from "discord.js";
+import { timestampToHuman } from "../../../lib/utils";
 import { getPlayerByUuid, getStatus } from "../../../personal-modules/hypixel";
 import { getUuidbyUsername } from "../../../personal-modules/mojang";
 import { slashCommand } from "../../../structures/Commands";
@@ -44,6 +45,22 @@ export default new slashCommand({
     }
 
     let offline = !data.session.online;
+    let timeSince: string;
+    let status: string;
+    if (offline == true) {
+      //if offline
+      const PlayerData = await getPlayerByUuid(uuid.id);
+      if (!PlayerData || typeof PlayerData == 'undefined') return interaction.followUp({content: `ERROR: couldn't get player data`}); //! CHANGE THAT ONCE FULL FUNCTION IS WRITTEN
+      if (!PlayerData.player?.lastLogin && !PlayerData.player?.lastLogout) status = 'Appear Offline'; //player has status set to Appear Offline
+        else {
+          const timestampSince = PlayerData.player.lastLogout;
+          const timeSinceLastLogout = Date.now() - timestampSince;
+
+          timeSince = timestampToHuman(timeSinceLastLogout);
+
+        };
+
+    }
 
     if (data.session != null) {
       const gameType = data.session.gameType;
@@ -93,11 +110,13 @@ export default new slashCommand({
         } else if (
           typeof gameType == "undefined" &&
           typeof offline == undefined ||
-          offline == true
+          offline == true &&
+           timeSince != undefined
         ) {
-          description = `${uuid.name} is offline`;
-        } else
-          description = `${uuid.name} is currently online\n Is in ${gameType} in the gamemode ${gameMode}`;
+          description = `${uuid.name} is offline since ${timeSince}`;
+        } else if (offline == true && typeof status != undefined) {
+          description = `${uuid.name} is currently in status Appear Offline, I cannot get their current position / last time online`;
+        }else description = `${uuid.name} is currently online\n Is in ${gameType} in the gamemode ${gameMode}`;
       } else
         description = `${uuid.name} is currently online\n in the game ${gameType} in the gamemode ${gameMode} in the map ${map}`;
 
