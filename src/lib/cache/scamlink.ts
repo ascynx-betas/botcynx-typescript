@@ -30,5 +30,6 @@ export const safe = [
     "canary.discord.com",
     "steamcommunity.com",
     "cdn.discordapp.com",
-    "media.discordapp.come"
+    "media.discordapp.com",
+    "discord.gg"
 ]
