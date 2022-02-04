@@ -1,7 +1,6 @@
 import { EmbedFieldData } from "discord.js";
 import fetch from "node-fetch";
 import {
-  senitherProfile,
   senitherProfiles,
   senitherProfileSingular,
 } from "../typings/ApiInterface";

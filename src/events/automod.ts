@@ -1,17 +1,19 @@
 import { GuildTextBasedChannel, MessageEmbed } from "discord.js";
 import { botcynx } from "..";
-import { hasScamLink } from "../lib/cache/scamlink";
+import { hasScamLink, safe } from "../lib/cache/scamlink";
+import { similarityDetection } from "../lib/utils";
 import { isLink } from "../personal-modules/testFor";
 import { Event } from "../structures/Event";
 //TODO rename the event to raid / scamlink detector
 export default new Event('messageCreate', (message) => {
+
     if (message.author.bot || !message.guild) return;
 
     let Data: {isScamLink: boolean, cause: string} = {isScamLink: false, cause: ''};
     
     //if in scamLink database
     Data.isScamLink = hasScamLink(message.content);
-    if (Data.isScamLink == true) Data.cause = 'Link detected in known database';
+    if (Data.isScamLink == true) Data = {isScamLink: Data.isScamLink, cause: 'Link detected in known database'};
 
 
     //common server scam method
@@ -20,6 +22,19 @@ export default new Event('messageCreate', (message) => {
         if (!message.member.permissions.toArray().includes('MENTION_EVERYONE')) Data = {isScamLink: true, cause: 'Common scam detection'};
       }
   }
+
+  //similarity based automod
+  (message.content.split(' ').filter(w => isLink(w))).forEach((word) => {
+    safe.forEach((safeword) => {
+      const testFields = word.split('/').filter(f => f != '');
+
+      const result = similarityDetection(testFields[1], safeword);
+      if (result.result == true && result.percentage >= 20) Data = {isScamLink: true, cause: `similarity based automod: ${word} is ${Math.floor(Math.round(result.percentage / 10) * 10)}% the same as ${safeword}`};
+
+    });
+  
+  });
+  
   //if ping spam raid
   if (message.mentions.users.size >= 5) Data = {isScamLink: true, cause: 'Spam mention'};
 

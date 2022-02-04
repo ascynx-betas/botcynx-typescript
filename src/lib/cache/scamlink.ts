@@ -22,3 +22,11 @@ export function hasScamLink(message: string) {
 
     return hasScamLink;
 }
+
+export const safe = [
+    "discord.gift",
+    "discord.com",
+    "ptb.discord.com",
+    "canary.discord.com",
+    "steamcommunity.com"
+]

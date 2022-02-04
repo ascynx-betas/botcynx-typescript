@@ -20,7 +20,7 @@ async function haste(content: string) {
 			const res: hastebinRes = await (await fetch(`${url}/documents`, {
                 method: 'POST',
                 body: content,
-                headers: {'user-agent': `${botcynx.package.name}/${botcynx.package.version} haste function, commonly used for when outputs are too big`}
+                headers: {'user-agent': `${botcynx.package.name}/${botcynx.package.version} haste function, commonly used for when the output of commands exceeds the maximum character limit.`}
                 })).json();
 
 			return `${url}/${res.key}`;
