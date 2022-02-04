@@ -29,7 +29,7 @@ export default new Event('messageCreate', (message) => {
       const testFields = word.split('/').filter(f => f != '');
 
       const result = similarityDetection(testFields[1], safeword);
-      if (result.result == true && result.percentage >= 20) Data = {isScamLink: true, cause: `similarity based automod: ${word} is ${Math.floor(Math.round(result.percentage / 10) * 10)}% the same as ${safeword}`};
+      if (result.result == true && result.percentage >= 20 && !safe.some(w => w == testFields[1])) Data = {isScamLink: true, cause: `similarity based automod: ${word} is ${Math.floor(Math.round(result.percentage / 10) * 10)}% the same as ${safeword}`};
 
     });
   

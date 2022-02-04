@@ -28,5 +28,7 @@ export const safe = [
     "discord.com",
     "ptb.discord.com",
     "canary.discord.com",
-    "steamcommunity.com"
+    "steamcommunity.com",
+    "cdn.discordapp.com",
+    "media.discordapp.come"
 ]
