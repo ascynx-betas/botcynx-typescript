@@ -17,9 +17,6 @@ export default new Event('messageCreate', async (message) => {
         const config = await configModel.find({guildId: message.guild.id});
         if (config[0].disabledCommands.includes('crashLogReader')) return;
 
-        const allowedGuilds = ['779489942899785748'];
-        if (!allowedGuilds.includes(message.guild.id)) return;
-
         if (message.attachments.size === 0) return;
 
         for (const [, {url}] of message.attachments) {
@@ -27,11 +24,9 @@ export default new Event('messageCreate', async (message) => {
         
             const log = await (await fetch(url)).text();
             const isLog = checkPossibleLog(log);
-
             if (isLog == false) return;
 
             let logUrl = await haste(log);
-
             if (logUrl != 'unable to post') {
                 await message.delete();
             }
@@ -46,7 +41,6 @@ export default new Event('messageCreate', async (message) => {
             const JavaVersion = /\s+Java Version:.+$/g;
             const MinecraftVersion = /\s+Minecraft Version:.+$/g;
             const JVMFlags = /\s+JVM Flags:.+$/g;
-            const FML = /\s+FML:.+$/g;
 
             fields.forEach((data) => {
                 if (JavaVersion.test(data) == true || MinecraftVersion.test(data) == true || JVMFlags.test(data)) clientData.push(data);

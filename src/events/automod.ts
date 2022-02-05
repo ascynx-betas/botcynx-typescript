@@ -1,10 +1,10 @@
 import { GuildTextBasedChannel, MessageEmbed } from "discord.js";
 import { botcynx } from "..";
-import { hasScamLink, safe } from "../lib/cache/scamlink";
+import { hasScamLink, ignore, safe } from "../lib/cache/scamlink";
 import { similarityDetection } from "../lib/utils";
 import { isLink } from "../personal-modules/testFor";
 import { Event } from "../structures/Event";
-//TODO rename the event to raid / scamlink detector
+
 export default new Event('messageCreate', (message) => {
 
     if (message.author.bot || !message.guild) return;
@@ -29,9 +29,9 @@ export default new Event('messageCreate', (message) => {
       const testFields = word.split('/').filter(f => f != '');
 
       const result = similarityDetection(testFields[1], safeword);
-      if (result.result == true && result.percentage >= 60 && !safe.some(w => w == testFields[1])) Data = {isScamLink: true, cause: `similarity based automod: ${word} is ${Math.floor(Math.round(result.percentage / 10) * 10)}% the same as ${safeword}`};
+      if (result.result == true && result.percentage >= 60 && !ignore.some(w => w == testFields[1])) Data = {isScamLink: true, cause: `similarity based automod:\n${word} is ${Math.round(result.percentage *10) / 10}% the same as ${safeword}`};
 
-    });
+    }); //might be unstable after the last changes done
   
   });
   

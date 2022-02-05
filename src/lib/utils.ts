@@ -6,10 +6,11 @@ export const timestampToHuman = (timestamp: number): string => {
                 if (data.time >= 24) data = {time: data.time / 24, type: 'days'};
                     if (data.time >= 7) data = {time: data.time / 7, type: 'weeks'};
                         if (data.time >= 4) data = {time: data.time / 4, type: 'months'};
-                        data.time = Math.floor(Math.round(data.time * 10) / 10); //round number to decimal
+                        data.time = Math.round(data.time * 10) / 10; //round number to decimal
 
     return `${data.time} ${data.type}`
 }
+
 
 export const similarityDetection = (word: string, testWord: string): {result: boolean, percentage: number} => {
     const testWordLength = testWord.length;

@@ -29,7 +29,20 @@ export const safe = [
     "ptb.discord.com",
     "canary.discord.com",
     "steamcommunity.com",
+]; //checks those in automod;
+
+export const ignore = [
+    "discord.gift",
+    "discord.com",
+    "ptb.discord.com",
+    "canary.discord.com",
+    "steamcommunity.com",
+    "safety.discord.com",
+    "support-dev.discord.com",
+    "support.discord.com",
+    "blog.discord.com",
+    "media.discordapp.net",
+    "discord.gg",
     "cdn.discordapp.com",
-    "media.discordapp.com",
-    "discord.gg"
-]
+    "media.discordapp.com"
+]; //ignores those in automod
