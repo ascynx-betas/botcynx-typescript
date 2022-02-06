@@ -62,7 +62,8 @@ export default new slashCommand({
             if (isTestRun == false) {
               guild.members.cache
                 .get(member.id)
-                .roles.remove(removable).catch();
+                .roles.remove(removable)
+                .catch();
               affectedMembers.push(String(member));
             } else if (isTestRun == true) {
               affectedMembers.push(String(member));

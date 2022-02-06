@@ -21,7 +21,6 @@ export interface contextInteraction extends ContextMenuInteraction {
   message: Message;
 }
 
-
 /**
  * required values.
  */
@@ -32,11 +31,11 @@ export type require =
   | "mongooseConnectionString"
   | "botPrefix";
 
-  /**
-   * client - the client that will run this interaction
-   * interaction - the informations linked to this interaction
-   * args - the interaction options
-   */
+/**
+ * client - the client that will run this interaction
+ * interaction - the informations linked to this interaction
+ * args - the interaction options
+ */
 interface runOptions {
   client: botClient;
   interaction: botcynxInteraction;
@@ -53,10 +52,10 @@ interface updateRunOptions {
 }
 
 /**
-  * client - the client that will run this interaction
-  * interaction - the informations linked to this interaction
-  * args - the interaction options 
-  */
+ * client - the client that will run this interaction
+ * interaction - the informations linked to this interaction
+ * args - the interaction options
+ */
 interface runContextOptions {
   client: botClient;
   interaction: contextInteraction;
@@ -64,10 +63,10 @@ interface runContextOptions {
 } //ContextCommands
 
 /**
-  * client - the client that will run this interaction
-  * message - the informations linked to this message
-  * args - the interaction options  
-  */
+ * client - the client that will run this interaction
+ * message - the informations linked to this message
+ * args - the interaction options
+ */
 interface runOptionsMessage {
   client: botClient;
   message: Message;
@@ -81,7 +80,6 @@ type updateRunFunction = (options: updateRunOptions) => any;
 type RunFunction = (options: runOptions) => any;
 type MessageRunFunction = (options: runOptionsMessage) => any;
 type ContextRunFunction = (options: runContextOptions) => any;
-
 
 /**
  * all arguments for the environment in which the commands will be executed
@@ -102,7 +100,8 @@ export type CommandType = {
  */
 export type WhitelistedCommands = {
   pack?: string;
-} & CommandType & ChatInputApplicationCommandData //Whitelisted Interaction Commands (slash)
+} & CommandType &
+  ChatInputApplicationCommandData; //Whitelisted Interaction Commands (slash)
 
 export type UserContextType = {
   require?: require[];

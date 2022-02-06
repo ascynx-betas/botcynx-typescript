@@ -71,9 +71,9 @@ export default new slashCommand({
     let discord: any = await getPlayerByUuid(uuid).catch(() => null);
     if (discord) {
       discord = discord?.player?.socialMedia?.links?.DISCORD;
-      let isInCache = (client.users.cache.filter(u => u.tag === discord));
+      let isInCache = client.users.cache.filter((u) => u.tag === discord);
       if (isInCache.size > 0) {
-        let user = isInCache.map(u => u.toString());
+        let user = isInCache.map((u) => u.toString());
         discord = discord + " - " + user;
       }
     }
@@ -83,8 +83,7 @@ export default new slashCommand({
     if (typeof coolPeopleUUId[uuid] != "undefined") {
       coolRank = coolPeopleUUId[uuid];
       coolRank = coolTypeToEmojis[coolRank];
-      displayName = coolRank + " " + username
-
+      displayName = coolRank + " " + username;
     }
 
     let status = await getStatus(uuid).catch(() => null);
@@ -96,21 +95,28 @@ export default new slashCommand({
       return interaction.followUp({ content: `player not found` });
 
     let embedFields: EmbedFieldData[] = [];
-      embedFields.push({name: 'username:', value: (displayName || username || "Error")});
-      embedFields.push({name: 'Linked discord account:', value: (discord || "no linked accounts")});
-      embedFields.push({name: "online:", value: (status || "Error")});
-      embedFields.push({name: "verified", value: (`${isVerified}` || "Error")});
+    embedFields.push({
+      name: "username:",
+      value: displayName || username || "Error",
+    });
+    embedFields.push({
+      name: "Linked discord account:",
+      value: discord || "no linked accounts",
+    });
+    embedFields.push({ name: "online:", value: status || "Error" });
+    embedFields.push({ name: "verified", value: `${isVerified}` || "Error" });
 
     if (uuid) {
-      embedFields.splice(1, 0, {name: "UUID:", value: (uuid || "Error")});
-
+      embedFields.splice(1, 0, { name: "UUID:", value: uuid || "Error" });
     } else {
-      embedFields.splice(1, 0, {name: "UUID:", value: (verified[0].minecraftuuid || "Error")});
-
+      embedFields.splice(1, 0, {
+        name: "UUID:",
+        value: verified[0].minecraftuuid || "Error",
+      });
     }
 
     let embed = new MessageEmbed()
-      .setTitle(`Informations about ${displayName || username ||"Error"}`)
+      .setTitle(`Informations about ${displayName || username || "Error"}`)
       .setColor("RANDOM")
       .setFields(embedFields)
       .setFooter({ text: `requested by ${interaction.user.tag}` })

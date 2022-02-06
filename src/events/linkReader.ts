@@ -20,10 +20,10 @@ export default new Event("messageCreate", async (message) => {
   )
     return;
 
-    const config = await configModel.find({guildId: message.guild.id});
-    if (config[0].disabledCommands.includes('linkReader')) return;
+  const config = await configModel.find({ guildId: message.guild.id });
+  if (config[0].disabledCommands.includes("linkReader")) return;
 
-  const discordSiteRegExp = /.{0,6}\.?discord\.com/gmi
+  const discordSiteRegExp = /.{0,6}\.?discord\.com/gim;
 
   let results = containsLink(message.content);
   if (results.length == 0) return;
@@ -43,8 +43,8 @@ export default new Event("messageCreate", async (message) => {
   result = isId(fields[4]);
   fields[4] = fields[4].replace(regex, "");
   if (result == false) return message.react("❌"); //link contains a non-id
-  if (!botcynx.guilds.cache.get(fields[2])) return message.react("📵") // The guild isn't in the bot's cache
-  
+  if (!botcynx.guilds.cache.get(fields[2])) return message.react("📵"); // The guild isn't in the bot's cache
+
   const source = await (
     botcynx.channels.cache.get(fields[3]) as GuildTextBasedChannel
   ).messages
@@ -83,7 +83,7 @@ export default new Event("messageCreate", async (message) => {
   let attachmentsUrls: any = (source as Message<boolean>).attachments.map(
     (a) => a.url
   );
-  
+
   //deprecated using deprecated property, might fail at any time
   let embeds = (source as Message<boolean>).embeds.filter(
     (embed) => embed.type === "rich"

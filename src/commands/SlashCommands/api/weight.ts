@@ -144,16 +144,15 @@ export default new slashCommand({
 
     const embedFields = result.embedFields;
     const profilename = result.profilename;
-    const gameStage = result.gamestage
+    const gameStage = result.gamestage;
 
     let coolRank: string;
-    
-    let displayName: string;
-    if (typeof coolPeopleUUId[(uuid as string)] != "undefined") {
-      coolRank = coolPeopleUUId[(uuid as string)];
-      coolRank = coolTypeToEmojis[coolRank];
-      displayName = coolRank
 
+    let displayName: string;
+    if (typeof coolPeopleUUId[uuid as string] != "undefined") {
+      coolRank = coolPeopleUUId[uuid as string];
+      coolRank = coolTypeToEmojis[coolRank];
+      displayName = coolRank;
     }
 
     const embed = new MessageEmbed()

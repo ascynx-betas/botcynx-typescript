@@ -1,6 +1,11 @@
 import { Message } from "discord.js";
 import { botcynx } from "..";
-import { botPermissionInhibitor, isDisabled, isOnCooldown, userPermissionInhibitor } from "../lib/command/commandInhibitors";
+import {
+  botPermissionInhibitor,
+  isDisabled,
+  isOnCooldown,
+  userPermissionInhibitor,
+} from "../lib/command/commandInhibitors";
 import { configModel } from "../models/config";
 import { RequireTest } from "../personal-modules/commandHandler";
 import { Event } from "../structures/Event";
@@ -33,29 +38,42 @@ export default new Event(
       let RequireValue = await RequireTest(command.require);
       if (RequireValue == false) return;
     }
-  const globalConfig = await configModel.findOne({guildId: "global"});
-  if (!isDisabled(command, newMessage.guild)) return newMessage.reply('This command is disabled');
-  
-  //cooldown
- if (command.cooldown && newMessage.author.id != process.env.developerId) {
-   if (!isOnCooldown(command, newMessage.author)) return newMessage.reply('You are currently in cooldown');
- }
+    const globalConfig = await configModel.findOne({ guildId: "global" });
+    if (!isDisabled(command, newMessage.guild))
+      return newMessage.reply("This command is disabled");
 
-  // if bot requires permissions
-  if (command.botPermissions) {
-    if (!botPermissionInhibitor(command, newMessage.guild)) return newMessage.reply('I do not have the permissions required to run that command !')
-  }
-  //if user requires permission
-  if (command.userPermissions) {
-    if (!userPermissionInhibitor(command, {member: newMessage.member, guild: newMessage.guild})) return newMessage.reply('You do not have the required permissions to run that command !')
-  }
+    //cooldown
+    if (command.cooldown && newMessage.author.id != process.env.developerId) {
+      if (!isOnCooldown(command, newMessage.author))
+        return newMessage.reply("You are currently in cooldown");
+    }
+
+    // if bot requires permissions
+    if (command.botPermissions) {
+      if (!botPermissionInhibitor(command, newMessage.guild))
+        return newMessage.reply(
+          "I do not have the permissions required to run that command !"
+        );
+    }
+    //if user requires permission
+    if (command.userPermissions) {
+      if (
+        !userPermissionInhibitor(command, {
+          member: newMessage.member,
+          guild: newMessage.guild,
+        })
+      )
+        return newMessage.reply(
+          "You do not have the required permissions to run that command !"
+        );
+    }
 
     const Guildinfo = await configModel.find({
       guildId: newMessage.guildId,
     });
     let info = Guildinfo[0];
 
-    const su = (info.su).concat(globalConfig.su);
+    const su = info.su.concat(globalConfig.su);
     if (
       !su.includes(newMessage.author.id) &&
       newMessage.author.id != process.env.developerId &&

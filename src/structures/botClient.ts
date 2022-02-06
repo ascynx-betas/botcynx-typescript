@@ -4,7 +4,7 @@ import {
   ClientEvents,
   Collection,
 } from "discord.js";
-import * as fs from 'fs';
+import * as fs from "fs";
 import {
   CommandType,
   UserContextType,
@@ -36,17 +36,18 @@ export class botClient extends Client {
   package: any;
   constructor() {
     super({ intents: 32767 });
-    this.package = JSON.parse(fs.readFileSync('package.json', 'utf-8'));
-    
+    this.package = JSON.parse(fs.readFileSync("package.json", "utf-8"));
   }
 
   start() {
     if (process.env.mongooseConnectionString) {
       connect(process.env.mongooseConnectionString);
     }
-    
+
     this.registerModules();
-    this.login(process.env.botToken).then(() => console.log(`successfully logged in`))
+    this.login(process.env.botToken).then(() =>
+      console.log(`successfully logged in`)
+    );
   }
 
   async importFile(filePath: string) {
@@ -120,7 +121,6 @@ export class botClient extends Client {
     });
 
     this.on("ready", async () => {
-
       //register tags
       let guildsWithTags: any = await tagModel.find();
       guildsWithTags = guildsWithTags.map((g) => g.guildId);
@@ -159,12 +159,14 @@ export class botClient extends Client {
 
     //Custom Events
 
-    const customEventFiles = await globPromise(`${__dirname}/../lib/customEvents/*{.ts,.js}`);
+    const customEventFiles = await globPromise(
+      `${__dirname}/../lib/customEvents/*{.ts,.js}`
+    );
     customEventFiles.forEach(async (filePath) => {
-      const event = await this.importFile(filePath)
+      const event = await this.importFile(filePath);
 
       if (event) {
-        this.on(event.event, event.run)
+        this.on(event.event, event.run);
       }
     });
   }

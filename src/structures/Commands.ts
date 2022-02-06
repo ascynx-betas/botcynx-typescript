@@ -35,6 +35,6 @@ export class ButtonResponse {
 
 export class WhitelistedCommand {
   constructor(commandOptions: WhitelistedCommands) {
-    Object.assign(this, commandOptions)
+    Object.assign(this, commandOptions);
   }
 }

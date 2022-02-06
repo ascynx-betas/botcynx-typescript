@@ -50,16 +50,19 @@ export default new slashCommand({
     if (offline == true) {
       //if offline
       const PlayerData = await getPlayerByUuid(uuid.id);
-      if (!PlayerData || typeof PlayerData == 'undefined') return interaction.followUp({content: `ERROR: couldn't get player data`}); //! CHANGE THAT ONCE FULL FUNCTION IS WRITTEN
-      if (!PlayerData.player?.lastLogin && !PlayerData.player?.lastLogout) status = 'Appear Offline'; //player has status set to Appear Offline
-        else {
-          const timestampSince = Math.round(PlayerData.player.lastLogout / 1000);
-          console.log(Date.now(), timestampSince)
+      if (!PlayerData || typeof PlayerData == "undefined")
+        return interaction.followUp({
+          content: `ERROR: couldn't get player data`,
+        }); //! CHANGE THAT ONCE FULL FUNCTION IS WRITTEN
+      if (!PlayerData.player?.lastLogin && !PlayerData.player?.lastLogout)
+        status = "Appear Offline";
+      //player has status set to Appear Offline
+      else {
+        const timestampSince = Math.round(PlayerData.player.lastLogout / 1000);
+        console.log(Date.now(), timestampSince);
 
-          timeSince = `<t:${timestampSince}:R>`;
-
-        };
-
+        timeSince = `<t:${timestampSince}:R>`;
+      }
     }
 
     if (data.session != null) {
@@ -108,15 +111,14 @@ export default new slashCommand({
 
           description = `${uuid.name} is currently online\n in Skyblock in ${gameModeTranslated}`;
         } else if (
-          typeof gameType == "undefined" &&
-          typeof offline == undefined ||
-          offline == true &&
-           timeSince != undefined
+          (typeof gameType == "undefined" && typeof offline == undefined) ||
+          (offline == true && timeSince != undefined)
         ) {
           description = `${uuid.name} has been offline since ${timeSince}`;
         } else if (offline == true && typeof status != undefined) {
           description = `${uuid.name} is currently in status Appear Offline, I cannot get their current position / last time online`;
-        }else description = `${uuid.name} is currently online\n Is in ${gameType} in the gamemode ${gameMode}`;
+        } else
+          description = `${uuid.name} is currently online\n Is in ${gameType} in the gamemode ${gameMode}`;
       } else
         description = `${uuid.name} is currently online\n in the game ${gameType} in the gamemode ${gameMode} in the map ${map}`;
 

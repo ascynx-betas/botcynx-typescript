@@ -29,12 +29,12 @@ const getProfilebyUuid = async function (uuid: string) {
 const fetchJSON = async (url) => {
   const body = await fetch(url);
   const json = await body.json();
-  if (json.success === false) throw Error("Request to API Failed: " + json.error);
+  if (json.success === false)
+    throw Error("Request to API Failed: " + json.error);
   return json;
 };
 
 const getUsername = async (uuid) =>
-  (await fetchJSON(`https://api.mojang.com/user/profile/${uuid}`))
-  .name
+  (await fetchJSON(`https://api.mojang.com/user/profile/${uuid}`)).name;
 
 export { getProfilebyUuid, getUuidbyUsername, getUsername };

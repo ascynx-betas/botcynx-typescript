@@ -1,13 +1,16 @@
 import { botcynx } from "..";
 import { Collection, CommandInteractionOptionResolver } from "discord.js";
 import { Event } from "../structures/Event";
-import {
-  botcynxInteraction,
-  CommandType,
-} from "../typings/Command";
+import { botcynxInteraction, CommandType } from "../typings/Command";
 import { RequireTest } from "../personal-modules/commandHandler";
 import { tagModel } from "../models/tag";
-import { botPermissionInhibitor, isDevOnly, isDisabled, isOnCooldown, userPermissionInhibitor } from "../lib/command/commandInhibitors";
+import {
+  botPermissionInhibitor,
+  isDevOnly,
+  isDisabled,
+  isOnCooldown,
+  userPermissionInhibitor,
+} from "../lib/command/commandInhibitors";
 
 export default new Event(
   "interactionCreate",
@@ -44,23 +47,37 @@ export default new Event(
         return interaction.reply("You have used a non existant command");
 
       //disabled commands
-      if (!isDisabled(command, interaction.guild)) return interaction.reply('This command is disabled');
+      if (!isDisabled(command, interaction.guild))
+        return interaction.reply("This command is disabled");
 
       if (command.devonly) {
-      if (!isDevOnly(interaction.user)) return interaction.reply('this command is developer only')
+        if (!isDevOnly(interaction.user))
+          return interaction.reply("this command is developer only");
       }
       //cooldown
-     if (command.cooldown && interaction.user.id != process.env.developerId) {
-       if (!isOnCooldown(command, interaction.user)) return interaction.reply('You are currently in cooldown');
-     }
+      if (command.cooldown && interaction.user.id != process.env.developerId) {
+        if (!isOnCooldown(command, interaction.user))
+          return interaction.reply("You are currently in cooldown");
+      }
 
       // if bot requires permissions
       if (command.botPermissions) {
-        if (!botPermissionInhibitor(command, interaction.guild)) return interaction.reply('I do not have the permissions required to run that command !')
+        if (!botPermissionInhibitor(command, interaction.guild))
+          return interaction.reply(
+            "I do not have the permissions required to run that command !"
+          );
       }
       //if user requires permission
       if (command.userPermissions) {
-        if (!userPermissionInhibitor(command, {member: interaction.member, guild: interaction.guild})) return interaction.reply('You do not have the required permissions to run that command !')
+        if (
+          !userPermissionInhibitor(command, {
+            member: interaction.member,
+            guild: interaction.guild,
+          })
+        )
+          return interaction.reply(
+            "You do not have the required permissions to run that command !"
+          );
       }
 
       if (command.require) {
@@ -69,11 +86,10 @@ export default new Event(
           return interaction.reply({
             content: `the client in which this command has been called, doesn't have the required values to execute this command`,
           });
-
       }
 
       await interaction.deferReply();
-      botcynx.emit('interactioncommandCreate', interaction);
+      botcynx.emit("interactioncommandCreate", interaction);
 
       await command.run({
         args: interaction.options as CommandInteractionOptionResolver,

@@ -8,7 +8,10 @@ import {
   MessageSelectMenu,
 } from "discord.js";
 import { RequireTest } from "../personal-modules/commandHandler";
-import { botPermissionInhibitor, userPermissionInhibitor } from "../lib/command/commandInhibitors";
+import {
+  botPermissionInhibitor,
+  userPermissionInhibitor,
+} from "../lib/command/commandInhibitors";
 
 export default new Event("interactionCreate", async (interaction) => {
   if (interaction.isCommand()) return;
@@ -87,7 +90,9 @@ export default new Event("interactionCreate", async (interaction) => {
 
     if (command.onlyAuthor) {
       let user = interaction.user.id;
-      let author = (interaction.message.interaction?.user?.id || (interaction.message as Message).mentions.repliedUser?.id);
+      let author =
+        interaction.message.interaction?.user?.id ||
+        (interaction.message as Message).mentions.repliedUser?.id;
 
       if (user != author)
         return interaction.update({
@@ -140,7 +145,12 @@ export default new Event("interactionCreate", async (interaction) => {
     }
 
     if (button.userPermissions) {
-      if (!userPermissionInhibitor(button, {member: (interaction.member as GuildMember), guild: interaction.guild}))
+      if (
+        !userPermissionInhibitor(button, {
+          member: interaction.member as GuildMember,
+          guild: interaction.guild,
+        })
+      )
         return interaction.followUp({
           content: `You do not have the required permissions to run this command`,
           ephemeral: true,
@@ -157,7 +167,9 @@ export default new Event("interactionCreate", async (interaction) => {
 
     if (button.onlyAuthor) {
       let user = interaction.user.id;
-      let author = (interaction.message.interaction?.user?.id || (interaction.message as Message).mentions.repliedUser?.id);
+      let author =
+        interaction.message.interaction?.user?.id ||
+        (interaction.message as Message).mentions.repliedUser?.id;
 
       if (user != author)
         return interaction.update({

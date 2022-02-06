@@ -11,14 +11,13 @@ export default new ButtonResponse({
   require: ["hypixelApiKey"],
   onlyAuthor: true,
   run: async ({ interaction, client }) => {
-
     let IdFields = interaction.customId.split(":");
     const uuid = IdFields[2];
     const profile = IdFields[3];
     const username = await getUsername(uuid);
 
     const lily = new lilyweight(process.env.hypixelapikey);
- 
+
     const weight = await lily.getProfileWeight(uuid, profile);
     //calculations
     const skillb = Math.round(weight.skill.base * 10) / 10;
@@ -34,10 +33,22 @@ export default new ButtonResponse({
     let tslayer = Math.round(weight.slayer * 10) / 10;
 
     let embedFields: EmbedFieldData[] = [];
-      embedFields.push({name: "Total weight: ", value: String(Math.round(weight.total * 10) / 10)});
-      embedFields.push({name: "<:catacombs:914860327978532874> Dungeon weight: ", value: `\`\`${tcata}\`\` Total\n\`\`${catab}\`\` from F completion\n\`\`${catam}\`\` from MM completion\n\`\`${catae}\`\` from cata level`});
-      embedFields.push({name: "<:beheaded:914859571351269447> Slayer weight: ", value: `\`\`${tslayer}\`\``});
-      embedFields.push({name: "<:skill:914859774187814932> Skill weight: ", value: `\`\`${tskill}\`\`(\`\`${skillb}\`\`/\`\`${skillo}\`\` overflow)`});
+    embedFields.push({
+      name: "Total weight: ",
+      value: String(Math.round(weight.total * 10) / 10),
+    });
+    embedFields.push({
+      name: "<:catacombs:914860327978532874> Dungeon weight: ",
+      value: `\`\`${tcata}\`\` Total\n\`\`${catab}\`\` from F completion\n\`\`${catam}\`\` from MM completion\n\`\`${catae}\`\` from cata level`,
+    });
+    embedFields.push({
+      name: "<:beheaded:914859571351269447> Slayer weight: ",
+      value: `\`\`${tslayer}\`\``,
+    });
+    embedFields.push({
+      name: "<:skill:914859774187814932> Skill weight: ",
+      value: `\`\`${tskill}\`\`(\`\`${skillb}\`\`/\`\`${skillo}\`\` overflow)`,
+    });
     const embed = new MessageEmbed()
       .setFields(embedFields)
       .setFooter({

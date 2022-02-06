@@ -60,12 +60,12 @@ const extractWeight = async function (data: senitherProfileSingular) {
   if (!dataprofile || dataprofile.skills?.apiEnabled == false) return null;
 
   const profilename = dataprofile.name;
-  const skillweight = (dataprofile.skills?.weight || 0);
-  const skilloweight = (dataprofile.skills?.weight_overflow || 0);
-  const slayerweight = (dataprofile.slayers?.weight || 0);
-  const slayeroweight = (dataprofile.slayers?.weight_overflow || 0);
-  const dungeonweight = (dataprofile.dungeons?.weight || 0);
-  const dungeonoweight = (dataprofile.dungeons?.weight_overflow || 0);
+  const skillweight = dataprofile.skills?.weight || 0;
+  const skilloweight = dataprofile.skills?.weight_overflow || 0;
+  const slayerweight = dataprofile.slayers?.weight || 0;
+  const slayeroweight = dataprofile.slayers?.weight_overflow || 0;
+  const dungeonweight = dataprofile.dungeons?.weight || 0;
+  const dungeonoweight = dataprofile.dungeons?.weight_overflow || 0;
 
   //calculations
   const fdungeonweight = dungeonweight + dungeonoweight;
@@ -100,12 +100,25 @@ const extractWeight = async function (data: senitherProfileSingular) {
     gamestage = null;
   }
   let embedFields: EmbedFieldData[] = [];
-    embedFields.push({name: "Total weight:", value: `${rf}`});
-    embedFields.push({name: "<:catacombs:914860327978532874> Dungeon weight", value: `\`\`${rfdungeon}\`\`(\`\`${rdungeon}\`\`/\`\`${rodungeon}\`\` overflow)`});
-    embedFields.push({name: "<:beheaded:914859571351269447> Slayer weight:", value: `\`\`${rfslayer}\`\`(\`\`${rslayer}\`\`/\`\`${roslayer}\`\` overflow)`});
-    embedFields.push({name: `<:skill:914859774187814932> Skill weight`, value: `\`\`${rfskill}\`\`(\`\`${rskill}\`\`/\`\`${roskill}\`\` overflow)`});
+  embedFields.push({ name: "Total weight:", value: `${rf}` });
+  embedFields.push({
+    name: "<:catacombs:914860327978532874> Dungeon weight",
+    value: `\`\`${rfdungeon}\`\`(\`\`${rdungeon}\`\`/\`\`${rodungeon}\`\` overflow)`,
+  });
+  embedFields.push({
+    name: "<:beheaded:914859571351269447> Slayer weight:",
+    value: `\`\`${rfslayer}\`\`(\`\`${rslayer}\`\`/\`\`${roslayer}\`\` overflow)`,
+  });
+  embedFields.push({
+    name: `<:skill:914859774187814932> Skill weight`,
+    value: `\`\`${rfskill}\`\`(\`\`${rskill}\`\`/\`\`${roskill}\`\` overflow)`,
+  });
 
-  let result = { embedFields: embedFields, profilename: profilename, gamestage: gamestage };
+  let result = {
+    embedFields: embedFields,
+    profilename: profilename,
+    gamestage: gamestage,
+  };
   return result;
 };
 

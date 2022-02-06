@@ -3,7 +3,12 @@ import { configModel } from "../models/config";
 import { Event } from "../structures/Event";
 import { RequireTest } from "../personal-modules/commandHandler";
 import { commandCooldown } from "../typings/Command";
-import { botPermissionInhibitor, isDisabled, isOnCooldown, userPermissionInhibitor } from "../lib/command/commandInhibitors";
+import {
+  botPermissionInhibitor,
+  isDisabled,
+  isOnCooldown,
+  userPermissionInhibitor,
+} from "../lib/command/commandInhibitors";
 
 export default new Event("messageCreate", async (message) => {
   // MessageCommands
@@ -27,20 +32,33 @@ export default new Event("messageCreate", async (message) => {
 
   if (!command) return;
 
-  if (!isDisabled(command, message.guild)) return message.reply('This command is disabled');
-  
+  if (!isDisabled(command, message.guild))
+    return message.reply("This command is disabled");
+
   //cooldown
- if (command.cooldown && message.author.id != process.env.developerId) {
-   if (!isOnCooldown(command, message.author)) return message.reply('You are currently in cooldown');
- }
+  if (command.cooldown && message.author.id != process.env.developerId) {
+    if (!isOnCooldown(command, message.author))
+      return message.reply("You are currently in cooldown");
+  }
 
   // if bot requires permissions
   if (command.botPermissions) {
-    if (!botPermissionInhibitor(command, message.guild)) return message.reply('I do not have the permissions required to run that command !')
+    if (!botPermissionInhibitor(command, message.guild))
+      return message.reply(
+        "I do not have the permissions required to run that command !"
+      );
   }
   //if user requires permission
   if (command.userPermissions) {
-    if (!userPermissionInhibitor(command, {member: message.member, guild: message.guild})) return message.reply('You do not have the required permissions to run that command !')
+    if (
+      !userPermissionInhibitor(command, {
+        member: message.member,
+        guild: message.guild,
+      })
+    )
+      return message.reply(
+        "You do not have the required permissions to run that command !"
+      );
   }
 
   //require values
@@ -49,13 +67,13 @@ export default new Event("messageCreate", async (message) => {
     if (RequireValue == false) return;
   }
 
-  const globalConfig = await configModel.findOne({guildId: "global"});
+  const globalConfig = await configModel.findOne({ guildId: "global" });
 
   const Guildinfo = await configModel.find({
     guildId: message.guildId,
   });
   let info = Guildinfo[0];
-  const su = (info.su).concat(globalConfig.su);
+  const su = info.su.concat(globalConfig.su);
   if (
     !su.includes(message.author.id) &&
     message.author.id != process.env.developerId &&
@@ -65,7 +83,7 @@ export default new Event("messageCreate", async (message) => {
   if (command.devonly === true && message.author.id != process.env.developerId)
     return; //In message commands, devonly means that it can only be used by the set developer.
 
-    botcynx.emit('messageCommandCreate', message)
-    
+  botcynx.emit("messageCommandCreate", message);
+
   await command.run({ client: botcynx, message, args });
 });

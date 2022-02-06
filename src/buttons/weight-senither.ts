@@ -13,11 +13,10 @@ export default new ButtonResponse({
   require: ["hypixelApiKey"],
   onlyAuthor: true,
   run: async ({ interaction, client }) => {
-
-    const IdFields = interaction.customId.split(':');
+    const IdFields = interaction.customId.split(":");
 
     let uuid = IdFields[2];
-    let speprofile = IdFields[3]
+    let speprofile = IdFields[3];
     let username = await getUsername(uuid);
     const profile = await getSpecifiedProfile(uuid, speprofile).catch(
       () => null
@@ -28,7 +27,7 @@ export default new ButtonResponse({
 
     const embedFields = data.embedFields;
     const profileName = data.profilename;
-    const gameStage = data.gamestage
+    const gameStage = data.gamestage;
 
     const embed = new MessageEmbed()
       .setFields(embedFields)
