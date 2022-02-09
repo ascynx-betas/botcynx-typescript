@@ -11,28 +11,7 @@ class GitError extends Error {
   }
 }
 const gitFetchJson = async (url) => {
-  const body = await fetch(url);
-  const json = await body.json();
-
-  if (json.ok == false) {
-    const err: repoError = {
-      code: json.status,
-      cause: json.statusText || "unknown",
-    };
-    return err;
-  }
-  if (json.message) {
-    let err: repoError = { code: 404, cause: json.message };
-    return err;
-  }
-  return json;
-};
-
-const queryFetchJson = async (url: string, query: string) => {
-  const body = await fetch(url, {
-    headers: { q: query },
-  });
-
+  const body = await fetch(url, {headers: {Authorization: `token ${process.env.githubToken}`}});
   const json = await body.json();
   if (json.ok == false) {
     const err: repoError = {
