@@ -12,6 +12,7 @@ import {
   MessageContextType,
   ButtonResponseType,
   commandCooldown,
+  WhitelistedCommands,
 } from "../typings/Command";
 import glob from "glob";
 import { promisify } from "util";
@@ -31,6 +32,7 @@ export class botClient extends Client {
   commands: Collection<string, MessageCommandType> = new Collection();
   ArrayOfSlashCommands = new Collection();
   buttonCommands: Collection<string, ButtonResponseType> = new Collection();
+  whitelistedCommands: Collection<string, WhitelistedCommands> = new Collection();
   cooldowns: Collection<string, commandCooldown> = new Collection();
   tasks: Collection<string, any> = new Collection(); //!CHANGE THE ANY TO THE TASK TYPE ONCE IT'S MADE
   package: any;
@@ -103,6 +105,20 @@ export class botClient extends Client {
       this.ArrayOfSlashCommands.set(command.name, command);
       ArrayOfSlashCommands.push(command);
     });
+
+    //WhitelistedCommands
+    const whitelistedCommands: ApplicationCommandDataResolvable[] = [];
+    const whitelistedCommandFiles = await globPromise(
+      `${__dirname}/../commands/whitelistedCommands/*{.ts,.js}`
+    );
+
+    whitelistedCommandFiles.forEach(async (filePath) => {
+      const command: WhitelistedCommands = await this.importFile(filePath);
+      if (!command.name) return;
+
+      this.whitelistedCommands.set(command.name, command);
+      whitelistedCommands.push(command);
+    })
 
     //Button
     const buttonFiles = await globPromise(`${__dirname}/../buttons/*{.ts,.js}`);

@@ -1,3 +1,2 @@
-import { similarityDetection } from "../utils";
-
-console.log(similarityDetection("dlncord.fight", "discord.gift"));
+import { searchRepositories } from "../repoPull";
+searchRepositories(encodeURIComponent("botcynx-data")).then((data) => console.log(data));

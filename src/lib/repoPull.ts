@@ -5,7 +5,7 @@ type repoError = {
 };
 class GitError extends Error {
   possibilities: object[];
-  constructor(message: string, possibilities: object[], Error?: unknown) {
+  constructor(message: string, possibilities: object[]) {
     super(message);
     this.possibilities = possibilities;
   }
@@ -27,6 +27,27 @@ const gitFetchJson = async (url) => {
   }
   return json;
 };
+
+const queryFetchJson = async(url: string, query: string) => {
+  const body = await fetch(url, {
+    headers: {q: query}
+  });
+
+  const json = await body.json();
+  if (json.ok == false) {
+    const err: repoError = {
+      code: json.status,
+      cause: json.statusText || "unknown",
+    };
+    return err;
+  }
+  if (json.message) {
+    let err: repoError = { code: 404, cause: json.message };
+    return err;
+  }
+  return json;
+
+}
 
 const repoInfoPull = async (owner: string, repo: string) => {
   let requestUrl = `https://api.github.com/repos/${owner}/${repo}`;
@@ -98,4 +119,14 @@ const linkContentPull = async (link: string) => {
   }
 };
 
-export { repoContentPull, repoInfoPull, gitFetchJson, linkContentPull };
+//search with name
+
+const searchRepositories = async (query: string) => {
+  let requestUrl = `https://api.github.com/search/repositories?q=${query}`;
+
+  const data = await gitFetchJson(requestUrl);
+
+  return data;
+}
+
+export { repoContentPull, repoInfoPull, gitFetchJson, linkContentPull, searchRepositories };
