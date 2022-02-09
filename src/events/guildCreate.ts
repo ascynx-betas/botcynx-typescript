@@ -15,7 +15,7 @@ export default new Event("guildCreate", async (guild) => {
     .setThumbnail(guild.iconURL({ dynamic: true }))
     .setColor("GREEN");
 
-  (botcynx.channels.cache.get('903281241594413176') as TextChannel).send({
+  (botcynx.channels.cache.get("903281241594413176") as TextChannel).send({
     embeds: [embed],
   });
   const guildId = guild.id;

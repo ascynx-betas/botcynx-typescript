@@ -26,12 +26,13 @@ export default new Event("interactionCreate", async (interaction) => {
         components: interaction.message.components as MessageActionRow[],
       });
 
-    let command = botcynx.buttonCommands.get(category);
-    if (!command) command = botcynx.buttonCommands.get(`${category}:${Id}`);
+    let command = botcynx.buttonCommands.get(category.split(":")[0]);
+    if (!command)
+      command = botcynx.buttonCommands.get(`${category.split(":")[0]}:${Id}`);
     if (!command) return;
     if (interaction.message.author.id != botcynx.user.id) return;
 
-    if (command.temporary == true) {
+    if (command.temporary) {
       let current = Date.now();
       let creation = (interaction.message as Message).createdTimestamp;
       let time = current - creation;

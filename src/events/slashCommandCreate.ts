@@ -21,7 +21,8 @@ export default new Event(
 
     if (interaction.isCommand()) {
       let command = botcynx.slashCommands.get(interaction.commandName);
-      if (!command) command = botcynx.whitelistedCommands.get(interaction.commandName);
+      if (!command)
+        command = botcynx.whitelistedCommands.get(interaction.commandName);
       if (!command) {
         const tag = await tagModel.find({
           guilId: interaction.guild.id,

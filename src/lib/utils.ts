@@ -1,3 +1,6 @@
+import { EmbedFieldData, MessageButton, MessageEmbed } from "discord.js";
+import { fork } from "./emojis";
+
 export const timestampToHuman = (timestamp: number): string => {
   let data = { time: timestamp, type: "timestamp" };
   data = { time: timestamp / 1000, type: "seconds" };
@@ -48,4 +51,65 @@ export const similarityDetection = (
   if (percentageOfSimilarities <= 95 && percentageOfSimilarities > 0)
     return { result: true, percentage: percentageOfSimilarities };
   else return { result: false, percentage: percentageOfSimilarities };
+};
+
+export const queryEmbed = (data, tag, query) => {
+  if (data.total_count >= 5) data.items = data.items.slice(0, 5);
+
+  let items: {
+    name: string;
+    owner: string;
+    description: string;
+    repoURL: string;
+    stars: number;
+    forks: number;
+  }[] = [];
+  data.items.forEach((item) => {
+    let description: string;
+    if (item.description?.length <= 200) description = item.description;
+    else if (item.description?.length >= 200) {
+      item.description = item.description.slice(0, 200);
+      description = item.description + "... ";
+    } else description = "no description set";
+
+    let name = item.name;
+    let owner = item.owner.login;
+    let repoURL = item.html_url;
+    let stargazers = item.stargazers_count;
+    let forks = item.forks_count;
+
+    items.push({
+      description: description,
+      name: name,
+      owner: owner,
+      repoURL: repoURL,
+      stars: stargazers,
+      forks: forks,
+    });
+  });
+
+  let fields: EmbedFieldData[] = [];
+  let buttonFields: MessageButton[] = [];
+
+  items.forEach((item) => {
+    fields.push({
+      name: `${item.owner}/${item.name} - ${item.stars} ⭐ - ${item.forks} ${fork}`,
+      value: `${item.description}`,
+    });
+    buttonFields.push(
+      new MessageButton()
+        .setStyle("LINK")
+        .setURL(item.repoURL)
+        .setLabel(item.name)
+    );
+  });
+
+  const embed = new MessageEmbed()
+    .setTitle(
+      `${items.length === 1 ? `${items[0].name}` : `results for ${query}`}`
+    )
+    .setFields(fields)
+    .setFooter({ text: `requested by ${tag}` });
+
+  return { embed, buttonFields }; //not sure how it's gonna work out
 };

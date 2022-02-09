@@ -28,9 +28,9 @@ const gitFetchJson = async (url) => {
   return json;
 };
 
-const queryFetchJson = async(url: string, query: string) => {
+const queryFetchJson = async (url: string, query: string) => {
   const body = await fetch(url, {
-    headers: {q: query}
+    headers: { q: query },
   });
 
   const json = await body.json();
@@ -46,8 +46,7 @@ const queryFetchJson = async(url: string, query: string) => {
     return err;
   }
   return json;
-
-}
+};
 
 const repoInfoPull = async (owner: string, repo: string) => {
   let requestUrl = `https://api.github.com/repos/${owner}/${repo}`;
@@ -127,6 +126,12 @@ const searchRepositories = async (query: string) => {
   const data = await gitFetchJson(requestUrl);
 
   return data;
-}
+};
 
-export { repoContentPull, repoInfoPull, gitFetchJson, linkContentPull, searchRepositories };
+export {
+  repoContentPull,
+  repoInfoPull,
+  gitFetchJson,
+  linkContentPull,
+  searchRepositories,
+};

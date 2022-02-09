@@ -36,19 +36,20 @@ export default new Event(
         });
         let buttons: ButtonResponseType[] = [];
         if (!customIds.some((c) => c == null)) {
-        customIds.forEach((customId) => {
-          let fields = customId?.split(":");
-          const category = fields[0];
-          const Id = fields[1];
-          let button = botcynx.buttonCommands.get(category);
-          if (!button) button = botcynx.buttonCommands.get(`${category}:${Id}`);
+          customIds.forEach((customId) => {
+            let fields = customId?.split(":");
+            const category = fields[0];
+            const Id = fields[1];
+            let button = botcynx.buttonCommands.get(category);
+            if (!button)
+              button = botcynx.buttonCommands.get(`${category}:${Id}`);
 
-          if (button) buttons.push(button);
-        });
+            if (button) buttons.push(button);
+          });
 
-        if (buttons.some((m) => m.temporary === true) != true) return;
-      }
-      
+          if (buttons.some((m) => m.temporary === true) != true) return;
+        }
+
         let messagesArr = messages.map((m) => m.id);
 
         if (!messages || typeof messagesArr[0] == "undefined") return;
