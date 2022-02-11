@@ -22,7 +22,7 @@ export default new WhitelistedCommand({
     const query = encodeURIComponent(queryParameter);
 
     const data = await searchRepositories(query);
-    if (!data.items || data.items == null)
+    if (data.total_count == 0)
       return interaction.followUp({
         content: `there are no results for that query`,
       });
@@ -62,7 +62,7 @@ export default new WhitelistedCommand({
           label: "sort by forks a > b",
         })
         .setCustomId(`sort-repo:${query}`)
-        .setPlaceholder("sort")
+        .setPlaceholder("sorting technique")
     );
 
     interaction.followUp({

@@ -5,6 +5,7 @@ import { ButtonResponse } from "../structures/Commands";
 
 export default new ButtonResponse({
   category: "sort-repo",
+  temporary: true,
   run: async ({ interaction, client }) => {
     const sortby = interaction.customId.split(":")[2]; //sorting technique
     const query = interaction.customId.split(":")[1]; //query parameter
