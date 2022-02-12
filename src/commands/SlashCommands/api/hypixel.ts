@@ -88,8 +88,6 @@ export default new slashCommand({
 
     let status = await getStatus(uuid).catch(() => null);
     status = status.session.online;
-    if (status == false) status = `🔴`;
-    if (status == true) status = `🟢`;
 
     if (uuid === null || username === null)
       return interaction.followUp({ content: `player not found` });
@@ -103,8 +101,14 @@ export default new slashCommand({
       name: "Linked discord account:",
       value: discord || "no linked accounts",
     });
-    embedFields.push({ name: "online:", value: status || "Error" });
-    embedFields.push({ name: "verified", value: `${isVerified}` || "Error" });
+    embedFields.push({
+      name: "online:",
+      value: `${status ? "🟢" : "🔴"}` || "Error",
+    });
+    embedFields.push({
+      name: "verified",
+      value: `${isVerified ? "🟢" : "🔴"}` || "Error",
+    });
 
     if (uuid) {
       embedFields.splice(1, 0, { name: "UUID:", value: uuid || "Error" });

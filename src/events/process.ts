@@ -1,9 +1,9 @@
 import process from "process";
 import { botcynx } from "..";
-import * as d from "../personal-modules/discordPlugin";
-import * as mp from "../personal-modules/testFor";
+import { webhook } from "../personal-modules/discordPlugin";
+import { getTimeOfDay } from "../personal-modules/testFor";
 
-process.on("unhandledRejection", async (error: Error) => {
+const sendError = async (error: Error) => {
   let stack = error.stack;
   let fields = stack?.split("\n");
   if (typeof fields == "undefined") return console.log(error);
@@ -12,60 +12,35 @@ process.on("unhandledRejection", async (error: Error) => {
     global.bot.environment != "dev"
   )
     return console.log(error); //returns if DiscordAPIError when it isn't in dev environment
-  stack = fields[0] + "\n" + fields[1] + "\n" + fields[2];
+    stack = fields.slice(1, 5).join('\n')
+  const err = "[" + getTimeOfDay() + "]" + " Caught error: \n" + stack;
 
-  const time = mp.getTimeOfDay();
-  const err = "[" + time + "]" + " Unhandled promise rejection: " + stack;
+  console.log(`${fields.slice(0)[0]} ${err}`);
 
-  console.log(err);
-
-  const info = d.webhook(process.env.webhookLogLink);
+  const info = webhook(process.env.webhookLogLink);
   if (!info) return;
 
   return botcynx.fetchWebhook(info.id, info.token).then((webhook) =>
     webhook.send({
-      content: `${err}`,
+      embeds: [
+        {
+          title: fields.slice(0)[0],
+          description: err,
+          footer: {
+            text: `${botcynx.uptime}ms since last restart`
+          }
+        },
+      ],
       username: `${botcynx.user?.tag || "preloading Error"}`,
       avatarURL: botcynx.user?.displayAvatarURL({ dynamic: true }),
     })
   );
+};
+
+process.on("unhandledRejection", (error: Error) => {
+  sendError(error);
 });
 
-process.on("uncaughtException", async (error: Error) => {
-  let stack = error.stack;
-  let fields = stack.split("\n");
-  stack = fields[0] + "\n" + fields[1] + "\n" + fields[2];
-
-  const time = mp.getTimeOfDay();
-  const err = "[" + time + "]" + " Unhandled Exception " + stack;
-  console.log(err);
-  const info = d.webhook(process.env.webhookLogLink);
-  if (!info) return;
-  return botcynx.fetchWebhook(info.id, info.token).then((webhook) =>
-    webhook.send({
-      content: `${err}`,
-      username: `${botcynx.user?.tag || "preloading Error"}`,
-      avatarURL: botcynx.user?.displayAvatarURL({ dynamic: true }),
-    })
-  );
-});
-
-process.on("rejectionHandled", async (error: Error) => {
-  let stack = error.stack;
-  let fields = stack.split("\n");
-  stack = fields[0] + "\n" + fields[1] + "\n" + fields[2];
-
-  const time = mp.getTimeOfDay();
-  const err = "[" + time + "]" + " handled promise rejection " + stack;
-  console.log(err);
-  const info = d.webhook(process.env.webhookLogLink);
-  if (!info) return;
-
-  return botcynx.fetchWebhook(info.id, info.token).then((webhook) =>
-    webhook.send({
-      content: `${err}`,
-      username: `${botcynx.user?.tag || "preloading Error"}`,
-      avatarURL: botcynx.user?.displayAvatarURL({ dynamic: true }),
-    })
-  );
+process.on("uncaughtException", (error: Error) => {
+  sendError(error);
 });

@@ -40,7 +40,6 @@ export default new Event("messageCreate", async (message) => {
 
     const JavaVersion = /\s+Java Version:.+$/g;
     const MinecraftVersion = /\s+Minecraft Version:.+$/g;
-    const isModded = /\s+is Modded:.+$/g;
 
     fields.forEach((data) => {
       if (JavaVersion.test(data) == true || MinecraftVersion.test(data) == true)

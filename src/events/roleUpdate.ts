@@ -18,11 +18,7 @@ export default new Event("guildMemberUpdate", async (oldMember, newMember) => {
     guildId: guild.id,
   });
   if (config[0].disabledCommands.includes("roleLinked")) return;
-
-  let trigger = config[0].trigger;
-  let removable = config[0].removable;
-  let bypass = config[0].bypass || [];
-  let logChannel = config[0].logchannel;
+  let { trigger, removable, bypass, logchannel} = config[0];
 
   if (trigger.length == 0 || removable.length == 0) return;
   const oldMemberRoles = oldMember.roles.cache.map((r) => r.id);
@@ -38,7 +34,7 @@ export default new Event("guildMemberUpdate", async (oldMember, newMember) => {
       TriggerSimilaritiesNewmember.breakingcount > 0)
   ) {
     let differences = newMemberRoles.filter((x) => !oldMemberRoles.includes(x));
-    return (botcynx.channels.cache.get(logChannel) as TextBasedChannel).send({
+    return (botcynx.channels.cache.get(logchannel) as TextBasedChannel).send({
       content: `${oldMember.user.tag} now has trigger role <@&${differences[0]}>`,
       allowedMentions: { parse: [] },
     });
@@ -51,7 +47,7 @@ export default new Event("guildMemberUpdate", async (oldMember, newMember) => {
       TriggerSimilaritiesOldmember.breakingcount > 0)
   ) {
     let differences = oldMemberRoles.filter((x) => !newMemberRoles.includes(x));
-    (botcynx.channels.cache.get(logChannel) as TextBasedChannel).send({
+    (botcynx.channels.cache.get(logchannel) as TextBasedChannel).send({
       content: `${newMember.user.tag} lost trigger role <@&${differences[0]}>`,
       allowedMentions: { parse: [] },
     });
@@ -66,7 +62,7 @@ export default new Event("guildMemberUpdate", async (oldMember, newMember) => {
     );
     newMemberRemovables.forEach(function (removable) {
       newMember.roles.remove(removable);
-      (botcynx.channels.cache.get(logChannel) as TextBasedChannel).send({
+      (botcynx.channels.cache.get(logchannel) as TextBasedChannel).send({
         content: `removed <@&${removable}> from ${newMember.user.tag}`,
         allowedMentions: { parse: [] },
       });

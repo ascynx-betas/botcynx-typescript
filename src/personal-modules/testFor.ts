@@ -161,15 +161,14 @@ const isLink = function (potentiallink): boolean {
     return true;
   } else return false;
 };
-/**
- * @param  {} message
- */
-const containsLink = function (message): number[] {
-  let fields = message.split(" ");
-  let result;
+
+const containsLink = function (message: string): number[] {
+  let whitespace = /\s/gi;
+  message = message.replace(whitespace, " ");
+  let fields: string[] = message.split(" ");
   let arrayofresults = [];
-  fields.forEach(function (fields, index: number) {
-    result = isLink(fields);
+  fields.forEach(function (field, index: number) {
+    let result = isLink(field);
     if (result == true) {
       arrayofresults.push(index);
     }

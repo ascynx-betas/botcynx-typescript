@@ -27,22 +27,26 @@ export default new Event("messageCreate", async (message) => {
 
   let results = containsLink(message.content);
   if (results.length == 0) return;
+  let whitespace = /\s/gi;
+  message.content = message.content.replace(whitespace, " ");
   let linkfield = message.content.split(" ");
-  let first = linkfield[results[0]];
+  results.forEach( async(result) => {
+    let first = linkfield[result];
+
   let link = first.slice(8, message.content.length);
   let fields = link.split("/");
-  if (!discordSiteRegExp.test(fields[0])) return; //if the link isn't discord related (avoid getting a discord youtube link caught up in it 💀)
+  if (!discordSiteRegExp.test(fields[0])) return; //if the link isn't discord related (avoid getting a youtube link caught up in it 💀)
   if (fields[1] !== "channels") return;
-  let result = isId(fields[2]);
+  let Id = isId(fields[2]);
   let regex = /[^[0-9]/gi;
   fields[2] = fields[2].replace(regex, "");
-  if (result == false) return message.react("❌"); //link contains a non-id
-  result = isId(fields[3]);
+  if (Id == false) return message.react("❌"); //link contains a non-id
+  Id = isId(fields[3]);
   fields[3] = fields[3].replace(regex, "");
-  if (result == false) return message.react("❌"); //link contains a non-id
-  result = isId(fields[4]);
+  if (Id == false) return message.react("❌"); //link contains a non-id
+  Id = isId(fields[4]);
   fields[4] = fields[4].replace(regex, "");
-  if (result == false) return message.react("❌"); //link contains a non-id
+  if (Id == false) return message.react("❌"); //link contains a non-id
   if (!botcynx.guilds.cache.get(fields[2])) return message.react("📵"); // The guild isn't in the bot's cache
 
   const source = await (
@@ -164,4 +168,5 @@ export default new Event("messageCreate", async (message) => {
         .catch(() => message.react("🔇")); //empty message
     }
   }
+  });
 });

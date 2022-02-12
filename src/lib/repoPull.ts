@@ -11,7 +11,9 @@ class GitError extends Error {
   }
 }
 const gitFetchJson = async (url) => {
-  const body = await fetch(url, {headers: {Authorization: `token ${process.env.githubToken}`}});
+  const body = await fetch(url, {
+    headers: { Authorization: `token ${process.env.githubToken}` },
+  });
   const json = await body.json();
   if (json.ok == false) {
     const err: repoError = {
