@@ -31,7 +31,7 @@ export default new Event("messageCreate", async (message) => {
     logs.push(log);
   }
 
-  for (const word of message.content.split(" ")) {
+  for (const word of (message.content.replaceAll("\n", " ")).split(" ")) {
     console.log(word);
     if (!isLink(word)) return;
     if (!isHaste(word)) return;
@@ -48,7 +48,7 @@ export default new Event("messageCreate", async (message) => {
 
   for (const log of logs) {
     let logUrl = await haste(log);
-    if (logUrl != "unable to post") await message.delete();
+    if (logUrl != "unable to post" && message.channel.messages.cache.get(message.id)) await message.delete().catch();
 
     const fixes = crashFixCache.data.fixes; //type 1 => solution; type 2 => recommendations //type 0 => informations;
     let extraLogOutput: string[] = [];
