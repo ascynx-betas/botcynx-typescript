@@ -34,7 +34,6 @@ export default new Event("messageCreate", async (message) => {
     const fixes = crashFixCache.data.fixes; //type 1 => solution; type 2 => recommendations //type 0 => informations;
     let extraLogOutput: string[] = [];
     let recommendedOutput: string[] = [];
-
     let clientData: string[] = [];
 
     for (const fix of fixes) {
@@ -58,14 +57,14 @@ export default new Event("messageCreate", async (message) => {
 
     let solutions = "";
     for (const fix of extraLogOutput) {
-      solutions.length === 0 ? (solutions += fix) : (solutions += `\n${fix}`);
+      solutions.length === 0 ? (solutions += `\t• ${fix}`) : (solutions += `\n\t• ${fix}`);
     }
 
     let recommendations = "";
     for (const recommended of recommendedOutput) {
       recommendations.length === 0
-        ? (recommendations += recommended)
-        : (solutions += `\n${recommended}`);
+        ? (recommendations += `\t• ${recommended}`)
+        : (solutions += `\n\t• ${recommended}`);
     }
 
     const buttonRow = new MessageActionRow().addComponents(
@@ -74,12 +73,12 @@ export default new Event("messageCreate", async (message) => {
     await message.channel.send({
       content: `**${
         message.author
-      }** sent a log,\nit's running on\n${clientData.join(",\n")}\n\n ${
+      }** sent a log,\n${clientData.join(",\n")}\n\n ${
         extraLogOutput.length === 0
           ? message.content
             ? message.content
             : ""
-          : `Solutions: \n\n${solutions}`
+          : `Solutions: \n${solutions}`
       }${
         recommendedOutput.length === 0 && message.content
           ? `\n\n${message.content}`
@@ -93,7 +92,7 @@ export default new Event("messageCreate", async (message) => {
                   : ""
                 : ""
             }`
-          : `\nRecommendations: \n\n${recommendations}`
+          : `\nRecommendations: \n${recommendations}`
       }`,
       components: [buttonRow],
     });

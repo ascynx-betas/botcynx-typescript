@@ -54,12 +54,12 @@ export default new WhitelistedCommand({
           label: "oldest since updated",
         })
         .addOptions({
-          value: "forks-up",
-          label: "sort by forks a < b",
-        })
-        .addOptions({
           value: "forks-down",
           label: "sort by forks a > b",
+        })
+        .addOptions({
+          value: "forks-up",
+          label: "sort by forks a < b",
         })
         .setCustomId(`sort-repo:${query}`)
         .setPlaceholder("sorting technique")
@@ -71,12 +71,3 @@ export default new WhitelistedCommand({
     });
   },
 });
-
-/**
- * TODO add sorting
- * by stars
- * forks
- * commits
- * last updated
- * and most recently updated
- */

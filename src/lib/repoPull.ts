@@ -40,7 +40,6 @@ const repoInfoPull = async (owner: string, repo: string) => {
  * @param owner - The owner of the repository
  * @param repo - The repository's name
  * @param path - The path of the file
- * @param link - The direct link to the file
  * @returns - An Error with the reason or the content of the file
  */
 const repoContentPull = async (owner: string, repo: string, path: string) => {

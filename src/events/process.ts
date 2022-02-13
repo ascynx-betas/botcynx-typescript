@@ -2,6 +2,7 @@ import process from "process";
 import { botcynx } from "..";
 import { webhook } from "../personal-modules/discordPlugin";
 import { getTimeOfDay } from "../personal-modules/testFor";
+import chalk from "chalk";
 
 const sendError = async (error: Error) => {
   let stack = error.stack;
@@ -15,7 +16,7 @@ const sendError = async (error: Error) => {
   stack = fields.slice(1, 5).join("\n");
   const err = "[" + getTimeOfDay() + "]" + " Caught error: \n" + stack;
 
-  console.log(`${fields.slice(0)[0]} ${err}`);
+  console.log(chalk.red(`${fields.slice(0)[0]} ${err}`));
 
   const info = webhook(process.env.webhookLogLink);
   if (!info) return;
