@@ -18,7 +18,7 @@ export default new Event("guildMemberUpdate", async (oldMember, newMember) => {
     guildId: guild.id,
   });
   if (config[0].disabledCommands.includes("roleLinked")) return;
-  let { trigger, removable, bypass, logchannel} = config[0];
+  let { trigger, removable, bypass, logchannel } = config[0];
 
   if (trigger.length == 0 || removable.length == 0) return;
   const oldMemberRoles = oldMember.roles.cache.map((r) => r.id);

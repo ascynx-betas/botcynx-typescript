@@ -31,9 +31,9 @@ export default new Event("messageCreate", async (message) => {
       await message.delete();
     }
 
-    const fixes = crashFixCache.data.fixes;
-
+    const fixes = crashFixCache.data.fixes; //type 1 => solution; type 2 => recommendations
     let extraLogOutput: string[] = [];
+    let recommendedOutput: string[] = [];
 
     let clientData: string[] = [];
     let fields = log.split("\n");
@@ -80,12 +80,22 @@ export default new Event("messageCreate", async (message) => {
       }
 
       if (completedProblems === maxProblems) {
-        extraLogOutput.push(fix.fix);
+        fix.fixtype == 1
+          ? extraLogOutput.push(fix.fix)
+          : recommendedOutput.push(fix.fix);
       }
     }
+
     let solutions = "";
     for (const fix of extraLogOutput) {
       solutions.length === 0 ? (solutions += fix) : (solutions += `\n${fix}`);
+    }
+
+    let recommendations = "";
+    for (const recommended of recommendedOutput) {
+      recommendations.length === 0
+        ? (recommendations += recommended)
+        : (solutions += `\n${recommended}`);
     }
 
     const buttonRow = new MessageActionRow().addComponents(
@@ -94,12 +104,24 @@ export default new Event("messageCreate", async (message) => {
     await message.channel.send({
       content: `**${
         message.author
-      }** sent a log,\nit's running on\n${clientData.join(",\n")}\n\nI found ${
-        extraLogOutput.length === 1
-          ? `${extraLogOutput.length} fix.`
-          : `${extraLogOutput.length} fixes.`
-      } ${extraLogOutput.length === 0 ? "" : `\n\n${solutions}`}${
-        message.content ? `\n\n${message.content}` : ""
+      }** sent a log,\nit's running on\n${clientData.join(",\n")}\n\n ${
+        extraLogOutput.length === 0
+          ? message.content
+            ? message.content
+            : ""
+          : `Solutions: \n\n${solutions}`
+      }${
+        recommendedOutput.length === 0 && message.content
+          ? `\n\n${message.content}`
+          : ""
+      }${
+        recommendedOutput.length === 0
+          ? extraLogOutput.length === 0
+            ? ""
+            : message.content
+            ? `\n\n${message.content}`
+            : ""
+          : `Recommendations: \n\n${recommendations}`
       }`,
       components: [buttonRow],
     });
