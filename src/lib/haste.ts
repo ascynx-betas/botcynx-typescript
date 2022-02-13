@@ -35,4 +35,26 @@ async function haste(content: string) {
   return "Unable to post";
 }
 
-export { haste };
+function isHaste(string: string) {
+  const urls = [
+    "hst.sh",
+    "hasteb.in",
+    "hastebin.com",
+    "mystb.in",
+    "haste.clicksminuteper.net",
+    "paste.pythondiscord.com",
+    "haste.unbelievaboat.com",
+  ];
+
+  let result: boolean;
+  for (const url of urls) {
+    let regex = new RegExp(`.*${url}.*`, "gi");
+    if (regex.test(url)) return result = true;
+
+  }
+
+  if (result == true) return true;
+  return false;
+}
+
+export { haste, isHaste };

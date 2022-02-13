@@ -2,8 +2,9 @@ import { configModel } from "../models/config";
 import { Event } from "../structures/Event";
 import fetch from "node-fetch";
 import { checkPossibleLog, crashFixCache } from "../lib/cache/crashFix";
-import { haste } from "../lib/haste";
+import { haste, isHaste } from "../lib/haste";
 import { MessageActionRow, MessageButton } from "discord.js";
+import { containsLink, isLink } from "../personal-modules/testFor";
 
 export default new Event("messageCreate", async (message) => {
   if (message.author.bot || !message.guild) return;
@@ -17,7 +18,9 @@ export default new Event("messageCreate", async (message) => {
   const config = await configModel.find({ guildId: message.guild.id });
   if (config[0].disabledCommands.includes("crashLogReader")) return;
 
-  if (message.attachments.size === 0) return;
+  if (message.attachments.size === 0 && containsLink(message.content).length === 0) return;
+
+    let logs = [];
 
   for (const [, { url }] of message.attachments) {
     if (!url.endsWith(".txt") && !url.endsWith(".log")) return;
@@ -25,11 +28,27 @@ export default new Event("messageCreate", async (message) => {
     const log = await (await fetch(url)).text();
     const isLog = checkPossibleLog(log);
     if (isLog == false) return;
+    logs.push(log);
+  }
 
+  for (const word of message.content.split(" ")) {
+    console.log(word);
+    if (!isLink(word)) return;
+    if (!isHaste(word)) return;
+
+    let linkSplit = word.split('/');
+    let link = word;
+    if (linkSplit[3] != "raw") link = linkSplit[0] + "//" + linkSplit[2] + "/raw/" + linkSplit[3];
+
+    const log = await (await fetch(link)).text();
+    const isLog = checkPossibleLog(log);
+    if (isLog == false) return;
+    logs.push(log);
+  }
+
+  for (const log of logs) {
     let logUrl = await haste(log);
-    if (logUrl != "unable to post") {
-      await message.delete();
-    }
+    if (logUrl != "unable to post") await message.delete();
 
     const fixes = crashFixCache.data.fixes; //type 1 => solution; type 2 => recommendations //type 0 => informations;
     let extraLogOutput: string[] = [];
