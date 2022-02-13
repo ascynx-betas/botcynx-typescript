@@ -31,7 +31,7 @@ export default new Event("messageCreate", async (message) => {
       await message.delete();
     }
 
-    const fixes = crashFixCache.data.fixes; //type 1 => solution; type 2 => recommendations
+    const fixes = crashFixCache.data.fixes; //type 1 => solution; type 2 => recommendations //type 0 => informations;
     let extraLogOutput: string[] = [];
     let recommendedOutput: string[] = [];
 
@@ -80,9 +80,9 @@ export default new Event("messageCreate", async (message) => {
       }
 
       if (completedProblems === maxProblems) {
-        fix.fixtype == 1
-          ? extraLogOutput.push(fix.fix)
-          : recommendedOutput.push(fix.fix);
+        if (fix.fixtype == 1) extraLogOutput.push(fix.fix);
+        else if (fix.fixtype == 2) recommendedOutput.push(fix.fix);
+        else if (fix.fixtype == 0) clientData.push(fix.fix);
       }
     }
 
@@ -116,12 +116,14 @@ export default new Event("messageCreate", async (message) => {
           : ""
       }${
         recommendedOutput.length === 0
-          ? extraLogOutput.length === 0
-            ? ""
-            : message.content
-            ? `\n\n${message.content}`
-            : ""
-          : `Recommendations: \n\n${recommendations}`
+          ? `${
+              extraLogOutput.length === 0
+                ? ""
+                : message.content
+                ? `\n\n${message.content}`
+                : ""
+            }`
+          : `\nRecommendations: \n\n${recommendations}`
       }`,
       components: [buttonRow],
     });
