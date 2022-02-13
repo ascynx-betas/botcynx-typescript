@@ -36,36 +36,6 @@ export default new Event("messageCreate", async (message) => {
     let recommendedOutput: string[] = [];
 
     let clientData: string[] = [];
-    let fields = log.split("\n");
-
-    const JavaVersion = /\s+Java Version:.+$/g;
-    const MinecraftVersion = /\s+Minecraft Version:.+$/g;
-
-    fields.forEach((data) => {
-      if (JavaVersion.test(data) == true || MinecraftVersion.test(data) == true)
-        clientData.push(data);
-      if (
-        data.includes(
-          "Is Modded: Definitely; Client brand changed to 'Feather Forge'"
-        )
-      )
-        clientData.push("Feather Forge");
-    });
-
-    if (clientData.includes("Feather Forge")) {
-      const buttonRow = new MessageActionRow().addComponents(
-        new MessageButton().setStyle("LINK").setURL(logUrl).setLabel("view log")
-      );
-
-      return message.channel.send({
-        content: `**${
-          message.author
-        }** sent a log,\n- Feather 'client' is completely unsupported due to it being obfuscated. Any issues you get while using it has to be reported to them ${
-          message.content ? `\n\n${message.content}` : ""
-        }`,
-        components: [buttonRow],
-      });
-    }
 
     for (const fix of fixes) {
       let completedProblems = 0;
@@ -118,9 +88,9 @@ export default new Event("messageCreate", async (message) => {
         recommendedOutput.length === 0
           ? `${
               extraLogOutput.length === 0
-                ? ""
-                : message.content
-                ? `\n\n${message.content}`
+                ? message.content
+                  ? `\n\n${message.content}`
+                  : ""
                 : ""
             }`
           : `\nRecommendations: \n\n${recommendations}`
