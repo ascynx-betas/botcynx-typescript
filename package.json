@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "pretest": "eslint --ignore-path .gitignore",
-    "start": "node dist/index.js",
+    "start:prod": "node dist/index.js",
     "start:dev": "ts-node-dev src/index.ts",
     "build": "tsc",
     "watch": "tsc -w",
