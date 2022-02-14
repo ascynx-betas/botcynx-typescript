@@ -8,6 +8,12 @@ import {
 } from "../typings/Command";
 import { CommandInteractionOptionResolver } from "discord.js";
 import { RequireTest } from "../personal-modules/commandHandler";
+import {
+  botPermissionInhibitor,
+  isOnCooldown,
+  userPermissionInhibitor,
+} from "../lib/command/commandInhibitors";
+
 export default new Event(
   "interactionCreate",
   async (interaction: contextInteraction) => {
@@ -32,102 +38,43 @@ export default new Event(
 
       //cooldown
       if (command.cooldown && interaction.user.id != process.env.developerId) {
-        const time = command.cooldown * 1000; //set seconds to milliseconds
-        let userCooldowns = botcynx.cooldowns.get(
-          `${interaction.user.id}-${command.name}`
-        );
-
-        if (typeof userCooldowns != "undefined") {
-          let cooldown = userCooldowns.timestamp;
-
-          if (cooldown > Date.now()) {
-            //still in cooldown
-
-            return interaction.followUp({
-              content: `chill out, you're currently on cooldown from using the ${command.name} command`,
-            });
-          } else {
-            //ended
-
-            botcynx.cooldowns.delete(`${interaction.user.id}-${command.name}`);
-            const newCoolDown = new commandCooldown(
-              interaction.user.id,
-              time,
-              command.name
-            );
-            botcynx.cooldowns.set(
-              `${interaction.user.id}-${command.name}`,
-              newCoolDown
-            );
-          }
-        } else {
-          //doesn't exist
-
-          const newCoolDown = new commandCooldown(
-            interaction.user.id,
-            time,
-            command.name
-          );
-          botcynx.cooldowns.set(
-            `${interaction.user.id}-${command.name}`,
-            newCoolDown
-          );
-        }
+        if (!isOnCooldown(command, interaction.user))
+          return interaction.reply({
+            content: "you are currently in cooldown from using that command",
+          });
       }
 
       // if bot requires permissions
       if (command.botPermissions) {
-        const botRequiredPermission = command.botPermissions;
-        let botPermission = interaction.guild.me.permissions.toArray();
-
-        if (
-          !botPermission.includes(botRequiredPermission[0]) &&
-          !botPermission.includes("ADMINISTRATOR")
-        )
-          return interaction
-            .reply({
-              content: `I cannot execute this command due to the lack of ${botRequiredPermission}`,
-              ephemeral: true,
-            })
-            .catch(() =>
-              interaction.followUp({
-                content: `I cannot execute this command due to the lack of ${botRequiredPermission}`,
-              })
-            );
+        if (!botPermissionInhibitor(command, interaction.guild))
+          return interaction.reply({
+            content:
+              "I do not have the permissions required to run that command !",
+          });
       }
       //if user requires permission
       if (command.userPermissions) {
-        const userRequiredPermission = command.userPermissions;
-        let userPermissions = interaction.guild.members.cache
-          .get(interaction.user.id)
-          .permissions.toArray();
-
         if (
-          !userPermissions.includes(userRequiredPermission[0]) &&
-          !userPermissions.includes("ADMINISTRATOR") &&
-          interaction.user.id != interaction.guild.ownerId &&
-          interaction.user.id != process.env.developerId
+          !userPermissionInhibitor(command, {
+            member: interaction.member,
+            guild: interaction.guild,
+          })
         )
-          return interaction
-            .reply({
-              content: `You cannot use this command as you lack ${userRequiredPermission}`,
-              ephemeral: true,
-            })
-            .catch(() =>
-              interaction.followUp({
-                content: `You cannot use this command as you lack ${userRequiredPermission}`,
-                ephemeral: true,
-              })
-            );
+          return interaction.reply({
+            content:
+              "You do not have the required permissions to run that command !",
+          });
       }
 
       if (command.require) {
         let RequireValue = await RequireTest(command.require);
         if (RequireValue == false)
-          return interaction.followUp({
+          return interaction.reply({
             content: `the client in which this command has been called, doesn't have the required values to execute this command`,
           });
       }
+
+      botcynx.emit("interactioncommandCreate", interaction);
 
       command.run({
         args: interaction.options as CommandInteractionOptionResolver,

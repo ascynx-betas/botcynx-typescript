@@ -1,12 +1,17 @@
 import { configModel } from "../models/config";
 import { Event } from "../structures/Event";
 import fetch from "node-fetch";
-import { checkPossibleLog, crashFixCache } from "../lib/cache/crashFix";
+import {
+  checkPossibleLog,
+  crashFixCache,
+  getMods,
+} from "../lib/cache/crashFix";
 import { haste, isHaste } from "../lib/haste";
 import { MessageActionRow, MessageButton } from "discord.js";
 import { containsLink, isLink } from "../personal-modules/testFor";
 import { indexOf } from "lodash";
 
+//originally based on SkyblockClient's bot's crashLogReader
 export default new Event("messageCreate", async (message) => {
   if (message.author.bot || !message.guild) return;
   let botPermissions = message.guild.me.permissions.toArray();
@@ -53,6 +58,10 @@ export default new Event("messageCreate", async (message) => {
   }
 
   for (const log of logs) {
+    const mods = getMods(log);
+    let forgeVersion = mods?.get("Forge").version;
+    if (!forgeVersion) forgeVersion = null;
+
     let logUrl = await haste(log);
     if (
       logUrl != "unable to post" &&
@@ -69,14 +78,26 @@ export default new Event("messageCreate", async (message) => {
       let completedProblems = 0;
       let maxProblems = fix.causes.length;
 
-      for (const p of fix.causes) {
-        if (p.method === "contains") {
-          if (log.includes(p.value)) {
+      for (const cause of fix.causes) {
+        if (cause.method === "contains") {
+          if (log.includes(cause.value)) {
             completedProblems += 1;
           }
         }
-        if (p.method === "contains_not") {
-          if (!log.includes(p.value)) {
+        if (cause.method === "contains_not") {
+          if (!log.includes(cause.value)) {
+            completedProblems += 1;
+          }
+        }
+        if (cause.method === "regex") {
+          const regex = new RegExp(cause.value);
+          if (regex.test(log)) {
+            completedProblems += 1;
+          }
+        }
+        if (cause.method === "regex_not") {
+          const regex = new RegExp(cause.value);
+          if (!regex.test(cause.value)) {
             completedProblems += 1;
           }
         }
@@ -131,6 +152,7 @@ export default new Event("messageCreate", async (message) => {
           : `\nRecommendations: \n${recommendations}`
       }`,
       components: [buttonRow],
+      allowedMentions: { parse: [] },
     });
   }
 });
