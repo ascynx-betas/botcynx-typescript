@@ -21,7 +21,7 @@ import { Event } from "./Event";
 import { connect } from "mongoose";
 import { tagModel } from "../models/tag";
 import { reload } from "../lib/coolPeople";
-import chalk from 'chalk';
+import chalk from "chalk";
 
 const globPromise = promisify(glob);
 
@@ -145,16 +145,16 @@ export class botClient extends Client {
       guildsWithTags = [...new Set(guildsWithTags)];
       guildsWithTags.forEach((guild) => this.registerTags(guild));
       //register commands
-      
+
       if (process.env.environment != "dev")
-      this.registerCommands({
-        commands: this.ArrayOfSlashCommands,
-      });
+        this.registerCommands({
+          commands: this.ArrayOfSlashCommands,
+        });
       else
-      this.registerCommands({
-        commands: this.ArrayOfSlashCommands,
-        guildId: process.env.guildId
-      });
+        this.registerCommands({
+          commands: this.ArrayOfSlashCommands,
+          guildId: process.env.guildId,
+        });
 
       reload(); //reload coolPeople list
     });
@@ -200,7 +200,11 @@ export class botClient extends Client {
   async registerCommands({ commands, guildId }: RegisterCommandsOptions) {
     if (guildId) {
       this.guilds.cache.get(guildId)?.commands.set(commands);
-      console.log(chalk.redBright(`Registering commands to ${this.guilds.cache.get(guildId).name}`));
+      console.log(
+        chalk.redBright(
+          `Registering commands to ${this.guilds.cache.get(guildId).name}`
+        )
+      );
     } else {
       this.application?.commands.set(commands);
       console.log(chalk.green(`Registering global commands`));

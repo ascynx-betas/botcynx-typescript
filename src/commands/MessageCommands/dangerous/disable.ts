@@ -29,7 +29,8 @@ export default new Command({
     if (
       !commands.includes(target) &&
       target != "linkReader" &&
-      target != "roleLinked"
+      target != "roleLinked" &&
+      target != "crashLogReader"
     )
       return message.reply({
         content: `you cannot disable ${target} as it is not an available command / event`,

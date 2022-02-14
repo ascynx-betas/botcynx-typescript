@@ -14,7 +14,8 @@ export default new Event("ready", async () => {
   }
   if (process.env.developerId) global.bot.developerid = true; //set value of developerId
   if (process.env.environment) global.bot.environment = process.env.environment; //set environment
-  if (process.env.guildId) console.log(chalk.green("commands will be registered locally"));
+  if (process.env.guildId && process.env.environment == "dev")
+    console.log(chalk.green("commands will be registered locally"));
   if (process.env.hypixelapikey) {
     console.log(chalk.green("api key exists"));
     let data = await getKeyInfo();

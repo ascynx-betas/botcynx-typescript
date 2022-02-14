@@ -5,6 +5,7 @@ import { checkPossibleLog, crashFixCache } from "../lib/cache/crashFix";
 import { haste, isHaste } from "../lib/haste";
 import { MessageActionRow, MessageButton } from "discord.js";
 import { containsLink, isLink } from "../personal-modules/testFor";
+import { indexOf } from "lodash";
 
 export default new Event("messageCreate", async (message) => {
   if (message.author.bot || !message.guild) return;
@@ -18,37 +19,46 @@ export default new Event("messageCreate", async (message) => {
   const config = await configModel.find({ guildId: message.guild.id });
   if (config[0].disabledCommands.includes("crashLogReader")) return;
 
-  if (message.attachments.size === 0 && containsLink(message.content).length === 0) return;
+  if (
+    message.attachments.size === 0 &&
+    containsLink(message.content).length === 0
+  )
+    return;
 
-    let logs = [];
+  let logs = [];
 
   for (const [, { url }] of message.attachments) {
     if (!url.endsWith(".txt") && !url.endsWith(".log")) return;
 
     const log = await (await fetch(url)).text();
-    const isLog = checkPossibleLog(log);
-    if (isLog == false) return;
+    if (checkPossibleLog(log) == false) return;
     logs.push(log);
   }
 
-  for (const word of (message.content.replaceAll("\n", " ")).split(" ")) {
-    console.log(word);
-    if (!isLink(word)) return;
-    if (!isHaste(word)) return;
+  if (message.content.length > 0) {
+    for (const word of message.content.replaceAll("\n", " ").split(" ")) {
+      if (!isLink(word)) return;
+      if (!isHaste(word)) return;
 
-    let linkSplit = word.split('/');
-    let link = word;
-    if (linkSplit[3] != "raw") link = linkSplit[0] + "//" + linkSplit[2] + "/raw/" + linkSplit[3];
+      let linkSplit = word.split("/");
+      let link = word;
+      if (linkSplit[3] != "raw")
+        link = linkSplit[0] + "//" + linkSplit[2] + "/raw/" + linkSplit[3];
 
-    const log = await (await fetch(link)).text();
-    const isLog = checkPossibleLog(log);
-    if (isLog == false) return;
-    logs.push(log);
+      const log = await (await fetch(link)).text();
+      const isLog = checkPossibleLog(log);
+      if (isLog == false) return;
+      logs.push(log);
+    }
   }
 
   for (const log of logs) {
     let logUrl = await haste(log);
-    if (logUrl != "unable to post" && message.channel.messages.cache.get(message.id)) await message.delete().catch();
+    if (
+      logUrl != "unable to post" &&
+      message.channel.messages.cache.get(message.id)
+    )
+      await message.delete().catch();
 
     const fixes = crashFixCache.data.fixes; //type 1 => solution; type 2 => recommendations //type 0 => informations;
     let extraLogOutput: string[] = [];
@@ -65,6 +75,11 @@ export default new Event("messageCreate", async (message) => {
             completedProblems += 1;
           }
         }
+        if (p.method === "contains_not") {
+          if (!log.includes(p.value)) {
+            completedProblems += 1;
+          }
+        }
       }
 
       if (completedProblems === maxProblems) {
@@ -75,24 +90,26 @@ export default new Event("messageCreate", async (message) => {
     }
 
     let solutions = "";
-    for (const fix of extraLogOutput) {
-      solutions.length === 0 ? (solutions += `\t• ${fix}`) : (solutions += `\n\t• ${fix}`);
-    }
+    for (const fix of extraLogOutput)
+      solutions.length === 0
+        ? (solutions += `\t• ${fix}`)
+        : extraLogOutput.length - indexOf(extraLogOutput, fix) > 1
+        ? (solutions += `\n\t• ${fix}`)
+        : (solutions += `\n\t• ${fix}\n`);
 
     let recommendations = "";
-    for (const recommended of recommendedOutput) {
+    for (const recommended of recommendedOutput)
       recommendations.length === 0
         ? (recommendations += `\t• ${recommended}`)
         : (solutions += `\n\t• ${recommended}`);
-    }
 
     const buttonRow = new MessageActionRow().addComponents(
       new MessageButton().setStyle("LINK").setURL(logUrl).setLabel("view log")
     );
     await message.channel.send({
-      content: `**${
-        message.author
-      }** sent a log,\n${clientData.join(",\n")}\n\n ${
+      content: `**${message.author}** sent a log,\n${clientData.join(
+        ",\n"
+      )}\n\n ${
         extraLogOutput.length === 0
           ? message.content
             ? message.content

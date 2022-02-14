@@ -49,8 +49,7 @@ function isHaste(string: string) {
   let result: boolean;
   for (const url of urls) {
     let regex = new RegExp(`.*${url}.*`, "gi");
-    if (regex.test(url)) return result = true;
-
+    if (regex.test(url)) return (result = true);
   }
 
   if (result == true) return true;
