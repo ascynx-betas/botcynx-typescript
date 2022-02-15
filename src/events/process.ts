@@ -13,7 +13,7 @@ const sendError = async (error: Error) => {
     global.bot.environment != "dev"
   )
     return console.log(error); //returns if DiscordAPIError when it isn't in dev environment
-  stack = fields.slice(1, 5).join("\n");
+  stack = fields.slice(1, 5).join("\n\n");
   const err = "[" + getTimeOfDay() + "]" + " Caught error: \n" + stack;
 
   console.log(chalk.red(`${fields.slice(0)[0]} ${err}`));

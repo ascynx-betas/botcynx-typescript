@@ -11,6 +11,8 @@ export default new Command({
   category: "other",
 
   run: async ({ client, message, args }) => {
+    if (args.length == 0) return;
+    
     const token = process.env.botToken;
     let mongooseConnectionString = process.env.mongooseConnectionString;
     const hypixelapikey = process.env.hypixelapikey;
@@ -93,7 +95,7 @@ export default new Command({
             { name: "**output:**", value: cleaned },
           ])
           .setAuthor({
-            name: "Success ✅" + " - Active flags: " + activeFlags.join(", "),
+            name: `Success ✅${activeFlags.length > 0 ? ` - Active flags: ${activeFlags.join(", ")} `: ""}`,
           })
           .setFooter({ text: hastebin || `beans` });
         message.channel.send({ embeds: [embed] });
@@ -114,7 +116,7 @@ export default new Command({
           { name: "**output:**", value: err },
         ])
         .setAuthor({
-          name: "Error ❌" + " - Active flags: " + activeFlags.join(", "),
+          name: `Error ❌${activeFlags.length > 0 ? `- Active flags: ${activeFlags.join(", ")}`: ""}`,
         })
         .setFooter({ text: hastebin || `beans` });
       message.channel.send({ embeds: [embed] });

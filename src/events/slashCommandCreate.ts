@@ -49,19 +49,24 @@ export default new Event(
         return interaction.reply("You have used a non existant command");
 
       //disabled commands
+      if (process.env.environment == "debug") console.log('isDisabled check');
       if (!isDisabled(command, interaction.guild))
         return interaction.reply("This command is disabled");
 
+        if (process.env.environment == "debug") console.log('isDevOnly check');
       if (command.devonly) {
         if (!isDevOnly(interaction.user))
           return interaction.reply("this command is developer only");
       }
+
+      if (process.env.environment == "debug") console.log('isOnCooldown check');
       //cooldown
       if (command.cooldown && interaction.user.id != process.env.developerId) {
         if (!isOnCooldown(command, interaction.user))
           return interaction.reply("You are currently in cooldown");
       }
 
+      if (process.env.environment == "debug") console.log('botPermission check');
       // if bot requires permissions
       if (command.botPermissions) {
         if (!botPermissionInhibitor(command, interaction.guild))
@@ -69,6 +74,8 @@ export default new Event(
             "I do not have the permissions required to run that command !"
           );
       }
+
+      if (process.env.environment == "debug") console.log('userPermission check');
       //if user requires permission
       if (command.userPermissions) {
         if (
@@ -82,6 +89,7 @@ export default new Event(
           );
       }
 
+      if (process.env.environment == "debug") console.log('require check');
       if (command.require) {
         let RequireValue = await RequireTest(command.require);
         if (RequireValue == false)
@@ -90,9 +98,11 @@ export default new Event(
           });
       }
 
+      if (process.env.environment == "debug") console.log('sending interactioncommand');
       await interaction.deferReply();
       botcynx.emit("interactioncommandCreate", interaction);
 
+      if (process.env.environment == "debug") console.log('running command');
       await command.run({
         args: interaction.options as CommandInteractionOptionResolver,
         client: botcynx,
