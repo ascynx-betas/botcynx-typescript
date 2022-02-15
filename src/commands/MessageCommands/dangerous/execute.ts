@@ -67,7 +67,7 @@ export default new Command({
     try {
       let Cregexp = /process\.env\.?/gim;
       let r = Cregexp.test(code);
-      if (r === true) throw Error("not happening m8");
+      if (r === true && !activeFlags.includes("sudo")) throw Error("not happening m8");
       let evaled = eval(code);
       let cleaned = await clean(evaled);
       cleaned = cleaned.replace(
