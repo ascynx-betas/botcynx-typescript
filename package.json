@@ -10,7 +10,8 @@
     "build": "tsc",
     "watch": "tsc -w",
     "quickstart": "tsc && node dist/index.js",
-    "test:api": "node dist/lib/test/gitPull.js"
+    "test:api": "node dist/lib/test/gitPull.js",
+    "start:prod": "node dist/index.js"
   },
   "repository": {
     "type": "git",
