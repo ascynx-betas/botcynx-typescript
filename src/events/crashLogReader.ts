@@ -4,6 +4,7 @@ import fetch from "node-fetch";
 import {
   checkPossibleLog,
   crashFixCache,
+  getML,
   getMods,
 } from "../lib/cache/crashFix";
 import { haste, isHaste } from "../lib/haste";
@@ -21,8 +22,10 @@ export default new Event("messageCreate", async (message) => {
   )
     return;
 
-  const config = await configModel.find({ guildId: message.guild.id });
-  if (config[0].disabledCommands.includes("crashLogReader")) return;
+  if (process.env.environment != "dev") {
+    const config = await configModel.find({ guildId: message.guild.id });
+    if (config[0].disabledCommands.includes("crashLogReader")) return;
+  }
 
   if (
     message.attachments.size === 0 &&
@@ -59,8 +62,7 @@ export default new Event("messageCreate", async (message) => {
 
   for (const log of logs) {
     const mods = getMods(log);
-    let forgeVersion = mods?.get("Forge").version;
-    if (!forgeVersion) forgeVersion = null;
+    const ModLoader = getML(log);
 
     let logUrl = await haste(log);
     if (
@@ -69,10 +71,16 @@ export default new Event("messageCreate", async (message) => {
     )
       await message.delete().catch();
 
-    const fixes = crashFixCache.data.fixes; //type 1 => solution; type 2 => recommendations //type 0 => informations;
+    const fixes = crashFixCache.data.fixes; //type 1 => solution //type 2 => recommendations //type 0 => informations;
     let extraLogOutput: string[] = [];
     let recommendedOutput: string[] = [];
     let clientData: string[] = [];
+    let forgeVersion = mods?.get("Forge")?.version || null;
+    clientData.push(
+      `user is on ${
+        forgeVersion != null ? "forge version " + forgeVersion : ModLoader
+      }`
+    );
 
     for (const fix of fixes) {
       let completedProblems = 0;
@@ -128,27 +136,13 @@ export default new Event("messageCreate", async (message) => {
       new MessageButton().setStyle("LINK").setURL(logUrl).setLabel("view log")
     );
     await message.channel.send({
-      content: `**${message.author}** sent a log,\n${clientData.join(
-        ",\n"
-      )}\n\n ${
-        extraLogOutput.length === 0
-          ? message.content
-            ? message.content
-            : ""
-          : `Solutions: \n${solutions}`
-      }${
-        recommendedOutput.length === 0 && message.content
-          ? `\n\n${message.content}`
-          : ""
+      content: `**${message.author}** sent a log, ${
+        message.content ? message.content : ""
+      }\n${clientData.join(",\n")}\n\n ${
+        extraLogOutput.length === 0 ? "" : `Solutions: \n${solutions}`
       }${
         recommendedOutput.length === 0
-          ? `${
-              extraLogOutput.length === 0
-                ? message.content
-                  ? `\n\n${message.content}`
-                  : ""
-                : ""
-            }`
+          ? ""
           : `\nRecommendations: \n${recommendations}`
       }`,
       components: [buttonRow],

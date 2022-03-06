@@ -12,7 +12,7 @@ export default new Command({
 
   run: async ({ client, message, args }) => {
     if (args.length == 0) return;
-    
+
     const token = process.env.botToken;
     let mongooseConnectionString = process.env.mongooseConnectionString;
     const hypixelapikey = process.env.hypixelapikey;
@@ -67,7 +67,8 @@ export default new Command({
     try {
       let Cregexp = /process\.env\.?/gim;
       let r = Cregexp.test(code);
-      if (r === true && !activeFlags.includes("sudo")) throw Error("not happening m8");
+      if (r === true && !activeFlags.includes("sudo"))
+        throw Error("not happening m8");
       let evaled = eval(code);
       let cleaned = await clean(evaled);
       cleaned = cleaned.replace(
@@ -95,7 +96,11 @@ export default new Command({
             { name: "**output:**", value: cleaned },
           ])
           .setAuthor({
-            name: `Success ✅${activeFlags.length > 0 ? ` - Active flags: ${activeFlags.join(", ")} `: ""}`,
+            name: `Success ✅${
+              activeFlags.length > 0
+                ? ` - Active flags: ${activeFlags.join(", ")} `
+                : ""
+            }`,
           })
           .setFooter({ text: hastebin || `beans` });
         message.channel.send({ embeds: [embed] });
@@ -116,7 +121,11 @@ export default new Command({
           { name: "**output:**", value: err },
         ])
         .setAuthor({
-          name: `Error ❌${activeFlags.length > 0 ? `- Active flags: ${activeFlags.join(", ")}`: ""}`,
+          name: `Error ❌${
+            activeFlags.length > 0
+              ? `- Active flags: ${activeFlags.join(", ")}`
+              : ""
+          }`,
         })
         .setFooter({ text: hastebin || `beans` });
       message.channel.send({ embeds: [embed] });

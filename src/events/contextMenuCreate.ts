@@ -1,7 +1,6 @@
 import { botcynx } from "..";
 import { Event } from "../structures/Event";
 import {
-  commandCooldown,
   contextInteraction,
   MessageContextType,
   UserContextType,

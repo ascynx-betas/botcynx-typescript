@@ -102,6 +102,22 @@ export function getMods(Log: string): Collection<string, ModCollection> {
   return mods;
 }
 
+/**
+ * ML = ModLoader
+ */
+export function getML(log: string): string {
+  const splitLog = log.split("\n");
+  let fml: string;
+  splitLog.forEach((line) => {
+    if (line.startsWith("\tIs Modded:")) {
+      const FML = line.split("'");
+      fml = FML[1];
+    }
+  });
+
+  return fml || "unknown / vanilla";
+}
+
 export const crashFixCache = new jsonCache(
   new repoLink("SkyblockClient", "CrashData", "crashes.json")
 );

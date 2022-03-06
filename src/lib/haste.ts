@@ -4,9 +4,7 @@ interface hastebinRes {
   key: string;
 }
 
-//this next function is stolen from bush bot (https://github.com/NotEnoughUpdates/bush-bot)
-async function haste(content: string) {
-  const urls = [
+const hasteUrls = [
     "https://hst.sh",
     "https://hasteb.in",
     "https://hastebin.com",
@@ -14,8 +12,11 @@ async function haste(content: string) {
     "https://haste.clicksminuteper.net",
     "https://paste.pythondiscord.com",
     "https://haste.unbelievaboat.com",
-  ];
-  for (const url of urls) {
+];
+
+//this next function is largely based on the one used in bush bot (https://github.com/NotEnoughUpdates/bush-bot)
+async function haste(content: string) {
+  for (const url of hasteUrls) {
     try {
       const res: hastebinRes = await (
         await fetch(`${url}/documents`, {
@@ -36,20 +37,11 @@ async function haste(content: string) {
 }
 
 function isHaste(string: string) {
-  const urls = [
-    "hst.sh",
-    "hasteb.in",
-    "hastebin.com",
-    "mystb.in",
-    "haste.clicksminuteper.net",
-    "paste.pythondiscord.com",
-    "haste.unbelievaboat.com",
-  ];
 
   let result: boolean;
-  for (const url of urls) {
+  for (const url of hasteUrls) {
     let regex = new RegExp(`.*${url}.*`, "gi");
-    if (regex.test(url)) return (result = true);
+    if (regex.test(string)) return (result = true);
   }
 
   if (result == true) return true;

@@ -34,7 +34,9 @@ export default new slashCommand({
     const channel = interaction.options.getChannel("channel");
     if (user) {
       user
-        .send({ content: message })
+        .send({
+          content: `${interaction.user.tag} wanted to tell you: ` + message,
+        })
         .catch(() => interaction.followUp("Cannot send DM to specified user"));
       interaction
         .followUp({ content: `sent message '${message}' to ${user.tag}` })

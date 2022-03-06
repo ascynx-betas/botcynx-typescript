@@ -18,6 +18,7 @@ export default new Event("guildDelete", (guild) => {
   (botcynx.channels.cache.get("903281241594413176") as TextChannel).send({
     embeds: [embed],
   });
+
   const guildId = guild.id;
   configModel.deleteOne({ guildId: guildId });
 });

@@ -1,12 +1,6 @@
 import { botcynx } from "..";
 import { Event } from "../structures/Event";
-import {
-  GuildMember,
-  Message,
-  MessageActionRow,
-  MessageButton,
-  MessageSelectMenu,
-} from "discord.js";
+import { GuildMember, Message, MessageActionRow } from "discord.js";
 import { RequireTest } from "../personal-modules/commandHandler";
 import {
   botPermissionInhibitor,

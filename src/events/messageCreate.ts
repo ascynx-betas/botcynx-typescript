@@ -2,16 +2,17 @@ import { botcynx } from "..";
 import { configModel } from "../models/config";
 import { Event } from "../structures/Event";
 import { RequireTest } from "../personal-modules/commandHandler";
-import { commandCooldown } from "../typings/Command";
 import {
   botPermissionInhibitor,
   isDisabled,
   isOnCooldown,
   userPermissionInhibitor,
 } from "../lib/command/commandInhibitors";
+import { handleMessageAnnouncement } from "../lib/AnnounceTesting/announcer";
 
 export default new Event("messageCreate", async (message) => {
   // MessageCommands
+
   if (
     message.author.bot ||
     !message.guild ||
