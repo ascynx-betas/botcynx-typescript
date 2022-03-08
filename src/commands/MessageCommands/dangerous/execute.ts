@@ -2,6 +2,7 @@ import { MessageEmbed } from "discord.js";
 import { Command } from "../../../structures/Commands";
 import { inspect } from "util";
 import { haste } from "../../../lib/haste";
+import { getUpdaterFile } from "../../../lib/Testlang";
 
 //!You can access modules using /app/personal-modules/{module}.js
 export default new Command({

@@ -5,13 +5,13 @@ interface hastebinRes {
 }
 
 const hasteUrls = [
-    "https://hst.sh",
-    "https://hasteb.in",
-    "https://hastebin.com",
-    "https://mystb.in",
-    "https://haste.clicksminuteper.net",
-    "https://paste.pythondiscord.com",
-    "https://haste.unbelievaboat.com",
+  "https://hst.sh",
+  "https://hasteb.in",
+  "https://hastebin.com",
+  "https://mystb.in",
+  "https://haste.clicksminuteper.net",
+  "https://paste.pythondiscord.com",
+  "https://haste.unbelievaboat.com",
 ];
 
 //this next function is largely based on the one used in bush bot (https://github.com/NotEnoughUpdates/bush-bot)
@@ -37,7 +37,6 @@ async function haste(content: string) {
 }
 
 function isHaste(string: string) {
-
   let result: boolean;
   for (const url of hasteUrls) {
     let regex = new RegExp(`.*${url}.*`, "gi");

@@ -2,6 +2,7 @@ import { Event } from "../structures/Event";
 import { getKeyInfo } from "../personal-modules/hypixel";
 import { ticketBlockedName } from "../config";
 import chalk from "chalk";
+import { sendInfoWebhook } from "../lib/utils";
 
 export default new Event("ready", async () => {
   console.log(chalk.blue("----Status----"));
@@ -20,7 +21,13 @@ export default new Event("ready", async () => {
     console.log(chalk.green("api key exists"));
     let data = await getKeyInfo();
     if (data.success === true) global.bot.hypixelapikey = true; //set value of hypixelApiKey to valid
-    if (data.success === false) global.bot.hypixelapikey = false; //set value of hypixelApiKey to invalid
+    if (data.success === false) {
+      global.bot.hypixelapikey = false; //set value of hypixelApiKey to invalid
+      console.log(chalk.red("invalid api key\nreason: " + data.cause));
+      sendInfoWebhook(
+        `<@${process.env.developerId}>, API key invalid, reason: ${data.cause}`
+      );
+    }
   }
   if (process.env.webhookLogLink) global.bot.loglink = true; //set value of LogLink to valid
   if (process.env.githubToken) {

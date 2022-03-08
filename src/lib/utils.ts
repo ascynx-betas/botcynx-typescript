@@ -1,4 +1,7 @@
+import { Embed } from "@discordjs/builders";
 import { EmbedFieldData, MessageButton, MessageEmbed } from "discord.js";
+import { botcynx } from "..";
+import { webhook } from "../personal-modules/discordPlugin";
 import { fork } from "./emojis";
 
 export const timestampToHuman = (timestamp: number): string => {
@@ -112,4 +115,16 @@ export const queryEmbed = (data, tag, query) => {
     .setFooter({ text: `requested by ${tag}` });
 
   return { embed, buttonFields }; //not sure how it's gonna work out
+};
+
+export const sendInfoWebhook = async (message?: string, embed?: Embed) => {
+  const infoWebhook = webhook(process.env.webhookLogLink);
+  const hook = await botcynx.fetchWebhook(infoWebhook.id, infoWebhook.token);
+  hook.send({
+    content: message != null ? message : null,
+    embeds: embed != null ? [embed] : null,
+    allowedMentions: { parse: ["roles", "users"] },
+    username: botcynx.user.tag,
+    avatarURL: botcynx.user.avatarURL({ dynamic: true }),
+  });
 };

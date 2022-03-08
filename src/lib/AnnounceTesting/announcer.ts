@@ -162,7 +162,7 @@ export const handleMessageAnnouncement = async (message: Message) => {
     .addListener(
       new Listener(
         "testing listener",
-        "https://ptb.discord.com/api/webhooks/948221156371095602/3jeUzw6JTAlyuReiv_-2PqLSixp3uOXCmv88THZwPGbdHwOgE2jm1qkgVF2l1xz73h09"
+        ""
       )
         .addPreference({
           method: "REPLACE",
@@ -182,7 +182,7 @@ export const handleMessageAnnouncement = async (message: Message) => {
     .addListener(
       new Listener(
         "LISTENER2",
-        "https://ptb.discord.com/api/webhooks/948221682286485564/vzOtr_KdlBGNZhpO-H2vke1eqNUbCLstGwJ_nLAFeT8Fi71bnS5DVtz0fmNLNd45DzLA"
+        ""
       )
     );
   const otherAnnouncer: Announcer = new Announcer(
@@ -191,7 +191,7 @@ export const handleMessageAnnouncement = async (message: Message) => {
   ).addListener(
     new Listener(
       "1st listener",
-      "https://ptb.discord.com/api/webhooks/948221156371095602/3jeUzw6JTAlyuReiv_-2PqLSixp3uOXCmv88THZwPGbdHwOgE2jm1qkgVF2l1xz73h09"
+      ""
     )
       .addPreference({ method: "REPLACE", original: "skill issue" })
       .addPreference({ method: "IDENTITY", type: "SERVER-USER" })
