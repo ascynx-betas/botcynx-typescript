@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
 import { botcynx } from "../..";
-import { Announcer } from "./announcer";
+import { Announcer, preference } from "./announcer";
 
 export const handleAnnouncement = async (
   message: Message,
@@ -16,7 +16,7 @@ export const handleAnnouncement = async (
     const preferences =
       listener.PREFERENCES != null ? listener.PREFERENCES : null;
     let isActiveListener = true;
-    let announcementType = "ANONYMOUS";
+    let announcementType: preference["type"] = "ANONYMOUS";
     let content = message.content;
 
     for (const preference of preferences) {
@@ -29,8 +29,8 @@ export const handleAnnouncement = async (
             : "[REDACTED INFORMATION]"
         );
       }
-      if (preference.method == "DISABLE") isActiveListener = false;
-      if (preference.method == "IDENTITY") announcementType = preference.type;
+      if (preference.method == "DISABLE" && isActiveListener != false) isActiveListener = false;
+      if (preference.method == "IDENTITY" && announcementType != "ANONYMOUS") announcementType = preference.type;
     }
 
     if (!isActiveListener) continue;
