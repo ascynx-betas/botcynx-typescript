@@ -1,3 +1,4 @@
+import { ModalSubmitInteraction } from "discord-modals";
 import { ClientEvents, Message } from "discord.js";
 import { botcynxInteraction } from "../typings/Command";
 
@@ -11,4 +12,5 @@ export class Event<Key extends keyof extendedClientEvents> {
 export interface extendedClientEvents extends ClientEvents {
   interactioncommandCreate: [interaction: botcynxInteraction];
   messageCommandCreate: [message: Message];
+  modalSubmit: [modal: ModalSubmitInteraction];
 } //add custom events here

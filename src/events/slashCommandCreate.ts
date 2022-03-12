@@ -102,7 +102,7 @@ export default new Event(
 
       if (process.env.environment == "debug")
         console.log("sending interactioncommand");
-      await interaction.deferReply();
+      if (!command.isModalCommand) await interaction.deferReply();
       botcynx.emit("interactioncommandCreate", interaction);
 
       if (process.env.environment == "debug") console.log("running command");

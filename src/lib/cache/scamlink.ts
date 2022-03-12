@@ -47,4 +47,4 @@ export const ignore = [
   "discord.gg",
   "cdn.discordapp.com",
   "media.discordapp.com",
-]; //ignores those in automod
+]; //ignores those in automod if found

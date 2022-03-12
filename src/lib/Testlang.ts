@@ -8,7 +8,7 @@ const testLangPlaceholder = {
   "en-us": {
     value: "whatever the frick it means",
   },
-  fr: {
+  "fr": {
     value: "ce que ça veut dire mais en français",
   },
 };
@@ -19,11 +19,11 @@ const getLangValue = (searchedValue: string) => {
   const CollectionOfValues: Collection<string, string> = new Collection();
 
   for (const lang in testLangPlaceholder) {
-    //deprecated to update
+    //deprecated to change testLangPlaceholder to TestLang when the cache is finished
     const language =
       Object.values(testLangPlaceholder)[
         Object.keys(testLangPlaceholder).indexOf(lang)
-      ]; //deprecated to update
+      ]; //deprecated to change testLangPlaceholder to TestLang when the cache is finished
 
     for (const value in language) {
       if (value != searchedValue) continue;
@@ -49,11 +49,12 @@ const addLangValue = (key: string, ENvalue: string): void => {
   const k = key;
   const addedValue = {};
   addedValue[k] = ENvalue;
-  Object.assign(testLangPlaceholder["en-us"], addedValue); //deprecated to update
+  Object.assign(testLangPlaceholder["en-us"], addedValue); //deprecated to change testLangPlaceholder to TestLang when the cache is finished
+  //TODO find a way to automate the translation in available languages
 };
 
-const getUpdaterFile = () => {
-  const jsonLang = JSON.stringify(testLangPlaceholder); //deprecated to update
+const getUpdaterFile = (): Buffer => {
+  const jsonLang = JSON.stringify(testLangPlaceholder); //deprecated to change testLangPlaceholder to TestLang when the cache is finished
   const bufferLang = Buffer.from(jsonLang);
 
   return bufferLang;

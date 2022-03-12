@@ -45,17 +45,16 @@ export default new Event("messageCreate", async (message) => {
 
   if (message.content.length > 0) {
     for (const word of message.content.replaceAll("\n", " ").split(" ")) {
-      if (!isLink(word)) return;
-      if (!isHaste(word)) return;
+      if (!isLink(word) || !isHaste(word)) continue;
 
       let linkSplit = word.split("/");
       let link = word;
       if (linkSplit[3] != "raw")
-        link = linkSplit[0] + "//" + linkSplit[2] + "/raw/" + linkSplit[3];
+        link = linkSplit[0] + "//" + linkSplit[2] + "/raw/" + linkSplit[3]; //Example https://hst.sh/raw/ID
 
       const log = await (await fetch(link)).text();
       const isLog = checkPossibleLog(log);
-      if (isLog == false) return;
+      if (isLog == false) continue;
       logs.push(log);
     }
   }
@@ -69,7 +68,7 @@ export default new Event("messageCreate", async (message) => {
       logUrl != "unable to post" &&
       message.channel.messages.cache.get(message.id)
     )
-      await message.delete().catch();
+      message.delete().catch();
 
     const fixes = crashFixCache.data.fixes; //type 1 => solution //type 2 => recommendations //type 0 => informations;
     let extraLogOutput: string[] = [];
@@ -78,7 +77,7 @@ export default new Event("messageCreate", async (message) => {
     let forgeVersion = mods?.get("Forge")?.version || null;
     clientData.push(
       `user is on ${
-        forgeVersion != null ? "forge version " + forgeVersion : ModLoader
+        forgeVersion != null && forgeVersion != undefined ? "forge version " + forgeVersion : ModLoader != null || ModLoader != undefined ? ModLoader : "unknown"
       }`
     );
 
@@ -146,7 +145,7 @@ export default new Event("messageCreate", async (message) => {
           : `\nRecommendations: \n${recommendations}`
       }`,
       components: [buttonRow],
-      allowedMentions: { parse: [] },
+      allowedMentions: { users: [message.author.id] },
     });
   }
 });

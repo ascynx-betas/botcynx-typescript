@@ -128,8 +128,7 @@ export default new slashCommand({
         .setFooter({ text: `requested by ${interaction.user.tag}` })
         .setColor("RANDOM")
         .setThumbnail(`https://mc-heads.net/avatar/${username}/100`);
-      // gameMap is probably used for games like skywars and bedwars
-      interaction.followUp({ embeds: [embed] });
+      interaction.followUp({ embeds: [embed], allowedMentions: {} });
     }
   },
 });

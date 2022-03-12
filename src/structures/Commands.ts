@@ -3,6 +3,7 @@ import {
   CommandType,
   MessageCommandType,
   MessageContextType,
+  modalResponseType,
   UserContextType,
   WhitelistedCommands,
 } from "../typings/Command";
@@ -35,6 +36,12 @@ export class ButtonResponse {
 
 export class WhitelistedCommand {
   constructor(commandOptions: WhitelistedCommands) {
+    Object.assign(this, commandOptions);
+  }
+}
+
+export class modalResponse {
+  constructor(commandOptions: modalResponseType) {
     Object.assign(this, commandOptions);
   }
 }

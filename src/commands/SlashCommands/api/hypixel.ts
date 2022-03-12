@@ -69,6 +69,7 @@ export default new slashCommand({
     } else isVerified = true;
 
     let discord: any = await getPlayerByUuid(uuid).catch(() => null);
+    const player = discord.player;
     if (discord) {
       discord = discord?.player?.socialMedia?.links?.DISCORD;
       let isInCache = client.users.cache.filter((u) => u.tag === discord);
@@ -80,8 +81,8 @@ export default new slashCommand({
     if (!discord) discord = "couldn't fetch discord";
     let coolRank: string;
     let displayName: string;
-    if (typeof coolPeopleUUId[uuid] != "undefined") {
-      coolRank = coolPeopleUUId[uuid];
+    if (typeof coolPeopleUUId[uuid] != "undefined" || player.rank == "YOUTUBER") {
+      coolRank = coolPeopleUUId[uuid] != undefined ? coolPeopleUUId[uuid] : "youtube rank";
       coolRank = coolTypeToEmojis[coolRank];
       displayName = coolRank + " " + username;
     }
@@ -104,10 +105,12 @@ export default new slashCommand({
     embedFields.push({
       name: "online:",
       value: `${status ? "🟢" : "🔴"}` || "Error",
+      inline: true
     });
     embedFields.push({
       name: "verified",
-      value: `${isVerified ? "🟢" : "🔴"}` || "Error",
+      value: `${isVerified ? `🟢 verified account: <@${verified[0].userId}>` : "🔴"}` || "Error",
+      inline: true
     });
 
     if (uuid) {

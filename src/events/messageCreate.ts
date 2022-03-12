@@ -8,7 +8,6 @@ import {
   isOnCooldown,
   userPermissionInhibitor,
 } from "../lib/command/commandInhibitors";
-import { handleMessageAnnouncement } from "../lib/AnnounceTesting/announcer";
 
 export default new Event("messageCreate", async (message) => {
   // MessageCommands

@@ -13,6 +13,7 @@ import {
   ButtonResponseType,
   commandCooldown,
   WhitelistedCommands,
+  modalResponseType,
 } from "../typings/Command";
 import glob from "glob";
 import { promisify } from "util";
@@ -38,6 +39,7 @@ export class botClient extends Client {
   cooldowns: Collection<string, commandCooldown> = new Collection();
   tasks: Collection<string, any> = new Collection(); //!CHANGE THE ANY TO THE TASK TYPE ONCE IT'S MADE
   package: any;
+  modals: Collection<string, modalResponseType> = new Collection();
   constructor() {
     super({ intents: 32767 });
     this.package = JSON.parse(fs.readFileSync("package.json", "utf-8"));
@@ -121,6 +123,16 @@ export class botClient extends Client {
       this.whitelistedCommands.set(command.name, command);
       whitelistedCommands.push(command);
     });
+
+    //modals
+    const modalFiles = await globPromise(`${__dirname}/../modals/*{.ts,.js}`);
+
+    modalFiles.forEach(async(filePath) => {
+        const modal: modalResponseType = await this.importFile(filePath);
+        if (!modal.run || !modal.name) return;
+
+        this.modals.set(modal.name, modal);
+    })
 
     //Button
     const buttonFiles = await globPromise(`${__dirname}/../buttons/*{.ts,.js}`);

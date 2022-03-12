@@ -1,4 +1,5 @@
 import { time } from "console";
+import { ModalSubmitInteraction } from "discord-modals";
 import {
   ChatInputApplicationCommandData,
   CommandInteraction,
@@ -73,6 +74,11 @@ interface runOptionsMessage {
   args: any;
 } //MessageCommands
 
+interface modalRunOption {
+  modal: ModalSubmitInteraction;
+  client: botClient;
+}
+
 /**
  * all run functions
  */
@@ -80,6 +86,7 @@ type updateRunFunction = (options: updateRunOptions) => any;
 type RunFunction = (options: runOptions) => any;
 type MessageRunFunction = (options: runOptionsMessage) => any;
 type ContextRunFunction = (options: runContextOptions) => any;
+type modalRunFunction = (options: modalRunOption) => any;
 
 /**
  * all arguments for the environment in which the commands will be executed
@@ -92,6 +99,7 @@ export type CommandType = {
   invisible?: boolean;
   category?: string;
   cooldown?: number; //seconds
+  isModalCommand?: boolean
   run: RunFunction;
 } & ChatInputApplicationCommandData; //SlashCommands
 
@@ -102,6 +110,12 @@ export type WhitelistedCommands = {
   pack?: string;
 } & CommandType &
   ChatInputApplicationCommandData; //Whitelisted Interaction Commands (slash)
+
+  export type modalResponseType = {
+    once?: boolean,
+    run: modalRunFunction,
+    name: string
+  }
 
 export type UserContextType = {
   require?: require[];
