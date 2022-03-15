@@ -160,10 +160,7 @@ export const handleMessageAnnouncement = async (message: Message) => {
     "895619966877962240"
   )
     .addListener(
-      new Listener(
-        "testing listener",
-        ""
-      )
+      new Listener("testing listener", "")
         .addPreference({
           method: "REPLACE",
           original: "<@!?376647579653636096>",
@@ -179,20 +176,12 @@ export const handleMessageAnnouncement = async (message: Message) => {
           type: "USER",
         })
     )
-    .addListener(
-      new Listener(
-        "LISTENER2",
-        ""
-      )
-    );
+    .addListener(new Listener("LISTENER2", ""));
   const otherAnnouncer: Announcer = new Announcer(
     "amogus",
     "893864038554017793"
   ).addListener(
-    new Listener(
-      "1st listener",
-      ""
-    )
+    new Listener("1st listener", "")
       .addPreference({ method: "REPLACE", original: "skill issue" })
       .addPreference({ method: "IDENTITY", type: "SERVER-USER" })
   );

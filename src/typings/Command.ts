@@ -99,7 +99,7 @@ export type CommandType = {
   invisible?: boolean;
   category?: string;
   cooldown?: number; //seconds
-  isModalCommand?: boolean
+  isModalCommand?: boolean;
   run: RunFunction;
 } & ChatInputApplicationCommandData; //SlashCommands
 
@@ -111,11 +111,11 @@ export type WhitelistedCommands = {
 } & CommandType &
   ChatInputApplicationCommandData; //Whitelisted Interaction Commands (slash)
 
-  export type modalResponseType = {
-    once?: boolean,
-    run: modalRunFunction,
-    name: string
-  }
+export type modalResponseType = {
+  once?: boolean;
+  run: modalRunFunction;
+  name: string;
+};
 
 export type UserContextType = {
   require?: require[];

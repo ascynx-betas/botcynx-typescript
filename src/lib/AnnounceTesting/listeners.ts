@@ -29,8 +29,10 @@ export const handleAnnouncement = async (
             : "[REDACTED INFORMATION]"
         );
       }
-      if (preference.method == "DISABLE" && isActiveListener != false) isActiveListener = false;
-      if (preference.method == "IDENTITY" && announcementType != "ANONYMOUS") announcementType = preference.type;
+      if (preference.method == "DISABLE" && isActiveListener != false)
+        isActiveListener = false;
+      if (preference.method == "IDENTITY" && announcementType != "ANONYMOUS")
+        announcementType = preference.type;
     }
 
     if (!isActiveListener) continue;

@@ -8,7 +8,7 @@ const testLangPlaceholder = {
   "en-us": {
     value: "whatever the frick it means",
   },
-  "fr": {
+  fr: {
     value: "ce que ça veut dire mais en français",
   },
 };

@@ -77,7 +77,11 @@ export default new Event("messageCreate", async (message) => {
     let forgeVersion = mods?.get("Forge")?.version || null;
     clientData.push(
       `user is on ${
-        forgeVersion != null && forgeVersion != undefined ? "forge version " + forgeVersion : ModLoader != null || ModLoader != undefined ? ModLoader : "unknown"
+        forgeVersion != null && forgeVersion != undefined
+          ? "forge version " + forgeVersion
+          : ModLoader != null || ModLoader != undefined
+          ? ModLoader
+          : "unknown"
       }`
     );
 

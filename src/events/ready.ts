@@ -24,11 +24,9 @@ export default new Event("ready", async () => {
     if (data.success === false) {
       global.bot.hypixelapikey = false; //set value of hypixelApiKey to invalid
       console.log(chalk.red("invalid api key\nreason: " + data.cause));
-      sendInfoWebhook(
-          {
-          message: `<@${process.env.developerId}>, API key invalid, reason: ${data.cause}`
-          }
-        );
+      sendInfoWebhook({
+        message: `<@${process.env.developerId}>, API key invalid, reason: ${data.cause}`,
+      });
     }
   }
   if (process.env.webhookLogLink) global.bot.loglink = true; //set value of LogLink to valid

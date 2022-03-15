@@ -117,7 +117,10 @@ export const queryEmbed = (data, tag, query) => {
   return { embed, buttonFields }; //not sure how it's gonna work out
 };
 
-export const sendInfoWebhook = async (options: {message?: string, embed?: MessageEmbed}) => {
+export const sendInfoWebhook = async (options: {
+  message?: string;
+  embed?: MessageEmbed;
+}) => {
   const { message, embed } = options;
   const infoWebhook = webhook(process.env.webhookLogLink);
   const hook = await botcynx.fetchWebhook(infoWebhook.id, infoWebhook.token);

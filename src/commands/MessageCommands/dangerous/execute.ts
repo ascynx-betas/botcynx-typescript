@@ -94,7 +94,15 @@ export default new Command({
         const embed = new MessageEmbed()
           .setFields([
             { name: "**input:**", value: cool },
-            { name: "**output:**", value: cleaned },
+            {
+              name: `**output: Type: (${
+                cleaned.split(" ")[1] != "<ref" &&
+                cleaned.split(" ")[2] != "*1>"
+                  ? typeof evaled
+                  : cleaned.split(" ")[3]
+              })**`,
+              value: cleaned,
+            },
           ])
           .setAuthor({
             name: `Success ✅${

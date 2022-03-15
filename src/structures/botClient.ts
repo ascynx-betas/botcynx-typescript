@@ -127,12 +127,12 @@ export class botClient extends Client {
     //modals
     const modalFiles = await globPromise(`${__dirname}/../modals/*{.ts,.js}`);
 
-    modalFiles.forEach(async(filePath) => {
-        const modal: modalResponseType = await this.importFile(filePath);
-        if (!modal.run || !modal.name) return;
+    modalFiles.forEach(async (filePath) => {
+      const modal: modalResponseType = await this.importFile(filePath);
+      if (!modal.run || !modal.name) return;
 
-        this.modals.set(modal.name, modal);
-    })
+      this.modals.set(modal.name, modal);
+    });
 
     //Button
     const buttonFiles = await globPromise(`${__dirname}/../buttons/*{.ts,.js}`);
