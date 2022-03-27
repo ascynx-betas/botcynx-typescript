@@ -1,9 +1,4 @@
-import {
-  ApplicationCommandDataResolvable,
-  Client,
-  ClientEvents,
-  Collection,
-} from "discord.js";
+import { Client, ClientEvents, Collection } from "discord.js";
 import * as fs from "fs";
 import {
   CommandType,
@@ -17,7 +12,10 @@ import {
 } from "../typings/Command";
 import glob from "glob";
 import { promisify } from "util";
-import { RegisterCommandsOptions } from "../typings/Client";
+import {
+  RegisterCommandsOptions,
+  registerModulesOptions,
+} from "../typings/Client";
 import { Event } from "./Event";
 import { connect } from "mongoose";
 import { tagModel } from "../models/tag";
@@ -27,6 +25,7 @@ import chalk from "chalk";
 const globPromise = promisify(glob);
 
 export class botClient extends Client {
+  //dynamic Collections
   slashCommands: Collection<string, CommandType> = new Collection();
   userContextCommands: Collection<string, UserContextType> = new Collection();
   messageContextCommands: Collection<string, MessageContextType> =
@@ -38,11 +37,19 @@ export class botClient extends Client {
     new Collection();
   cooldowns: Collection<string, commandCooldown> = new Collection();
   tasks: Collection<string, any> = new Collection(); //!CHANGE THE ANY TO THE TASK TYPE ONCE IT'S MADE
-  package: any;
   modals: Collection<string, modalResponseType> = new Collection();
-  constructor() {
-    super({ intents: 32767 });
-    this.package = JSON.parse(fs.readFileSync("package.json", "utf-8"));
+
+  //static values
+  static instance: botClient;
+  package: any = JSON.parse(fs.readFileSync("package.json", "utf-8"));
+
+  private constructor() {
+    super({ intents: 32767, partials: ["CHANNEL"] });
+  }
+
+  static getInstance(): botClient {
+    if (!botClient.instance) botClient.instance = new botClient();
+    return botClient.instance;
   }
 
   start() {
@@ -60,94 +67,127 @@ export class botClient extends Client {
     return (await import(filePath))?.default;
   }
 
+  async registerModule(options: registerModulesOptions) {
+    const data = await this.importFile(options.path);
+
+    if (options.type == "command") {
+      if (!data.name) return;
+      if (process.env.environment == "debug")
+        console.log("registering " + data.name + "!");
+    } else if (options.type == "modal") {
+      if (!data.name || !data.run) return;
+      if (process.env.environment == "debug")
+        console.log("registering " + data.name + "!");
+    } else if (options.type == "button") {
+      if (!data.category) return;
+      if (process.env.environment == "debug")
+        console.log(
+          "registering " + typeof data.customId != "undefined"
+            ? data.category + ":" + data.customId
+            : data.category + "!"
+        );
+    }
+
+    if (process.env.environment == "debug")
+      console.log("――――――――――――――――――――――――――");
+
+    options.callback(data);
+  }
+
   async registerModules() {
-    const ArrayOfSlashCommands: any[] = [];
     //Context Commands
     //User
-    const userContextCommands: UserContextType[] = [];
     const userContextFiles = await globPromise(
       `${__dirname}/../commands/ContextCommands/user/*{.ts,.js}`
     );
 
     userContextFiles.forEach(async (filePath) => {
-      const command: UserContextType = await this.importFile(filePath);
-      if (!command.name) return;
-
-      this.userContextCommands.set(command.name, command);
-      userContextCommands.push(command);
-      this.ArrayOfSlashCommands.set(command.name, command);
-      ArrayOfSlashCommands.push(command);
+      this.registerModule({
+        path: filePath,
+        callback: function (data: UserContextType) {
+          botClient.getInstance().userContextCommands.set(data.name, data);
+          botClient.getInstance().ArrayOfSlashCommands.set(data.name, data);
+        },
+        type: "command",
+      });
     });
     //Message
-    const messageContextCommands: MessageContextType[] = [];
     const messageContextFiles = await globPromise(
       `${__dirname}/../commands/ContextCommands/message/*{.ts,.js}`
     );
 
     messageContextFiles.forEach(async (filePath) => {
-      const command: MessageContextType = await this.importFile(filePath);
-      if (!command.name) return;
-
-      this.messageContextCommands.set(command.name, command);
-      messageContextCommands.push(command);
-      this.ArrayOfSlashCommands.set(command.name, command);
-      ArrayOfSlashCommands.push(command);
+      this.registerModule({
+        path: filePath,
+        callback: function (data: MessageContextType) {
+          botClient.getInstance().messageContextCommands.set(data.name, data);
+          botClient.getInstance().ArrayOfSlashCommands.set(data.name, data);
+        },
+        type: "command",
+      });
     });
 
     //SlashCommands
-    const slashCommands: ApplicationCommandDataResolvable[] = [];
     const slashCommandFiles = await globPromise(
       `${__dirname}/../commands/SlashCommands/*/*{.ts,.js}`
     );
 
     slashCommandFiles.forEach(async (filePath) => {
-      const command: CommandType = await this.importFile(filePath);
-      if (!command.name) return;
-
-      this.slashCommands.set(command.name, command);
-      slashCommands.push(command);
-      this.ArrayOfSlashCommands.set(command.name, command);
-      ArrayOfSlashCommands.push(command);
+      this.registerModule({
+        path: filePath,
+        callback: function (data: CommandType) {
+          botClient.getInstance().ArrayOfSlashCommands.set(data.name, data);
+          botClient.getInstance().slashCommands.set(data.name, data);
+        },
+        type: "command",
+      });
     });
 
     //WhitelistedCommands
-    const whitelistedCommands: ApplicationCommandDataResolvable[] = [];
     const whitelistedCommandFiles = await globPromise(
       `${__dirname}/../commands/whitelistedCommands/*{.ts,.js}`
     );
 
     whitelistedCommandFiles.forEach(async (filePath) => {
-      const command: WhitelistedCommands = await this.importFile(filePath);
-      if (!command.name) return;
-
-      this.whitelistedCommands.set(command.name, command);
-      whitelistedCommands.push(command);
+      this.registerModule({
+        path: filePath,
+        callback: function (data: WhitelistedCommands) {
+          botClient.getInstance().whitelistedCommands.set(data.name, data);
+        },
+        type: "command",
+      });
     });
 
     //modals
     const modalFiles = await globPromise(`${__dirname}/../modals/*{.ts,.js}`);
 
     modalFiles.forEach(async (filePath) => {
-      const modal: modalResponseType = await this.importFile(filePath);
-      if (!modal.run || !modal.name) return;
-
-      this.modals.set(modal.name, modal);
+      this.registerModule({
+        path: filePath,
+        callback: function (data: modalResponseType) {
+          botClient.getInstance().modals.set(data.name, data);
+        },
+        type: "modal",
+      });
     });
 
     //Button
     const buttonFiles = await globPromise(`${__dirname}/../buttons/*{.ts,.js}`);
 
     buttonFiles.forEach(async (filePath) => {
-      const buttons: ButtonResponseType = await this.importFile(filePath);
-      if (!buttons.category) return;
-      if (!buttons.customId) {
-        this.buttonCommands.set(buttons.category, buttons);
-      } else {
-        this.buttonCommands.set(
-          `${buttons.category}:${buttons.customId}`,
-          buttons
-        );
-      }
+      this.registerModule({
+        path: filePath,
+        callback: function (data: ButtonResponseType) {
+          if (!data.customId) {
+            botClient.getInstance().buttonCommands.set(data.category, data);
+          } else {
+            botClient
+              .getInstance()
+              .buttonCommands.set(`${data.category}:${data.customId}`, data);
+          }
+        },
+        type: "button",
+      });
     });
 
     this.on("ready", async () => {
@@ -157,32 +197,35 @@ export class botClient extends Client {
       guildsWithTags = [...new Set(guildsWithTags)];
       guildsWithTags.forEach((guild) => this.registerTags(guild));
       //register commands
-
       if (process.env.environment != "dev")
         this.registerCommands({
           commands: this.ArrayOfSlashCommands,
         });
-      else
+      else {
         this.registerCommands({
           commands: this.ArrayOfSlashCommands,
           guildId: process.env.guildId,
         });
-
+        for (let command of this.whitelistedCommands.map((c) => c)) {
+          command.register({client: this, guild: this.guilds.cache.get(process.env.guildId)});
+        }
+      }
       reload(); //reload coolPeople list
     });
 
     //MessageCommands
-    const commands: MessageCommandType[] = [];
     const CommandFiles = await globPromise(
       `${__dirname}/../commands/MessageCommands/*/*{.ts,.js}`
     );
 
     CommandFiles.forEach(async (filePath) => {
-      const command: MessageCommandType = await this.importFile(filePath);
-      if (!command.name) return;
-
-      this.commands.set(command.name, command);
-      commands.push(command);
+      this.registerModule({
+        path: filePath,
+        callback: function (data: MessageCommandType) {
+          botClient.getInstance().commands.set(data.name, data);
+        },
+        type: "command",
+      });
     });
 
     //Events
@@ -222,6 +265,7 @@ export class botClient extends Client {
       console.log(chalk.green(`Registering global commands`));
     }
   }
+
   async registerTags(guildId: string) {
     const guild = this.guilds.cache.get(guildId);
     if (!guild) return;

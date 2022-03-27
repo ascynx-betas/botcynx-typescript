@@ -1,6 +1,6 @@
 {
   "name": "botcynx-typescript",
-  "version": "1.7.1",
+  "version": "1.8.3",
   "description": "a discord bot made in typescript based on an earlier project",
   "main": "index.js",
   "scripts": {
@@ -32,7 +32,7 @@
     "@typescript-eslint/parser": "^5.8.1",
     "ansi-regex": "^5.0.1",
     "discord-akairo": "^8.1.0",
-    "discord-modals": "github:Ascynx/discord-modals",
+    "discord-modals": "github:Mateo-tem/discord-modals",
     "discord.js": "^13.6.0",
     "dotenv": "^10.0.0",
     "ffmpeg-static": "^4.4.0",

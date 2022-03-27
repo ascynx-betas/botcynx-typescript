@@ -32,4 +32,7 @@ export default new WhitelistedCommand({
 
     showModal(modal, { client, interaction });
   },
+  register: ({ client, guild }) => {
+    guild.commands.create(client.whitelistedCommands.get("giveawayrequest"));
+  },
 });

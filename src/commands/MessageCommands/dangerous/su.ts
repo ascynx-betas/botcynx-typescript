@@ -28,13 +28,13 @@ export default new Command({
         content: `the Id doesn't follow standards for an id`,
       });
 
-    const config = await configModel.find({
-      guildId: message.guild.id,
-    });
-    const guildconfig = config[0];
-    const su = guildconfig.su;
-
     if (!flags || flags == "-l") {
+      const config = await configModel.find({
+        guildId: message.guild.id,
+      });
+      const guildconfig = config[0];
+      const su = guildconfig.su;
+      
       if (su.includes(Id)) {
         //remove
 

@@ -70,7 +70,7 @@ export default new slashCommand({
       .timeout(timeForTimeout, reason || "reason not provided")
       .then(() =>
         interaction.followUp({
-          content: `success, ${target} i now muted until ${time}`,
+          content: `Success, ${target} is now muted until ${time}`,
           allowedMentions: { parse: [] },
         })
       )
@@ -85,7 +85,7 @@ export default new slashCommand({
           });
         if (error.httpStatus != 400 && error.httpStatus != 403)
           return interaction.followUp({
-            content: `encountered an unknown error while executing this command`,
+            content: `Encountered an unknown error while executing this command`,
           });
       });
   },

@@ -11,10 +11,8 @@ import {
 
 export default new Event("messageCreate", async (message) => {
   // MessageCommands
-
   if (
     message.author.bot ||
-    !message.guild ||
     !message.content.toLowerCase().startsWith(process.env.botPrefix)
   )
     return;
@@ -32,24 +30,24 @@ export default new Event("messageCreate", async (message) => {
 
   if (!command) return;
 
-  if (!isDisabled(command, message.guild))
+  if (message.guild && !isDisabled(command, message.guild))
     return message.reply("This command is disabled");
 
   //cooldown
-  if (command.cooldown && message.author.id != process.env.developerId) {
+  if (command.cooldown && message.author.id != process.env.developerId && message.guild) {
     if (!isOnCooldown(command, message.author))
       return message.reply("You are currently in cooldown");
   }
 
   // if bot requires permissions
-  if (command.botPermissions) {
+  if (command.botPermissions && message.guild) {
     if (!botPermissionInhibitor(command, message.guild))
       return message.reply(
         "I do not have the permissions required to run that command !"
       );
   }
   //if user requires permission
-  if (command.userPermissions) {
+  if (command.userPermissions && message.guild) {
     if (
       !userPermissionInhibitor(command, {
         member: message.member,
@@ -66,7 +64,7 @@ export default new Event("messageCreate", async (message) => {
     let RequireValue = await RequireTest(command.require);
     if (RequireValue == false) return;
   }
-
+if (message.guild) {
   const globalConfig = await configModel.findOne({ guildId: "global" });
 
   const Guildinfo = await configModel.find({
@@ -80,10 +78,12 @@ export default new Event("messageCreate", async (message) => {
     message.author.id != message.guild.ownerId
   )
     return; //message commands can only be used by super-users or the developer
-  if (command.devonly === true && message.author.id != process.env.developerId)
+}
+    if (command.devonly === true && message.author.id != process.env.developerId)
     return; //In message commands, devonly means that it can only be used by the set developer.
 
-  botcynx.emit("messageCommandCreate", message);
+  if (message.guild) botcynx.emit("messageCommandCreate", message);
+  
 
   await command.run({ client: botcynx, message, args });
 });

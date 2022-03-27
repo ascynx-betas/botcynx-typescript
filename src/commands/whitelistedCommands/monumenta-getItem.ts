@@ -1,9 +1,9 @@
 import { MessageEmbed } from "discord.js";
-import { itemList, itemType } from "../../lib/monumenta";
+import { itemModel } from "../../models/item";
 import { WhitelistedCommand } from "../../structures/Commands";
 
 export default new WhitelistedCommand({
-  name: "getItem",
+  name: "getitem",
   description: "get the stats / how to get an item in monumenta",
   options: [
     {
@@ -16,37 +16,11 @@ export default new WhitelistedCommand({
 
   run: async ({ client, interaction, args }) => {
     const itemName = args.getString("item-name");
-
-    if (!Object.keys(itemList).includes(itemName))
-      interaction.followUp({
-        content: "I cannot find that item in the item list",
-      });
-    const item: itemType = itemList[itemName]; //create itemList;
-
-    let itemAttributes: string;
-    let enchantmentsString: string;
-    Object.keys(item.Attributes).forEach((element) => {
-      let itemAttributeString: string = element;
-      itemAttributeString =
-        itemAttributeString + item.Attributes[element].join(",\n");
-
-      itemAttributes = itemAttributes + "\n" + itemAttributeString;
+    const item = await itemModel.findOne({
+      name: itemName.toLowerCase(),
     });
-
-    Object.keys(item.enchantments).forEach((enchantment) => {
-      let enchantString;
-
-      enchantString =
-        enchantString +
-        "\n" +
-        item.enchantments[enchantment].level +
-        enchantment;
-
-      enchantmentsString = enchantmentsString + "\n" + enchantString;
-    });
-
-    let embed = new MessageEmbed()
-      .setTitle(itemName)
-      .addField("Attributes", itemAttributes, true);
+  },
+  register: ({ client, guild }) => {
+    guild.commands.create(client.whitelistedCommands.get("getitem"));
   },
 });

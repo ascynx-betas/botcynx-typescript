@@ -70,4 +70,7 @@ export default new WhitelistedCommand({
       components: [actionRow, componentRow],
     });
   },
+  register: ({ client, guild }) => {
+    guild.commands.create(client.whitelistedCommands.get("find-repo"));
+  },
 });

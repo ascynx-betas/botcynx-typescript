@@ -2,10 +2,11 @@ import { Message } from "discord.js";
 import { handleAnnouncement } from "./listeners";
 
 export class Announcer {
-  name: string;
-  channelId: string;
-  LISTENERS: Listener[];
-  isDisabled: boolean;
+  public name: string;
+  public channelId: string;
+  public LISTENERS: Listener[];
+  public isDisabled: boolean;
+  private logs: { [key: string]: { [key: string]: string } }; //example: {"original-message-id": {Listener1: messageId, Listener2: messageId}} (used to edit the original message)
 
   constructor(name: string, channelId: string, isDisabled = false) {
     this.name = name;
@@ -17,6 +18,22 @@ export class Announcer {
   addListener(listener: Listener) {
     this.LISTENERS.push(listener);
     return this;
+  }
+
+  setLogs = (
+    originalMessageId: string,
+    listeners: { [key: string]: string }
+  ) => {
+    this.logs[originalMessageId] = listeners;
+    return this;
+  };
+
+  getLog(messageId) {
+    if (Object.keys(this.logs).includes(messageId)) {
+      return this.logs[messageId];
+    }
+
+    return null;
   }
 
   removeListener(index?: number, name?: string) {
@@ -49,9 +66,15 @@ export class Announcers {
    * - The announcers stored
    */
   Announcers: Announcer[];
+  static instance: Announcers;
 
-  constructor(announcers: Announcer[]) {
+  private constructor(announcers?: Announcer[]) {
     this.Announcers = announcers;
+  }
+
+  static getInstance(): Announcers {
+    if (!Announcers.instance) Announcers.instance = new Announcers();
+    return Announcers.instance;
   }
 
   /**
@@ -69,6 +92,14 @@ export class Announcers {
       return;
 
     this.Announcers.push(announcerToAdd);
+    return this;
+  }
+
+  addAnnouncers(announcersToAdd: Announcer[]) {
+    for (let announcer in announcersToAdd) {
+      this.addAnnouncer(announcersToAdd[announcer]);
+    }
+
     return this;
   }
 
@@ -92,7 +123,7 @@ export class Announcers {
   /**
    *
    * @param channelId - The channel that's monitored (ID);
-   * @returns {Array<Announcer>} - returns the list of announcers that monitor that ID;
+   * @returns {Array<Announcer>} - returns the list of announcers that monitors that ID;
    */
   getAnnouncerById(channelId: string) {
     if (!this.Announcers.some((Announcer) => Announcer.channelId == channelId))
@@ -186,7 +217,8 @@ export const handleMessageAnnouncement = async (message: Message) => {
       .addPreference({ method: "IDENTITY", type: "SERVER-USER" })
   );
 
-  let announcers = new Announcers([announcer, otherAnnouncer]);
+  let announcers = Announcers.getInstance(); //create / get instance
+  announcers.addAnnouncers([announcer, otherAnnouncer]); //add announcers to instance if they don't exist
 
   if (!announcers.getIds().includes(message.channelId)) return;
   let selectedAnnouncer = announcers.getAnnouncerById(message.channelId)[0];

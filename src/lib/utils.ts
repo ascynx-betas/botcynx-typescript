@@ -132,3 +132,8 @@ export const sendInfoWebhook = async (options: {
     avatarURL: botcynx.user.avatarURL({ dynamic: true }),
   });
 };
+export const recordFunctionTime = (functionToUse: Function, args?) => {
+  const startTime = console.time();
+  args != undefined ? functionToUse(...args) : functionToUse();
+  const stopTime = console.timeEnd();
+};

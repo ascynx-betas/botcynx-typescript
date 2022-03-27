@@ -5,6 +5,7 @@ import {
   CommandInteraction,
   CommandInteractionOptionResolver,
   ContextMenuInteraction,
+  Guild,
   GuildMember,
   Message,
   MessageApplicationCommandData,
@@ -87,6 +88,10 @@ type RunFunction = (options: runOptions) => any;
 type MessageRunFunction = (options: runOptionsMessage) => any;
 type ContextRunFunction = (options: runContextOptions) => any;
 type modalRunFunction = (options: modalRunOption) => any;
+type RegisterWhitelistedFunction = (options: {
+  client: botClient;
+  guild: Guild;
+}) => any;
 
 /**
  * all arguments for the environment in which the commands will be executed
@@ -108,6 +113,7 @@ export type CommandType = {
  */
 export type WhitelistedCommands = {
   pack?: string;
+  register: RegisterWhitelistedFunction;
 } & CommandType &
   ChatInputApplicationCommandData; //Whitelisted Interaction Commands (slash)
 
