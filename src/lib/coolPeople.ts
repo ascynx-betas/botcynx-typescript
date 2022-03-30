@@ -1,5 +1,4 @@
 import { updateCoolPeople } from "./gistPull";
-
 export type coolPeopleType =
   | "developer"
   | "youtube rank"

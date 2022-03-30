@@ -20,10 +20,8 @@ export default new Event("messageCreate", async (message) => {
   )
     return;
 
-  const config = await configModel.find({ guildId: message.guild.id });
-  if (config[0].disabledCommands.includes("linkReader")) return;
-
-  const discordSiteRegExp = /.{0,6}\.?discord\.com/gim;
+  //const config = await configModel.find({ guildId: message.guild.id });
+  //if (config[0].disabledCommands.includes("linkReader")) return;
 
   let results = containsLink(message.content);
   if (results.length == 0) return;
@@ -35,18 +33,7 @@ export default new Event("messageCreate", async (message) => {
 
     let link = first.slice(8, message.content.length);
     let fields = link.split("/");
-    if (!discordSiteRegExp.test(fields[0])) return; //if the link isn't discord related (avoid getting a youtube link caught up in it 💀)
-    if (fields[1] !== "channels") return;
-    let Id = isId(fields[2]);
-    let regex = /[^[0-9]/gi;
-    fields[2] = fields[2].replace(regex, "");
-    if (Id == false) return message.react("❌"); //link contains a non-id
-    Id = isId(fields[3]);
-    fields[3] = fields[3].replace(regex, "");
-    if (Id == false) return message.react("❌"); //link contains a non-id
-    Id = isId(fields[4]);
-    fields[4] = fields[4].replace(regex, "");
-    if (Id == false) return message.react("❌"); //link contains a non-id
+    if (!checkLink(link)) return;
     if (!botcynx.guilds.cache.get(fields[2])) return message.react("📵"); // The guild isn't in the bot's cache
 
     const source = await (
@@ -58,6 +45,10 @@ export default new Event("messageCreate", async (message) => {
           return message.react("📵");
         } /**the message does not exist */
       );
+
+    console.log((source as Message<boolean>).type);
+    if (!isSupportedMessage((source as any).type)) return;
+
     const sourceConfig = await configModel.find({
       guildId: fields[2],
     });
@@ -66,10 +57,15 @@ export default new Event("messageCreate", async (message) => {
     if (!source || source == null || typeof source === "undefined") return;
     let username;
     let avatarURL;
-    let content = `${(source as Message<boolean>).content || " "}`; //might break
+    let content =
+      (source as Message<boolean>).content != null
+        ? (source as Message<boolean>).content
+        : null;
+
     let sourceGuildMember = (
       source as Message<boolean>
     ).guild.members.cache.get((source as Message<boolean>).author.id);
+
     if (typeof sourceGuildMember !== "undefined") {
       username = sourceGuildMember.user.tag;
       avatarURL = sourceGuildMember.user.displayAvatarURL({ dynamic: true });
@@ -87,7 +83,6 @@ export default new Event("messageCreate", async (message) => {
     let attachmentsUrls: any = (source as Message<boolean>).attachments.map(
       (a) => a.url
     );
-
     //deprecated using deprecated property, might fail at any time
     let embeds = (source as Message<boolean>).embeds.filter(
       (embed) => embed.type === "rich"
@@ -115,58 +110,48 @@ export default new Event("messageCreate", async (message) => {
       .fetchWebhook(webhook.id, webhook.token)
       .catch(() => null);
     if (webhookClient == null) return;
-    if (isThread == true) {
-      if (typeof attachmentsUrls[0] !== "undefined") {
-        webhookClient
-          .send({
-            content: content,
-            username: username,
-            avatarURL: avatarURL,
-            threadId: message.channel.id,
-            embeds: embeds,
-            components: (source as Message<boolean>).components,
-            allowedMentions: { parse: [] },
-            files: attachmentsUrls,
-          })
-          .catch(() => message.react("🔇")); //empty message
-      } else {
-        webhookClient
-          .send({
-            content: content,
-            username: username,
-            avatarURL: avatarURL,
-            threadId: message.channel.id,
-            embeds: embeds,
-            components: (source as Message<boolean>).components,
-            allowedMentions: { parse: [] },
-          })
-          .catch(() => message.react("🔇")); //empty message
-      }
-    } else {
-      if (typeof attachmentsUrls[0] !== "undefined") {
-        webhookClient
-          .send({
-            content: content,
-            username: username,
-            avatarURL: avatarURL,
-            embeds: embeds,
-            components: (source as Message<boolean>).components,
-            allowedMentions: { parse: [] },
-            files: attachmentsUrls,
-          })
-          .catch(() => message.react("🔇")); //empty message
-      } else {
-        webhookClient
-          .send({
-            content: content,
-            username: username,
-            avatarURL: avatarURL,
-            embeds: embeds,
-            components: (source as Message<boolean>).components,
-            allowedMentions: { parse: [] },
-          })
-          .catch(() => message.react("🔇")); //empty message
-      }
-    }
+    webhookClient
+      .send({
+        content: content != null ? content : null,
+        username: username != null ? username : "Unknown",
+        avatarURL: avatarURL != null ? avatarURL : null,
+        threadId: message.channel.isThread() ? message.channel.id : null,
+        embeds: embeds != null ? embeds : null,
+        components:
+          (source as Message<boolean>).components != null
+            ? (source as Message<boolean>).components
+            : null,
+        allowedMentions: { parse: [] },
+        files: attachmentsUrls != null ? attachmentsUrls : null,
+      })
+      .catch((err) => {
+        message.react("🔇");
+        if (process.env.environment == "dev") console.log(err);
+      }); //empty message
   });
 });
+
+const checkLink = (link: string) => {
+  const discordSiteRegExp = /.{0,6}\.?discord\.com/gim;
+  let fields = link.split("/");
+
+  if (!discordSiteRegExp.test(fields[0])) return; //if the link isn't discord related (avoid getting a youtube link caught up in it 💀)
+  if (fields[1] !== "channels") return;
+  let Id = isId(fields[2]);
+  let regex = /[^[0-9]/gi;
+  fields[2] = fields[2].replace(regex, "");
+  if (Id == false) return false;
+  Id = isId(fields[3]);
+  fields[3] = fields[3].replace(regex, "");
+  if (Id == false) return false;
+  Id = isId(fields[4]);
+  fields[4] = fields[4].replace(regex, "");
+  if (Id == false) return false;
+
+  return true;
+};
+
+const isSupportedMessage = (messageType: string): boolean =>
+  ["DEFAULT", "APPLICATION_COMMAND", "CONTEXT_MENU_COMMAND", "REPLY"].includes(
+    messageType
+  );

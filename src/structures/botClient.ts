@@ -207,7 +207,10 @@ export class botClient extends Client {
           guildId: process.env.guildId,
         });
         for (let command of this.whitelistedCommands.map((c) => c)) {
-          command.register({client: this, guild: this.guilds.cache.get(process.env.guildId)});
+          command.register({
+            client: this,
+            guild: this.guilds.cache.get(process.env.guildId),
+          });
         }
       }
       reload(); //reload coolPeople list

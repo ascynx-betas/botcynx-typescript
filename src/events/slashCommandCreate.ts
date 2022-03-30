@@ -19,7 +19,10 @@ export default new Event(
     if (interaction.isContextMenu()) return;
     if (interaction.isButton()) return;
 
-    if (interaction.channel == null) return interaction.reply({content: `DM Commands are not currently supported`});
+    if (interaction.channel == null)
+      return interaction.reply({
+        content: `DM Commands are not currently supported`,
+      });
 
     if (interaction.isCommand()) {
       let command = botcynx.slashCommands.get(interaction.commandName);

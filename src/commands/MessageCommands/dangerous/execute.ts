@@ -1,10 +1,8 @@
 import { MessageEmbed } from "discord.js";
 import { Command } from "../../../structures/Commands";
 import { inspect } from "util";
-import { haste } from "../../../lib/haste";
-import { getUpdaterFile } from "../../../lib/Testlang";
+import * as lib from "../../../lib/index";
 
-//!You can access modules using /app/personal-modules/{module}.js
 export default new Command({
   name: "exec",
   aliases: ["eval", "ev", "e", "ex", "execute", "evaluate"],
@@ -87,7 +85,7 @@ export default new Command({
       let hastebin;
       if (cool.length > 1000) cool = cut(cool);
       if (cleaned.length > 1000) {
-        hastebin = await haste(cleaned);
+        hastebin = await lib.haste(cleaned);
         cleaned = cut(cleaned);
       }
       if (!activeFlags.includes("silent")) {
@@ -121,7 +119,7 @@ export default new Command({
       err = `\`\`\`\n${err}\n\`\`\``;
       if (cool.length > 1000) cool = cut(cool);
       if (err.length > 1000) {
-        hastebin = await haste(err);
+        hastebin = await lib.haste(err);
         err = cut(err);
       }
       const embed = new MessageEmbed()

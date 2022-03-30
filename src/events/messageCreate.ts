@@ -34,7 +34,11 @@ export default new Event("messageCreate", async (message) => {
     return message.reply("This command is disabled");
 
   //cooldown
-  if (command.cooldown && message.author.id != process.env.developerId && message.guild) {
+  if (
+    command.cooldown &&
+    message.author.id != process.env.developerId &&
+    message.guild
+  ) {
     if (!isOnCooldown(command, message.author))
       return message.reply("You are currently in cooldown");
   }
@@ -64,26 +68,25 @@ export default new Event("messageCreate", async (message) => {
     let RequireValue = await RequireTest(command.require);
     if (RequireValue == false) return;
   }
-if (message.guild) {
-  const globalConfig = await configModel.findOne({ guildId: "global" });
+  if (message.guild) {
+    const globalConfig = await configModel.findOne({ guildId: "global" });
 
-  const Guildinfo = await configModel.find({
-    guildId: message.guildId,
-  });
-  let info = Guildinfo[0];
-  const su = info.su.concat(globalConfig.su);
-  if (
-    !su.includes(message.author.id) &&
-    message.author.id != process.env.developerId &&
-    message.author.id != message.guild.ownerId
-  )
-    return; //message commands can only be used by super-users or the developer
-}
-    if (command.devonly === true && message.author.id != process.env.developerId)
+    const Guildinfo = await configModel.find({
+      guildId: message.guildId,
+    });
+    let info = Guildinfo[0];
+    const su = info.su.concat(globalConfig.su);
+    if (
+      !su.includes(message.author.id) &&
+      message.author.id != process.env.developerId &&
+      message.author.id != message.guild.ownerId
+    )
+      return; //message commands can only be used by super-users or the developer
+  }
+  if (command.devonly === true && message.author.id != process.env.developerId)
     return; //In message commands, devonly means that it can only be used by the set developer.
 
   if (message.guild) botcynx.emit("messageCommandCreate", message);
-  
 
   await command.run({ client: botcynx, message, args });
 });

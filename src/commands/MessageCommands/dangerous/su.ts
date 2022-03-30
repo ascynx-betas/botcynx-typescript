@@ -34,7 +34,7 @@ export default new Command({
       });
       const guildconfig = config[0];
       const su = guildconfig.su;
-      
+
       if (su.includes(Id)) {
         //remove
 
