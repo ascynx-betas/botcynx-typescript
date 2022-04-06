@@ -51,7 +51,7 @@ export default new Command({
       });
     }
     if (
-      badPhrases.some((p) => code.includes(p)) &&
+      badPhrases.some((p) => new RegExp(`.*${p}.*`, "gi").test(message.content)) &&
       !activeFlags.includes("sudo")
     ) {
       return await message.reply({
