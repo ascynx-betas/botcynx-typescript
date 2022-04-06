@@ -88,29 +88,39 @@ export default new WhitelistedCommand({
 
       let price: string;
       let interValue: number = itemFromDB.currentPrice;
-      let priceInfos: { a: number; b: number; c: number } = {a: null, b: null, c: null}; //a (xp, cs) b (cxp, ccs) c (hcs, hxp)
-      
-      let {increments, rest} = incrementor(512, interValue);
+      let priceInfos: { a: number; b: number; c: number } = {
+        a: null,
+        b: null,
+        c: null,
+      }; //a (xp, cs) b (cxp, ccs) c (hcs, hxp)
+
+      let { increments, rest } = incrementor(512, interValue);
       interValue = rest;
       priceInfos.c = increments;
-      ({increments, rest} = incrementor(8, interValue));
+      ({ increments, rest } = incrementor(8, interValue));
       interValue = rest;
       priceInfos.b = increments;
-      ({increments, rest} = incrementor(1, interValue));
+      ({ increments, rest } = incrementor(1, interValue));
       priceInfos.a = increments;
 
-      
-      price = priceBuilder(priceInfos.c, priceInfos.b, priceInfos.a, itemFromDB.currency);
+      price = priceBuilder(
+        priceInfos.c,
+        priceInfos.b,
+        priceInfos.a,
+        itemFromDB.currency
+      );
 
       modal = new Modal()
         .addComponents(
           new TextInputComponent()
             .setCustomId("enchantments")
-            .setLabel(
-              'Set enchantments, limit each by a ","'
-            )
+            .setLabel('Set enchantments, limit each by a ","')
             .setRequired(false)
-            .setPlaceholder(enchantments.join(",").length > 100 ? "PLACEHOLDER TOO LONG" : enchantments.join(","))
+            .setPlaceholder(
+              enchantments.join(",").length > 100
+                ? "PLACEHOLDER TOO LONG"
+                : enchantments.join(",")
+            )
             .setStyle("LONG")
         )
         .addComponents(
@@ -118,7 +128,11 @@ export default new WhitelistedCommand({
             .setCustomId("lore")
             .setLabel("set the item lore, to change line use \\n")
             .setRequired(false)
-            .setPlaceholder(itemFromDB.lore.length > 100 ? "PLACEHOLDER TOO LONG": itemFromDB.lore)
+            .setPlaceholder(
+              itemFromDB.lore.length > 100
+                ? "PLACEHOLDER TOO LONG"
+                : itemFromDB.lore
+            )
             .setStyle("LONG")
         )
         .addComponents(
@@ -141,27 +155,30 @@ export default new WhitelistedCommand({
 });
 
 const incrementor = (increments: number, value: number) => {
-const stuff = value / increments;
+  const stuff = value / increments;
 
-const rest = stuff - Math.floor(stuff);
-const increment = Math.floor(stuff); 
+  const rest = stuff - Math.floor(stuff);
+  const increment = Math.floor(stuff);
 
-return {increments: increment, rest: rest};
-}
+  return { increments: increment, rest: rest };
+};
 
-const priceBuilder = (H: number, C: number, base: number, region: string): string => {
- 
- const currency = currencyDictionary[region];
+const priceBuilder = (
+  H: number,
+  C: number,
+  base: number,
+  region: string
+): string => {
+  const currency = currencyDictionary[region];
 
-let priceString = base != 0 ? base + " " + currency.base : "";
-    priceString = C != 0 ? priceString + C + " " + currency.C : priceString + "";
-    priceString = H != 0 ? priceString + H + " " + currency.H : priceString + "";
+  let priceString = base != 0 ? base + " " + currency.base : "";
+  priceString = C != 0 ? priceString + C + " " + currency.C : priceString + "";
+  priceString = H != 0 ? priceString + H + " " + currency.H : priceString + "";
 
-
-return priceString;
-}
+  return priceString;
+};
 
 const currencyDictionary = {
-  "R1": {H: "HXP", C: "CXP", base: "XP"},
-  "R2": {H: "HCS", C: "CCS", base: "CS"}
+  R1: { H: "HXP", C: "CXP", base: "XP" },
+  R2: { H: "HCS", C: "CCS", base: "CS" },
 };

@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "lib": ["ESNext"],
-    "module": "CommonJS",
+    "module": "commonJS",
     "moduleResolution": "node",
     "target": "ESNext",
     "outDir": "dist",
@@ -13,7 +13,11 @@
     "skipDefaultLibCheck": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "importHelpers": true
+    "importHelpers": true,
+    "paths": {
+      "#lib": ["./src/lib/index.ts", "./src/personal-modules/index.ts"]
+    },
+    "removeComments": true
   },
   "include": ["src", "environment.d.ts"],
   "exclude": ["node-modules", "**/*.spec.ts"]
