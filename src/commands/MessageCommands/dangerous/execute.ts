@@ -2,6 +2,7 @@ import { MessageEmbed } from "discord.js";
 import { Command } from "../../../structures/Commands";
 import { inspect } from "util";
 import * as lib from "../../../lib/index";
+import fetch from "node-fetch";
 
 export default new Command({
   name: "exec",
@@ -44,12 +45,14 @@ export default new Command({
     let possibleFlags: string = args.at(args.length - 1);
     if (possibleFlags.startsWith("-")) {
       (code as string[]).splice(code.length - 1, 1);
-      let flagList = ["async", "sudo", "silent"];
+      let flagList = ["async", "sudo", "silent", "attachment"];
       let flags = possibleFlags.split("-");
       flags.forEach((flag: string) => {
         if (flagList.includes(flag)) activeFlags.push(flag);
       });
     }
+    if (activeFlags.includes("attachment") && message.attachments.map((c) => c).length == 0) return await message.reply({content: `when using the attachment flag, please include code in attachment`})
+
     if (
       badPhrases.some((p) => new RegExp(`.*${p}.*`, "gi").test(message.content)) &&
       !activeFlags.includes("sudo")
@@ -59,7 +62,16 @@ export default new Command({
       });
     }
 
-    code = (code as string[]).join(" ");
+    if (activeFlags.includes("attachment")) {
+      for (const [, { url }] of message.attachments) {
+        if (!url.endsWith(".txt") && !url.endsWith(".js")) return await message.reply({content: `when using the attachment flag, please attach a .js / .txt file`});
+
+
+        code = (await (await fetch(url)).text());
+      }
+    }
+
+    code = activeFlags.includes("attachment") ? (code as string) : (code as string[]).join(" ");
 
     if (activeFlags.includes("async")) code = "(async () => {" + code + "})()";
 

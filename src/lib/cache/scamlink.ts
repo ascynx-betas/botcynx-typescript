@@ -13,6 +13,8 @@ export function hasScamLink(message: string) {
   words = words.filter((w) => isLink(w));
 
   for (const scam in scamLinks.data) {
+    if ([...safe, ...ignore].includes(scam)) continue; //fixes the fact that the list may contains safe links
+
     const scamRegExp = new RegExp(`.*${scamLinks.data[scam]}.*`, "gi");
     let isScam: boolean;
 

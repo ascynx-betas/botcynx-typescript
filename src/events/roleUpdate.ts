@@ -1,10 +1,10 @@
-import { TextBasedChannel } from "discord.js";
+import { GuildMember, TextBasedChannel } from "discord.js";
 import { botcynx } from "..";
 import { configModel } from "../models/config";
 import { compare, ct } from "../personal-modules/testFor";
 import { Event } from "../structures/Event";
 
-export default new Event("guildMemberUpdate", async (oldMember, newMember) => {
+export default new Event("guildMemberUpdate", async (oldMember: GuildMember, newMember: GuildMember) => {
   let botPermissions = oldMember.guild.me.permissions.toArray();
 
   if (

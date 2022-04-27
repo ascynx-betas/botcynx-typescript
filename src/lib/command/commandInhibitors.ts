@@ -1,6 +1,5 @@
 import {
   Guild,
-  GuildChannel,
   GuildMember,
   PermissionString,
   User,
@@ -12,7 +11,7 @@ import { commandCooldown } from "../../typings/Command";
 /**
  * an inhibitor allowing to see if the user has the permissions required to run that command
  * @param command - The command which has been instantiated
- * @param {member: GuildMember, guild: Guild, channel: Channel} data - The data about the guild and member affected
+ * @param {member: GuildMember, guild: Guild} data - The data about the guild and member affected
  * @returns {boolean} - Whether it failed or not. (true = passed, false = failed)
  */
 const userPermissionInhibitor = function (
