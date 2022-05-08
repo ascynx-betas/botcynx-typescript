@@ -6,7 +6,6 @@ import {
   MessageEmbed,
 } from "discord.js";
 import { ticketModel } from "../../../models/ticket";
-import { testfor } from "../../../personal-modules/testFor";
 import { slashCommand } from "../../../structures/Commands";
 
 export default new slashCommand({
@@ -64,7 +63,7 @@ export default new slashCommand({
         .catch(() => null);
 
     const blacklisted = global.bot.ticketblockedNames;
-    const success = testfor(blacklisted, name);
+    const success = blacklisted.some((c) => c === name);
     if (success == true)
       return interaction.followUp({
         content: `You cannot name a ticket ${name}`,

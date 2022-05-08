@@ -1,7 +1,6 @@
-// MOJANG API INTERFACES
-
 import { rarity } from "./Hypixel";
 
+// MOJANG API INTERFACES
 export interface uuid {
   name: string;
   id: string;
@@ -35,8 +34,6 @@ export interface decodedvalue {
     url: string;
   };
 }
-
-//END OF MOJANG API INTERFACING
 
 //SENITHER API INTERFACE
 type skill = {

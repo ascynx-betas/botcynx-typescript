@@ -1,6 +1,6 @@
 import { isLink } from "../../personal-modules/testFor";
 import { repoLink } from "./cache";
-import { jsonCache } from "./crashFix";
+import { jsonCache } from "./cache";
 
 //! ALL OF THE LINKS IN THERE AREN'T NECESSARELY SCAM LINKS
 export const scamLinks = new jsonCache(
@@ -25,6 +25,11 @@ export function hasScamLink(message: string) {
   }
 
   return hasScamLink;
+}
+
+export function contains(content: string, searchItem: string) {
+  const regex = new RegExp(`.*${searchItem}.*`, "gi");
+  return regex.test(content);
 }
 
 export const safe = [

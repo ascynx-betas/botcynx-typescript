@@ -2,7 +2,7 @@ import { configModel } from "../models/config";
 import { Event } from "../structures/Event";
 import fetch from "node-fetch";
 import {
-  checkPossibleLog,
+  checkIfLog,
   crashFixCache,
   getML,
   getMods,
@@ -12,7 +12,6 @@ import { MessageActionRow, MessageButton } from "discord.js";
 import { containsLink, isLink } from "../personal-modules/testFor";
 import { indexOf } from "lodash";
 
-//originally based on SkyblockClient's bot's crashLogReader
 export default new Event("messageCreate", async (message) => {
   if (message.author.bot || !message.guild) return;
   let botPermissions = message.guild.me.permissions.toArray();
@@ -39,7 +38,7 @@ export default new Event("messageCreate", async (message) => {
     if (!url.endsWith(".txt") && !url.endsWith(".log")) return;
 
     const log = await (await fetch(url)).text();
-    if (checkPossibleLog(log) == false) return;
+    if (checkIfLog(log) == false) return;
     logs.push(log);
   }
 
@@ -53,7 +52,7 @@ export default new Event("messageCreate", async (message) => {
         link = linkSplit[0] + "//" + linkSplit[2] + "/raw/" + linkSplit[3]; //Example https://hst.sh/raw/ID
 
       const log = await (await fetch(link)).text();
-      const isLog = checkPossibleLog(log);
+      const isLog = checkIfLog(log);
       if (isLog == false) continue;
       logs.push(log);
     }
@@ -63,7 +62,14 @@ export default new Event("messageCreate", async (message) => {
     const mods = getMods(log);
     const ModLoader = getML(log);
 
-    let logUrl = await haste(log);
+    const AdditionalData = `\n\tBotcynx additional Data:\n\nMod Loader: ${
+      ModLoader.loader
+    } ${ModLoader.loaderVersion} \nMods: ${mods.map((m) => m.ID).join(", ")}`;
+
+    const IDs = mods.map((m) => m.ID);
+    const Statuses = mods.map((m) => m.state);
+
+    let logUrl = await haste(log + AdditionalData);
     if (
       logUrl != "unable to post" &&
       message.channel.messages.cache.get(message.id)
@@ -74,16 +80,10 @@ export default new Event("messageCreate", async (message) => {
     let extraLogOutput: string[] = [];
     let recommendedOutput: string[] = [];
     let clientData: string[] = [];
-    let forgeVersion = mods?.get("Forge")?.version || null;
     clientData.push(
-      `user is on ${
-        forgeVersion != null && forgeVersion != undefined
-          ? "forge version " + forgeVersion
-          : ModLoader != null || ModLoader != undefined
-          ? ModLoader
-          : "unknown"
-      }`
+      `user is using ${ModLoader.loader} ${ModLoader.loaderVersion}`
     );
+    clientData.push(`user is on minecraft version ${ModLoader.mcVersion}`);
 
     for (const fix of fixes) {
       let completedProblems = 0;
@@ -121,6 +121,14 @@ export default new Event("messageCreate", async (message) => {
       }
     }
 
+    Statuses.forEach((status, index) => {
+      if (status.search(/.*E.*/) != -1) {
+        extraLogOutput.push(
+          `${IDs[index]} errored, please report this to the developer.`
+        );
+      }
+    });
+
     let solutions = "";
     for (const fix of extraLogOutput)
       solutions.length === 0
@@ -132,8 +140,8 @@ export default new Event("messageCreate", async (message) => {
     let recommendations = "";
     for (const recommended of recommendedOutput)
       recommendations.length === 0
-        ? (recommendations += `\t• ${recommended}`)
-        : (solutions += `\n\t• ${recommended}`);
+        ? recommendations == `\t• ${recommended}`
+        : (recommendations += `\n\t• ${recommended}`);
 
     const buttonRow = new MessageActionRow().addComponents(
       new MessageButton().setStyle("LINK").setURL(logUrl).setLabel("view log")

@@ -7,12 +7,10 @@ export default new ButtonResponse({
   run: async ({ interaction, client }) => {
     //close ticket button
     const thread = interaction.channel;
-    if (interaction.channel.type === "GUILD_PRIVATE_THREAD") {
-      interaction
-        .reply({ content: `Locking thread...`, ephemeral: true })
-        .then(() => (thread as ThreadChannel).setLocked())
-        .then(() => (thread as ThreadChannel).setArchived());
-    } else if (interaction.channel.type === "GUILD_PUBLIC_THREAD") {
+    if (
+      interaction.channel.type === "GUILD_PRIVATE_THREAD" ||
+      interaction.channel.type === "GUILD_PUBLIC_THREAD"
+    ) {
       interaction
         .reply({ content: `Locking thread...`, ephemeral: true })
         .then(() => (thread as ThreadChannel).setLocked())

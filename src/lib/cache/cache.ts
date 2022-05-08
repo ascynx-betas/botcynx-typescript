@@ -16,6 +16,27 @@ export class cache {
   }
 }
 
+export class jsonCache extends cache {
+  constructor(link: string | repoLink) {
+    super(link);
+  }
+
+  /**
+   * @override - overrides the base reload function from cache - and make it get JSON data instead of text
+   */
+  async reload() {
+    this.data = JSON.parse(await linkContentPull(this.reloader));
+  }
+
+  /**
+   * - Import data into the current data cache (currently overrides data)
+   * @param data - Data to import (currently overrides the internal data)
+   */
+  importData(data: any) {
+    this.data = data;
+  }
+}
+
 export class repoLink {
   repoLink: string;
   #owner: string;

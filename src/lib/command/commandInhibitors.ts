@@ -1,9 +1,4 @@
-import {
-  Guild,
-  GuildMember,
-  PermissionString,
-  User,
-} from "discord.js";
+import { Guild, GuildMember, PermissionString, User } from "discord.js";
 import { botcynx } from "../..";
 import { configModel } from "../../models/config";
 import { commandCooldown } from "../../typings/Command";
@@ -118,10 +113,19 @@ const isOnCooldown = function (command, user: User) {
   }
 };
 
+const isAdminOrHigherThanBot = function (user: GuildMember) {
+  if (user.id == process.env.developerId) return true;
+  if (user.id == user.guild.ownerId) return true;
+  if (user.permissions.has("ADMINISTRATOR")) return true;
+
+  return false;
+};
+
 export {
   isDevOnly,
   isOnCooldown,
   isDisabled,
   botPermissionInhibitor,
   userPermissionInhibitor,
+  isAdminOrHigherThanBot,
 };

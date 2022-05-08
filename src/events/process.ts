@@ -3,6 +3,7 @@ import { botcynx } from "..";
 import { webhook } from "../personal-modules/discordPlugin";
 import { getTimeOfDay } from "../personal-modules/testFor";
 import chalk from "chalk";
+import { postStartData } from "./ready";
 
 const sendError = async (error: Error) => {
   let stack = error.stack;
@@ -10,7 +11,7 @@ const sendError = async (error: Error) => {
   if (typeof fields == "undefined") return console.log(error);
   if (
     fields[0].startsWith("DiscordAPIError") &&
-    global.bot.environment != "dev"
+    postStartData.environment != "dev"
   )
     return console.log(error); //returns if DiscordAPIError when it isn't in dev environment
   stack = fields.slice(1, 5).join("\n\n");

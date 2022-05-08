@@ -5,10 +5,10 @@ import {
   MessageButton,
   ThreadChannel,
 } from "discord.js";
+import { postStartData } from "../events/ready";
 import { ticketModel } from "../models/ticket";
 import { permissions } from "../personal-modules/bitfieldCalculator";
 import { permOverride } from "../personal-modules/discordPlugin";
-import { testfor } from "../personal-modules/testFor";
 import { ButtonResponse } from "../structures/Commands";
 
 export default new ButtonResponse({
@@ -23,9 +23,8 @@ export default new ButtonResponse({
     const customId = interaction.customId;
     let target = interaction.user;
 
-    const success = testfor(
-      global.bot.ticketblockedNames,
-      interaction.customId
+    const success = postStartData.ticketblockedNames.some(
+      (c) => c === interaction.customId
     );
     if (success != true) {
       let fields = customId.split(":");
@@ -59,31 +58,23 @@ export default new ButtonResponse({
         }
       });
       if (blacklisted == "blacklisted") return;
-      if (guild.features.includes("PRIVATE_THREADS")) {
-        const thread = await (channel as BaseGuildTextChannel).threads.create({
-          name: `${interaction.user.tag}-${fields[1]}`,
-          autoArchiveDuration: 1440,
-          type: "GUILD_PRIVATE_THREAD",
-          reason: "created new private ticket",
-        });
-        (thread as ThreadChannel).send({
-          content: `${config[0].welcomemessage || "undefined"}`,
-          components: [buttonRow],
-        });
-        (thread as ThreadChannel).members.add(`${interaction.user.id}`);
-      } else {
-        const thread = await (channel as BaseGuildTextChannel).threads.create({
-          name: `${interaction.user.tag}-${fields[1]}`,
-          autoArchiveDuration: 1440,
-          type: "GUILD_PUBLIC_THREAD",
-          reason: "created new public ticket",
-        });
-        (thread as ThreadChannel).send({
-          content: `${config[0]?.welcomemessage || "undefined"}`,
-          components: [buttonRow],
-        });
-        (thread as ThreadChannel).members.add(`${interaction.user.id}`);
-      }
+
+      const thread = await (channel as BaseGuildTextChannel).threads.create({
+        name: `${interaction.user.tag}-${fields[1]}`,
+        autoArchiveDuration: 1440,
+        type: guild.features.includes("PRIVATE_THREADS")
+          ? "GUILD_PRIVATE_THREAD"
+          : "GUILD_PUBLIC_THREAD",
+        reason: `created new ${
+          guild.features.includes("PRIVATE_THREADS") ? "private" : "public"
+        } thread`,
+      });
+
+      (thread as ThreadChannel).send({
+        content: `${config[0]?.welcomemessage || "undefined"}`,
+        components: [buttonRow],
+      });
+      (thread as ThreadChannel).members.add(`${interaction.user.id}`);
     }
   },
 });

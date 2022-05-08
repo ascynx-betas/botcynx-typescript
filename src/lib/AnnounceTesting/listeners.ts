@@ -14,8 +14,7 @@ export const handleAnnouncement = async (
   const listeners = announcer.LISTENERS;
 
   for (const listener of listeners) {
-    const preferences =
-      listener.PREFERENCES != null ? listener.PREFERENCES : null;
+    const preferences = listener.PREFERENCES;
     let isActiveListener = true;
     let announcementType: preference["type"] = "ANONYMOUS";
     let content = message.content;

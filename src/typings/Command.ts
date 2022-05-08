@@ -1,4 +1,3 @@
-import { time } from "console";
 import { ModalSubmitInteraction } from "discord-modals";
 import {
   ChatInputApplicationCommandData,

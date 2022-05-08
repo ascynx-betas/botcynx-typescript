@@ -51,10 +51,18 @@ export default new Command({
         if (flagList.includes(flag)) activeFlags.push(flag);
       });
     }
-    if (activeFlags.includes("attachment") && message.attachments.map((c) => c).length == 0) return await message.reply({content: `when using the attachment flag, please include code in attachment`})
+    if (
+      activeFlags.includes("attachment") &&
+      message.attachments.map((c) => c).length == 0
+    )
+      return await message.reply({
+        content: `when using the attachment flag, please include code in attachment`,
+      });
 
     if (
-      badPhrases.some((p) => new RegExp(`.*${p}.*`, "gi").test(message.content)) &&
+      badPhrases.some((p) =>
+        new RegExp(`.*${p}.*`, "gi").test(message.content)
+      ) &&
       !activeFlags.includes("sudo")
     ) {
       return await message.reply({
@@ -64,14 +72,18 @@ export default new Command({
 
     if (activeFlags.includes("attachment")) {
       for (const [, { url }] of message.attachments) {
-        if (!url.endsWith(".txt") && !url.endsWith(".js")) return await message.reply({content: `when using the attachment flag, please attach a .js / .txt file`});
+        if (!url.endsWith(".txt") && !url.endsWith(".js"))
+          return await message.reply({
+            content: `when using the attachment flag, please attach a .js / .txt file`,
+          });
 
-
-        code = (await (await fetch(url)).text());
+        code = await (await fetch(url)).text();
       }
     }
 
-    code = activeFlags.includes("attachment") ? (code as string) : (code as string[]).join(" ");
+    code = activeFlags.includes("attachment")
+      ? (code as string)
+      : (code as string[]).join(" ");
 
     if (activeFlags.includes("async")) code = "(async () => {" + code + "})()";
 

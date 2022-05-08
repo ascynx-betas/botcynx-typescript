@@ -26,7 +26,6 @@ export let coolPeopleUUId: coolPeople = {
   b43d74579da4408ba9fb51239022cec9: "cool person", //Erymanthus
   "4e465a68b4d245b8ad42460a653cfa1b": "cool person", //Cyanoix
   abc61a592d4843ffb2c9feb85a33f94f: "friend", //TheCarotte
-  "7d6efbf2d6b54da7a95c3933bbbab53b": "cool person", //Doksito
 };
 
 export let coolTypeToEmojis = {

@@ -70,45 +70,11 @@ export default new slashCommand({
 
     if (profile) {
       profile = profile.toLowerCase();
-
-      if (
-        profile != "apple" &&
-        profile != "banana" &&
-        profile != "blueberry" &&
-        profile != "coconut" &&
-        profile != "cucumber" &&
-        profile != "grapes" &&
-        profile != "kiwi" &&
-        profile != "lemon" &&
-        profile != "lime" &&
-        profile != "mango" &&
-        profile != "orange" &&
-        profile != "papaya" &&
-        profile != "pear" &&
-        profile != "pineapple" &&
-        profile != "pomegranate" &&
-        profile != "raspberry" &&
-        profile != "strawberry" &&
-        profile != "tomato" &&
-        profile != "watermelon" &&
-        profile != "zucchini" &&
-        profile != "peach"
-      ) {
-        const embed = new MessageEmbed()
-          .setDescription(
-            `${profile} doesn't seem to match any possible profile names, if you feel like that's an error, please contact the developer`
-          )
-          .setFooter({ text: `requested by ${interaction.user.tag}` })
-          .setAuthor({ name: `Error 501: blocked request` })
-          .setThumbnail(`https://http.cat/501`);
-        return interaction.followUp({ embeds: [embed] });
-      }
-
       data = await getSpecifiedProfile(uuid as string, profile).catch(
         () => null
       );
 
-      if (typeof data == "undefined" || !data || data == null) {
+      if (!data || data == null) {
         const embed = new MessageEmbed()
           .setDescription(`player not found or profile provided does not exist`)
           .setFooter({ text: `requested by ${interaction.user.tag}` })
@@ -119,7 +85,7 @@ export default new slashCommand({
     } else {
       data = await getFatterProfile(uuid as string).catch(() => null);
 
-      if (typeof data == "undefined" || !data || data == null) {
+      if (!data || data == null) {
         const embed = new MessageEmbed()
           .setDescription(`player not found or profile provided does not exist`)
           .setFooter({ text: `requested by ${interaction.user.tag}` })

@@ -1,7 +1,33 @@
-# Botcynx Typescript v1.7.1
+# How to set up
 
-the old [javascript version](https://github.com/ascynx-betas/botcynx-js) was created in october of 2021
-and was mostly coded by me @Ascynx,
+- Install node 16.14.0 and npm
+
+- run `npm i` in your terminal
+
+- create a .env file in the root of the project
+
+- create a bot in the discord developer portal
+
+- set all needed permissions to true
+
+- add botToken (the bot's token),
+  guildId (not obligatory, locally registers command),
+
+  environment (not obligatory, sets the environment),
+
+  mongooseConnectionString ((string from mongoDB to connect) not obligatory but is recommended for the use of a lot of commands),
+
+  webhookLogLink (not obligatory, recommended to get the error alerts),
+
+  developerId (not obligatory, recommended to avoid permission issues),
+
+  hypixelapikey (not obligatory, used for commands that require the hypixel api),
+
+  githubToken (not obligatory, recommended for crashlog reader and automod)
+
+  botprefix (currently needed)
+
+- either run `npm run build` and `npm run start:prod` or `npm run quickstart`
 
 # features
 
@@ -88,3 +114,8 @@ botInfo =>
 **needs**: none
 
 **action**: gives information about the bot and it's commands
+
+# contribute
+
+follow [How to set up](#how-to-set-up) and once you finish your changes,
+create a pull-request (I might not see it directly as I am generally busy)

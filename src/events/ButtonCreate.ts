@@ -26,23 +26,6 @@ export default new Event("interactionCreate", async (interaction) => {
     if (!command) return;
     if (interaction.message.author.id != botcynx.user.id) return;
 
-    if (command.temporary) {
-      let current = Date.now();
-      let creation = (interaction.message as Message).createdTimestamp;
-      let time = current - creation;
-
-      //deprecated
-      //Timeout
-      if (time >= 900000) {
-        //const components = interaction.message.components
-        //components.forEach((component) => component.components.forEach(sub => {
-        //  sub.setDisabled(true);
-        //}))
-
-        return interaction.update({ components: [] }); //(components as MessageActionRow[])
-      }
-    } //temp check
-
     if (command.botPermissions) {
       const botRequiredPermission = command.botPermissions;
       let botPermission = interaction.guild.me.permissions.toArray();
@@ -79,7 +62,7 @@ export default new Event("interactionCreate", async (interaction) => {
       let RequireValue = await RequireTest(command.require);
       if (RequireValue == false)
         return interaction.followUp({
-          content: `the client in which this command has been called, doesn't have the required values to execute this command`,
+          content: `Client cannot run this command as it's missing required values`,
         });
     }
 

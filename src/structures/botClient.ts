@@ -40,7 +40,7 @@ export class botClient extends Client {
   modals: Collection<string, modalResponseType> = new Collection();
 
   //static values
-  static instance: botClient;
+  private static instance: botClient;
   package: any = JSON.parse(fs.readFileSync("package.json", "utf-8"));
 
   private constructor() {

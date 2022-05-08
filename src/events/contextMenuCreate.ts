@@ -69,7 +69,7 @@ export default new Event(
         let RequireValue = await RequireTest(command.require);
         if (RequireValue == false)
           return interaction.reply({
-            content: `the client in which this command has been called, doesn't have the required values to execute this command`,
+            content: `Client cannot run this command as it's missing required values`,
           });
       }
 

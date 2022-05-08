@@ -1,6 +1,7 @@
 import { GuildTextBasedChannel, MessageEmbed } from "discord.js";
 import { botcynx } from "..";
-import { hasScamLink, ignore, safe } from "../lib/cache/scamlink";
+import { contains, hasScamLink, ignore, safe } from "../lib/cache/scamlink";
+import { isAdminOrHigherThanBot } from "../lib/command/commandInhibitors";
 import { similarityDetection } from "../lib/utils";
 import { isLink } from "../personal-modules/testFor";
 import { Event } from "../structures/Event";
@@ -27,11 +28,20 @@ export default new Event("messageCreate", (message) => {
     message.content.includes("@here")
   ) {
     if (message.content.split(" ").some((w) => isLink(w))) {
-      if (!message.member.permissions.toArray().includes("MENTION_EVERYONE"))
-        Data = { isScamLink: true, cause: "Common scam detection" };
+      let DataArray = message.content.split(" ").filter((w) => isLink(w));
+      DataArray.forEach((word, index) => {
+        if (ignore.some((i) => contains(word, i))) DataArray.splice(index, 1);
+      });
+      if (DataArray.length >= 1) {
+        if (
+          !message.member.permissions.toArray().includes("MENTION_EVERYONE")
+        ) {
+          console.log(DataArray.length);
+          Data = { isScamLink: true, cause: "Common scam detection" };
+        }
+      }
     }
   }
-
   //similarity based automod
   message.content
     .split(" ")
@@ -52,14 +62,14 @@ export default new Event("messageCreate", (message) => {
               Math.round(result.percentage * 10) / 10
             }% the same as ${safeword}`,
           };
-      }); //might be unstable after the last changes done
+      });
     });
 
   //if ping spam raid
   if (message.mentions.users.size >= 5)
     Data = { isScamLink: true, cause: "Spam mention" };
 
-  if (Data.isScamLink == true) {
+  if (Data.isScamLink == true && !isAdminOrHigherThanBot(message.member)) {
     const embed = new MessageEmbed()
       .setAuthor({
         name: "BOT ⚠️ " + message.author.tag + " (" + message.author.id + ")",

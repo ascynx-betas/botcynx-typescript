@@ -1,24 +1,3 @@
-const testfor = function (disabledarray: string[], testvalue: string) {
-  //test for errors
-  //variables
-  let testedvalue = 0;
-  let success: boolean;
-
-  //function itself
-  do {
-    if (testvalue.includes(disabledarray[testedvalue])) {
-      success = true;
-      break;
-    } else {
-      testedvalue++;
-    }
-  } while (testedvalue != disabledarray.length);
-  if (testedvalue == disabledarray.length && success != true) {
-    success = false;
-  }
-  return success;
-};
-
 const compare = function (array1: string[], array2: string[]) {
   //var
   let success: boolean;
@@ -45,9 +24,8 @@ export interface ctResult extends Object {
   breakingcount?: number;
 }
 const ct = function (array1: string[], array2: string[]): ctResult {
-  let success: boolean;
+  let success: boolean = false;
   let breakingpoint = [];
-  let result: ctResult;
   array1.forEach(function (array1) {
     let testedvalue = 0;
     do {
@@ -62,13 +40,9 @@ const ct = function (array1: string[], array2: string[]): ctResult {
   });
 
   let breakingcount = breakingpoint.length;
-  if (success != true) {
-    success = false;
-    result = { success: success };
-  } else {
-    result = { success: success, breakingcount: breakingcount };
-  }
-  return result;
+  return success
+    ? { success: success, breakingcount: breakingcount }
+    : { success: success };
 };
 
 const getTimeOfDay = function (): string {
@@ -193,6 +167,5 @@ export {
   e2r,
   compare,
   ct,
-  testfor,
   TimeCheck,
 };

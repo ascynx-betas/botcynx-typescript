@@ -1,4 +1,3 @@
-import { Embed } from "@discordjs/builders";
 import { EmbedFieldData, MessageButton, MessageEmbed } from "discord.js";
 import { botcynx } from "..";
 import { webhook } from "../personal-modules/discordPlugin";
@@ -48,7 +47,7 @@ export const similarityDetection = (
       percentageOfSimilarities =
         percentageOfSimilarities -
         (testLetterArray.length - overflowLettersLength) * 5;
-    if (percentageOfSimilarities > 0) percentageOfSimilarities = 0;
+    if (percentageOfSimilarities < 0) percentageOfSimilarities = 0;
   }
 
   if (percentageOfSimilarities <= 95 && percentageOfSimilarities > 0)
@@ -131,9 +130,4 @@ export const sendInfoWebhook = async (options: {
     username: botcynx.user.tag,
     avatarURL: botcynx.user.avatarURL({ dynamic: true }),
   });
-};
-export const recordFunctionTime = (functionToUse: Function, args?) => {
-  const startTime = console.time();
-  args != undefined ? functionToUse(...args) : functionToUse();
-  const stopTime = console.timeEnd();
 };

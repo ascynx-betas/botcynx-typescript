@@ -1,34 +1,10 @@
 import { Collection } from "discord.js";
-import { indexOf } from "lodash";
-import { linkContentPull } from "../repoPull";
-import { cache, repoLink } from "./cache";
+import { jsonCache, repoLink } from "./cache";
 
-export class jsonCache extends cache {
-  constructor(link: string | repoLink) {
-    super(link);
-  }
-
-  /**
-   * @override - overrides the base reload function from cache - and make it get JSON data instead of text
-   */
-  async reload() {
-    this.data = JSON.parse(await linkContentPull(this.reloader));
-  }
-
-  /**
-   * - Import data into the current data cache (currently overrides data)
-   * @param data - Data to import (currently overrides the internal data)
-   */
-  importData(data: any) {
-    this.data = data;
-  }
-}
-
-export function checkPossibleLog(possibleLog: string): boolean {
+export function checkIfLog(possibleLog: string): boolean {
   let isLog = false;
 
   const logText = [
-    "The game crashed whilst",
     "net.minecraft.launchwrapper.Launch",
     "# A fatal error has been detected by the Java Runtime Environment:",
     "---- Minecraft Crash Report ----",
@@ -39,18 +15,21 @@ export function checkPossibleLog(possibleLog: string): boolean {
     "[Client thread/INFO]: Setting user:",
     "[Client thread/INFO]: (Session ID is",
     "MojangTricksIntelDriversForPerformance",
-    "[DefaultDispatcher-worker-1] INFO Installer",
-    "[DefaultDispatcher-worker-1] ERROR Installer",
+    "Loading for game Minecraft ",
+    "[main/INFO]: [FabricLoader] Loading ",
+    ".minecraft/libraries/net/fabricmc",
+    "net.fabricmc.loader.launch",
+    "net.fabricmc.loader.game",
     "net.minecraftforge",
-    "club.sk1er",
     "gg.essential",
-    "View crash report",
+    "club.sk1er",
+    "fabric-api",
+    "Environment: authHost='https://authserver.mojang.com'",
+    " with Fabric Loader ",
   ];
 
   for (const text of logText) {
-    if (possibleLog.includes(text)) {
-      isLog = true;
-    }
+    if (possibleLog.includes(text)) isLog = true;
   }
 
   return isLog;
@@ -76,7 +55,7 @@ export function getMods(Log: string): Collection<string, ModCollection> {
   let Sources = [];
 
   modList.forEach((modInfo, index) => {
-    if (modInfo != "" && index >= 11) {
+    if (modInfo != "" && index >= 10) {
       //is a mod info
       if (modList[index - 1] == "") statuses.push(modInfo);
       //isStatus
@@ -102,21 +81,95 @@ export function getMods(Log: string): Collection<string, ModCollection> {
   return mods;
 }
 
+enum Loaders {
+  FORGE = "Forge",
+  FABRIC = "Fabric",
+  OPTIFINE = "Vanilla w/Optifine HD U",
+  FEATHER = "Feather",
+}
+
+const regexes = {
+  loaders: [
+    {
+      loader: Loaders.FORGE,
+      regexes: [
+        /Forge Mod Loader version (?<loaderver>(?:\d{1,2}\.)?\d{1,3}\.\d{1,3}\.\d{1,5}) for Minecraft (?<mcver>\d\.\d{1,2}(?:\.\d{1,2})?) loading/gim,
+        /Forge mod loading, version (?<loaderver>(?:\d{1,2}\.)?\d{1,3}\.\d{1,3}\.\d{1,5}), for MC (?<mcver>\d\.\d{1,2}(?:\.\d{1,2})?)/gim,
+        /--version, (?<mcver>\d\.\d{1,2}(?:\.\d{1,2})?)-forge-(?<loaderver>(?:\d{1,2}\.)?\d{1,3}\.\d{1,3}\.\d{1,5})/gim,
+        /forge-(?<mcver>\d\.\d{1,2}(?:\.\d{1,2})?)-(?<loaderver>(?:\d{1,2}\.)?\d{1,3}\.\d{1,3}\.\d{1,5})/gim,
+        /Launched Version: (?<mcver>\d\.\d{1,2}(?:\.\d{1,2})?)-forge(?:\d\.\d{1,2}(?:\.\d{1,2})?)-(?<loaderver>(?:\d{1,2}\.)?\d{1,3}\.\d{1,3}\.\d{1,5})/gim,
+      ],
+    },
+    {
+      loader: Loaders.FABRIC,
+      regexes: [
+        /Loading Minecraft (?<mcver>\d\.\d{1,2}(?:\.\d{1,2})?) with Fabric Loader (?<loaderver>\d\.\d{1,3}\.\d{1,3})/gim,
+        /Loading for game Minecraft (?<mcver>\d\.\d{1,2}(?:\.\d{1,2})?)/gim,
+        /fabricloader(?:@|\s*)(?<loaderver>\d\.\d{1,3}\.\d{1,3})/gim,
+      ],
+    },
+    {
+      loader: Loaders.OPTIFINE,
+      regexes: [
+        /Launched Version: (?<mcver>\d\.\d{1,2}(?:\.\d{1,2})?)-OptiFine_HD_U_(?<loaderver>[A-Z]\d)/gim,
+      ],
+    },
+    {
+      loader: Loaders.FEATHER,
+      regexes: [
+        /Started Feather \((?<loaderver>\w*)\)/gim,
+        /Forge Mod Loader version (?:\d{1,2}\.)?\d{1,3}\.\d{1,3}\.\d{1,5} for Minecraft (?<mcver>\d\.\d{1,2}(?:\.\d{1,2})?) loading/gim,
+        /Forge mod loading, version (?:\d{1,2}\.)?\d{1,3}\.\d{1,3}\.\d{1,5}, for MC (?<mcver>\d\.\d{1,2}(?:\.\d{1,2})?)/gim,
+        /--version, (?<mcver>\d\.\d{1,2}(?:\.\d{1,2})?)-forge-(?:\d{1,2}\.)?\d{1,3}\.\d{1,3}\.\d{1,5}/gim,
+        /Launched Version: (?<mcver>\d\.\d{1,2}(?:\.\d{1,2})?)-forge(?:\d\.\d{1,2}(?:\.\d{1,2})?)-(?:\d{1,2}\.)?\d{1,3}\.\d{1,3}\.\d{1,5}/gim,
+        /forge-(?<mcver>\d\.\d{1,2}(?:\.\d{1,2})?)-(?:\d{1,2}\.)?\d{1,3}\.\d{1,3}\.\d{1,5}/gim,
+        /Loading Minecraft (?<mcver>\d\.\d{1,2}(?:\.\d{1,2})?) with Fabric Loader \d\.\d{1,3}\.\d{1,3}/gim,
+        /Loading for game Minecraft (?<mcver>\d\.\d{1,2}(?:\.\d{1,2})?)/gim,
+      ],
+    },
+  ],
+};
+
 /**
  * ML = ModLoader
  */
-export function getML(log: string): string {
-  const splitLog = log.split("\n");
-  let fml: string;
-  splitLog.forEach((line) => {
-    if (line.startsWith("\tIs Modded:")) {
-      const FML = line.split("'");
-      fml = FML[1];
-    }
-  });
+export function getML(log: string): {
+  loaderVersion: string;
+  mcVersion: string;
+  loader: string;
+} {
+  let loaderData = {
+    loaderVersion: "",
+    mcVersion: "",
+    loader: "",
+  };
 
-  return fml || "unknown / vanilla";
+  for (const loader of regexes.loaders) {
+    const matches = loader.regexes.map((regex) => regex.exec(log));
+    loader.regexes.forEach((regex) => (regex.lastIndex = 0));
+
+    for (const match of matches) {
+      if (match?.groups?.mcver) {
+        loaderData.mcVersion = match.groups.mcver;
+      }
+      if (match?.groups?.loaderver) {
+        loaderData.loaderVersion = match.groups.loaderver;
+      }
+
+      if (loaderData.loaderVersion || loaderData.mcVersion) {
+        loaderData.loader = loader.loader;
+        console.log(loaderData);
+      }
+    }
+
+    if (loaderData.loader && loaderData.loaderVersion && loaderData.mcVersion)
+      break;
+  }
+
+  return loaderData;
 }
+
+//original source of getML, regexes and Loaders after update 1.8.5(saturday 7th of may 2022) https://github.com/FireDiscordBot/bot/blob/master/src/modules/mclogs.ts
 
 export const crashFixCache = new jsonCache(
   new repoLink("SkyblockClient", "CrashData", "crashes.json")

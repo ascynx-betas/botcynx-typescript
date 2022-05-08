@@ -15,7 +15,7 @@ import {
 export default new Event(
   "interactionCreate",
   async (interaction: botcynxInteraction) => {
-    // slashCommands
+    // slashcommands
     if (interaction.isContextMenu()) return;
     if (interaction.isButton()) return;
 

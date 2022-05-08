@@ -1,4 +1,4 @@
-import { Collection, EmbedFieldData, MessageEmbed } from "discord.js";
+import { EmbedFieldData, MessageEmbed } from "discord.js";
 import { configModel } from "../models/config";
 import { snowflakeToMention } from "../personal-modules/discordPlugin";
 import { ButtonResponse } from "../structures/Commands";
@@ -36,14 +36,11 @@ export default new ButtonResponse({
       } else logchannel = `**none set**`;
       let activity: string;
 
-      if (
+      activity =
         removable.length >= 1 &&
         !guildConfig.disabledCommands.includes("roleLinked")
-      ) {
-        activity = "🟢";
-      } else {
-        activity = "🔴";
-      }
+          ? "🟢"
+          : "🔴";
 
       //name
       name = "roleLinked configuration";
@@ -71,14 +68,11 @@ export default new ButtonResponse({
 
       let activity: string;
 
-      if (
+      activity =
         interaction.guild.me.permissions.has("MANAGE_WEBHOOKS") &&
         !guildConfig.disabledCommands.includes("linkReader")
-      ) {
-        activity = "🟢";
-      } else {
-        activity = "🔴";
-      }
+          ? "🟢"
+          : "🔴";
 
       //name
       name = "linkReader configuration";
