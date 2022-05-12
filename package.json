@@ -47,7 +47,7 @@
     "opusscript": "^0.0.8",
     "pako": "^2.0.4",
     "prettier": "^2.5.1",
-    "prettier-eslint": "^14.0.1",
+    "prettier-eslint": "^14.0.3",
     "qrcode-reader": "^1.0.4",
     "tweetnacl": "^1.0.3"
   },
