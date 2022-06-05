@@ -28,7 +28,7 @@
   "author": "Ascynx",
   "license": "MIT",
   "dependencies": {
-    "@discordjs/opus": "^0.5.3",
+    "@discordjs/opus": "^0.7.0",
     "@typescript-eslint/parser": "^5.21.0",
     "ansi-regex": "^5.0.1",
     "crypto-js": "^4.1.1",
