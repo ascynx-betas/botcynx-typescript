@@ -53,7 +53,7 @@ const botPermissionInhibitor = function (command, guild: Guild) {
 /**
  * Allows to see if the command is disabled or not
  * @param command - The command which has been instantiated
- * @param guild - The guild affected
+ * @param {Guild} guild - The guild affected
  * @returns {boolean}
  */
 const isDisabled = async function (command, guild: Guild) {
@@ -83,7 +83,7 @@ const isDevOnly = function (user: User) {
 /**
  * If the command is on cooldown for the user or not
  * @param command - The command instantiated
- * @param user - The user affected
+ * @param {User} user - The user affected
  * @returns {boolean} - Whether it failed or not. (true = passed, false = failed)
  */
 const isOnCooldown = function (command, user: User) {

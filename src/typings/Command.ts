@@ -37,46 +37,31 @@ export type require =
  * interaction - the informations linked to this interaction
  * args - the interaction options
  */
-interface runOptions {
-  client: botClient;
+interface baseRunOptions {
+  client: botClient
+};
+
+interface runOptions extends baseRunOptions {
   interaction: botcynxInteraction;
   args: CommandInteractionOptionResolver;
 } //SlashCommands
 
-/**
- * client - the client that will run this interaction update
- * interaction - the informations linked to this interaction
- */
-interface updateRunOptions {
-  client: botClient;
+interface updateRunOptions extends baseRunOptions {
   interaction: MessageComponentInteraction;
 }
 
-/**
- * client - the client that will run this interaction
- * interaction - the informations linked to this interaction
- * args - the interaction options
- */
-interface runContextOptions {
-  client: botClient;
+interface runContextOptions extends baseRunOptions {
   interaction: contextInteraction;
   args: CommandInteractionOptionResolver;
 } //ContextCommands
 
-/**
- * client - the client that will run this interaction
- * message - the informations linked to this message
- * args - the interaction options
- */
-interface runOptionsMessage {
-  client: botClient;
+interface runOptionsMessage extends baseRunOptions {
   message: Message;
   args: any;
 } //MessageCommands
 
-interface modalRunOption {
+interface modalRunOption extends baseRunOptions {
   modal: ModalSubmitInteraction;
-  client: botClient;
 }
 
 /**
@@ -132,6 +117,7 @@ export type UserContextType = {
   cooldown?: number; //seconds
   run: ContextRunFunction;
 } & UserApplicationCommandData; //User Context Commands
+
 export type MessageContextType = {
   require?: require[];
   userPermissions?: PermissionString[];

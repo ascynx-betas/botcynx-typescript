@@ -4,8 +4,8 @@ import { Event } from "../../structures/Event";
 import { ButtonResponseType } from "../../typings/Command";
 
 export default new Event("messageCommandCreate", (message) => {
-  const filter = (i) => i?.message?.reference?.messageId === message.id; //see if the interaction is linked to the created collector
   if (message == null) return;
+  const filter = (i) => i?.message?.reference?.messageId === message.id; //see if the interaction is linked to the created collector
   const collector = message.channel.createMessageComponentCollector({
     filter,
     time: 300000,

@@ -21,6 +21,7 @@ import { connect } from "mongoose";
 import { tagModel } from "../models/tag";
 import { reload } from "../lib/coolPeople";
 import chalk from "chalk";
+import { registerCooldownTask } from "../lib/Tasks/cooldownReset";
 
 const globPromise = promisify(glob);
 
@@ -36,7 +37,7 @@ export class botClient extends Client {
   whitelistedCommands: Collection<string, WhitelistedCommands> =
     new Collection();
   cooldowns: Collection<string, commandCooldown> = new Collection();
-  tasks: Collection<string, any> = new Collection(); //!CHANGE THE ANY TO THE TASK TYPE ONCE IT'S MADE
+  tasks: Collection<string, NodeJS.Timer> = new Collection();
   modals: Collection<string, modalResponseType> = new Collection();
 
   //static values
@@ -253,6 +254,17 @@ export class botClient extends Client {
         this.on(event.event, event.run);
       }
     });
+
+    //Tasks
+    this.tasks.set("cooldown", await registerCooldownTask(this)); //register cooldown timer id
+
+  }
+
+  async killTasks() {// kill all registered tasks, what did you expect?
+    for (let task of this.tasks.map((t) => t)) {
+      clearInterval(task);
+      this.tasks.delete(this.tasks.findKey((t) => t == task));
+    }
   }
 
   async registerCommands({ commands, guildId }: RegisterCommandsOptions) {

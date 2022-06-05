@@ -6,8 +6,8 @@ import { botcynxInteraction, ButtonResponseType } from "../../typings/Command";
 export default new Event(
   "interactioncommandCreate",
   (interaction: botcynxInteraction) => {
-    const filter = (i) => i.message.interaction.id === interaction.id;
     if (interaction == null) return;
+    const filter = (i) => i.message.interaction.id === interaction.id;
     const collector = interaction.channel.createMessageComponentCollector({
       filter,
       time: 300000,
