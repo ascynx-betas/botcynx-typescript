@@ -39,11 +39,11 @@ export default new WhitelistedCommand({
     if (!username) {
         //get info from database;
 
-        let userInfo: verify = await verifyModel.find({
+        let userInfo = await verifyModel.findOne({
             userId: interaction.user.id
-        })[0];
+        });
 
-        if (!userInfo) interaction.followUp({content: `Missing username parameter, you can also verify using the /verify command`});
+        if (typeof userInfo == "undefined" || !userInfo) interaction.followUp({content: `Missing username parameter, you can also verify using the /verify command`});
 
         uuid = userInfo.minecraftuuid;
     } else {
