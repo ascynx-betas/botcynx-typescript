@@ -214,6 +214,7 @@ export type profileMember = {
     spider: slayer;
     wolf: slayer;
     enderman: slayer;
+    blaze: slayer;
   };
   pets: profilePet[];
   dungeons: {
@@ -432,7 +433,7 @@ type upgrade = {
 };
 export type Profile = {
   profile_id: string;
-  members: profileMember[];
+  members: {[key: string]: profileMember};
   community_upgrades: {
     currently_upgrading: {
       currently_upgrading: unknown;
