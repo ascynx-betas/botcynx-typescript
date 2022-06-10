@@ -130,7 +130,7 @@ export default new WhitelistedCommand({
                 .setTitle("Added Role")
                 .setDescription(
                   `Added role <@&${role.toString()}> to ${
-                    interaction.user.toString
+                    interaction.user.toString()
                   }`
                 )
                 .setTimestamp(Date.now()),
