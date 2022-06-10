@@ -257,10 +257,10 @@ export class botClient extends Client {
 
     //Tasks
     this.tasks.set("cooldown", await registerCooldownTask(this)); //register cooldown timer id
-
   }
 
-  async killTasks() {// kill all registered tasks, what did you expect?
+  async killTasks() {
+    // kill all registered tasks, what did you expect?
     for (let task of this.tasks.map((t) => t)) {
       clearInterval(task);
       this.tasks.delete(this.tasks.findKey((t) => t == task));

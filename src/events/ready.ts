@@ -5,15 +5,15 @@ import chalk from "chalk";
 import { sendInfoWebhook } from "../lib/utils";
 
 type postStartDataType = {
-  maxTimeout: string,
-  ticketblockedNames: string[],
-  mongooseconnectionstring: boolean,
-  developerid: boolean,
-  environment: string,
-  hypixelapikey: boolean,
-  loglink: boolean,
-  githubtoken: boolean,
-}
+  maxTimeout: string;
+  ticketblockedNames: string[];
+  mongooseconnectionstring: boolean;
+  developerid: boolean;
+  environment: string;
+  hypixelapikey: boolean;
+  loglink: boolean;
+  githubtoken: boolean;
+};
 
 export let postStartData: postStartDataType = {
   maxTimeout: "",
@@ -23,7 +23,7 @@ export let postStartData: postStartDataType = {
   environment: "",
   hypixelapikey: false,
   loglink: false,
-  githubtoken: false
+  githubtoken: false,
 };
 
 export default new Event("ready", async () => {
@@ -39,7 +39,8 @@ export default new Event("ready", async () => {
 
   postStartData.developerid = process.env.developerId ? true : false; //set value of developerId to the value defined in process environment
 
-  if (process.env.environment) postStartData.environment = process.env.environment; //set environment to process environment value
+  if (process.env.environment)
+    postStartData.environment = process.env.environment; //set environment to process environment value
   process.env.guildId && process.env.environment == "dev"
     ? console.log(chalk.green("commands will be registered locally"))
     : console.log(chalk.red("Commands will be registered globally"));

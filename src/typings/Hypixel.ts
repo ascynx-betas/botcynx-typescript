@@ -433,7 +433,7 @@ type upgrade = {
 };
 export type Profile = {
   profile_id: string;
-  members: {[key: string]: profileMember};
+  members: { [key: string]: profileMember };
   community_upgrades: {
     currently_upgrading: {
       currently_upgrading: unknown;

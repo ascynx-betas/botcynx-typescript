@@ -38,8 +38,8 @@ export type require =
  * args - the interaction options
  */
 interface baseRunOptions {
-  client: botClient
-};
+  client: botClient;
+}
 
 interface runOptions extends baseRunOptions {
   interaction: botcynxInteraction;

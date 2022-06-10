@@ -37,12 +37,20 @@ export default new slashCommand({
         .send({
           content: `${interaction.user.tag} wanted to tell you: ` + message,
         })
-        .then(() => {interaction.followUp({content: `sent message '${message}' to ${user.tag}`}).catch(() => null);})
+        .then(() => {
+          interaction
+            .followUp({ content: `sent message '${message}' to ${user.tag}` })
+            .catch(() => null);
+        })
         .catch(() => interaction.followUp("Cannot send DM to specified user"));
     } else if (channel) {
       (channel as TextChannel)
         .send({ content: message, allowedMentions: { parse: [] } })
-        .then(() => {interaction.followUp({content: `sent message in ${channel}`}).catch(() => null);})
+        .then(() => {
+          interaction
+            .followUp({ content: `sent message in ${channel}` })
+            .catch(() => null);
+        })
         .catch(() =>
           interaction.editReply(
             "I don't have permission to send a message in the specified channel"
