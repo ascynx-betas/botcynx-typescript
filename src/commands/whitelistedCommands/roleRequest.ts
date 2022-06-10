@@ -1,7 +1,7 @@
 import { Role } from "discord.js";
 import { calculateSkillLevel } from "../../lib/constants";
-import { verify, verifyModel } from "../../models/verifyModel";
-import { getProfiles } from "../../personal-modules/hypixel";
+import { verifyModel } from "../../models/verifyModel";
+import { getPlayerByUuid, getProfiles } from "../../personal-modules/hypixel";
 import { getUuidbyUsername } from "../../personal-modules/mojang";
 import { getSpecifiedProfile } from "../../personal-modules/senither";
 import { WhitelistedCommand } from "../../structures/Commands";
@@ -35,6 +35,7 @@ export default new WhitelistedCommand({
     let username: string = args.getString("username");
     let role = args.getRole("role");
     let uuid: string;
+    let verified: boolean;
 
     if (!username) {
         //get info from database;
@@ -46,9 +47,16 @@ export default new WhitelistedCommand({
         if (typeof userInfo == "undefined" || !userInfo) interaction.followUp({content: `Missing username parameter, you can also verify using the /verify command`});
 
         uuid = userInfo.minecraftuuid;
+        verified = true;
+
     } else {
         uuid = (await getUuidbyUsername(username).catch((e) =>  interaction.followUp({content: `couldn't fetch uuid`}))).id;
+        verified = (await getPlayerByUuid(uuid))?.player?.socialMedia?.links?.DISCORD === `${interaction.user.username}#${interaction.user.discriminator}`;
     }
+
+    if (!verified) return interaction.followUp({content: `that account isn't linked to ${interaction.user.username}#${interaction.user.discriminator}`});
+
+
 
     let hypixelData = await getProfiles(uuid);
 
