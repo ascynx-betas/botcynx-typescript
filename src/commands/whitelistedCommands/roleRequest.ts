@@ -75,7 +75,7 @@ export default new WhitelistedCommand({
       : hypixelData
           .sort(
             (acc, curr) =>
-              acc.members[uuid].last_save - curr.members[uuid].last_save
+              curr.members[uuid].last_save - acc.members[uuid].last_save
           )
           .first()
           .cute_name.toLowerCase();
@@ -139,7 +139,7 @@ export default new WhitelistedCommand({
         });
     } else {
       return interaction.followUp({
-        content: `You don't follow the requirement for <@&${role.id}>, try using another profile`,
+        content: `You don't follow the requirement for <@&${role.id}>, try using another profile than ${profile}`,
         allowedMentions: { parse: [] },
       });
     }
