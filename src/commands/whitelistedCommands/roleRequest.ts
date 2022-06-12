@@ -44,12 +44,12 @@ export default new WhitelistedCommand({
         userId: interaction.user.id,
       });
 
-      if (typeof userInfo == "undefined" || !userInfo)
-        interaction.followUp({
+      if (!userInfo)
+        return interaction.followUp({
           content: `Missing username parameter, you can also verify using the /verify command`,
         });
 
-      uuid = userInfo.minecraftuuid;
+      uuid = userInfo?.minecraftuuid;
       verified = true;
     } else {
       uuid = (await getUuidbyUsername(username))?.id;
