@@ -1,4 +1,3 @@
-import { ModalSubmitInteraction } from "discord-modals";
 import {
   ChatInputApplicationCommandData,
   CommandInteraction,
@@ -9,6 +8,7 @@ import {
   Message,
   MessageApplicationCommandData,
   MessageComponentInteraction,
+  ModalSubmitInteraction,
   PermissionString,
   UserApplicationCommandData,
 } from "discord.js";

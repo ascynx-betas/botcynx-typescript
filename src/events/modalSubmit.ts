@@ -1,19 +1,21 @@
+import { ModalSubmitInteraction } from "discord.js";
 import { botcynx } from "..";
 import { Event } from "../structures/Event";
 
-export default new Event("modalSubmit", (modal) => {
-  const modalC = botcynx.modals.get(modal.customId.split(":")[0]);
+export default new Event("interactionCreate", (interaction) => {
+  if (!interaction.isModalSubmit()) return; 
+  const modalC = botcynx.modals.get(interaction.customId.split(":")[0]);
   if (!modalC)
-    modal
+  interaction
       .reply({
-        content: `The modal ${modal.customId} does not exist`,
+        content: `The modal ${interaction.customId} does not exist`,
         ephemeral: true,
       })
       .then((message) => {
         throw new Error(
-          `Modal handler for ${modal.customId} not found,\n\terror triggered in ${modal.guildId} by ${modal.user.tag}`
+          `Modal handler for ${interaction.customId} not found,\n\terror triggered in ${interaction.guildId} by ${interaction.user.tag}`
         );
       });
 
-  modalC.run({ modal, client: botcynx });
+  modalC.run({ modal: interaction, client: botcynx });
 });

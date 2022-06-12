@@ -137,4 +137,8 @@ export const dungeonSkillRequiredExp: { [key: number]: number } = {
   58: 200000000,
   59: 200000000,
   60: 200000000,
+  61: 200000000,
+  62: 200000000,
+  63: 200000000,
+  64: 200000000,
 }; //yep every level post 50 is 200m to next one

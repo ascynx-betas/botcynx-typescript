@@ -1,5 +1,5 @@
 import { EmbedFieldData, MessageEmbed } from "discord.js";
-import { coolPeopleUUId, coolTypeToEmojis } from "../../../lib/coolPeople";
+import { coolPeopleUUID, coolTypeToEmojis } from "../../../lib/coolPeople";
 import { verifyModel } from "../../../models/verifyModel";
 import { getPlayerByUuid, getStatus } from "../../../personal-modules/hypixel";
 import { getUuidbyUsername } from "../../../personal-modules/mojang";
@@ -82,12 +82,12 @@ export default new slashCommand({
     let coolRank: string;
     let displayName: string;
     if (
-      typeof coolPeopleUUId[uuid] != "undefined" ||
+      coolPeopleUUID[uuid] ||
       player.rank == "YOUTUBER"
     ) {
       coolRank =
-        coolPeopleUUId[uuid] != undefined
-          ? coolPeopleUUId[uuid]
+      coolPeopleUUID[uuid] != undefined
+          ? coolPeopleUUID[uuid]
           : "youtube rank";
       coolRank = coolTypeToEmojis[coolRank];
       displayName = coolRank + " " + username;

@@ -3,19 +3,6 @@ import { botcynx } from "..";
 import { webhook } from "../personal-modules/discordPlugin";
 import { fork } from "./emojis";
 
-export const timestampToHuman = (timestamp: number): string => {
-  let data = { time: timestamp, type: "timestamp" };
-  data = { time: timestamp / 1000, type: "seconds" };
-  if (data.time >= 60) data = { time: data.time / 60, type: "minutes" };
-  if (data.time >= 60) data = { time: data.time / 60, type: "hours" };
-  if (data.time >= 24) data = { time: data.time / 24, type: "days" };
-  if (data.time >= 7) data = { time: data.time / 7, type: "weeks" };
-  if (data.time >= 4) data = { time: data.time / 4, type: "months" };
-  data.time = Math.round(data.time * 10) / 10; //round number to decimal
-
-  return `${data.time} ${data.type}`;
-};
-
 export const similarityDetection = (
   word: string,
   testWord: string
@@ -70,8 +57,7 @@ export const queryEmbed = (data, tag, query) => {
     let description: string;
     if (item.description?.length <= 200) description = item.description;
     else if (item.description?.length >= 200) {
-      item.description = item.description.slice(0, 200);
-      description = item.description + "... ";
+      description = item.description.slice(0, 196) + "... ";
     } else description = "no description set";
 
     let name = item.name;

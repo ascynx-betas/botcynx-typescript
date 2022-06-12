@@ -1,4 +1,5 @@
-import { Modal, showModal, TextInputComponent } from "discord-modals";
+import { MessageActionRow, Modal, TextInputComponent } from "discord.js";
+import { MessageComponentTypes } from "discord.js/typings/enums";
 import { WhitelistedCommand } from "../../structures/Commands";
 
 export default new WhitelistedCommand({
@@ -10,27 +11,26 @@ export default new WhitelistedCommand({
     let modal = new Modal()
       .setCustomId("giveawayrequest:" + interaction.guild.id)
       .setTitle("Giveaway Request (minimum: 5m coins)")
-      .addComponents(
-        new TextInputComponent()
-          .setCustomId("item")
-          .setLabel("Items or moners")
-          .setStyle("LONG")
-          .setMinLength(10)
-          .setMaxLength(200)
-          .setRequired(true)
-          .setDefaultValue("5 MILLERS SKYBLOCK COINS")
-      )
-      .addComponents(
-        new TextInputComponent()
-          .setCustomId("username")
-          .setLabel("Minecraft username (if ≄ discord)")
-          .setStyle("SHORT")
-          .setMinLength(1)
-          .setMaxLength(16)
-          .setRequired(false)
-      );
-
-    showModal(modal, { client, interaction });
+      .addComponents(...[
+        new MessageActionRow<TextInputComponent>().addComponents(new TextInputComponent({
+          customId: "item",
+          label: "Items or money",
+          style: "PARAGRAPH",
+          minLength: 10,
+          maxLength: 200,
+          required: true,
+          placeholder: "5 MILLION Skyblock coins"
+        })),
+      new MessageActionRow<TextInputComponent>().addComponents(new TextInputComponent({
+        customId: "username",
+        label: "Minecraft username (if ≄ discord)",
+        style: "SHORT",
+        minLength: 1,
+        maxLength: 16,
+        required: false
+      }))
+    ])
+      interaction.showModal(modal);
   },
   register: ({ client, guild }) => {
     guild.commands.create(client.whitelistedCommands.get("giveawayrequest"));

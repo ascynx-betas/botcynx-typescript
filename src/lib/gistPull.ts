@@ -19,6 +19,7 @@ type githubFileResponse = {
  */
 export const gistJSONPull = async (link: string) => {
   return fetch(link).then(async (body) => {
+    if (!body.ok) return new Error(body.status + body.statusText);
     const text = await body.text();
     const json = JSON.parse(text);
 
@@ -40,6 +41,7 @@ export const gistJSONPull = async (link: string) => {
  */
 export const updateCoolPeople = async (link: string) => {
   return fetch(link).then(async (body) => {
+    if (!body.ok) return new Error(body.status + body.statusText);
     const text = await body.text();
     const json = JSON.parse(text);
 

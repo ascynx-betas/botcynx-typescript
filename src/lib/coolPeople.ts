@@ -13,7 +13,7 @@ export interface coolPeople {
 export const gistLink =
   "https://api.github.com/gists/65d7fbe29623a1497fffa6de8b754e95";
 
-export let coolPeopleUUId: coolPeople = {
+export let coolPeopleUUID: coolPeople = {
   "0ce87d5afa5f4619ae78872d9c5e07fe": "developer", //Ascynx
   "548548d6784a42f6821733fc6bca6a47": "youtube rank", //Alaawii
   d0e05de76067454dbeaec6d19d886191: "other developer", //Moulberry
@@ -38,5 +38,7 @@ export let coolTypeToEmojis = {
 };
 
 export const reload = async () => {
-  coolPeopleUUId = await updateCoolPeople(gistLink);
+  const update = await updateCoolPeople(gistLink).catch((e) => e);
+  if (update instanceof Error) return update;
+  coolPeopleUUID = update;
 };

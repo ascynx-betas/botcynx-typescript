@@ -19,7 +19,7 @@ const compare = function (array1: string[], array2: string[]) {
   }
   return success;
 };
-export interface ctResult extends Object {
+export interface ctResult {
   success: boolean;
   breakingcount?: number;
 }

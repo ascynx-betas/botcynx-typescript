@@ -9,7 +9,7 @@ import {
   getSpecifiedProfile,
 } from "../../../personal-modules/senither";
 import { uuid } from "../../../typings/ApiInterface";
-import { coolPeopleUUId, coolTypeToEmojis } from "../../../lib/coolPeople";
+import { coolPeopleUUID, coolTypeToEmojis } from "../../../lib/coolPeople";
 
 export default new slashCommand({
   name: "weight",
@@ -115,8 +115,8 @@ export default new slashCommand({
     let coolRank: string;
 
     let displayName: string;
-    if (typeof coolPeopleUUId[uuid as string] != "undefined") {
-      coolRank = coolPeopleUUId[uuid as string];
+    if (coolPeopleUUID[uuid as string]) {
+      coolRank = coolPeopleUUID[uuid as string];
       coolRank = coolTypeToEmojis[coolRank];
       displayName = coolRank;
     }

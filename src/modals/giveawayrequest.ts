@@ -20,10 +20,10 @@ export default new modalResponse({
             : ""
         )
         .addField("Name: ", `${modal.member} | ${modal.user.tag}`)
-        .addField("Giveaway Item(s): ", modal.getTextInputValue("item"), true);
+        .addField("Giveaway Item(s): ", modal.fields.getTextInputValue("item"), true);
 
-      if (modal.getTextInputValue("username") != null)
-        embed.addField("username: ", modal.getTextInputValue("username"), true);
+      if (modal.fields.getTextInputValue("username") != null)
+        embed.addField("username: ", modal.fields.getTextInputValue("username"), true);
 
       if (modal.customId.split(":")[1] == "758015919451537522") {
         const channel = client.channels.cache.get("890996343085088778");

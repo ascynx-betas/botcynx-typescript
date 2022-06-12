@@ -52,11 +52,12 @@ export default new WhitelistedCommand({
       uuid = userInfo.minecraftuuid;
       verified = true;
     } else {
-      uuid = (
-        await getUuidbyUsername(username).catch((e) =>
-          interaction.followUp({ content: `couldn't fetch uuid` })
-        )
-      ).id;
+      uuid = (await getUuidbyUsername(username))?.id;
+      if (typeof uuid != "string") {
+        return interaction.followUp({
+          content: `Account doesn't exist or couldn't fetch it's uuid`,
+        });
+      }
       verified =
         (await getPlayerByUuid(uuid))?.player?.socialMedia?.links?.DISCORD ===
         `${interaction.user.username}#${interaction.user.discriminator}`;
@@ -129,9 +130,7 @@ export default new WhitelistedCommand({
               new MessageEmbed()
                 .setTitle("Added Role")
                 .setDescription(
-                  `Added role <@&${role.toString()}> to ${
-                    interaction.user.toString()
-                  }`
+                  `Added role ${role.toString()} to ${interaction.user.toString()}`
                 )
                 .setTimestamp(Date.now()),
             ],

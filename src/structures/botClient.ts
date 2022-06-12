@@ -22,6 +22,7 @@ import { tagModel } from "../models/tag";
 import { reload } from "../lib/coolPeople";
 import chalk from "chalk";
 import { registerCooldownTask } from "../lib/Tasks/cooldownReset";
+import { registerGistReload } from "../lib/Tasks/gistLoadFail";
 
 const globPromise = promisify(glob);
 
@@ -214,7 +215,7 @@ export class botClient extends Client {
           });
         }
       }
-      reload(); //reload coolPeople list
+      if (reload()) registerGistReload(); //attempt to reload coolPeople list / if it fails register the error Task
     });
 
     //MessageCommands

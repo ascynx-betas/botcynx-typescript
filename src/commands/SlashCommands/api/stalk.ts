@@ -1,5 +1,4 @@
 import { MessageEmbed } from "discord.js";
-import { timestampToHuman } from "../../../lib/utils";
 import { getPlayerByUuid, getStatus } from "../../../personal-modules/hypixel";
 import { getUuidbyUsername } from "../../../personal-modules/mojang";
 import { slashCommand } from "../../../structures/Commands";
