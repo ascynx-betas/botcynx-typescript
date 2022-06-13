@@ -73,7 +73,9 @@ export default new slashCommand({
         new verifyModel({
           userId: userId,
           uuid,
-        }).save().then(() => {
+        }).save().catch((e) => {
+          return interaction.followUp({content: `There was an error while trying to save the data, please try again`});
+        }).then(() => {
           return interaction.followUp({
             content: `added ${userTag} as ${username} in database`,
           });
@@ -112,7 +114,7 @@ export default new slashCommand({
             content: `successfully updated linked account`,
           });
         });
-        
+
       } else {
         return interaction.followUp({
           content: `please link hypixel to your discord account\nyou can link it by following the steps in this video: https://i.gyazo.com/3a2358687dae9b4333fd2fef932e0a17.mp4`,
