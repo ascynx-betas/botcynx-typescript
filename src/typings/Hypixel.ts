@@ -172,6 +172,7 @@ type contest = {
   claimed_participants: number;
 };
 export type profileMember = {
+  experience_skill_combat: number;
   last_save: number;
   inv_armor: { type: number; data: string };
   coop_invitation: {

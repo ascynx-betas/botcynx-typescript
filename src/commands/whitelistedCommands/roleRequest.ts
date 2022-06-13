@@ -1,5 +1,5 @@
 import { GuildTextBasedChannel, MessageEmbed, Role } from "discord.js";
-import { skillLevelCalculator } from "../../lib/constants";
+import { skillAverageCalculator, skillLevelCalculator } from "../../lib/hypixelSkillCalc";
 import { verifyModel } from "../../models/verifyModel";
 import { getPlayerByUuid, getProfiles } from "../../personal-modules/hypixel";
 import { getUuidbyUsername } from "../../personal-modules/mojang";
@@ -230,253 +230,43 @@ export const whitelistedRoles: {
 
   "909003858586525756": function (options) {
     //25 skill avg
-    let skill_alchemy = skillLevelCalculator(
-      options?.member?.experience_skill_alchemy
-    );
-    let skill_mining = skillLevelCalculator(
-      options?.member?.experience_skill_mining
-    );
-    let skill_enchanting = skillLevelCalculator(
-      options?.member?.experience_skill_enchanting
-    );
-    let skill_farming = skillLevelCalculator(
-      options?.member?.experience_skill_farming
-    );
-    let skill_fishing = skillLevelCalculator(
-      options?.member?.experience_skill_fishing
-    );
-    let skill_foraging = skillLevelCalculator(
-      options?.member?.experience_skill_foraging
-    );
-    let skill_taming = skillLevelCalculator(
-      options?.member?.experience_skill_taming
-    );
-
-    let average =
-      (skill_alchemy +
-        skill_mining +
-        skill_enchanting +
-        skill_farming +
-        skill_fishing +
-        skill_foraging +
-        skill_taming) /
-      7;
+    let average = skillAverageCalculator(options?.member);
 
     return average >= 25;
   },
   "904672951293603860": function (options) {
     //30 skill avg
-    let skill_alchemy = skillLevelCalculator(
-      options?.member?.experience_skill_alchemy
-    );
-    let skill_mining = skillLevelCalculator(
-      options?.member?.experience_skill_mining
-    );
-    let skill_enchanting = skillLevelCalculator(
-      options?.member?.experience_skill_enchanting
-    );
-    let skill_farming = skillLevelCalculator(
-      options?.member?.experience_skill_farming
-    );
-    let skill_fishing = skillLevelCalculator(
-      options?.member?.experience_skill_fishing
-    );
-    let skill_foraging = skillLevelCalculator(
-      options?.member?.experience_skill_foraging
-    );
-    let skill_taming = skillLevelCalculator(
-      options?.member?.experience_skill_taming
-    );
-
-    let average =
-      (skill_alchemy +
-        skill_mining +
-        skill_enchanting +
-        skill_farming +
-        skill_fishing +
-        skill_foraging +
-        skill_taming) /
-      7;
+    let average = skillAverageCalculator(options?.member);
 
     return average >= 30;
   },
   "904673033069920256": function (options) {
     //35 skill avg
-    let skill_alchemy = skillLevelCalculator(
-      options?.member?.experience_skill_alchemy
-    );
-    let skill_mining = skillLevelCalculator(
-      options?.member?.experience_skill_mining
-    );
-    let skill_enchanting = skillLevelCalculator(
-      options?.member?.experience_skill_enchanting
-    );
-    let skill_farming = skillLevelCalculator(
-      options?.member?.experience_skill_farming
-    );
-    let skill_fishing = skillLevelCalculator(
-      options?.member?.experience_skill_fishing
-    );
-    let skill_foraging = skillLevelCalculator(
-      options?.member?.experience_skill_foraging
-    );
-    let skill_taming = skillLevelCalculator(
-      options?.member?.experience_skill_taming
-    );
-
-    let average =
-      (skill_alchemy +
-        skill_mining +
-        skill_enchanting +
-        skill_farming +
-        skill_fishing +
-        skill_foraging +
-        skill_taming) /
-      7;
+    let average = skillAverageCalculator(options?.member);
 
     return average >= 35;
   },
   "904673068704755742": function (options) {
     //40 skill avg
-    let skill_alchemy = skillLevelCalculator(
-      options?.member?.experience_skill_alchemy
-    );
-    let skill_mining = skillLevelCalculator(
-      options?.member?.experience_skill_mining
-    );
-    let skill_enchanting = skillLevelCalculator(
-      options?.member?.experience_skill_enchanting
-    );
-    let skill_farming = skillLevelCalculator(
-      options?.member?.experience_skill_farming
-    );
-    let skill_fishing = skillLevelCalculator(
-      options?.member?.experience_skill_fishing
-    );
-    let skill_foraging = skillLevelCalculator(
-      options?.member?.experience_skill_foraging
-    );
-    let skill_taming = skillLevelCalculator(
-      options?.member?.experience_skill_taming
-    );
-
-    let average =
-      (skill_alchemy +
-        skill_mining +
-        skill_enchanting +
-        skill_farming +
-        skill_fishing +
-        skill_foraging +
-        skill_taming) /
-      7;
+    let average = skillAverageCalculator(options?.member);
 
     return average >= 40;
   },
   "904673130914648064": function (options) {
     //45 skill avg
-    let skill_alchemy = skillLevelCalculator(
-      options?.member?.experience_skill_alchemy
-    );
-    let skill_mining = skillLevelCalculator(
-      options?.member?.experience_skill_mining
-    );
-    let skill_enchanting = skillLevelCalculator(
-      options?.member?.experience_skill_enchanting
-    );
-    let skill_farming = skillLevelCalculator(
-      options?.member?.experience_skill_farming
-    );
-    let skill_fishing = skillLevelCalculator(
-      options?.member?.experience_skill_fishing
-    );
-    let skill_foraging = skillLevelCalculator(
-      options?.member?.experience_skill_foraging
-    );
-    let skill_taming = skillLevelCalculator(
-      options?.member?.experience_skill_taming
-    );
-
-    let average =
-      (skill_alchemy +
-        skill_mining +
-        skill_enchanting +
-        skill_farming +
-        skill_fishing +
-        skill_foraging +
-        skill_taming) /
-      7;
+    let average = skillAverageCalculator(options?.member);
 
     return average >= 45;
   },
   "904673169976229888": function (options) {
     //50 skill avg
-    let skill_alchemy = skillLevelCalculator(
-      options?.member?.experience_skill_alchemy
-    );
-    let skill_mining = skillLevelCalculator(
-      options?.member?.experience_skill_mining
-    );
-    let skill_enchanting = skillLevelCalculator(
-      options?.member?.experience_skill_enchanting
-    );
-    let skill_farming = skillLevelCalculator(
-      options?.member?.experience_skill_farming
-    );
-    let skill_fishing = skillLevelCalculator(
-      options?.member?.experience_skill_fishing
-    );
-    let skill_foraging = skillLevelCalculator(
-      options?.member?.experience_skill_foraging
-    );
-    let skill_taming = skillLevelCalculator(
-      options?.member?.experience_skill_taming
-    );
-
-    let average =
-      (skill_alchemy +
-        skill_mining +
-        skill_enchanting +
-        skill_farming +
-        skill_fishing +
-        skill_foraging +
-        skill_taming) /
-      7;
+    let average = skillAverageCalculator(options?.member);
 
     return average >= 50;
   },
   "904673232563617847": function (options) {
     //55 skill avg
-    let skill_alchemy = skillLevelCalculator(
-      options?.member?.experience_skill_alchemy
-    );
-    let skill_mining = skillLevelCalculator(
-      options?.member?.experience_skill_mining
-    );
-    let skill_enchanting = skillLevelCalculator(
-      options?.member?.experience_skill_enchanting
-    );
-    let skill_farming = skillLevelCalculator(
-      options?.member?.experience_skill_farming
-    );
-    let skill_fishing = skillLevelCalculator(
-      options?.member?.experience_skill_fishing
-    );
-    let skill_foraging = skillLevelCalculator(
-      options?.member?.experience_skill_foraging
-    );
-    let skill_taming = skillLevelCalculator(
-      options?.member?.experience_skill_taming
-    );
-
-    let average =
-      (skill_alchemy +
-        skill_mining +
-        skill_enchanting +
-        skill_farming +
-        skill_fishing +
-        skill_foraging +
-        skill_taming) /
-      7;
+    let average = skillAverageCalculator(options?.member);
 
     return average >= 55;
   },
@@ -619,6 +409,15 @@ export const whitelistedRoles: {
     const s = skillLevelCalculator(options?.member?.dungeons?.dungeon_types?.catacombs?.experience, 0, "dungeoneering");
     console.log(s);
     return s >= 35;
+  },
+  "785826436481155152": async function (options) {
+    //test for skill average
+    //50 skill avg
+    let average = skillAverageCalculator(options?.member);
+
+      console.log(average);
+
+    return average >= 35;
   }
 };
 
