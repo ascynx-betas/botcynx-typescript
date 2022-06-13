@@ -58,7 +58,7 @@ const getProfiles = async function (uuid: string) {
     let data: any = await body.text();
     let result: skyblockProfiles = JSON.parse(data);
     let Profiles: Collection<string, Profile> = new Collection();
-    result.profiles.forEach((profile) =>
+    result?.profiles?.forEach((profile) =>
       Profiles.set(profile.cute_name, profile)
     );
     return Profiles;
