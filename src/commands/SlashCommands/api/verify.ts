@@ -73,10 +73,11 @@ export default new slashCommand({
         new verifyModel({
           userId: userId,
           uuid,
-        }).save();
-        interaction.followUp({
-          content: `added ${userTag} as ${username} in database`,
-        });
+        }).save().then(() => {
+          return interaction.followUp({
+            content: `added ${userTag} as ${username} in database`,
+          });
+        })
       } else {
         return interaction.followUp({
           content: `please link hypixel to your discord account\nyou can link it by following the steps in this video: https://i.gyazo.com/3a2358687dae9b4333fd2fef932e0a17.mp4`,
@@ -106,11 +107,12 @@ export default new slashCommand({
                 });
             },
           }
-        );
-
-        interaction.followUp({
-          content: `successfully updated linked account`,
+        ).then(() => {
+          return interaction.followUp({
+            content: `successfully updated linked account`,
+          });
         });
+        
       } else {
         return interaction.followUp({
           content: `please link hypixel to your discord account\nyou can link it by following the steps in this video: https://i.gyazo.com/3a2358687dae9b4333fd2fef932e0a17.mp4`,

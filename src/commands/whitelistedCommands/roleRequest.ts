@@ -69,6 +69,7 @@ export default new WhitelistedCommand({
       });
 
     let hypixelData = await getProfiles(uuid);
+    if (hypixelData.size == 0) return interaction.followUp({content: `no data found`});
 
     let profile = args.getString("profile")
       ? args.getString("profile").toLowerCase()
@@ -81,15 +82,13 @@ export default new WhitelistedCommand({
           .cute_name.toLowerCase();
 
     let member = args.getString("profile")
-      ? hypixelData
-          .filter(
+      ? hypixelData?.filter(
             (profile) =>
               profile.cute_name.toLowerCase() ==
               args.getString("profile").toLowerCase()
           )
           .first().members[uuid]
-      : hypixelData
-          .sort(
+      : hypixelData?.sort(
             (acc, curr) =>
               curr.members[uuid].last_save - acc.members[uuid].last_save
           )
