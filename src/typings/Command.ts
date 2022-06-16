@@ -90,6 +90,7 @@ export type CommandType = {
   cooldown?: number; //seconds
   isModalCommand?: boolean;
   run: RunFunction;
+  default_member_permissions?: bigint | string;//bitfield or string
 } & ChatInputApplicationCommandData; //SlashCommands
 
 /**
@@ -116,6 +117,7 @@ export type UserContextType = {
   category?: string;
   cooldown?: number; //seconds
   run: ContextRunFunction;
+  default_member_permissions?: bigint | string;//bitfield or string
 } & UserApplicationCommandData; //User Context Commands
 
 export type MessageContextType = {
@@ -127,6 +129,7 @@ export type MessageContextType = {
   category?: string;
   cooldown?: number; //seconds
   run: ContextRunFunction;
+  default_member_permissions?: bigint | string;//bitfield or string
 } & MessageApplicationCommandData; //Chat Context Commands
 
 export type MessageCommandType = {

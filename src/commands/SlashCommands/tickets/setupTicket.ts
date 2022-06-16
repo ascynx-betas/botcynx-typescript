@@ -5,6 +5,7 @@ import {
   MessageButton,
   MessageEmbed,
 } from "discord.js";
+import { postStartData } from "../../../events/ready";
 import { ticketModel } from "../../../models/ticket";
 import { slashCommand } from "../../../structures/Commands";
 
@@ -62,7 +63,7 @@ export default new slashCommand({
         .followUp({ content: `Missing permissions to create threads` })
         .catch(() => null);
 
-    const blacklisted = global.bot.ticketblockedNames;
+    const blacklisted = postStartData.ticketblockedNames;
     const success = blacklisted.some((c) => c === name);
     if (success == true)
       return interaction.followUp({

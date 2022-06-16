@@ -29,9 +29,7 @@ export default new Event("messageCommandCreate", (message) => {
       components.forEach((component) => {
         component.forEach((component) => {
           let arrOfCustomIds = component.components.map((c) => c.customId);
-          arrOfCustomIds.forEach((customId) => {
-            customIds.push(customId);
-          });
+          customIds.push(...arrOfCustomIds);
         });
       });
       let buttons: ButtonResponseType[] = [];
@@ -68,8 +66,7 @@ export default new Event("messageCommandCreate", (message) => {
     if (!button) button = botcynx.buttonCommands.get(`${category}:${Id}`);
     if (!button) return;
 
-    if (button.temporary) {
-      if (button.temporary == true)
+    if (button?.temporary) {
         message.channel.messages.cache
           .get(messageId)
           ?.edit({ components: [] })

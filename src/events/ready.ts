@@ -26,7 +26,7 @@ export let postStartData: postStartDataType = {
   githubtoken: false,
 };
 
-export default new Event("ready", async () => {
+export default new Event("ready", async () => {//post start data setup
   console.log(chalk.blue("----Status----"));
   console.log(chalk.green("Bot is now online"));
 

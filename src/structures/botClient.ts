@@ -1,4 +1,4 @@
-import { Client, ClientEvents, Collection } from "discord.js";
+import { BitField, Client, ClientEvents, Collection, Permissions } from "discord.js";
 import * as fs from "fs";
 import {
   CommandType,
@@ -23,6 +23,8 @@ import { reload } from "../lib/coolPeople";
 import chalk from "chalk";
 import { registerCooldownTask } from "../lib/Tasks/cooldownReset";
 import { registerGistReload } from "../lib/Tasks/gistLoadFail";
+import { PermissionFlagsBits } from 'discord-api-types/v10';
+import { permissionTranslate } from "../lib/utils";
 
 const globPromise = promisify(glob);
 
@@ -107,6 +109,16 @@ export class botClient extends Client {
       this.registerModule({
         path: filePath,
         callback: function (data: UserContextType) {
+
+          if (data?.userPermissions) {
+            data.default_member_permissions = BigInt(0);
+            data?.userPermissions.forEach((permission) => {
+              (data.default_member_permissions as bigint) |= BigInt(PermissionFlagsBits[permissionTranslate[permission]]);
+            });
+            data.default_member_permissions = String(data.default_member_permissions);
+          };
+
+
           botClient.getInstance().userContextCommands.set(data.name, data);
           botClient.getInstance().ArrayOfSlashCommands.set(data.name, data);
         },
@@ -122,6 +134,15 @@ export class botClient extends Client {
       this.registerModule({
         path: filePath,
         callback: function (data: MessageContextType) {
+
+          if (data?.userPermissions) {
+            data.default_member_permissions = BigInt(0);
+            data?.userPermissions.forEach((permission) => {
+              (data.default_member_permissions as bigint) |= BigInt(PermissionFlagsBits[permissionTranslate[permission]]);
+            });
+            data.default_member_permissions = String(data.default_member_permissions);
+          };
+
           botClient.getInstance().messageContextCommands.set(data.name, data);
           botClient.getInstance().ArrayOfSlashCommands.set(data.name, data);
         },
@@ -138,6 +159,15 @@ export class botClient extends Client {
       this.registerModule({
         path: filePath,
         callback: function (data: CommandType) {
+
+          if (data?.userPermissions) {
+            data.default_member_permissions = BigInt(0);
+            data?.userPermissions.forEach((permission) => {
+              (data.default_member_permissions as bigint) |= BigInt(PermissionFlagsBits[permissionTranslate[permission]]);
+            });
+            data.default_member_permissions = String(data.default_member_permissions);
+          };
+
           botClient.getInstance().ArrayOfSlashCommands.set(data.name, data);
           botClient.getInstance().slashCommands.set(data.name, data);
         },
@@ -154,6 +184,15 @@ export class botClient extends Client {
       this.registerModule({
         path: filePath,
         callback: function (data: WhitelistedCommands) {
+
+          if (data?.userPermissions) {
+            data.default_member_permissions = BigInt(0);
+            data?.userPermissions.forEach((permission) => {
+              (data.default_member_permissions as bigint) |= BigInt(PermissionFlagsBits[permissionTranslate[permission]]);
+            });
+            data.default_member_permissions = String(data.default_member_permissions);
+          };
+
           botClient.getInstance().whitelistedCommands.set(data.name, data);
         },
         type: "command",
@@ -209,10 +248,12 @@ export class botClient extends Client {
           guildId: process.env.guildId,
         });
         for (let command of this.whitelistedCommands.map((c) => c)) {
+          try {
           command.register({
             client: this,
-            guild: this.guilds.cache.get(process.env.guildId),
+            guild: this.guilds.cache.get(process?.env?.guildId),
           });
+        } catch (e) {}
         }
       }
       if (reload()) registerGistReload(); //attempt to reload coolPeople list / if it fails register the error Task
@@ -278,6 +319,14 @@ export class botClient extends Client {
       );
     } else {
       this.application?.commands.set(commands);
+
+      (await this.application?.commands.fetch()).map((c) => c).filter((c) => {
+        console.log(c);
+        (this.ArrayOfSlashCommands.get(c.name) as CommandType)?.userPermissions?.length > 0
+      }).forEach(async (c) => {
+        await c.setDefaultPermission(false);
+      });
+
       console.log(chalk.green(`Registering global commands`));
     }
   }

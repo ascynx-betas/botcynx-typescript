@@ -1,5 +1,6 @@
 import { slashCommand } from "../../../structures/Commands";
 import ms from "ms";
+import { postStartData } from "../../../events/ready";
 
 export default new slashCommand({
   name: "timeout",
@@ -81,7 +82,7 @@ export default new slashCommand({
           });
         if (error.httpStatus == 400)
           return interaction.followUp({
-            content: `You cannot timeout a member for more than ${global.bot.maxTimeout} !`,
+            content: `You cannot timeout a member for more than ${postStartData.maxTimeout} !`,
           });
         if (error.httpStatus != 400 && error.httpStatus != 403)
           return interaction.followUp({

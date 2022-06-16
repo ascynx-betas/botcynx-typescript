@@ -20,21 +20,20 @@ export default new Event(
       guildId: guild.id,
     });
 
-    if (
-      !oldMember.communicationDisabledUntilTimestamp &&
-      newMember.communicationDisabledUntilTimestamp
-    ) {
-      //user is timeouted
-
-      let auditLogs = await newMember.guild.fetchAuditLogs({
-        type: "MEMBER_UPDATE",
-      });
-      auditLogs.entries.filter((log) => log.target.id == oldMember.id);
-      let log = auditLogs.entries.get(auditLogs.entries.firstKey());
-      const reason = log.reason;
-
-      console.log(reason);
-    }
+    //if (
+    //  !oldMember.communicationDisabledUntilTimestamp &&
+    //  newMember.communicationDisabledUntilTimestamp
+    //) {
+    //  //user is timeouted
+//
+    //  let auditLogs = await newMember.guild.fetchAuditLogs({
+    //    type: "MEMBER_UPDATE",
+    //  });
+    //  auditLogs.entries.filter((log) => log.target.id == oldMember.id);
+    //  let log = auditLogs.entries.get(auditLogs.entries.firstKey());
+    //  const reason = log.reason;
+//
+    //}
 
     if (config[0].disabledCommands.includes("roleLinked")) return;
     let { trigger, removable, bypass, logchannel } = config[0];
