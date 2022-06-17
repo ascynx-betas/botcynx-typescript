@@ -56,7 +56,7 @@ export default new slashCommand({
         return interaction.followUp({
           content: `please enter the username of the person you want to see the weight of`,
         });
-      uuid = uuid.id;
+      uuid = (uuid as uuid).id;
     } else {
       const data = await getPlayerByUuid(uuid as string).catch(() => null);
 
