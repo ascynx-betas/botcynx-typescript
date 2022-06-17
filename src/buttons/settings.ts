@@ -116,6 +116,6 @@ export default new ButtonResponse({
       .setTitle(name)
       .setFooter({ text: `requested by ${interaction.user.tag}` });
 
-    interaction.update({ embeds: [embed] });
+    interaction.update({ embeds: [embed], allowedMentions: {parse: []} });
   },
 });

@@ -68,6 +68,7 @@ export default new WhitelistedCommand({
     interaction.followUp({
       embeds: [embed],
       components: [actionRow, componentRow],
+      allowedMentions: {parse: []}
     });
   },
   register: ({ client, guild }) => {

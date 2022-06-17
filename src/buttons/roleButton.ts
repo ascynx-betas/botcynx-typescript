@@ -9,7 +9,7 @@ export default new ButtonResponse({
     const member = interaction.guild.members.cache.get(interaction.user.id);
     const role = interaction.guild.roles.cache.get(roleId);
 
-    if ((await interaction.guild.fetchMe()).roles.highest.position <= role.position)
+    if (interaction.guild.members.me.roles.highest.position <= role.position)
       return interaction.reply({
         content: `I cannot give you ${role}`,
         ephemeral: true,

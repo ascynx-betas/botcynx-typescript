@@ -141,7 +141,7 @@ export default new slashCommand({
     );
 
     interaction
-      .followUp({ embeds: [embed], components: [buttonRow] })
+      .followUp({ embeds: [embed], components: [buttonRow], allowedMentions: {parse: []} })
       .catch(() => null);
   },
 });

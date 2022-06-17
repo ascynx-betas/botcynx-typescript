@@ -79,6 +79,7 @@ export default new slashCommand({
         }).then(() => {
           return interaction.followUp({
             content: `added ${userTag} as ${username} in database`,
+            allowedMentions: {parse: []}
           });
         })
       } else {

@@ -45,6 +45,6 @@ export default new slashCommand({
       .setTitle("Information")
       .setFooter({ text: `requested by ${interaction.user.tag}` });
 
-    interaction.followUp({ embeds: [embed], components: components });
+    interaction.followUp({ embeds: [embed], components: components, allowedMentions: {parse: []} });
   },
 });

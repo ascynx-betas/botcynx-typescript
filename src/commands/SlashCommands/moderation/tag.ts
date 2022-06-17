@@ -133,7 +133,7 @@ export default new slashCommand({
           .get(guild.id)
           .commands.create({ name: name, description: description })
           .then(() =>
-            interaction.followUp({ content: `created new tag ${name}` })
+            interaction.followUp({ content: `created new tag ${name}`, allowedMentions: {parse: []} })
           )
           .catch(() =>
             interaction.followUp({
@@ -170,7 +170,7 @@ export default new slashCommand({
         .get(guild.id)
         .commands.delete(commandId)
         .then(() =>
-          interaction.followUp({ content: `successfully deleted ${name}` })
+          interaction.followUp({ content: `successfully deleted ${name}`, allowedMentions: {parse: []} })
         );
     } else if (subCommand == "modify") {
       if (!description) {
@@ -193,7 +193,7 @@ export default new slashCommand({
       return client.guilds.cache
         .get(guild.id)
         .commands.edit(commandId, command)
-        .then(() => interaction.followUp({ content: `modified tag ${name}` }));
+        .then(() => interaction.followUp({ content: `modified tag ${name}`, allowedMentions: {parse: []} }));
     }
   },
 });

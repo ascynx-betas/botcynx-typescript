@@ -138,7 +138,7 @@ export default new slashCommand({
       .setFooter({ text: `requested by ${interaction.user.tag}` })
       .setThumbnail(`https://mc-heads.net/avatar/${username}/100`);
 
-    interaction.followUp({ embeds: [embed] });
+    interaction.followUp({ embeds: [embed], allowedMentions: {parse: ["everyone", "roles"]} });
 
     //create embed / send it
   },

@@ -1,6 +1,7 @@
 import {
   GuildTextBasedChannel,
   Message,
+  MessageType,
   TextChannel,
   ThreadChannel,
   Webhook,
@@ -47,7 +48,7 @@ export default new Event("messageCreate", async (message) => {
       );
 
     console.log((source as Message<boolean>).type);
-    if (!isSupportedMessage((source as any).type)) return;
+    if (!isSupportedMessage((source as Message<boolean>).type)) return;
 
     const sourceConfig = await configModel.find({
       guildId: fields[2],
@@ -151,7 +152,7 @@ const checkLink = (link: string) => {
   return true;
 };
 
-const isSupportedMessage = (messageType: string): boolean =>
-  ["DEFAULT", "APPLICATION_COMMAND", "CONTEXT_MENU_COMMAND", "REPLY"].includes(
+const isSupportedMessage = (messageType: MessageType): boolean =>
+  [MessageType.Default, MessageType.ChatInputCommand, MessageType.ContextMenuCommand, MessageType.Reply].includes(
     messageType
   );

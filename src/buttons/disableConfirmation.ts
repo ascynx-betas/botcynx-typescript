@@ -38,7 +38,7 @@ export default new ButtonResponse({
             `successfully removed ${command} from disabled commands`
           );
 
-        interaction.update({ embeds: [embed], components: [] });
+        interaction.update({ embeds: [embed], components: [], allowedMentions: {parse: []} });
       } else {
         configModel.updateOne(
           {
@@ -62,7 +62,7 @@ export default new ButtonResponse({
           .setTitle("Success")
           .setDescription(`successfully added ${command} to disabled commands`);
 
-        interaction.update({ embeds: [embed], components: [] });
+        interaction.update({ embeds: [embed], components: [], allowedMentions: {parse: []} });
       }
     } else if (flag == "global") {
       if (interaction.user.id != process.env.developerId)
@@ -98,7 +98,7 @@ export default new ButtonResponse({
             `successfully removed ${command} from global disabled commands`
           );
 
-        interaction.update({ embeds: [embed], components: [] });
+        interaction.update({ embeds: [embed], components: [], allowedMentions: {parse: []} });
       } else {
         //add command
 
@@ -124,7 +124,7 @@ export default new ButtonResponse({
             `successfully added ${command} to global disabled commands`
           );
 
-        interaction.update({ embeds: [embed], components: [] });
+        interaction.update({ embeds: [embed], components: [], allowedMentions: {parse: []} });
       }
     }
   },

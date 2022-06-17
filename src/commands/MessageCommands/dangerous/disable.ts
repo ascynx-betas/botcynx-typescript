@@ -9,6 +9,7 @@ import { Command } from "../../../structures/Commands";
 export default new Command({
   name: "disable",
   aliases: ["d", "enable"],
+  userPermissions: ["ManageGuild"],
 
   run: async ({ message, client, args }) => {
     const target = args[0];
@@ -34,6 +35,7 @@ export default new Command({
     )
       return message.reply({
         content: `you cannot disable ${target} as it is not an available command / event`,
+        allowedMentions: {parse: []}
       }); //doesn't exist
 
     if (target == "disable" || target == "exec")
@@ -61,7 +63,7 @@ export default new Command({
           .setStyle(ButtonStyle.Danger)
       );
 
-      message.reply({ embeds: [embed], components: [buttonRow] });
+      message.reply({ embeds: [embed], components: [buttonRow], allowedMentions: {parse: []} });
     } else {
       return message.reply({ content: `there is no such command flag` });
     }

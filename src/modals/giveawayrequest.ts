@@ -30,7 +30,7 @@ export default new modalResponse({
       if (modal.customId.split(":")[1] == "758015919451537522") {
         const channel = client.channels.cache.get("890996343085088778");
 
-        await (channel as GuildTextBasedChannel).send({ embeds: [embed] });
+        await (channel as GuildTextBasedChannel).send({ embeds: [embed], allowedMentions: {parse: []} });
       } else if (modal.customId.split(":")[1] == "779489942899785748") {
         await sendInfoWebhook({embed: embedApi});
       }
