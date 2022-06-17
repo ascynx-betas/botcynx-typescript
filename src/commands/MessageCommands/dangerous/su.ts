@@ -47,13 +47,14 @@ export default new Command({
             if (err)
               return message.reply({
                 content: `there was an error while removing super user from <@${Id}>`,
-                allowedMentions: { parse: [] },
+                allowedMentions: {parse: ["everyone", "roles"]}
               });
           }
         );
 
         message.reply({
           content: `successfully removed <@${Id}> from ${message.guild.name}'s super user list`,
+          allowedMentions: {parse: ["everyone", "roles"]}
         });
       } else {
         //add
@@ -67,13 +68,14 @@ export default new Command({
             if (err)
               return message.reply({
                 content: `there was an error while giving super user to <@${Id}>`,
-                allowedMentions: { parse: [] },
+                allowedMentions: {parse: ["everyone", "roles"]}
               });
           }
         );
 
         message.reply({
           content: `successfully added <@${Id}> to ${message.guild.name}'s super user list`,
+          allowedMentions: {parse: ["everyone", "roles"]}
         });
       }
     } else if (flags == "-g") {
@@ -92,13 +94,14 @@ export default new Command({
             if (err)
               return message.reply({
                 content: `there was an error while removing super user from <@${Id}>`,
-                allowedMentions: { parse: [] },
+                allowedMentions: {parse: ["everyone", "roles"]}
               });
           }
         );
 
         message.reply({
           content: `successfully removed <@${Id}> from global super user list`,
+          allowedMentions: {parse: ["everyone", "roles"]}
         });
       } else {
         //add
@@ -112,13 +115,14 @@ export default new Command({
             if (err)
               return message.reply({
                 content: `there was an error while giving super user to <@${Id}>`,
-                allowedMentions: { parse: [] },
+                allowedMentions: {parse: ["everyone", "roles"]}
               });
           }
         );
 
         message.reply({
           content: `successfully added <@${Id}> to global super user list`,
+          allowedMentions: {parse: ["everyone", "roles"]}
         });
       }
     } else {

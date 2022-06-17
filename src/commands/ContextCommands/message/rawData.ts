@@ -14,7 +14,7 @@ export default new MessageContextCommand({
         try {
           const channel = await interaction.user.createDM(true);
 
-          channel.send({ content: `${JSON.stringify(message.toJSON())}` });
+          channel.send({ content: `${JSON.stringify(message.toJSON())}`, allowedMentions: {parse: []} });
         } catch (e) {
           console.log(e);
         }

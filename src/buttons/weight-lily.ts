@@ -69,6 +69,6 @@ export default new ButtonResponse({
         .setLabel("Press to get senither weight")
         .setStyle(ButtonStyle.Secondary)
     );
-    interaction.update({ embeds: [embed], components: [buttonrow] });
+    interaction.update({ embeds: [embed], components: [buttonrow], allowedMentions: {parse: []} });
   },
 });

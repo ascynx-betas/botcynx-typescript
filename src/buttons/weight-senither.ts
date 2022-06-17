@@ -51,6 +51,6 @@ export default new ButtonResponse({
         .setStyle(ButtonStyle.Secondary)
     );
 
-    return interaction.update({ embeds: [embed], components: [buttonRow] });
+    return interaction.update({ embeds: [embed], components: [buttonRow], allowedMentions: {parse: []} });
   },
 });

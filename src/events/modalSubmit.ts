@@ -1,4 +1,5 @@
 import { ModalSubmitInteraction } from "discord.js";
+import { allowedNodeEnvironmentFlags } from "process";
 import { botcynx } from "..";
 import { Event } from "../structures/Event";
 

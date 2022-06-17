@@ -14,6 +14,7 @@ export default new MessageContextCommand({
           (interaction as MessageContextMenuCommandInteraction).targetId
         ).content || "no content"
       }`,
+      allowedMentions: {parse: []}
     });
   },
 });

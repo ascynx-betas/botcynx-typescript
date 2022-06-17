@@ -40,7 +40,7 @@ export default new slashCommand({
         .setDescription(description)
         .setTitle(`Error 404: not found`)
         .setThumbnail(`https://mc-heads.net/avatar/${username}/100`);
-      return interaction.followUp({ embeds: [embed] });
+      return interaction.followUp({ embeds: [embed], allowedMentions: {parse: []} });
     }
 
     let offline = !data.session.online;
@@ -76,7 +76,7 @@ export default new slashCommand({
           .setDescription(description)
           .setTitle(`Error 404: couldn't get status information`)
           .setThumbnail(`https://mc-heads.net/avatar/${username}/100`);
-        return interaction.followUp({ embeds: [embed] });
+        return interaction.followUp({ embeds: [embed], allowedMentions: {parse: []} });
       }
       let description: string;
       if (typeof map == "undefined") {
@@ -85,7 +85,7 @@ export default new slashCommand({
           const gameModeTranslate = {
             combat_3: "The End",
             dynamic: "Private island",
-            combat_2: "Blazing fortress",
+            combat_2: "Crimson Isles",
             combat_1: "Spider's den",
             hub: "The hub",
             foraging_1: "The park",
@@ -127,7 +127,7 @@ export default new slashCommand({
         .setFooter({ text: `requested by ${interaction.user.tag}` })
         .setColor(Colors.Aqua)
         .setThumbnail(`https://mc-heads.net/avatar/${username}/100`);
-      interaction.followUp({ embeds: [embed], allowedMentions: {} });
+      interaction.followUp({ embeds: [embed], allowedMentions: {parse: []} });
     }
   },
 });

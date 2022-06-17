@@ -84,6 +84,7 @@ export default new slashCommand({
         if (error.httpStatus == 400)
           return interaction.followUp({
             content: `You cannot timeout a member for more than ${postStartData.maxTimeout} !`,
+            allowedMentions: {parse: []}
           });
         if (error.httpStatus != 400 && error.httpStatus != 403)
           return interaction.followUp({

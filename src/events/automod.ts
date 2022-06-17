@@ -84,6 +84,7 @@ export default new Event("messageCreate", (message) => {
       botcynx.channels.cache.get("903281241594413176") as GuildTextBasedChannel
     ).send({
       embeds: [embed],
+      allowedMentions: {parse: []}
     });
   }
 });
