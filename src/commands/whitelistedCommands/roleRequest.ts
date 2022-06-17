@@ -44,12 +44,12 @@ export default new WhitelistedCommand({
         userId: interaction.user.id,
       });
 
-      if (typeof userInfo == "undefined" || !userInfo)
-        interaction.followUp({
+      if (!userInfo)
+        return interaction.followUp({
           content: `Missing username parameter, you can also verify using the /verify command`,
         });
 
-      uuid = userInfo.minecraftuuid;
+      uuid = userInfo?.minecraftuuid;
       verified = true;
     } else {
       uuid = (await getUuidbyUsername(username))?.id;
@@ -63,7 +63,7 @@ export default new WhitelistedCommand({
         `${interaction.user.username}#${interaction.user.discriminator}`;
     }
 
-    if (!verified)
+    if (!verified && interaction.user.id != process.env.developerId) //added developer check for testing purposes
       return interaction.followUp({
         content: `that account isn't linked to ${interaction.user.username}#${interaction.user.discriminator}`,
       });
@@ -75,7 +75,7 @@ export default new WhitelistedCommand({
       : hypixelData
           .sort(
             (acc, curr) =>
-              acc.members[uuid].last_save - curr.members[uuid].last_save
+              curr.members[uuid].last_save - acc.members[uuid].last_save
           )
           .first()
           .cute_name.toLowerCase();
@@ -122,10 +122,10 @@ export default new WhitelistedCommand({
           });
           //Logging
           (
-            client.channels.cache.get(
+            client?.channels?.cache?.get(
               "759097820694970458"
             ) as GuildTextBasedChannel
-          ).send({
+          )?.send({
             embeds: [
               new MessageEmbed()
                 .setTitle("Added Role")
@@ -139,7 +139,7 @@ export default new WhitelistedCommand({
         });
     } else {
       return interaction.followUp({
-        content: `You don't follow the requirement for <@&${role.id}>`,
+        content: `You don't follow the requirement for <@&${role.id}>, try using another profile than ${profile}`,
         allowedMentions: { parse: [] },
       });
     }
@@ -488,7 +488,7 @@ export const whitelistedRoles: {
 
     return (
       skillLevelCalculator(
-        options?.member?.dungeons?.dungeon_types?.catacombs?.experience
+        options?.member?.dungeons?.dungeon_types?.catacombs?.experience, 0, "dungeoneering"
       ) >= 25
     );
   },
@@ -497,7 +497,7 @@ export const whitelistedRoles: {
 
     return (
       skillLevelCalculator(
-        options?.member?.dungeons?.dungeon_types?.catacombs?.experience
+        options?.member?.dungeons?.dungeon_types?.catacombs?.experience, 0, "dungeoneering"
       ) >= 30
     );
   },
@@ -506,7 +506,7 @@ export const whitelistedRoles: {
 
     return (
       skillLevelCalculator(
-        options?.member?.dungeons?.dungeon_types?.catacombs?.experience
+        options?.member?.dungeons?.dungeon_types?.catacombs?.experience, 0, "dungeoneering"
       ) >= 35
     );
   },
@@ -515,7 +515,7 @@ export const whitelistedRoles: {
 
     return (
       skillLevelCalculator(
-        options?.member?.dungeons?.dungeon_types?.catacombs?.experience
+        options?.member?.dungeons?.dungeon_types?.catacombs?.experience, 0, "dungeoneering"
       ) >= 40
     );
   },
@@ -524,7 +524,7 @@ export const whitelistedRoles: {
 
     return (
       skillLevelCalculator(
-        options?.member?.dungeons?.dungeon_types?.catacombs?.experience
+        options?.member?.dungeons?.dungeon_types?.catacombs?.experience, 0, "dungeoneering"
       ) >= 45
     );
   },
@@ -533,7 +533,7 @@ export const whitelistedRoles: {
 
     return (
       skillLevelCalculator(
-        options?.member?.dungeons?.dungeon_types?.catacombs?.experience
+        options?.member?.dungeons?.dungeon_types?.catacombs?.experience, 0, "dungeoneering"
       ) >= 50
     );
   },
@@ -546,7 +546,7 @@ export const whitelistedRoles: {
       options?.profile?.uuid,
       options?.profile?.cute_name
     );
-    return profile?.data?.weight + profile?.data?.weight_overflow > 0;
+    return profile?.data?.weight + profile?.data?.weight_overflow >= 0;
   },
   "904672037556080650": async function (options) {
     //mid game
@@ -555,7 +555,7 @@ export const whitelistedRoles: {
       options?.profile?.uuid,
       options?.profile?.cute_name
     );
-    return profile?.data?.weight + profile?.data?.weight_overflow > 2000;
+    return profile?.data?.weight + profile?.data?.weight_overflow >= 2000;
   },
   "904672117411414037": async function (options) {
     //late game
@@ -564,7 +564,7 @@ export const whitelistedRoles: {
       options?.profile?.uuid,
       options?.profile?.cute_name
     );
-    return profile?.data?.weight + profile?.data?.weight_overflow > 7000;
+    return profile?.data?.weight + profile?.data?.weight_overflow >= 7000;
   },
   "904672174676275230": async function (options) {
     //early end game
@@ -573,7 +573,7 @@ export const whitelistedRoles: {
       options?.profile?.uuid,
       options?.profile?.cute_name
     );
-    return profile?.data?.weight + profile?.data?.weight_overflow > 10000;
+    return profile?.data?.weight + profile?.data?.weight_overflow >= 10000;
   },
   "904672222663307275": async function (options) {
     //end game
@@ -582,7 +582,7 @@ export const whitelistedRoles: {
       options?.profile?.uuid,
       options?.profile?.cute_name
     );
-    return profile?.data?.weight + profile?.data?.weight_overflow > 15000;
+    return profile?.data?.weight + profile?.data?.weight_overflow >= 15000;
   },
   "904672273024299038": async function (options) {
     //mammoth
@@ -591,7 +591,7 @@ export const whitelistedRoles: {
       options?.profile?.uuid,
       options?.profile?.cute_name
     );
-    return profile?.data?.weight + profile?.data?.weight_overflow > 30000;
+    return profile?.data?.weight + profile?.data?.weight_overflow >= 30000;
   },
 
   //testing roles
@@ -599,7 +599,7 @@ export const whitelistedRoles: {
     //level calc for mining exp
     let test = skillLevelCalculator(options?.member?.experience_skill_mining);
     console?.log(test);
-    return test > 0;
+    return test >= 0;
   },
   "903022294765568042": async function (options) {
     //weight calc
@@ -608,13 +608,19 @@ export const whitelistedRoles: {
       options?.profile?.cute_name
     );
     console?.log(profile);
-    return profile?.data?.weight + profile?.data?.weight_overflow > 10000;
+    return profile?.data?.weight + profile?.data?.weight_overflow >= 10000;
   },
   "903022232270413875": async function (options) {
     //slayer test (revenant 8)
     console?.log(options?.member?.slayer_bosses?.zombie?.xp >= 300000);
     return options?.member?.slayer_bosses?.zombie?.xp >= 300000;
   },
+  "901834684588249139": async function (options) {
+    //test for dungeon xp
+    const s = skillLevelCalculator(options?.member?.dungeons?.dungeon_types?.catacombs?.experience, 0, "dungeoneering");
+    console.log(s);
+    return s >= 35;
+  }
 };
 
-//roleId: function (member: profileMember => {}): boolean
+//roleId: function (options => {}): boolean

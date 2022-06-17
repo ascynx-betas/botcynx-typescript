@@ -71,7 +71,7 @@ export const skillLevelCalculator = (
     type == "based"
       ? exp - basedskillRequiredExp[level + 1]
       : exp - dungeonSkillRequiredExp[level + 1];
-  xp = xp > 0 ? xp : 0;
+    xp = xp > 0 ? xp : 0;
 
   return xp > 0 ? skillLevelCalculator(xp, level + 1, type) : level;
 };

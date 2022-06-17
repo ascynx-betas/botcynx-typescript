@@ -1,5 +1,4 @@
 import { MessageActionRow, Modal, TextInputComponent } from "discord.js";
-import { MessageComponentTypes } from "discord.js/typings/enums";
 import { WhitelistedCommand } from "../../structures/Commands";
 
 export default new WhitelistedCommand({

@@ -58,7 +58,7 @@ export default new slashCommand({
 
     if (!discord)
       return interaction.followUp({
-        content: `please link discord to your discord account\nyou can link it by following the steps in this video: https://i.gyazo.com/3a2358687dae9b4333fd2fef932e0a17.mp4`,
+        content: `please link hypixel to your discord account\nyou can link it by following the steps in this video: https://i.gyazo.com/3a2358687dae9b4333fd2fef932e0a17.mp4`,
       });
 
     if (action == "verify" || !action) {
@@ -76,6 +76,10 @@ export default new slashCommand({
         }).save();
         interaction.followUp({
           content: `added ${userTag} as ${username} in database`,
+        });
+      } else {
+        return interaction.followUp({
+          content: `please link hypixel to your discord account\nyou can link it by following the steps in this video: https://i.gyazo.com/3a2358687dae9b4333fd2fef932e0a17.mp4`,
         });
       }
     } else {
@@ -106,6 +110,10 @@ export default new slashCommand({
 
         interaction.followUp({
           content: `successfully updated linked account`,
+        });
+      } else {
+        return interaction.followUp({
+          content: `please link hypixel to your discord account\nyou can link it by following the steps in this video: https://i.gyazo.com/3a2358687dae9b4333fd2fef932e0a17.mp4`,
         });
       }
     }
