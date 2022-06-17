@@ -1,4 +1,4 @@
-import { Client, ClientEvents, Collection, Partials, Permissions } from "discord.js";
+import { Client, ClientEvents, Collection, Partials } from "discord.js";
 import * as fs from "fs";
 import {
   CommandType,
@@ -24,7 +24,6 @@ import chalk from "chalk";
 import { registerCooldownTask } from "../lib/Tasks/cooldownReset";
 import { registerGistReload } from "../lib/Tasks/gistLoadFail";
 import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { permissionTranslate } from "../lib/utils";
 
 const globPromise = promisify(glob);
 

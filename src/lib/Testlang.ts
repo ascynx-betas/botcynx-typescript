@@ -1,5 +1,4 @@
 import { Collection } from "discord.js";
-import { jsonCache, repoLink } from "./cache/cache";
 
 //export const TestLang = new jsonCache(new repoLink("Ascynx", "botcynx-data", "lang.json")); //Create lang.json
 

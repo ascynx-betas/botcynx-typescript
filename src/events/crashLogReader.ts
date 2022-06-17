@@ -8,7 +8,7 @@ import {
   getMods,
 } from "../lib/cache/crashFix";
 import { haste, isHaste } from "../lib/haste";
-import { ActionRow, ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
 import { containsLink, isLink } from "../personal-modules/testFor";
 import { indexOf } from "lodash";
 import { botcynx } from "..";

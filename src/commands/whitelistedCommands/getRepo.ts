@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ApplicationCommandOptionType, ButtonBuilder, CommandInteractionOptionResolver, SelectMenuBuilder } from "discord.js";
+import { ActionRowBuilder, ApplicationCommandOptionType, ButtonBuilder, SelectMenuBuilder } from "discord.js";
 import { searchRepositories } from "../../lib/repoPull";
 import { queryEmbed } from "../../lib/utils";
 import { WhitelistedCommand } from "../../structures/Commands";

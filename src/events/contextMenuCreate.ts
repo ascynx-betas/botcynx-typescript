@@ -15,8 +15,6 @@ import {
 export default new Event(
   "interactionCreate",
   async (interaction) => {
-    if (interaction.isChatInputCommand()) return;
-    if (interaction.isButton()) return;
     if (interaction.isContextMenuCommand()) {
       let command: UserContextType | MessageContextType =
         botcynx.userContextCommands.get(interaction.commandName);

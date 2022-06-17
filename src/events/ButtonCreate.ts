@@ -1,6 +1,6 @@
 import { botcynx } from "..";
 import { Event } from "../structures/Event";
-import { GuildMember, Message, ActionRow, MessageActionRowComponent, ButtonInteraction } from "discord.js";
+import { GuildMember, Message, ActionRow, MessageActionRowComponent } from "discord.js";
 import { RequireTest } from "../personal-modules/commandHandler";
 import {
   botPermissionInhibitor,
@@ -8,9 +8,6 @@ import {
 } from "../lib/command/commandInhibitors";
 
 export default new Event("interactionCreate", async (interaction) => {
-  if (interaction.isChatInputCommand()) return;
-  if (interaction.isContextMenuCommand()) return;
-
   if (interaction.isSelectMenu()) {
     const category = interaction.customId;
     const Id = interaction.values;

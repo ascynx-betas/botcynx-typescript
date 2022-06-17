@@ -1,4 +1,4 @@
-import { ActionRowBuilder, TextInputBuilder, ModalBuilder, TextInputComponent, TextInputStyle } from "discord.js";
+import { ActionRowBuilder, TextInputBuilder, ModalBuilder, TextInputStyle } from "discord.js";
 import { WhitelistedCommand } from "../../structures/Commands";
 
 export default new WhitelistedCommand({

@@ -1,6 +1,5 @@
 import {
   AnyInteraction,
-  ButtonBuilder,
   ButtonInteraction,
   ChatInputApplicationCommandData,
   ChatInputCommandInteraction,
@@ -9,7 +8,6 @@ import {
   GuildMember,
   Message,
   MessageApplicationCommandData,
-  MessageComponentInteraction,
   ModalSubmitInteraction,
   PermissionsString,
   SelectMenuInteraction,
