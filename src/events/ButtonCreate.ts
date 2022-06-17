@@ -25,7 +25,7 @@ export default new Event("interactionCreate", async (interaction) => {
 
     if (command.botPermissions) {
       const botRequiredPermission = command.botPermissions;
-      let botPermission = (await interaction.guild.fetchMe()).permissions.toArray();
+      let botPermission = interaction.guild.members.me.permissions.toArray();
 
       if (
         !botPermission.includes(botRequiredPermission[0]) &&

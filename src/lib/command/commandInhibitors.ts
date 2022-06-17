@@ -37,7 +37,7 @@ const userPermissionInhibitor = function (
  */
 const botPermissionInhibitor = async function (command, guild: Guild) {
   const requiredPermissions: PermissionsString[] = command.botPermissions;
-  const botPermissions: PermissionsString[] = (await guild.fetchMe()).permissions.toArray();
+  const botPermissions: PermissionsString[] = guild.members.me.permissions.toArray();
   if (
     requiredPermissions.some(
       (permission) => !botPermissions.includes(permission)

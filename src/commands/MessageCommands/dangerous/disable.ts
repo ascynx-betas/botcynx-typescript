@@ -15,7 +15,7 @@ export default new Command({
     const flags = args[1];
     //available flags: -l local(current guild) -g global(every guild)
 
-    //events that can be disabled: linkReader and roleLinked
+    //events that can be disabled: linkReader and roleLinked and crashLogReader
     //commands that can be disabled: all except exec and disable
     const commands = client.ArrayOfSlashCommands.concat(client.commands).map(
       (c: any) => c.name

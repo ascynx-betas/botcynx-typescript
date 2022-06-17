@@ -25,7 +25,11 @@ export class jsonCache extends cache {
    * @override - overrides the base reload function from cache - and make it get JSON data instead of text
    */
   async reload() {
-    this.data = JSON.parse(await linkContentPull(this.reloader));
+    try {
+      this.data = JSON.parse(await linkContentPull(this.reloader));
+    }catch (e) {
+      console.log(e);
+    }
   }
 
   /**
@@ -57,8 +61,10 @@ export class repoLink {
     this.#path = newPath;
     this.repoLink = `https://api.github.com/repos/${this.#owner}/${
       this.#repo
-    }/${newPath}`;
-  }
+    }/contents/${newPath}`;
+
+    return this;
+  };
 
   /**
    * Reloads the repoLink
@@ -66,6 +72,8 @@ export class repoLink {
   reloadLink() {
     this.repoLink = `https://api.github.com/repos/${this.#owner}/${
       this.#repo
-    }/${this.#path}`;
-  }
+    }/contents/${this.#path}`;
+
+    return this;
+  };
 }

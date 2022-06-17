@@ -11,11 +11,10 @@ import { haste, isHaste } from "../lib/haste";
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
 import { containsLink, isLink } from "../personal-modules/testFor";
 import { indexOf } from "lodash";
-import { botcynx } from "..";
 
 export default new Event("messageCreate", async (message) => {
   if (message.author.bot || !message.guild) return;
-  let botPermissions = message.guild.members.cache.get(botcynx.user.id).permissions.toArray();
+  let botPermissions = message.guild.members.me.permissions.toArray();
   if (
     !botPermissions.includes("ManageMessages") &&
     !botPermissions.includes("Administrator")

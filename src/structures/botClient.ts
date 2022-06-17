@@ -47,7 +47,7 @@ export class botClient extends Client {
   package: any = JSON.parse(fs.readFileSync("package.json", "utf-8"));
 
   private constructor() {
-    super({ intents: 32767, partials: [Partials.Channel] });
+    super({ intents: 65535, partials: [Partials.Channel, Partials.Message] });
   }
 
   static getInstance(): botClient {

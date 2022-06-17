@@ -93,13 +93,7 @@ export default new slashCommand({
           type: ApplicationCommandOptionType.String,
         },
       ],
-    },
-    {
-      name: "change",
-      description: "to what it's changed",
-      required: false,
-      type: ApplicationCommandOptionType.String,
-    },
+    }
   ],
 
   run: async ({ interaction, client }) => {

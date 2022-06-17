@@ -13,7 +13,7 @@ import { Event } from "../structures/Event";
 
 export default new Event("messageCreate", async (message) => {
   if (message.author.bot || !message.guild) return;
-  let botPermissions = message.guild.members.cache.get(botcynx.user.id).permissions.toArray();
+  let botPermissions = message.guild.members.me.permissions.toArray();
   if (
     !botPermissions.includes("ManageWebhooks") &&
     !botPermissions.includes("Administrator")

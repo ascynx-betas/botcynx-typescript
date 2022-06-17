@@ -158,7 +158,6 @@ export function getML(log: string): {
 
       if (loaderData.loaderVersion || loaderData.mcVersion) {
         loaderData.loader = loader.loader;
-        console.log(loaderData);
       }
     }
 
