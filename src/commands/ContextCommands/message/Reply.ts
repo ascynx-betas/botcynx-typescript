@@ -1,17 +1,17 @@
 import { MessageContextCommand } from "../../../structures/Commands";
-import { GuildTextBasedChannel } from "discord.js";
+import { ApplicationCommandType, GuildTextBasedChannel, MessageContextMenuCommandInteraction } from "discord.js";
 
 export default new MessageContextCommand({
   name: "reply",
-  type: "MESSAGE",
+  type: ApplicationCommandType.Message,
   category: "other",
-  userPermissions: ["MANAGE_MESSAGES"],
+  userPermissions: ["ManageMessages"],
 
   run: async ({ interaction }) => {
-    interaction.followUp({
+    (interaction as MessageContextMenuCommandInteraction).followUp({
       content: `${
         (interaction.channel as GuildTextBasedChannel).messages.cache.get(
-          interaction.targetId
+          (interaction as MessageContextMenuCommandInteraction).targetId
         ).content || "no content"
       }`,
     });

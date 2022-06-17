@@ -1,4 +1,4 @@
-import { Guild, GuildMember, PermissionString, User } from "discord.js";
+import { Guild, GuildMember, PermissionsString, User } from "discord.js";
 import { botcynx } from "../..";
 import { configModel } from "../../models/config";
 import { commandCooldown } from "../../typings/Command";
@@ -13,14 +13,14 @@ const userPermissionInhibitor = function (
   command,
   data: { member: GuildMember; guild: Guild }
 ) {
-  const requiredPermissions: PermissionString[] = command.userPermissions;
-  const userPermissions: PermissionString[] = data.member.permissions.toArray();
+  const requiredPermissions: PermissionsString[] = command.userPermissions;
+  const userPermissions: PermissionsString[] = data.member.permissions.toArray();
 
   if (
     requiredPermissions.some(
       (permission) => !userPermissions.includes(permission)
     ) &&
-    !userPermissions.includes("ADMINISTRATOR") &&
+    !userPermissions.includes("Administrator") &&
     data.member.id != process.env.developerId &&
     data.member.id != data.guild.ownerId
   )
@@ -35,15 +35,14 @@ const userPermissionInhibitor = function (
  * @param {Guild} guild - The data about the guild, member and channel affected
  * @returns {boolean} - Whether it failed or not. (true = passed, false = failed)
  */
-const botPermissionInhibitor = function (command, guild: Guild) {
-  const requiredPermissions: PermissionString[] = command.botPermissions;
-  const botPermissions: PermissionString[] = guild.me.permissions.toArray();
-
+const botPermissionInhibitor = async function (command, guild: Guild) {
+  const requiredPermissions: PermissionsString[] = command.botPermissions;
+  const botPermissions: PermissionsString[] = (await guild.fetchMe()).permissions.toArray();
   if (
     requiredPermissions.some(
       (permission) => !botPermissions.includes(permission)
     ) &&
-    !botPermissions.includes("ADMINISTRATOR")
+    !botPermissions.includes("Administrator")
   )
     return false;
 
@@ -116,7 +115,7 @@ const isOnCooldown = function (command, user: User) {
 const isAdminOrHigherThanBot = function (user: GuildMember) {
   if (user.id == process.env.developerId) return true;
   if (user.id == user.guild.ownerId) return true;
-  if (user.permissions.has("ADMINISTRATOR")) return true;
+  if (user.permissions.has("Administrator")) return true;
 
   return false;
 };

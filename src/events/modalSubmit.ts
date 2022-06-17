@@ -3,7 +3,7 @@ import { botcynx } from "..";
 import { Event } from "../structures/Event";
 
 export default new Event("interactionCreate", (interaction) => {
-  if (!interaction.isModalSubmit()) return; 
+  if (!(interaction instanceof ModalSubmitInteraction)) return; 
   const modalC = botcynx.modals.get(interaction.customId.split(":")[0]);
   if (!modalC)
   interaction

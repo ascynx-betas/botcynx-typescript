@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { ApplicationCommandOptionType, EmbedBuilder } from "discord.js";
 import { configModel } from "../../../models/config";
 import { ct } from "../../../personal-modules/testFor";
 import { slashCommand } from "../../../structures/Commands";
@@ -7,20 +7,20 @@ export default new slashCommand({
   name: "reload",
   description: "runs the configuration of the current server",
   require: ["mongooseConnectionString"],
-  userPermissions: ["MANAGE_ROLES"],
-  botPermissions: ["MANAGE_ROLES"],
+  userPermissions: ["ManageRoles"],
+  botPermissions: ["ManageRoles"],
   category: "configuration",
   options: [
     {
       name: "testrun",
       description: "test run of the command",
-      type: "BOOLEAN",
+      type: ApplicationCommandOptionType.Boolean,
       required: false,
     },
   ],
 
   run: async ({ interaction }) => {
-    let isTestRun = interaction.options.getBoolean("testrun") || false;
+    let isTestRun = (interaction.options.get("testrun").value as boolean) || false;
 
     const guild = interaction.guild;
     const guildId = guild.id;
@@ -82,7 +82,7 @@ export default new slashCommand({
         if (isTestRun == false)
           description = `**Affected members**:\n${affectedString}`;
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
           .setDescription(description)
           .setTitle("**results**")
           .setFooter({ text: `purge executed by ${interaction.user.tag}` });

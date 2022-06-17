@@ -8,16 +8,17 @@ import {
   getMods,
 } from "../lib/cache/crashFix";
 import { haste, isHaste } from "../lib/haste";
-import { MessageActionRow, MessageButton } from "discord.js";
+import { ActionRow, ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
 import { containsLink, isLink } from "../personal-modules/testFor";
 import { indexOf } from "lodash";
+import { botcynx } from "..";
 
 export default new Event("messageCreate", async (message) => {
   if (message.author.bot || !message.guild) return;
-  let botPermissions = message.guild.me.permissions.toArray();
+  let botPermissions = message.guild.members.cache.get(botcynx.user.id).permissions.toArray();
   if (
-    !botPermissions.includes("MANAGE_MESSAGES") &&
-    !botPermissions.includes("ADMINISTRATOR")
+    !botPermissions.includes("ManageMessages") &&
+    !botPermissions.includes("Administrator")
   )
     return;
 
@@ -143,8 +144,8 @@ export default new Event("messageCreate", async (message) => {
         ? recommendations == `\t• ${recommended}`
         : (recommendations += `\n\t• ${recommended}`);
 
-    const buttonRow = new MessageActionRow().addComponents(
-      new MessageButton().setStyle("LINK").setURL(logUrl).setLabel("view log")
+    const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
+      new ButtonBuilder().setStyle(ButtonStyle.Link).setURL(logUrl).setLabel("view log")
     );
     await message.channel.send({
       content: `**${message.author}** sent a log, ${

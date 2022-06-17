@@ -1,4 +1,4 @@
-import { GuildTextBasedChannel, MessageEmbed, Role } from "discord.js";
+import { ApplicationCommandOptionType, GuildTextBasedChannel, EmbedBuilder, Role } from "discord.js";
 import { skillAverageCalculator, skillLevelCalculator } from "../../lib/hypixelSkillCalc";
 import { verifyModel } from "../../models/verifyModel";
 import { getPlayerByUuid, getProfiles } from "../../personal-modules/hypixel";
@@ -15,19 +15,19 @@ export default new WhitelistedCommand({
       name: "role",
       description: "the role you want to get",
       required: true,
-      type: "ROLE",
+      type: ApplicationCommandOptionType.Role,
     },
     {
       name: "username",
       description: "your minecraft username",
       required: false,
-      type: "STRING",
+      type: ApplicationCommandOptionType.String,
     },
     {
       name: "profile",
       description: "the profile you want to get the data from",
       required: false,
-      type: "STRING",
+      type: ApplicationCommandOptionType.String,
     },
   ],
   require: ["hypixelApiKey", "mongooseConnectionString"],
@@ -126,7 +126,7 @@ export default new WhitelistedCommand({
             ) as GuildTextBasedChannel
           )?.send({
             embeds: [
-              new MessageEmbed()
+              new EmbedBuilder()
                 .setTitle("Added Role")
                 .setDescription(
                   `Added role ${role.toString()} to ${interaction.user.toString()}`

@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { ButtonResponse } from "../structures/Commands";
 
 export default new ButtonResponse({
@@ -7,7 +7,7 @@ export default new ButtonResponse({
   temporary: true,
 
   run: async ({ interaction, client }) => {
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setDescription("This command has been cancelled")
       .setTitle("cancelled command")
       .setFooter({ text: `cancelled by ${interaction.user.tag}` });

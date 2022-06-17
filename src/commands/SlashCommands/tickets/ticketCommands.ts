@@ -1,8 +1,10 @@
 import {
+  ApplicationCommandOptionType,
   GuildChannel,
   GuildTextBasedChannel,
-  MessageEmbed,
+  EmbedBuilder,
   ThreadChannel,
+  Colors,
 } from "discord.js";
 import { permOverride } from "../../../personal-modules/discordPlugin";
 import { slashCommand } from "../../../structures/Commands";
@@ -13,34 +15,34 @@ export default new slashCommand({
   name: "ticket",
   description: "allows to modify ticket config / execute ticket commands",
   require: ["mongooseConnectionString"],
-  userPermissions: ["MANAGE_THREADS"],
-  botPermissions: ["MANAGE_THREADS"],
+  userPermissions: ["ManageThreads"],
+  botPermissions: ["ManageThreads"],
   category: "ticket",
   options: [
     {
       name: "del",
       description: "delete a configuration",
-      type: "SUB_COMMAND",
+      type: ApplicationCommandOptionType.Subcommand,
       options: [
         {
           name: "config-name",
           description:
             "the name of the config, only needed for the del sub-command",
           required: true,
-          type: "STRING",
+          type: ApplicationCommandOptionType.String,
         },
       ],
     },
     {
       name: "add",
       description: "add a user to the current thread",
-      type: "SUB_COMMAND",
+      type: ApplicationCommandOptionType.Subcommand,
       options: [
         {
           name: "user",
           description: "target of the action",
           required: true,
-          type: "USER",
+          type: ApplicationCommandOptionType.User,
         },
       ],
     },
@@ -48,31 +50,31 @@ export default new slashCommand({
       name: "block",
       description:
         "block a user from speaking in any of the current channel's threads",
-      type: "SUB_COMMAND",
+      type: ApplicationCommandOptionType.Subcommand,
       options: [
         {
           name: "user",
           description: "target of the action",
           required: true,
-          type: "USER",
+          type: ApplicationCommandOptionType.User,
         },
       ],
     },
     {
       name: "close",
       description: "closes a thread",
-      type: "SUB_COMMAND",
+      type: ApplicationCommandOptionType.Subcommand,
     },
     {
       name: "modify",
       description: "modify a ticket message",
-      type: "SUB_COMMAND",
+      type: ApplicationCommandOptionType.Subcommand,
       options: [
         {
           name: "edit",
           description: "what will be modified",
           required: true,
-          type: "STRING",
+          type: ApplicationCommandOptionType.String,
           choices: [
             {
               name: "description",
@@ -88,7 +90,7 @@ export default new slashCommand({
           name: "change",
           description: "to what will it be changed",
           required: true,
-          type: "STRING",
+          type: ApplicationCommandOptionType.String,
         },
       ],
     },
@@ -96,7 +98,7 @@ export default new slashCommand({
       name: "change",
       description: "to what it's changed",
       required: false,
-      type: "STRING",
+      type: ApplicationCommandOptionType.String,
     },
   ],
 
@@ -152,7 +154,7 @@ export default new slashCommand({
                   Number(denied)
                 );
 
-                if (deniedPermission.includes("SEND_MESSAGES_IN_THREADS")) {
+                if (deniedPermission.includes("SendMessagesInThreads")) {
                   return result.push(true);
                 } else return result.push(false);
               });
@@ -167,7 +169,7 @@ export default new slashCommand({
               } while (index !== permissions.permlist.length);
 
               const description = permBed.join("\n");
-              const embed = new MessageEmbed()
+              const embed = new EmbedBuilder()
                 .setDescription(description)
                 .setTitle(`Blocked users`);
               interaction.followUp({ embeds: [embed] });
@@ -200,7 +202,7 @@ export default new slashCommand({
                 (parentChannel as GuildChannel).permissionOverwrites.create(
                   target.id,
                   {
-                    SEND_MESSAGES_IN_THREADS: false,
+                    SendMessagesInThreads: false,
                   }
                 );
                 return interaction.editReply({
@@ -231,8 +233,8 @@ export default new slashCommand({
             });
 
           if (edit === "description") {
-            const embed = new MessageEmbed()
-              .setColor("RANDOM")
+            const embed = new EmbedBuilder()
+              .setColor(Colors.Red)
               .setDescription(
                 `${
                   change ||
@@ -282,7 +284,7 @@ export default new slashCommand({
       );
 
       if (
-        !userPermission.includes("ADMINISTRATOR") &&
+        !userPermission.includes("Administrator") &&
         userId !== guild.ownerId &&
         userId !== process.env.developerId
       )

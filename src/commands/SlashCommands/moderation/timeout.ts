@@ -1,29 +1,30 @@
 import { slashCommand } from "../../../structures/Commands";
 import ms from "ms";
 import { postStartData } from "../../../events/ready";
+import { ApplicationCommandOptionType } from "discord.js";
 
 export default new slashCommand({
   name: "timeout",
   description: "timeout a user for a specified amount of time",
-  userPermissions: ["MODERATE_MEMBERS"],
-  botPermissions: ["MODERATE_MEMBERS"],
+  userPermissions: ["ModerateMembers"],
+  botPermissions: ["ModerateMembers"],
   category: "moderation",
   options: [
     {
       name: "user",
-      type: "USER",
+      type: ApplicationCommandOptionType.User,
       description: "target to timeout",
       required: true,
     },
     {
       name: "time",
-      type: "STRING",
+      type: ApplicationCommandOptionType.String,
       description: "time for timeout",
       required: false,
     },
     {
       name: "reason",
-      type: "STRING",
+      type: ApplicationCommandOptionType.String,
       description: "reason for timeout",
       required: false,
     },

@@ -2,14 +2,14 @@ import { ButtonResponse } from "../structures/Commands";
 
 export default new ButtonResponse({
   category: "role",
-  botPermissions: ["MANAGE_ROLES"],
+  botPermissions: ["ManageRoles"],
   run: async ({ interaction, client }) => {
     const fields = interaction.customId.split(":");
     const roleId = fields[1];
     const member = interaction.guild.members.cache.get(interaction.user.id);
     const role = interaction.guild.roles.cache.get(roleId);
 
-    if (interaction.guild.me.roles.highest.position <= role.position)
+    if ((await interaction.guild.fetchMe()).roles.highest.position <= role.position)
       return interaction.reply({
         content: `I cannot give you ${role}`,
         ephemeral: true,

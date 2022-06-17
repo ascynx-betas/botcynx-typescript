@@ -1,4 +1,4 @@
-import { MessageActionRow, MessageSelectMenu } from "discord.js";
+import { ActionRowBuilder, ApplicationCommandOptionType, ButtonBuilder, CommandInteractionOptionResolver, SelectMenuBuilder } from "discord.js";
 import { searchRepositories } from "../../lib/repoPull";
 import { queryEmbed } from "../../lib/utils";
 import { WhitelistedCommand } from "../../structures/Commands";
@@ -11,13 +11,13 @@ export default new WhitelistedCommand({
     {
       name: "query",
       description: "the query you want to use",
-      type: "STRING",
+      type: ApplicationCommandOptionType.String,
       required: true,
     },
   ],
 
   run: async ({ interaction, client }) => {
-    const queryParameter = interaction.options.getString("query");
+    const queryParameter = interaction.options.get("query").value;
 
     const query = encodeURIComponent(queryParameter);
 
@@ -34,9 +34,9 @@ export default new WhitelistedCommand({
       queryParameter
     );
 
-    const actionRow = new MessageActionRow().addComponents(buttonFields);
-    const componentRow = new MessageActionRow().addComponents(
-      new MessageSelectMenu()
+    const actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(buttonFields);
+    const componentRow = new ActionRowBuilder<SelectMenuBuilder>().addComponents(
+      new SelectMenuBuilder()
         .addOptions({
           value: "star-down",
           label: "sort by stars a > b",

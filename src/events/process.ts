@@ -34,7 +34,7 @@ const sendError = async (error: Error) => {
         },
       ],
       username: `${botcynx.user?.tag || "preloading Error"}`,
-      avatarURL: botcynx.user?.displayAvatarURL({ dynamic: true }),
+      avatarURL: botcynx.user?.displayAvatarURL({ forceStatic: false }),
     })
   );
 };

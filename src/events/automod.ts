@@ -1,4 +1,4 @@
-import { GuildTextBasedChannel, MessageEmbed } from "discord.js";
+import { GuildTextBasedChannel, EmbedBuilder, Colors } from "discord.js";
 import { botcynx } from "..";
 import { contains, hasScamLink, ignore, safe } from "../lib/cache/scamlink";
 import { isAdminOrHigherThanBot } from "../lib/command/commandInhibitors";
@@ -34,7 +34,7 @@ export default new Event("messageCreate", (message) => {
       });
       if (DataArray.length >= 1) {
         if (
-          !message.member.permissions.toArray().includes("MENTION_EVERYONE")
+          !message.member.permissions.toArray().includes("MentionEveryone")
         ) {
           console.log(DataArray.length);
           Data = { isScamLink: true, cause: "Common scam detection" };
@@ -70,7 +70,7 @@ export default new Event("messageCreate", (message) => {
     Data = { isScamLink: true, cause: "Spam mention" };
 
   if (Data.isScamLink == true && !isAdminOrHigherThanBot(message.member)) {
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setAuthor({
         name: "BOT ⚠️ " + message.author.tag + " (" + message.author.id + ")",
       })
@@ -78,7 +78,7 @@ export default new Event("messageCreate", (message) => {
         `Possible Raid / scam link detected: [here](https://discord.com/channels/${message.guildId}/${message.channelId}/${message.id})\n\t${message.cleanContent}\n**Cause:** \`\`\`${Data.cause}\`\`\``
       )
       .setFooter({ text: "triggered in: " + message.guild.name })
-      .setColor("DARK_RED");
+      .setColor(Colors.DarkRed);
 
     (
       botcynx.channels.cache.get("903281241594413176") as GuildTextBasedChannel

@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { Command } from "../../../structures/Commands";
 import { inspect } from "util";
 import * as lib from "../../../lib/index";
@@ -113,7 +113,7 @@ export default new Command({
         cleaned = cut(cleaned);
       }
       if (!activeFlags.includes("silent")) {
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
           .setFields([
             { name: "**input:**", value: cool },
             {
@@ -146,7 +146,7 @@ export default new Command({
         hastebin = await lib.haste(err);
         err = cut(err);
       }
-      const embed = new MessageEmbed()
+      const embed = new EmbedBuilder()
         .setFields([
           { name: "**input:**", value: cool },
           { name: "**output:**", value: err },

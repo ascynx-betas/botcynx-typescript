@@ -1,26 +1,24 @@
-import { configModel } from "../../../models/config";
 import { slashCommand } from "../../../structures/Commands";
-import { snowflakeToMention } from "../../../personal-modules/discordPlugin";
-import { MessageActionRow, MessageEmbed, MessageSelectMenu } from "discord.js";
+import { ActionRowBuilder, Colors, EmbedBuilder, SelectMenuBuilder } from "discord.js";
 
 export default new slashCommand({
   name: "serverconfig",
   description:
     "Allows a server administrator to see the configuration of the server",
   require: ["mongooseConnectionString"],
-  userPermissions: ["MANAGE_ROLES"],
+  userPermissions: ["ManageRoles"],
   category: "configuration",
 
   run: async ({ interaction }) => {
     const description = `use the select menu under this message to choose which category of settings you want to see`;
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setAuthor({ name: `configuration` })
       .setDescription(description)
-      .setColor(`BLUE`)
+      .setColor(Colors.Blue)
       .setTimestamp(Date.now());
 
-    const row = new MessageActionRow().addComponents(
-      new MessageSelectMenu()
+    const row = new ActionRowBuilder<SelectMenuBuilder>().addComponents(
+      new SelectMenuBuilder()
         .addOptions([
           {
             label: "roleLinked configuration",

@@ -1,4 +1,4 @@
-import { BitField, Client, ClientEvents, Collection, Permissions } from "discord.js";
+import { Client, ClientEvents, Collection, Partials, Permissions } from "discord.js";
 import * as fs from "fs";
 import {
   CommandType,
@@ -48,7 +48,7 @@ export class botClient extends Client {
   package: any = JSON.parse(fs.readFileSync("package.json", "utf-8"));
 
   private constructor() {
-    super({ intents: 32767, partials: ["CHANNEL"] });
+    super({ intents: 32767, partials: [Partials.Channel] });
   }
 
   static getInstance(): botClient {
@@ -113,7 +113,7 @@ export class botClient extends Client {
           if (data?.userPermissions) {
             data.default_member_permissions = BigInt(0);
             data?.userPermissions.forEach((permission) => {
-              (data.default_member_permissions as bigint) |= BigInt(PermissionFlagsBits[permissionTranslate[permission]]);
+              (data.default_member_permissions as bigint) |= BigInt(PermissionFlagsBits[permission]);
             });
             data.default_member_permissions = String(data.default_member_permissions);
           };
@@ -138,7 +138,7 @@ export class botClient extends Client {
           if (data?.userPermissions) {
             data.default_member_permissions = BigInt(0);
             data?.userPermissions.forEach((permission) => {
-              (data.default_member_permissions as bigint) |= BigInt(PermissionFlagsBits[permissionTranslate[permission]]);
+              (data.default_member_permissions as bigint) |= BigInt(PermissionFlagsBits[permission]);
             });
             data.default_member_permissions = String(data.default_member_permissions);
           };
@@ -163,7 +163,7 @@ export class botClient extends Client {
           if (data?.userPermissions) {
             data.default_member_permissions = BigInt(0);
             data?.userPermissions.forEach((permission) => {
-              (data.default_member_permissions as bigint) |= BigInt(PermissionFlagsBits[permissionTranslate[permission]]);
+              (data.default_member_permissions as bigint) |= BigInt(PermissionFlagsBits[permission]);
             });
             data.default_member_permissions = String(data.default_member_permissions);
           };
@@ -188,7 +188,7 @@ export class botClient extends Client {
           if (data?.userPermissions) {
             data.default_member_permissions = BigInt(0);
             data?.userPermissions.forEach((permission) => {
-              (data.default_member_permissions as bigint) |= BigInt(PermissionFlagsBits[permissionTranslate[permission]]);
+              (data.default_member_permissions as bigint) |= BigInt(PermissionFlagsBits[permission]);
             });
             data.default_member_permissions = String(data.default_member_permissions);
           };
@@ -238,7 +238,7 @@ export class botClient extends Client {
       guildsWithTags = [...new Set(guildsWithTags)];
       guildsWithTags.forEach((guild) => this.registerTags(guild));
       //register commands
-      if (process.env.environment != "dev")
+      if (!process?.env?.guildId)
         this.registerCommands({
           commands: this.ArrayOfSlashCommands,
         });
@@ -256,6 +256,8 @@ export class botClient extends Client {
         } catch (e) {}
         }
       }
+
+
       if (reload()) registerGistReload(); //attempt to reload coolPeople list / if it fails register the error Task
     });
 
@@ -319,13 +321,6 @@ export class botClient extends Client {
       );
     } else {
       this.application?.commands.set(commands);
-
-      (await this.application?.commands.fetch()).map((c) => c).filter((c) => {
-        console.log(c);
-        (this.ArrayOfSlashCommands.get(c.name) as CommandType)?.userPermissions?.length > 0
-      }).forEach(async (c) => {
-        await c.setDefaultPermission(false);
-      });
 
       console.log(chalk.green(`Registering global commands`));
     }

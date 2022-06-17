@@ -1,8 +1,7 @@
 import {
-  MessageActionRow,
-  MessageActionRowComponent,
-  MessageButton,
-  MessageEmbed,
+  ActionRowBuilder,
+  ButtonBuilder,
+  EmbedBuilder,
 } from "discord.js";
 import {
   infoEmbedCreation,
@@ -25,15 +24,15 @@ export default new ButtonResponse({
     types = [...new Set(types)];
     let category: string[] | string = interaction.customId.split(":");
     category = category[1];
-    let arrayOfButtons: MessageActionRowComponent[] = [];
+    let arrayOfButtons: ButtonBuilder[] = [];
     let messageComponents = interaction.message.components.map(
       (c) => c.components
     );
-    messageComponents = messageComponents[0].concat(messageComponents[1]);
-    let idArray = messageComponents.map((c) => c.customId);
+    let newMessageComponents = messageComponents[0].concat(messageComponents[1]);
+    let idArray = newMessageComponents.map((c) => c.customId);
     const buttonStyles = await SetActiveButton(interaction.customId, idArray);
     types.forEach(function (type, index) {
-      const button = new MessageButton()
+      const button = new ButtonBuilder()
         .setCustomId(`info:${type}`)
         .setLabel(`${type}`)
         .setStyle(buttonStyles[index]);
@@ -44,12 +43,12 @@ export default new ButtonResponse({
       return interaction.followUp({
         content: `there are too many categories to create enough buttons`,
       });
-    let components: MessageActionRow[] = await setButtonRows(arrayOfButtons);
+    let components: ActionRowBuilder<ButtonBuilder>[] = await setButtonRows(arrayOfButtons);
 
     let infoEmbed = infoEmbedCreation(category);
     let { fields, title } = infoEmbed;
-    let embed: MessageEmbed;
-    embed = new MessageEmbed().addFields(fields).setTitle(title || "error");
+    let embed: EmbedBuilder;
+    embed = new EmbedBuilder().addFields(fields).setTitle(title || "error");
 
     //update embed and set current button to PRIMARY style
     interaction.update({ embeds: [embed], components: components });

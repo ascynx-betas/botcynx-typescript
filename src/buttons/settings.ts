@@ -1,4 +1,4 @@
-import { EmbedFieldData, MessageEmbed } from "discord.js";
+import { EmbedFieldData, EmbedBuilder } from "discord.js";
 import { configModel } from "../models/config";
 import { snowflakeToMention } from "../personal-modules/discordPlugin";
 import { ButtonResponse } from "../structures/Commands";
@@ -69,7 +69,7 @@ export default new ButtonResponse({
       let activity: string;
 
       activity =
-        interaction.guild.me.permissions.has("MANAGE_WEBHOOKS") &&
+        (await interaction.guild.fetchMe()).permissions.has("ManageWebhooks") &&
         !guildConfig.disabledCommands.includes("linkReader")
           ? "🟢"
           : "🔴";
@@ -111,7 +111,7 @@ export default new ButtonResponse({
       });
     }
 
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setFields(embedFields)
       .setTitle(name)
       .setFooter({ text: `requested by ${interaction.user.tag}` });

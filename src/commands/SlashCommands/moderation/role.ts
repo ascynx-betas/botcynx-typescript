@@ -1,22 +1,23 @@
+import { ApplicationCommandOptionType } from "discord.js";
 import { slashCommand } from "../../../structures/Commands";
 
 export default new slashCommand({
   name: "role",
   description: "adds or removes a role from the target",
-  userPermissions: ["MANAGE_ROLES"],
-  botPermissions: ["MANAGE_ROLES"],
+  userPermissions: ["ManageRoles"],
+  botPermissions: ["ManageRoles"],
   category: "moderation",
   options: [
     {
       name: "role",
       description: "the role that will be added or removed",
-      type: "ROLE",
+      type: ApplicationCommandOptionType.Role,
       required: true,
     },
     {
       name: "user",
       description: "the target of the command",
-      type: "USER",
+      type: ApplicationCommandOptionType.User,
       required: true,
     },
   ],
@@ -24,7 +25,7 @@ export default new slashCommand({
   run: async ({ interaction, client }) => {
     if (process.env.environment == "debug") console.log("received command");
 
-    const role = interaction.options.getRole("role");
+    const role = interaction.options.get("role").role;
     const target = interaction.options.getUser("user");
     const roleId = role.id;
 

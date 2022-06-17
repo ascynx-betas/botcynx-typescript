@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { configModel } from "../models/config";
 import { ButtonResponse } from "../structures/Commands";
 
@@ -21,7 +21,7 @@ export default new ButtonResponse({
           { $pull: { disabledCommands: command } },
           function (err) {
             if (err) {
-              const embed = new MessageEmbed()
+              const embed = new EmbedBuilder()
                 .setDescription(
                   "there was an error while removing the command from disabled commands"
                 )
@@ -32,7 +32,7 @@ export default new ButtonResponse({
           }
         );
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
           .setTitle("Success")
           .setDescription(
             `successfully removed ${command} from disabled commands`
@@ -47,7 +47,7 @@ export default new ButtonResponse({
           { $addToSet: { disabledCommands: command } },
           function (err) {
             if (err) {
-              const embed = new MessageEmbed()
+              const embed = new EmbedBuilder()
                 .setDescription(
                   "there was an error while disabling that command"
                 )
@@ -58,7 +58,7 @@ export default new ButtonResponse({
           }
         );
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
           .setTitle("Success")
           .setDescription(`successfully added ${command} to disabled commands`);
 
@@ -81,7 +81,7 @@ export default new ButtonResponse({
           { $pull: { disabledCommands: command } },
           function (err) {
             if (err) {
-              const embed = new MessageEmbed()
+              const embed = new EmbedBuilder()
                 .setDescription(
                   "there was an error while removing the command from disabled commands"
                 )
@@ -92,7 +92,7 @@ export default new ButtonResponse({
           }
         );
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
           .setTitle("Success")
           .setDescription(
             `successfully removed ${command} from global disabled commands`
@@ -107,7 +107,7 @@ export default new ButtonResponse({
           { $addToSet: { disabledCommands: command } },
           function (err) {
             if (err) {
-              const embed = new MessageEmbed()
+              const embed = new EmbedBuilder()
                 .setDescription(
                   "there was an error while disabling that command"
                 )
@@ -118,7 +118,7 @@ export default new ButtonResponse({
           }
         );
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
           .setTitle("Success")
           .setDescription(
             `successfully added ${command} to global disabled commands`

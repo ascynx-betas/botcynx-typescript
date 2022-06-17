@@ -1,5 +1,5 @@
 import { slashCommand } from "../../../structures/Commands";
-import { MessageActionRow, MessageButton, MessageEmbed } from "discord.js";
+import { ApplicationCommandOptionType, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle } from "discord.js";
 import { verifyModel } from "../../../models/verifyModel";
 import { getUuidbyUsername } from "../../../personal-modules/mojang";
 import { getPlayerByUuid } from "../../../personal-modules/hypixel";
@@ -22,19 +22,19 @@ export default new slashCommand({
       name: "username",
       description: "the user you want the see the profiles of",
       required: false,
-      type: "STRING",
+      type: ApplicationCommandOptionType.String,
     },
     {
       name: "profile",
       description: "the profile you want to see the weight of",
       required: false,
-      type: "STRING",
+      type: ApplicationCommandOptionType.String,
     },
   ],
 
   run: async ({ interaction }) => {
-    let username: string = interaction.options.getString("username");
-    let profile: string = interaction.options.getString("profile");
+    let username: string = (interaction.options.get("username").value as string);
+    let profile: string = (interaction.options.get("profile").value as string);
     let uuid: uuid | string;
     let data: any;
 
@@ -75,7 +75,7 @@ export default new slashCommand({
       );
 
       if (!data || data == null) {
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
           .setDescription(`player not found or profile provided does not exist`)
           .setFooter({ text: `requested by ${interaction.user.tag}` })
           .setAuthor({ name: `Error 404: not found` })
@@ -86,7 +86,7 @@ export default new slashCommand({
       data = await getFatterProfile(uuid as string).catch(() => null);
 
       if (!data || data == null) {
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
           .setDescription(`player not found or profile provided does not exist`)
           .setFooter({ text: `requested by ${interaction.user.tag}` })
           .setAuthor({ name: `Error 404: not found` })
@@ -97,7 +97,7 @@ export default new slashCommand({
 
     const result = await extractWeight(data);
     if (result == null) {
-      const embed = new MessageEmbed()
+      const embed = new EmbedBuilder()
         .setDescription(`this profile doesn't have api on`)
         .setFooter({ text: `requested by ${interaction.user.tag}` })
         .setAuthor({ name: `Error 404: not found` })
@@ -121,7 +121,7 @@ export default new slashCommand({
       displayName = coolRank;
     }
 
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setFields(embedFields)
       .setFooter({ text: `requested by ${interaction.user.tag}` })
       .setAuthor({
@@ -133,11 +133,11 @@ export default new slashCommand({
         `profile: **\`\`${profilename}\`\`** username: ${displayName} **\`\`${username}\`\`**\ncurrent stage: **\`\`${gameStage}\`\`**`
       );
 
-    const buttonRow = new MessageActionRow().addComponents(
-      new MessageButton()
+    const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
+      new ButtonBuilder()
         .setCustomId(`weight:lily:${uuid}:${profilename}`)
         .setLabel("Press to get lily weight")
-        .setStyle("SECONDARY")
+        .setStyle(ButtonStyle.Secondary)
     );
 
     interaction

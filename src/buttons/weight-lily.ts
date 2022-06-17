@@ -1,4 +1,4 @@
-import { MessageActionRow, MessageButton, MessageEmbed } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Colors, EmbedBuilder } from "discord.js";
 import { ButtonResponse } from "../structures/Commands";
 import lilyweight from "lilyweight";
 import { EmbedFieldData } from "discord.js";
@@ -49,7 +49,7 @@ export default new ButtonResponse({
       name: "<:skill:914859774187814932> Skill weight: ",
       value: `\`\`${tskill}\`\`(\`\`${skillb}\`\`/\`\`${skillo}\`\` overflow)`,
     });
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setFields(embedFields)
       .setFooter({
         text: `requested by ${interaction.message.interaction.user.username}`,
@@ -58,16 +58,16 @@ export default new ButtonResponse({
       .setTitle(
         `profile: **\`\`${profile}\`\`** username: **\`\`${username}\`\`**\nCurrent Stage: **\`\`unknown\`\`**`
       )
-      .setColor(`RED`)
+      .setColor(Colors.Red)
       .setAuthor({
         name: `${username}'s Lily Weight`,
         url: `https://sky.shiiyu.moe/stats/${username}/${profile}`,
       });
-    const buttonrow = new MessageActionRow().addComponents(
-      new MessageButton()
+    const buttonrow = new ActionRowBuilder<ButtonBuilder>().addComponents(
+      new ButtonBuilder()
         .setCustomId(`weight:senither:${uuid}:${profile}`)
         .setLabel("Press to get senither weight")
-        .setStyle("SECONDARY")
+        .setStyle(ButtonStyle.Secondary)
     );
     interaction.update({ embeds: [embed], components: [buttonrow] });
   },

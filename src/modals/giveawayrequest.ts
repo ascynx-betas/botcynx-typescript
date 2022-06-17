@@ -1,4 +1,4 @@
-import { GuildTextBasedChannel, MessageEmbed } from "discord.js";
+import { GuildTextBasedChannel, EmbedBuilder, APIEmbed } from "discord.js";
 import { sendInfoWebhook } from "../lib/utils";
 import { modalResponse } from "../structures/Commands";
 
@@ -12,25 +12,27 @@ export default new modalResponse({
         modal.customId.split(":")[1]
       )
     ) {
-      const embed = new MessageEmbed()
+      const embed = new EmbedBuilder()
         .setTitle(
           "Giveaway Queue" + modal.customId.split(":")[1] ==
             "779489942899785748"
             ? " (debug)"
             : ""
         )
-        .addField("Name: ", `${modal.member} | ${modal.user.tag}`)
-        .addField("Giveaway Item(s): ", modal.fields.getTextInputValue("item"), true);
+        .addFields({name: "Name: ", value: `${modal.member} | ${modal.user.tag}`})
+        .addFields({name: "Giveaway Item(s): ", value: modal.fields.getTextInputValue("item"), inline: true});
 
       if (modal.fields.getTextInputValue("username") != null)
-        embed.addField("username: ", modal.fields.getTextInputValue("username"), true);
+        embed.addFields({name: "username: ", value: modal.fields.getTextInputValue("username"), inline: true});
+
+      const embedApi: APIEmbed = embed.data;
 
       if (modal.customId.split(":")[1] == "758015919451537522") {
         const channel = client.channels.cache.get("890996343085088778");
 
         await (channel as GuildTextBasedChannel).send({ embeds: [embed] });
       } else if (modal.customId.split(":")[1] == "779489942899785748") {
-        await sendInfoWebhook({ embed });
+        await sendInfoWebhook({embed: embedApi});
       }
       modal.reply({ content: "successfully submitted", ephemeral: true });
     }

@@ -1,15 +1,15 @@
-import { ThreadChannel } from "discord.js";
+import { ChannelType, ThreadChannel } from "discord.js";
 import { ButtonResponse } from "../structures/Commands";
 
 export default new ButtonResponse({
   category: "close",
-  botPermissions: ["MANAGE_THREADS"],
+  botPermissions: ["ManageThreads"],
   run: async ({ interaction, client }) => {
     //close ticket button
     const thread = interaction.channel;
     if (
-      interaction.channel.type === "GUILD_PRIVATE_THREAD" ||
-      interaction.channel.type === "GUILD_PUBLIC_THREAD"
+      interaction.channel.type === ChannelType.GuildPrivateThread ||
+      interaction.channel.type === ChannelType.GuildPublicThread
     ) {
       interaction
         .reply({ content: `Locking thread...`, ephemeral: true })

@@ -1,4 +1,4 @@
-import { Message, Collection } from "discord.js";
+import { Message, Collection, MessageType } from "discord.js";
 import { botcynx } from "../..";
 import { Event } from "../../structures/Event";
 import { ButtonResponseType } from "../../typings/Command";
@@ -20,8 +20,8 @@ export default new Event("messageCommandCreate", (message) => {
     if (collected.size == 0) {
       let messages: Collection<string, Message> =
         await message.channel.messages.fetch({ limit: 20 });
-      messages = messages.filter((m) => m?.author?.id == message.guild.me.id);
-      messages = messages.filter((m) => m?.type == "REPLY");
+      messages = messages.filter((m) => m?.author?.id === botcynx.user.id);
+      messages = messages.filter((m) => m?.type == MessageType.Reply);
       messages = messages.filter((m) => m?.reference?.messageId == message.id);
 
       const components = messages.map((m) => m.components);

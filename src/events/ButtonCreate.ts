@@ -1,6 +1,6 @@
 import { botcynx } from "..";
 import { Event } from "../structures/Event";
-import { GuildMember, Message, MessageActionRow } from "discord.js";
+import { GuildMember, Message, ActionRow, MessageActionRowComponent, ButtonInteraction } from "discord.js";
 import { RequireTest } from "../personal-modules/commandHandler";
 import {
   botPermissionInhibitor,
@@ -8,8 +8,8 @@ import {
 } from "../lib/command/commandInhibitors";
 
 export default new Event("interactionCreate", async (interaction) => {
-  if (interaction.isCommand()) return;
-  if (interaction.isContextMenu()) return;
+  if (interaction.isChatInputCommand()) return;
+  if (interaction.isContextMenuCommand()) return;
 
   if (interaction.isSelectMenu()) {
     const category = interaction.customId;
@@ -17,7 +17,7 @@ export default new Event("interactionCreate", async (interaction) => {
 
     if (Id[0] == "disabled")
       return interaction.update({
-        components: interaction.message.components as MessageActionRow[],
+        components: interaction.message.components as ActionRow<MessageActionRowComponent>[],
       });
 
     let command = botcynx.buttonCommands.get(category.split(":")[0]);
@@ -28,11 +28,11 @@ export default new Event("interactionCreate", async (interaction) => {
 
     if (command.botPermissions) {
       const botRequiredPermission = command.botPermissions;
-      let botPermission = interaction.guild.me.permissions.toArray();
+      let botPermission = (await interaction.guild.fetchMe()).permissions.toArray();
 
       if (
         !botPermission.includes(botRequiredPermission[0]) &&
-        !botPermission.includes("ADMINISTRATOR")
+        !botPermission.includes("Administrator")
       )
         return interaction.followUp({
           content: `I cannot execute this command due to the lack of ${botRequiredPermission}`,
@@ -48,7 +48,7 @@ export default new Event("interactionCreate", async (interaction) => {
 
       if (
         !userPermissions.includes(userRequiredPermission[0]) &&
-        !userPermissions.includes("ADMINISTRATOR") &&
+        !userPermissions.includes("Administrator") &&
         interaction.user.id != interaction.guild.ownerId &&
         interaction.user.id != process.env.developerId
       )
@@ -74,7 +74,7 @@ export default new Event("interactionCreate", async (interaction) => {
 
       if (user != author)
         return interaction.update({
-          components: interaction.message.components as MessageActionRow[],
+          components: interaction.message.components as ActionRow<MessageActionRowComponent>[],
         });
     }
 
@@ -151,7 +151,7 @@ export default new Event("interactionCreate", async (interaction) => {
 
       if (user != author)
         return interaction.update({
-          components: interaction.message.components as MessageActionRow[],
+          components: interaction.message.components as ActionRow<MessageActionRowComponent>[],
         });
     }
 

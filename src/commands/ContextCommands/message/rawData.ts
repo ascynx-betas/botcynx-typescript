@@ -1,15 +1,15 @@
-import { GuildTextBasedChannel } from "discord.js";
+import { ApplicationCommandType, GuildTextBasedChannel, MessageContextMenuCommandInteraction } from "discord.js";
 import { MessageContextCommand } from "../../../structures/Commands";
 
 export default new MessageContextCommand({
   name: "rawData",
-  type: "MESSAGE",
+  type: ApplicationCommandType.Message,
   category: "other",
-  userPermissions: ["MANAGE_MESSAGES"],
+  userPermissions: ["ManageMessages"],
 
   run: async ({ interaction, client }) => {
     (interaction.channel as GuildTextBasedChannel).messages
-      .fetch(interaction.targetId)
+      .fetch((interaction as MessageContextMenuCommandInteraction).targetId)
       .then(async (message) => {
         try {
           const channel = await interaction.user.createDM(true);
@@ -20,6 +20,6 @@ export default new MessageContextCommand({
         }
       });
 
-    interaction.followUp({ content: "Done!", ephemeral: true });
+      (interaction as MessageContextMenuCommandInteraction).followUp({ content: "Done!", ephemeral: true });
   },
 });

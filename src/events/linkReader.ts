@@ -13,10 +13,10 @@ import { Event } from "../structures/Event";
 
 export default new Event("messageCreate", async (message) => {
   if (message.author.bot || !message.guild) return;
-  let botPermissions = message.guild.me.permissions.toArray();
+  let botPermissions = message.guild.members.cache.get(botcynx.user.id).permissions.toArray();
   if (
-    !botPermissions.includes("MANAGE_WEBHOOKS") &&
-    !botPermissions.includes("ADMINISTRATOR")
+    !botPermissions.includes("ManageWebhooks") &&
+    !botPermissions.includes("Administrator")
   )
     return;
 
@@ -68,11 +68,11 @@ export default new Event("messageCreate", async (message) => {
 
     if (typeof sourceGuildMember !== "undefined") {
       username = sourceGuildMember.user.tag;
-      avatarURL = sourceGuildMember.user.displayAvatarURL({ dynamic: true });
+      avatarURL = sourceGuildMember.user.displayAvatarURL({ forceStatic: false });
     } else if (typeof source !== "undefined") {
       username = (source as Message<boolean>).author.username;
       avatarURL = (source as Message<boolean>).author.displayAvatarURL({
-        dynamic: true,
+        forceStatic: false,
       });
     } else {
       username = "Unknown User";
@@ -85,7 +85,7 @@ export default new Event("messageCreate", async (message) => {
     );
     //deprecated using deprecated property, might fail at any time
     let embeds = (source as Message<boolean>).embeds.filter(
-      (embed) => embed.type === "rich"
+      (embed) => embed.data.type === "rich"
     );
 
     if (isThread == true) {
@@ -95,9 +95,9 @@ export default new Event("messageCreate", async (message) => {
 
     if (typeof webhook === "undefined" || webhook.size == 0) {
       webhook = await (message.channel as TextChannel).createWebhook(
-        "Botcynx link reader",
         {
-          avatar: `${botcynx.user.displayAvatarURL({ dynamic: true })}`,
+          name: `${botcynx.user.username} Link reader`,
+          avatar: `${botcynx.user.displayAvatarURL({ forceStatic: false })}`,
           reason: "request for non existing webhook",
         }
       );

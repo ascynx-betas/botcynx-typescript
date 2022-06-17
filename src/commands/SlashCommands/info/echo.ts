@@ -1,37 +1,36 @@
-import { TextChannel } from "discord.js";
+import { ApplicationCommandOptionType, TextChannel } from "discord.js";
 import { slashCommand } from "../../../structures/Commands";
 
 export default new slashCommand({
   name: "echo",
   description: "allows the person to send a message via the bot",
-  userPermissions: ["MANAGE_MESSAGES"],
+  userPermissions: ["ManageMessages"],
   category: "moderation",
   options: [
     {
       name: "message",
       description: "the message you want to send",
-      type: "STRING",
+      type: ApplicationCommandOptionType.String,
       required: true,
     },
     {
       name: "channel",
       description: "in what channel you want to send it",
-      type: "CHANNEL",
-      channelTypes: ["GUILD_TEXT"],
-      required: false,
+      type: ApplicationCommandOptionType.Channel,
+      required: false
     },
     {
       name: "target",
       description: "to who you want to send it",
-      type: "USER",
+      type: ApplicationCommandOptionType.User,
       required: false,
     },
   ],
 
   run: async ({ client, interaction }) => {
-    const message = interaction.options.getString("message");
+    const message = (interaction.options.get("message").value as string);
     const user = interaction.options.getUser("target");
-    const channel = interaction.options.getChannel("channel");
+    const channel = interaction.options.get("channel").channel;
     if (user) {
       user
         .send({

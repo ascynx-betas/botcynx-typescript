@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { ApplicationCommandOptionType, Colors, EmbedBuilder } from "discord.js";
 import { getPlayerByUuid, getStatus } from "../../../personal-modules/hypixel";
 import { getUuidbyUsername } from "../../../personal-modules/mojang";
 import { slashCommand } from "../../../structures/Commands";
@@ -14,18 +14,18 @@ export default new slashCommand({
       name: "username",
       description: "the username of the person you want to stalk",
       required: true,
-      type: "STRING",
+      type: ApplicationCommandOptionType.String
     },
   ],
 
   run: async ({ interaction }) => {
-    const username = interaction.options.getString("username");
+    const username = (interaction.options.get("username").value as string);
 
     let uuid = await getUuidbyUsername(username).catch(() => null);
 
     if (uuid == null) {
       const description = `player not found`;
-      const embed = new MessageEmbed()
+      const embed = new EmbedBuilder()
         .setDescription(description)
         .setTitle(`Error 404: not found`)
         .setThumbnail(`https://http.cat/404`);
@@ -36,7 +36,7 @@ export default new slashCommand({
 
     if (data == null) {
       const description = `${uuid.name} never logged on mc.hypixel.net`;
-      const embed = new MessageEmbed()
+      const embed = new EmbedBuilder()
         .setDescription(description)
         .setTitle(`Error 404: not found`)
         .setThumbnail(`https://mc-heads.net/avatar/${username}/100`);
@@ -72,7 +72,7 @@ export default new slashCommand({
       if (data.session.online === null || data.success == false) {
         const description = `${username} never logged on hypixel.net`;
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
           .setDescription(description)
           .setTitle(`Error 404: couldn't get status information`)
           .setThumbnail(`https://mc-heads.net/avatar/${username}/100`);
@@ -121,11 +121,11 @@ export default new slashCommand({
       } else
         description = `${uuid.name} is currently online\n in the game ${gameType} in the gamemode ${gameMode} in the map ${map}`;
 
-      const embed = new MessageEmbed()
+      const embed = new EmbedBuilder()
         .setAuthor({ name: `${uuid.name}` })
         .setDescription(description)
         .setFooter({ text: `requested by ${interaction.user.tag}` })
-        .setColor("RANDOM")
+        .setColor(Colors.Aqua)
         .setThumbnail(`https://mc-heads.net/avatar/${username}/100`);
       interaction.followUp({ embeds: [embed], allowedMentions: {} });
     }

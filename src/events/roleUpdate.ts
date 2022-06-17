@@ -7,11 +7,11 @@ import { Event } from "../structures/Event";
 export default new Event(
   "guildMemberUpdate",
   async (oldMember: GuildMember, newMember: GuildMember) => {
-    let botPermissions = oldMember.guild.me.permissions.toArray();
+    let botPermissions = (await oldMember.guild.fetchMe()).permissions.toArray();
 
     if (
-      !botPermissions.includes("MANAGE_ROLES") &&
-      !botPermissions.includes("ADMINISTRATOR")
+      !botPermissions.includes("ManageRoles") &&
+      !botPermissions.includes("Administrator")
     )
       return; //permission check
 

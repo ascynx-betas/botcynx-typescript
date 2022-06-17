@@ -1,4 +1,4 @@
-import { TextBasedChannel } from "discord.js";
+import { ApplicationCommandOptionType, TextBasedChannel } from "discord.js";
 import { configModel } from "../../../models/config";
 import { slashCommand } from "../../../structures/Commands";
 
@@ -6,14 +6,14 @@ export default new slashCommand({
   name: "delconfig",
   description: "delete information from server configuration",
   require: ["mongooseConnectionString"],
-  userPermissions: ["MANAGE_ROLES"],
+  userPermissions: ["ManageRoles"],
   category: "configuration",
   options: [
     {
       name: "type",
       description: "the array you want to modify",
       required: true,
-      type: "STRING",
+      type: ApplicationCommandOptionType.String,
       choices: [
         {
           name: "trigger",
@@ -37,24 +37,23 @@ export default new slashCommand({
       name: "role",
       description: `the role that will be removed`,
       required: false,
-      type: "ROLE",
+      type: ApplicationCommandOptionType.Role,
     },
     {
       name: "channel",
       description:
         "the channel that will be removed (only for unblock channel)",
       required: false,
-      type: "CHANNEL",
-      channelTypes: ["GUILD_TEXT"],
+      type: ApplicationCommandOptionType.Channel
     },
   ],
 
   run: async ({ client, interaction }) => {
-    const type = interaction.options.getString("type");
+    const type = (interaction.options.get("type").value as string);
     const guildId = interaction.guild.id;
     const guild = interaction.guild;
-    const channel = interaction.options.getChannel("channel");
-    const role = interaction.options.getRole("role");
+    const channel = interaction.options.get("channel").channel;
+    const role = interaction.options.get("role").role;
 
     const config = await configModel.find({
       guildId: guildId,

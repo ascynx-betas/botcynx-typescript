@@ -1,4 +1,4 @@
-import { Message, TextChannel, ThreadChannel } from "discord.js";
+import { ChannelType, TextChannel } from "discord.js";
 import { isId } from "../../../personal-modules/discordPlugin";
 import { Command } from "../../../structures/Commands";
 
@@ -6,7 +6,7 @@ export default new Command({
   name: "hackban",
   aliases: ["dban", "hban", "hb", "cb"],
   devonly: true,
-  botPermissions: ["MANAGE_MESSAGES", "KICK_MEMBERS", "MANAGE_THREADS"],
+  botPermissions: ["ManageMessages", "KickMembers", "ManageThreads"],
 
   run: async ({ message, client, args }) => {
     let m = message;
@@ -20,7 +20,7 @@ export default new Command({
       return message.reply({ content: `this user isn't in this guild` });
 
     const channels = message.guild.channels.cache.filter(
-      (c) => c.type === "GUILD_TEXT"
+      (c) => c.type === ChannelType.GuildText
     );
 
     channels.forEach(async (channel) => {

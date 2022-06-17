@@ -1,8 +1,8 @@
 import {
-  Message,
-  MessageActionRow,
-  MessageButton,
-  MessageEmbed,
+  ActionRowBuilder,
+  ButtonBuilder,
+  EmbedBuilder,
+  ButtonStyle,
 } from "discord.js";
 import { Command } from "../../../structures/Commands";
 
@@ -46,19 +46,19 @@ export default new Command({
       if (flags == "-l" || !flag) flag = "local";
       if (flags == "-g") flag = "global";
 
-      const embed = new MessageEmbed()
+      const embed = new EmbedBuilder()
         .setDescription(`are you sure you want to disable/enable ${target}`)
         .setFooter({ text: `requested by ${message.author.tag}` });
 
-      const buttonRow = new MessageActionRow().addComponents(
-        new MessageButton()
+      const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
+        new ButtonBuilder()
           .setCustomId(`disable:${target}:${flag}`)
           .setLabel("Yes")
-          .setStyle("SUCCESS"),
-        new MessageButton()
+          .setStyle(ButtonStyle.Success),
+        new ButtonBuilder()
           .setCustomId(`clear`)
           .setLabel("cancel")
-          .setStyle("DANGER")
+          .setStyle(ButtonStyle.Danger)
       );
 
       message.reply({ embeds: [embed], components: [buttonRow] });

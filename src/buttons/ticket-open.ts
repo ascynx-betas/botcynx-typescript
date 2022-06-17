@@ -1,9 +1,12 @@
 import {
   BaseGuildTextChannel,
   GuildChannel,
-  MessageActionRow,
-  MessageButton,
+  ActionRowBuilder,
+  ButtonBuilder,
   ThreadChannel,
+  ButtonStyle,
+  GuildFeature,
+  ChannelType,
 } from "discord.js";
 import { postStartData } from "../events/ready";
 import { ticketModel } from "../models/ticket";
@@ -14,7 +17,7 @@ import { ButtonResponse } from "../structures/Commands";
 export default new ButtonResponse({
   category: "ticket",
   require: ["mongooseConnectionString"],
-  botPermissions: ["MANAGE_THREADS"],
+  botPermissions: ["ManageThreads"],
   run: async ({ interaction, client }) => {
     //ticket open buttons
     const guildId = interaction.guild.id;
@@ -28,11 +31,11 @@ export default new ButtonResponse({
     );
     if (success != true) {
       let fields = customId.split(":");
-      const buttonRow = new MessageActionRow().addComponents(
-        new MessageButton()
+      const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
+        new ButtonBuilder()
           .setCustomId("close")
           .setLabel("close ticket")
-          .setStyle("PRIMARY")
+          .setStyle(ButtonStyle.Danger)
       );
 
       const config = await ticketModel.find({
@@ -53,7 +56,7 @@ export default new ButtonResponse({
 
         if (typeof result !== "undefined") {
           let userPermissions = permissions(Number(denied[result]));
-          if (userPermissions.includes("SEND_MESSAGES_IN_THREADS"))
+          if (userPermissions.includes("SendMessagesInThreads"))
             return (blacklisted = "blacklisted");
         }
       });
@@ -62,12 +65,12 @@ export default new ButtonResponse({
       const thread = await (channel as BaseGuildTextChannel).threads.create({
         name: `${interaction.user.tag}-${fields[1]}`,
         autoArchiveDuration: 1440,
-        type: guild.features.includes("PRIVATE_THREADS")
-          ? "GUILD_PRIVATE_THREAD"
-          : "GUILD_PUBLIC_THREAD",
+        type: guild.features.includes(GuildFeature.PrivateThreads)
+          ? ChannelType.GuildPrivateThread
+          : ChannelType.GuildPublicThread,
         reason: `created new ${
-          guild.features.includes("PRIVATE_THREADS") ? "private" : "public"
-        } thread`,
+          guild.features.includes(GuildFeature.PrivateThreads) ? "private" : "public"
+        } ticket`,
       });
 
       (thread as ThreadChannel).send({

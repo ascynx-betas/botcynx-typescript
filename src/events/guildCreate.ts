@@ -1,19 +1,19 @@
-import { MessageEmbed, TextChannel } from "discord.js";
+import { Colors, EmbedBuilder, TextChannel } from "discord.js";
 import { botcynx } from "..";
 import { configModel } from "../models/config";
 import { Event } from "../structures/Event";
 
 export default new Event("guildCreate", async (guild) => {
-  const embed = new MessageEmbed()
+  const embed = new EmbedBuilder()
     .setTitle("Joined Server")
-    .addField(
-      "Guild Info",
-      `${guild.name} (${guild.id})\n ${guild.memberCount} members`
-    )
+    .addFields({
+      name: "Guild Info",
+      value: `${guild.name} (${guild.id})\n ${guild.memberCount} members`
+})
     .setFooter({ text: `Now in ${botcynx.guilds.cache.size} guilds` })
     .setTimestamp(Date.now())
-    .setThumbnail(guild.iconURL({ dynamic: true }))
-    .setColor("GREEN");
+    .setThumbnail(guild.iconURL({ forceStatic: false }))
+    .setColor(Colors.Green);
 
   (botcynx.channels.cache.get("903281241594413176") as TextChannel).send({
     embeds: [embed],

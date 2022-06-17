@@ -1,3 +1,4 @@
+import { ApplicationCommandOptionType } from "discord.js";
 import { ticketBlockedName } from "../../../config";
 import { tagModel } from "../../../models/tag";
 import { slashCommand } from "../../../structures/Commands";
@@ -6,17 +7,17 @@ import { CommandType } from "../../../typings/Command";
 export default new slashCommand({
   name: "tag",
   description: "manage tags",
-  userPermissions: ["MANAGE_MESSAGES"],
+  userPermissions: ["ManageMessages"],
   category: "other",
   options: [
     {
       name: "delete",
-      type: "SUB_COMMAND",
+      type: ApplicationCommandOptionType.Subcommand,
       description: "delete a tag",
       options: [
         {
           name: "name",
-          type: "STRING",
+          type: ApplicationCommandOptionType.String,
           required: true,
           description: "the name of the tag",
         },
@@ -24,24 +25,24 @@ export default new slashCommand({
     },
     {
       name: "create",
-      type: "SUB_COMMAND",
+      type: ApplicationCommandOptionType.Subcommand,
       description: "create a new tag",
       options: [
         {
           name: "name",
-          type: "STRING",
+          type: ApplicationCommandOptionType.String,
           required: true,
           description: "the name of the tag",
         },
         {
           name: "response",
-          type: "STRING",
+          type: ApplicationCommandOptionType.String,
           required: true,
           description: "what will be said when the command is executed",
         },
         {
           name: "description",
-          type: "STRING",
+          type: ApplicationCommandOptionType.String,
           required: true,
           description: "the description of the command",
         },
@@ -49,24 +50,24 @@ export default new slashCommand({
     },
     {
       name: "modify",
-      type: "SUB_COMMAND",
+      type: ApplicationCommandOptionType.Subcommand,
       description: "modify a tag",
       options: [
         {
           name: "name",
-          type: "STRING",
+          type: ApplicationCommandOptionType.String,
           required: true,
           description: "the name of the tag",
         },
         {
           name: "response",
-          type: "STRING",
+          type: ApplicationCommandOptionType.String,
           required: false,
           description: "what will be said when the command is executed",
         },
         {
           name: "description",
-          type: "STRING",
+          type: ApplicationCommandOptionType.String,
           required: false,
           description: "the description of the command",
         },

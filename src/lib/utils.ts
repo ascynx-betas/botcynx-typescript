@@ -1,4 +1,4 @@
-import { EmbedFieldData, MessageButton, MessageEmbed } from "discord.js";
+import { EmbedFieldData, ButtonBuilder, EmbedBuilder, Embed, ButtonStyle, APIEmbed } from "discord.js";
 import { botcynx } from "..";
 import { webhook } from "../personal-modules/discordPlugin";
 import { fork } from "./emojis";
@@ -77,7 +77,7 @@ export const queryEmbed = (data, tag, query) => {
   });
 
   let fields: EmbedFieldData[] = [];
-  let buttonFields: MessageButton[] = [];
+  let buttonFields: ButtonBuilder[] = [];
 
   items.forEach((item) => {
     fields.push({
@@ -85,14 +85,14 @@ export const queryEmbed = (data, tag, query) => {
       value: `${item.description}`,
     });
     buttonFields.push(
-      new MessageButton()
-        .setStyle("LINK")
+      new ButtonBuilder()
+        .setStyle(ButtonStyle.Link)
         .setURL(item.repoURL)
         .setLabel(item.name)
     );
   });
 
-  const embed = new MessageEmbed()
+  const embed = new EmbedBuilder()
     .setTitle(
       `${items.length === 1 ? `${items[0].name}` : `results for ${query}`}`
     )
@@ -104,7 +104,7 @@ export const queryEmbed = (data, tag, query) => {
 
 export const sendInfoWebhook = async (options: {
   message?: string;
-  embed?: MessageEmbed;
+  embed?: Embed | APIEmbed;
 }) => {
   const { message, embed } = options;
   const infoWebhook = webhook(process.env.webhookLogLink);
@@ -114,7 +114,7 @@ export const sendInfoWebhook = async (options: {
     embeds: embed != null ? [embed] : null,
     allowedMentions: { parse: ["roles", "users"] },
     username: botcynx.user.tag,
-    avatarURL: botcynx.user.avatarURL({ dynamic: true }),
+    avatarURL: botcynx.user.avatarURL({ forceStatic: false }),
   });
 };
 

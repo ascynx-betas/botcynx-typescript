@@ -1,11 +1,10 @@
 import { botcynx } from "..";
 import { Event } from "../structures/Event";
 import {
-  contextInteraction,
   MessageContextType,
   UserContextType,
 } from "../typings/Command";
-import { CommandInteractionOptionResolver } from "discord.js";
+import { CommandInteractionOptionResolver, GuildMember } from "discord.js";
 import { RequireTest } from "../personal-modules/commandHandler";
 import {
   botPermissionInhibitor,
@@ -15,10 +14,10 @@ import {
 
 export default new Event(
   "interactionCreate",
-  async (interaction: contextInteraction) => {
-    if (interaction.isCommand()) return;
+  async (interaction) => {
+    if (interaction.isChatInputCommand()) return;
     if (interaction.isButton()) return;
-    if (interaction.isContextMenu()) {
+    if (interaction.isContextMenuCommand()) {
       let command: UserContextType | MessageContextType =
         botcynx.userContextCommands.get(interaction.commandName);
       if (!command)
@@ -55,7 +54,7 @@ export default new Event(
       if (command.userPermissions) {
         if (
           !userPermissionInhibitor(command, {
-            member: interaction.member,
+            member: (interaction.member as GuildMember),
             guild: interaction.guild,
           })
         )
@@ -78,7 +77,7 @@ export default new Event(
       command.run({
         args: interaction.options as CommandInteractionOptionResolver,
         client: botcynx,
-        interaction: interaction as contextInteraction,
+        interaction: interaction,
       });
     } else return;
   }

@@ -1,4 +1,4 @@
-import { PermissionString } from "discord.js";
+import { PermissionsString } from "discord.js";
 
 const _permissions = {
   CREATE_INSTANT_INVITE: 0x1,
@@ -45,7 +45,7 @@ const _permissions = {
 /**
  * @param  {Number} permBitfield
  */
-const permissions = (permBitfield: number): PermissionString[] => {
+const permissions = (permBitfield: number): PermissionsString[] => {
   let currentPermissions = [];
   const permissionUpper = Math.floor(permBitfield / 0x100000000);
   const permissionLower = Math.floor(permBitfield % 0x100000000);

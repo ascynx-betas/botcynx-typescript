@@ -1,22 +1,22 @@
 import { UserContextCommand } from "../../../structures/Commands";
-import { MessageEmbed } from "discord.js";
+import { ApplicationCommandType, EmbedBuilder, UserContextMenuCommandInteraction } from "discord.js";
 
 export default new UserContextCommand({
   name: "getAvatar",
-  type: "USER",
+  type: ApplicationCommandType.User,
   category: "information",
 
   run: async ({ client, interaction }) => {
-    const user = await client.users.fetch(interaction.targetId);
+    const user = await client.users.fetch((interaction as UserContextMenuCommandInteraction).targetId);
 
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setAuthor({
         name: user.tag,
-        iconURL: user.displayAvatarURL({ dynamic: true }),
+        iconURL: user.displayAvatarURL({ forceStatic: false }),
       })
-      .setImage(user.displayAvatarURL({ dynamic: true }));
+      .setImage(user.displayAvatarURL({ forceStatic: false }));
 
-    interaction
+    (interaction as UserContextMenuCommandInteraction)
       .followUp({ embeds: [embed], ephemeral: true })
       .catch(() => null);
   },

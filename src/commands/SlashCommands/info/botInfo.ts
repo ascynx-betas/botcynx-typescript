@@ -1,9 +1,8 @@
 import {
-  MessageActionRow,
-  MessageActionRowComponent,
-  MessageButton,
-  MessageComponentTypeResolvable,
-  MessageEmbed,
+  ActionRowBuilder,
+  ButtonBuilder,
+  EmbedBuilder,
+  ButtonStyle,
 } from "discord.js";
 import { setButtonRows } from "../../../personal-modules/discordPlugin";
 import { slashCommand } from "../../../structures/Commands";
@@ -26,22 +25,22 @@ export default new slashCommand({
       client.guilds.cache.size
     } guilds, serving ${client.users.cache.size} users\n
     [**ToS and privacy policy**](https://ascynx-betas.github.io/botcynx-webpage/html/PrivacyandTos.html)`;
-    let arrayOfButtons: MessageActionRowComponent[] = [];
+    let arrayOfButtons: ButtonBuilder[] = [];
     types.forEach(function (type) {
-      const button = new MessageButton()
+      const button = new ButtonBuilder()
         .setCustomId(`info:${type}`)
         .setLabel(`${type}`)
-        .setStyle("SECONDARY");
+        .setStyle(ButtonStyle.Secondary);
 
-      arrayOfButtons.push(button);
+      arrayOfButtons.push(button as ButtonBuilder);
     });
     if (arrayOfButtons.length >= 25)
       return interaction.followUp({
         content: `there are too many categories to create enough buttons`,
       });
-    let components: MessageActionRow[] = await setButtonRows(arrayOfButtons);
+    let components: ActionRowBuilder<ButtonBuilder>[] = await setButtonRows(arrayOfButtons);
 
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setDescription(description)
       .setTitle("Information")
       .setFooter({ text: `requested by ${interaction.user.tag}` });

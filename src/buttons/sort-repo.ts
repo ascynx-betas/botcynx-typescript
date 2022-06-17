@@ -1,4 +1,4 @@
-import { MessageActionRow } from "discord.js";
+import { ActionRow, ActionRowBuilder, ButtonBuilder, MessageActionRowComponent } from "discord.js";
 import { searchRepositories } from "../lib/repoPull";
 import { queryEmbed } from "../lib/utils";
 import { ButtonResponse } from "../structures/Commands";
@@ -29,12 +29,12 @@ export default new ButtonResponse({
         decodedQuery
       );
 
-      const actionRow = new MessageActionRow().addComponents(buttonFields);
+      const actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(buttonFields);
       interaction.update({
         embeds: [embed],
         components: [
           actionRow,
-          interaction.message.components[1] as MessageActionRow,
+          interaction.message.components[1] as ActionRow<MessageActionRowComponent>,
         ],
       });
     } else if (sortby == "oldest-updated") {
@@ -53,12 +53,12 @@ export default new ButtonResponse({
         decodedQuery
       );
 
-      const actionRow = new MessageActionRow().addComponents(buttonFields);
+      const actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(buttonFields);
       interaction.update({
         embeds: [embed],
         components: [
           actionRow,
-          interaction.message.components[1] as MessageActionRow,
+          interaction.message.components[1] as ActionRow<MessageActionRowComponent>,
         ],
       });
     } else if (sortby == "forks-up") {
@@ -70,12 +70,12 @@ export default new ButtonResponse({
         decodedQuery
       );
 
-      const actionRow = new MessageActionRow().addComponents(buttonFields);
+      const actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(buttonFields);
       interaction.update({
         embeds: [embed],
         components: [
           actionRow,
-          interaction.message.components[1] as MessageActionRow,
+          interaction.message.components[1] as ActionRow<MessageActionRowComponent>,
         ],
       });
     } else if (sortby == "forks-down") {
@@ -87,12 +87,12 @@ export default new ButtonResponse({
         decodedQuery
       );
 
-      const actionRow = new MessageActionRow().addComponents(buttonFields);
+      const actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(buttonFields);
       interaction.update({
         embeds: [embed],
         components: [
           actionRow,
-          interaction.message.components[1] as MessageActionRow,
+          interaction.message.components[1] as ActionRow<MessageActionRowComponent>,
         ],
       });
     } else if (sortby == "star-down") {
@@ -104,12 +104,12 @@ export default new ButtonResponse({
         decodedQuery
       );
 
-      const actionRow = new MessageActionRow().addComponents(buttonFields);
+      const actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(buttonFields);
       interaction.update({
         embeds: [embed],
         components: [
           actionRow,
-          interaction.message.components[1] as MessageActionRow,
+          interaction.message.components[1] as ActionRow<MessageActionRowComponent>,
         ],
       });
     } else if (sortby == "star-up") {
@@ -121,12 +121,12 @@ export default new ButtonResponse({
         decodedQuery
       );
 
-      const actionRow = new MessageActionRow().addComponents(buttonFields);
+      const actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(buttonFields);
       interaction.update({
         embeds: [embed],
         components: [
           actionRow,
-          interaction.message.components[1] as MessageActionRow,
+          interaction.message.components[1] as ActionRow<MessageActionRowComponent>,
         ],
       });
     } else return;

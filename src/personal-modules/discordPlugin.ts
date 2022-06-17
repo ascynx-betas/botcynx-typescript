@@ -1,8 +1,11 @@
 import {
   EmbedFieldData,
-  MessageActionRow,
+  ActionRowBuilder,
   MessageActionRowComponent,
-  MessageButtonStyleResolvable,
+  ButtonStyle,
+  ActionRow,
+  ButtonComponent,
+  ButtonBuilder,
 } from "discord.js";
 import { botcynx } from "..";
 import { snowflake } from "../typings/Client";
@@ -84,21 +87,21 @@ const snowflakeToMention = function (array: Array<string>, type: snowflake) {
 const SetActiveButton = async function (
   buttonId: string,
   arrayOfCustomId: string[]
-): Promise<MessageButtonStyleResolvable[]> {
-  let arrOfStyles: MessageButtonStyleResolvable[] = [];
+): Promise<ButtonStyle[]> {
+  let arrOfStyles: ButtonStyle[] = [];
   arrayOfCustomId.forEach(function (customId, index) {
     if (buttonId == customId) {
-      arrOfStyles[index] = "PRIMARY";
-    } else arrOfStyles[index] = "SECONDARY";
+      arrOfStyles[index] = ButtonStyle.Primary;
+    } else arrOfStyles[index] = ButtonStyle.Secondary;
   });
   return arrOfStyles;
 };
 const setButtonRows = async function (
-  arrayOfButtons: MessageActionRowComponent[]
-): Promise<MessageActionRow[]> {
-  let arrayOfComponents: MessageActionRow[] = [];
+  arrayOfButtons: ButtonBuilder[]
+): Promise<ActionRowBuilder<ButtonBuilder>[]> {
+  let arrayOfComponents: ActionRowBuilder<ButtonBuilder>[] = [];
   if (arrayOfButtons.length > 1) {
-    let component = new MessageActionRow();
+    let component: ActionRowBuilder<ButtonBuilder> = new ActionRowBuilder<ButtonBuilder>();
     for (let i = 0; i < 5; i++) {
       component.addComponents(arrayOfButtons[i]);
       if (typeof arrayOfButtons[i + 1] == "undefined") break;
@@ -106,7 +109,7 @@ const setButtonRows = async function (
     arrayOfComponents.push(component);
   }
   if (arrayOfButtons.length > 5) {
-    let component = new MessageActionRow();
+    let component = new ActionRowBuilder<ButtonBuilder>();
     for (let i = 5; i < 10; i++) {
       if (typeof arrayOfButtons[i] == "undefined") break;
       component.addComponents(arrayOfButtons[i]);
@@ -114,7 +117,7 @@ const setButtonRows = async function (
     arrayOfComponents.push(component);
   }
   if (arrayOfButtons.length > 10) {
-    let component = new MessageActionRow();
+    let component = new ActionRowBuilder<ButtonBuilder>();
     for (let i = 10; i < 15; i++) {
       if (typeof arrayOfButtons[i] == "undefined") break;
       component.addComponents(arrayOfButtons[i]);
@@ -122,7 +125,7 @@ const setButtonRows = async function (
     arrayOfComponents.push(component);
   }
   if (arrayOfButtons.length > 15) {
-    let component = new MessageActionRow();
+    let component = new ActionRowBuilder<ButtonBuilder>();
     for (let i = 15; i < 20; i++) {
       if (typeof arrayOfButtons[i] == "undefined") break;
       component.addComponents(arrayOfButtons[i]);
@@ -130,7 +133,7 @@ const setButtonRows = async function (
     arrayOfComponents.push(component);
   }
   if (arrayOfButtons.length > 20) {
-    let component = new MessageActionRow();
+    let component = new ActionRowBuilder<ButtonBuilder>();
     for (let i = 20; i < 25; i++) {
       if (typeof arrayOfButtons[i] == "undefined") break;
       component.addComponents(arrayOfButtons[i]);

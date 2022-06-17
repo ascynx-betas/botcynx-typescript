@@ -1,25 +1,24 @@
 import {
+  AnyInteraction,
+  ButtonBuilder,
+  ButtonInteraction,
   ChatInputApplicationCommandData,
-  CommandInteraction,
+  ChatInputCommandInteraction,
   CommandInteractionOptionResolver,
-  ContextMenuInteraction,
   Guild,
   GuildMember,
   Message,
   MessageApplicationCommandData,
   MessageComponentInteraction,
   ModalSubmitInteraction,
-  PermissionString,
+  PermissionsString,
+  SelectMenuInteraction,
   UserApplicationCommandData,
 } from "discord.js";
 import { botClient } from "../structures/botClient";
 
-export interface botcynxInteraction extends CommandInteraction {
+export interface botcynxInteraction extends ChatInputCommandInteraction {
   member: GuildMember;
-}
-export interface contextInteraction extends ContextMenuInteraction {
-  member: GuildMember;
-  message: Message;
 }
 
 /**
@@ -47,11 +46,11 @@ interface runOptions extends baseRunOptions {
 } //SlashCommands
 
 interface updateRunOptions extends baseRunOptions {
-  interaction: MessageComponentInteraction;
+  interaction: ButtonInteraction | SelectMenuInteraction;
 }
 
 interface runContextOptions extends baseRunOptions {
-  interaction: contextInteraction;
+  interaction: AnyInteraction
   args: CommandInteractionOptionResolver;
 } //ContextCommands
 
@@ -82,8 +81,8 @@ type RegisterWhitelistedFunction = (options: {
  */
 export type CommandType = {
   require?: require[];
-  userPermissions?: PermissionString[];
-  botPermissions?: PermissionString[];
+  userPermissions?: PermissionsString[];
+  botPermissions?: PermissionsString[];
   devonly?: boolean;
   invisible?: boolean;
   category?: string;
@@ -110,8 +109,8 @@ export type modalResponseType = {
 
 export type UserContextType = {
   require?: require[];
-  userPermissions?: PermissionString[];
-  botPermissions?: PermissionString[];
+  userPermissions?: PermissionsString[];
+  botPermissions?: PermissionsString[];
   devonly?: boolean;
   invisible?: boolean;
   category?: string;
@@ -122,8 +121,8 @@ export type UserContextType = {
 
 export type MessageContextType = {
   require?: require[];
-  userPermissions?: PermissionString[];
-  botPermissions?: PermissionString[];
+  userPermissions?: PermissionsString[];
+  botPermissions?: PermissionsString[];
   devonly?: boolean;
   invisible?: boolean;
   category?: string;
@@ -135,8 +134,8 @@ export type MessageContextType = {
 export type MessageCommandType = {
   require?: require[];
   name: string;
-  userPermissions?: PermissionString[];
-  botPermissions?: PermissionString[];
+  userPermissions?: PermissionsString[];
+  botPermissions?: PermissionsString[];
   devonly?: boolean;
   aliases?: String[];
   category?: string;
@@ -151,8 +150,8 @@ export type ButtonResponseType = {
   temporary?: boolean;
   onlyAuthor?: boolean;
   cooldown?: number; //seconds
-  userPermissions?: PermissionString[];
-  botPermissions?: PermissionString[];
+  userPermissions?: PermissionsString[];
+  botPermissions?: PermissionsString[];
   run: updateRunFunction;
 };
 

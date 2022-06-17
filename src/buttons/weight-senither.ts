@@ -1,4 +1,4 @@
-import { MessageActionRow, MessageButton, MessageEmbed } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Colors, EmbedBuilder } from "discord.js";
 import { getUsername } from "../personal-modules/mojang";
 import {
   extractWeight,
@@ -29,12 +29,12 @@ export default new ButtonResponse({
     const profileName = data.profilename;
     const gameStage = data.gamestage;
 
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setFields(embedFields)
       .setFooter({
         text: `requested by ${interaction.message.interaction.user.username}`,
       })
-      .setColor(`RED`)
+      .setColor(Colors.Red)
       .setAuthor({
         name: `${username}'s senither weight`,
         url: `https://sky.shiiyu.moe/stats/${username}/${profileName}`,
@@ -44,11 +44,11 @@ export default new ButtonResponse({
         `profile: **\`\`${profileName}\`\`** username: **\`\`${username}\`\`**\ncurrent stage: **\`\`${gameStage}\`\`**`
       );
 
-    const buttonRow = new MessageActionRow().addComponents(
-      new MessageButton()
+    const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
+      new ButtonBuilder()
         .setCustomId(`weight:lily:${uuid}:${speprofile}`)
         .setLabel("Press to get lily weight")
-        .setStyle("SECONDARY")
+        .setStyle(ButtonStyle.Secondary)
     );
 
     return interaction.update({ embeds: [embed], components: [buttonRow] });

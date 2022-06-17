@@ -1,3 +1,4 @@
+import { ApplicationCommandOptionType } from "discord.js";
 import { verifyModel } from "../../../models/verifyModel";
 import { getPlayerByUuid } from "../../../personal-modules/hypixel";
 import { getUuidbyUsername } from "../../../personal-modules/mojang";
@@ -13,13 +14,13 @@ export default new slashCommand({
     {
       name: "username",
       description: "the minecraft username",
-      type: "STRING",
+      type: ApplicationCommandOptionType.String,
       required: true,
     },
     {
       name: "action",
       description: "the action that will be executed by the bot",
-      type: "STRING",
+      type: ApplicationCommandOptionType.String,
       required: false,
       choices: [
         {
@@ -35,10 +36,10 @@ export default new slashCommand({
   ],
 
   run: async ({ interaction }) => {
-    const username = interaction.options.getString("username");
+    const username = (interaction.options.get("username").value as string);
     const userTag = interaction.user.tag;
     const userId = interaction.user.id;
-    const action = interaction.options.getString("action");
+    const action = interaction.options.get("action").value;
 
     let uuid: any = await getUuidbyUsername(username).catch(() => null);
     if (uuid == null)

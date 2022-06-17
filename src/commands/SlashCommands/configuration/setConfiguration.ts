@@ -1,4 +1,4 @@
-import { TextBasedChannel } from "discord.js";
+import { ApplicationCommandOptionType, TextBasedChannel } from "discord.js";
 import { configModel } from "../../../models/config";
 import { slashCommand } from "../../../structures/Commands";
 
@@ -6,14 +6,14 @@ export default new slashCommand({
   name: "setconfig",
   description: "store certain informations for uses in the bot",
   require: ["mongooseConnectionString"],
-  userPermissions: ["MANAGE_ROLES"],
+  userPermissions: ["ManageRoles"],
   category: "configuration",
   options: [
     {
       name: "type",
       description: "the type of information to add",
       required: true,
-      type: "STRING",
+      type: ApplicationCommandOptionType.String,
       choices: [
         {
           name: "trigger",
@@ -40,22 +40,21 @@ export default new slashCommand({
     {
       name: "role",
       description: "role to add",
-      type: "ROLE",
+      type: ApplicationCommandOptionType.Role,
       required: false,
     },
     {
       name: "channel",
       description: "only used for setting logchannel",
-      type: "CHANNEL",
-      channelTypes: ["GUILD_TEXT"],
-      required: false,
+      type: ApplicationCommandOptionType.Channel,
+      required: false
     },
   ],
 
   run: async ({ interaction, client }) => {
-    const role = interaction.options.getRole("role");
-    const type = interaction.options.getString("type");
-    const channel = interaction.options.getChannel("channel");
+    const role = interaction.options.get("role").role;
+    const type = (interaction.options.get("type").value as string);
+    const channel = interaction.options.get("channel").channel;
     const guild = interaction.guild;
     const guildId = guild.id;
 

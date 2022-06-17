@@ -1,9 +1,12 @@
 import {
   GuildTextBasedChannel,
   Message,
-  MessageActionRow,
-  MessageButton,
-  MessageEmbed,
+  ActionRowBuilder,
+  ButtonBuilder,
+  EmbedBuilder,
+  ApplicationCommandOptionType,
+  ButtonStyle,
+  Colors,
 } from "discord.js";
 import { postStartData } from "../../../events/ready";
 import { ticketModel } from "../../../models/ticket";
@@ -13,36 +16,35 @@ export default new slashCommand({
   name: "setup-ticket",
   description: "create a ticket message",
   require: ["mongooseConnectionString"],
-  userPermissions: ["MANAGE_CHANNELS"],
-  botPermissions: ["MANAGE_CHANNELS"],
+  userPermissions: ["ManageChannels"],
+  botPermissions: ["ManageChannels"],
   category: "ticket",
   options: [
     {
       name: "channel",
       description: "the channel where the ticket system will be based in",
       required: true,
-      type: "CHANNEL",
-      channelTypes: ["GUILD_TEXT"],
+      type: ApplicationCommandOptionType.Channel
     },
     {
       name: "config-name",
       description: "the name the config will be refered to in the commands",
       required: true,
-      type: "STRING",
+      type: ApplicationCommandOptionType.String,
     },
     {
       name: "welcome-message",
       description:
         "the message that will be displayed when creating a new ticket",
       required: true,
-      type: "STRING",
+      type: ApplicationCommandOptionType.String,
     },
     {
       name: "description",
       description:
         "the description that will be shown above the create ticket button",
       required: false,
-      type: "STRING",
+      type: ApplicationCommandOptionType.String,
     },
   ],
 
@@ -52,12 +54,12 @@ export default new slashCommand({
     const name = interaction.options.getString("config-name");
     const welcomeMessage = interaction.options.getString("welcome-message");
     const welcomeButton = interaction.options.getString("description");
-    let botPermissions = interaction.guild.me.permissions.toArray();
+    let botPermissions = (await interaction.guild.fetchMe()).permissions.toArray();
 
     if (
-      !botPermissions.includes("USE_PRIVATE_THREADS") &&
-      !botPermissions.includes("USE_PUBLIC_THREADS") &&
-      !botPermissions.includes("ADMINISTRATOR")
+      !botPermissions.includes("CreatePrivateThreads") &&
+      !botPermissions.includes("CreatePublicThreads") &&
+      !botPermissions.includes("Administrator")
     )
       return interaction
         .followUp({ content: `Missing permissions to create threads` })
@@ -70,15 +72,15 @@ export default new slashCommand({
         content: `You cannot name a ticket ${name}`,
       });
 
-    const buttonRow = new MessageActionRow().addComponents(
-      new MessageButton()
+    const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
+      new ButtonBuilder()
         .setCustomId(`ticket:${name}`)
         .setLabel("create ticket")
-        .setStyle("SUCCESS")
+        .setStyle(ButtonStyle.Success)
     );
 
-    const embed = new MessageEmbed()
-      .setColor("RANDOM")
+    const embed = new EmbedBuilder()
+      .setColor(Colors.Red)
       .setDescription(
         `${
           welcomeButton || "press create to enter in contact with staff members"

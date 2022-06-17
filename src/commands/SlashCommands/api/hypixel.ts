@@ -1,4 +1,4 @@
-import { EmbedFieldData, MessageEmbed } from "discord.js";
+import { EmbedFieldData, EmbedBuilder, Colors, ApplicationCommandOptionType } from "discord.js";
 import { coolPeopleUUID, coolTypeToEmojis } from "../../../lib/coolPeople";
 import { verifyModel } from "../../../models/verifyModel";
 import { getPlayerByUuid, getStatus } from "../../../personal-modules/hypixel";
@@ -15,13 +15,13 @@ export default new slashCommand({
     {
       name: "username",
       description: "ign of the player",
-      type: "STRING",
+      type: ApplicationCommandOptionType.String,
       required: false,
     },
   ],
 
   run: async ({ interaction, client }) => {
-    let username = interaction.options.getString("username");
+    let username = (interaction.options.get("username").value as string);
     let uuid: any;
     if (!username) {
       //!GET INFORMATION FROM DATABASE
@@ -131,9 +131,9 @@ export default new slashCommand({
       });
     }
 
-    let embed = new MessageEmbed()
+    let embed = new EmbedBuilder()
       .setTitle(`Informations about ${displayName || username || "Error"}`)
-      .setColor("RANDOM")
+      .setColor(Colors.Red)
       .setFields(embedFields)
       .setFooter({ text: `requested by ${interaction.user.tag}` })
       .setThumbnail(`https://mc-heads.net/avatar/${username}/100`);
