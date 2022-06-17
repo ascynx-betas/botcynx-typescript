@@ -1,5 +1,6 @@
 import { slashCommand } from "../../../structures/Commands";
 import { ActionRowBuilder, Colors, EmbedBuilder, SelectMenuBuilder } from "discord.js";
+import { emojis } from "../../../lib/emojis";
 
 export default new slashCommand({
   name: "serverconfig",
@@ -24,14 +25,14 @@ export default new slashCommand({
             label: "roleLinked configuration",
             description: "see configuration for the server about roleLinked",
             value: "roleLinked",
-            emoji: "<:role:930783993991933993>",
+            emoji: emojis.role,
           },
           {
             label: "Link reader configuration",
             description:
               "see the configuration for this server about the link reader feature",
             value: "linkReader",
-            emoji: "<:read:930784208048242708>",
+            emoji: emojis.read,
           },
           {
             label: "other configurations",

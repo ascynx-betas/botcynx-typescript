@@ -1,7 +1,7 @@
 import { EmbedFieldData, ButtonBuilder, EmbedBuilder, Embed, ButtonStyle, APIEmbed } from "discord.js";
 import { botcynx } from "..";
 import { webhook } from "../personal-modules/discordPlugin";
-import { fork } from "./emojis";
+import { emojis } from "./emojis";
 
 export const similarityDetection = (
   word: string,
@@ -81,7 +81,7 @@ export const queryEmbed = (data, tag, query) => {
 
   items.forEach((item) => {
     fields.push({
-      name: `${item.owner}/${item.name} - ${item.stars} ⭐ - ${item.forks} ${fork}`,
+      name: `${item.owner}/${item.name} - ${item.stars} ⭐ - ${item.forks} ${emojis.fork}`,
       value: `${item.description}`,
     });
     buttonFields.push(
