@@ -12,9 +12,9 @@ import {
   skillLevelCalculator,
 } from "../../lib/hypixelSkillCalc";
 import { verifyModel } from "../../models/verifyModel";
-import { getPlayerByUuid, getProfiles } from "../../personal-modules/hypixel";
-import { getUuidbyUsername } from "../../personal-modules/mojang";
-import { getSpecifiedProfile } from "../../personal-modules/senither";
+import { getPlayerByUuid, getProfiles } from "../../lib/personal-modules/hypixel";
+import { getUuidbyUsername } from "../../lib/personal-modules/mojang";
+import { getSpecifiedProfile } from "../../lib/personal-modules/senither";
 import { WhitelistedCommand } from "../../structures/Commands";
 import { profileMember } from "../../typings/Hypixel";
 
@@ -90,7 +90,8 @@ export default new WhitelistedCommand({
     }
 
     let hypixelData = await getProfiles(uuid);
-    if (hypixelData.size == 0)
+
+    if (!hypixelData || hypixelData.size == 0)
       return interaction.followUp({
         content: `Error 404: no informations found. Try again later.`,
       });

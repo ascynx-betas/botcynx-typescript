@@ -9,7 +9,7 @@ import {
 } from "../lib/cache/crashFix";
 import { haste, isHaste } from "../lib/haste";
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
-import { containsLink, isLink } from "../personal-modules/testFor";
+import { containsLink, isLink } from "../lib/personal-modules/testFor";
 import { indexOf } from "lodash";
 
 export default new Event("messageCreate", async (message) => {

@@ -1,7 +1,7 @@
 import { GuildMember, TextBasedChannel } from "discord.js";
 import { botcynx } from "..";
 import { configModel } from "../models/config";
-import { compare, ct } from "../personal-modules/testFor";
+import { compare, ct } from "../lib/personal-modules/testFor";
 import { Event } from "../structures/Event";
 
 export default new Event(

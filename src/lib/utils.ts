@@ -7,7 +7,7 @@ import {
   APIEmbed,
 } from "discord.js";
 import { botcynx } from "..";
-import { webhook } from "../personal-modules/discordPlugin";
+import { webhook } from "./personal-modules/discordPlugin";
 import { emojis } from "./emojis";
 
 export const similarityDetection = (

@@ -1,5 +1,5 @@
 import { ChannelType, TextChannel } from "discord.js";
-import { isId } from "../../../personal-modules/discordPlugin";
+import { isId } from "../../../lib/personal-modules/discordPlugin";
 import { Command } from "../../../structures/Commands";
 
 export default new Command({

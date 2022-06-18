@@ -8,7 +8,7 @@ import {
 import { ButtonResponse } from "../structures/Commands";
 import lilyweight from "lilyweight";
 import { EmbedFieldData } from "discord.js";
-import { getUsername } from "../personal-modules/mojang";
+import { getUsername } from "../lib/personal-modules/mojang";
 
 export default new ButtonResponse({
   category: "weight",

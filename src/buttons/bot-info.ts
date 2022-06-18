@@ -3,7 +3,7 @@ import {
   infoEmbedCreation,
   SetActiveButton,
   setButtonRows,
-} from "../personal-modules/discordPlugin";
+} from "../lib/personal-modules/discordPlugin";
 import { ButtonResponse } from "../structures/Commands";
 
 export default new ButtonResponse({

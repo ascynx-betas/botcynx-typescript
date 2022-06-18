@@ -7,7 +7,7 @@ import {
   userPermissionInhibitor,
 } from "../lib/command/commandInhibitors";
 import { configModel } from "../models/config";
-import { RequireTest } from "../personal-modules/commandHandler";
+import { RequireTest } from "../lib/personal-modules/commandHandler";
 import { Event } from "../structures/Event";
 
 export default new Event(

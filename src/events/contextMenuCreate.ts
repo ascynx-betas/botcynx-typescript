@@ -2,7 +2,7 @@ import { botcynx } from "..";
 import { Event } from "../structures/Event";
 import { MessageContextType, UserContextType } from "../typings/Command";
 import { CommandInteractionOptionResolver, GuildMember } from "discord.js";
-import { RequireTest } from "../personal-modules/commandHandler";
+import { RequireTest } from "../lib/personal-modules/commandHandler";
 import {
   botPermissionInhibitor,
   isOnCooldown,

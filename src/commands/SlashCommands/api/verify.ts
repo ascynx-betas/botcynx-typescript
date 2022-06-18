@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType } from "discord.js";
 import { verifyModel } from "../../../models/verifyModel";
-import { getPlayerByUuid } from "../../../personal-modules/hypixel";
-import { getUuidbyUsername } from "../../../personal-modules/mojang";
+import { getPlayerByUuid } from "../../../lib/personal-modules/hypixel";
+import { getUuidbyUsername } from "../../../lib/personal-modules/mojang";
 import { slashCommand } from "../../../structures/Commands";
 
 export default new slashCommand({

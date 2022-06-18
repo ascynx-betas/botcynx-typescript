@@ -2,7 +2,7 @@ import { botcynx } from "..";
 import { Collection, CommandInteractionOptionResolver } from "discord.js";
 import { Event } from "../structures/Event";
 import { botcynxInteraction, CommandType } from "../typings/Command";
-import { RequireTest } from "../personal-modules/commandHandler";
+import { RequireTest } from "../lib/personal-modules/commandHandler";
 import { tagModel } from "../models/tag";
 import {
   botPermissionInhibitor,

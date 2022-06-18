@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, EmbedBuilder } from "discord.js";
 import { configModel } from "../../../models/config";
-import { ct } from "../../../personal-modules/testFor";
+import { ct } from "../../../lib/personal-modules/testFor";
 import { slashCommand } from "../../../structures/Commands";
 
 export default new slashCommand({

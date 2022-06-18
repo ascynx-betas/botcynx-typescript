@@ -10,8 +10,8 @@ import {
 } from "discord.js";
 import { postStartData } from "../events/ready";
 import { ticketModel } from "../models/ticket";
-import { permissions } from "../personal-modules/bitfieldCalculator";
-import { permOverride } from "../personal-modules/discordPlugin";
+import { permissions } from "../lib/personal-modules/bitfieldCalculator";
+import { permOverride } from "../lib/personal-modules/discordPlugin";
 import { ButtonResponse } from "../structures/Commands";
 
 export default new ButtonResponse({

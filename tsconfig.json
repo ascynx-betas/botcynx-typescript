@@ -15,7 +15,7 @@
     "resolveJsonModule": true,
     "importHelpers": true,
     "paths": {
-      "#lib": ["./src/lib/index.ts", "./src/personal-modules/index.ts"]
+      "#lib": ["./src/lib/index.ts"],
     },
     "removeComments": true
   },

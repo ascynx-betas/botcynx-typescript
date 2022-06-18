@@ -1,7 +1,7 @@
 import { botcynx } from "..";
 import { configModel } from "../models/config";
 import { Event } from "../structures/Event";
-import { RequireTest } from "../personal-modules/commandHandler";
+import { RequireTest } from "../lib/personal-modules/commandHandler";
 import {
   botPermissionInhibitor,
   isDisabled,

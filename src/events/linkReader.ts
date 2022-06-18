@@ -8,8 +8,8 @@ import {
 } from "discord.js";
 import { botcynx } from "..";
 import { configModel } from "../models/config";
-import { isId } from "../personal-modules/discordPlugin";
-import { containsLink } from "../personal-modules/testFor";
+import { isId } from "../lib/personal-modules/discordPlugin";
+import { containsLink } from "../lib/personal-modules/testFor";
 import { Event } from "../structures/Event";
 
 export default new Event("messageCreate", async (message) => {

@@ -17,4 +17,4 @@ export * from "./cache/cache";
 export * from "./cache/crashFix";
 export * from "./cache/scamlink";
 
-export * from "../personal-modules/index";
+export * from "./personal-modules/index";

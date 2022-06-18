@@ -1,4 +1,4 @@
-import { isLink } from "../../personal-modules/testFor";
+import { isLink } from "../personal-modules/testFor";
 import { repoLink } from "./cache";
 import { jsonCache } from "./cache";
 
@@ -13,13 +13,11 @@ export function hasScamLink(message: string) {
   words = words.filter((w) => isLink(w));
 
   for (const scam in scamLinks.data) {
-    if ([...safe, ...ignore].includes(scamLinks.data[scam])) continue; //fixes the fact that the list may contains safe links
 
 
     const scamRegExp = new RegExp(`.*${scamLinks.data[scam]}.*`, "gi");
 
-
-    if (words.some((word) => [...safe, ...ignore].some((safe) => new RegExp(`.*${safe}.*`, "gi").test(word)))) return (hasScamLink = false);
+    if (words.some((word) => [...new Set([...safe, ...ignore])].some((safe) => new RegExp(`.*${safe}.*`, "gi").test(word)))) return (hasScamLink = false);
 
     if (words.some((word) => scamRegExp.test(word))) {
       return (hasScamLink = true);

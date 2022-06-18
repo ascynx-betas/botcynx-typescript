@@ -5,11 +5,11 @@ import {
   Colors,
   EmbedBuilder,
 } from "discord.js";
-import { getUsername } from "../personal-modules/mojang";
+import { getUsername } from "../lib/personal-modules/mojang";
 import {
   extractWeight,
   getSpecifiedProfile,
-} from "../personal-modules/senither";
+} from "../lib/personal-modules/senither";
 import { ButtonResponse } from "../structures/Commands";
 
 export default new ButtonResponse({

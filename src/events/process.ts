@@ -1,7 +1,7 @@
 import process from "process";
 import { botcynx } from "..";
-import { webhook } from "../personal-modules/discordPlugin";
-import { getTimeOfDay } from "../personal-modules/testFor";
+import { webhook } from "../lib/personal-modules/discordPlugin";
+import { getTimeOfDay } from "../lib/personal-modules/testFor";
 import chalk from "chalk";
 import { postStartData } from "./ready";
 

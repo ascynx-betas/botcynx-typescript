@@ -1,5 +1,5 @@
 import { Event } from "../structures/Event";
-import { getKeyInfo } from "../personal-modules/hypixel";
+import { getKeyInfo } from "../lib/personal-modules/hypixel";
 import { ticketBlockedName } from "../config";
 import chalk from "chalk";
 import { sendInfoWebhook } from "../lib/utils";
