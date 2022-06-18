@@ -24,7 +24,7 @@ export default new slashCommand({
       name: "channel",
       description: "the channel where the ticket system will be based in",
       required: true,
-      type: ApplicationCommandOptionType.Channel
+      type: ApplicationCommandOptionType.Channel,
     },
     {
       name: "config-name",
@@ -54,7 +54,9 @@ export default new slashCommand({
     const name = interaction.options.getString("config-name");
     const welcomeMessage = interaction.options.getString("welcome-message");
     const welcomeButton = interaction.options.getString("description");
-    let botPermissions = (await interaction.guild.fetchMe()).permissions.toArray();
+    let botPermissions = (
+      await interaction.guild.fetchMe()
+    ).permissions.toArray();
 
     if (
       !botPermissions.includes("CreatePrivateThreads") &&

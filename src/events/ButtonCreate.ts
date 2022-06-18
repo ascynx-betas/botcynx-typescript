@@ -1,6 +1,11 @@
 import { botcynx } from "..";
 import { Event } from "../structures/Event";
-import { GuildMember, Message, ActionRow, MessageActionRowComponent } from "discord.js";
+import {
+  GuildMember,
+  Message,
+  ActionRow,
+  MessageActionRowComponent,
+} from "discord.js";
 import { RequireTest } from "../personal-modules/commandHandler";
 import {
   botPermissionInhibitor,
@@ -14,7 +19,8 @@ export default new Event("interactionCreate", async (interaction) => {
 
     if (Id[0] == "disabled")
       return interaction.update({
-        components: interaction.message.components as ActionRow<MessageActionRowComponent>[],
+        components: interaction.message
+          .components as ActionRow<MessageActionRowComponent>[],
       });
 
     let command = botcynx.buttonCommands.get(category.split(":")[0]);
@@ -71,7 +77,8 @@ export default new Event("interactionCreate", async (interaction) => {
 
       if (user != author)
         return interaction.update({
-          components: interaction.message.components as ActionRow<MessageActionRowComponent>[],
+          components: interaction.message
+            .components as ActionRow<MessageActionRowComponent>[],
         });
     }
 
@@ -148,7 +155,8 @@ export default new Event("interactionCreate", async (interaction) => {
 
       if (user != author)
         return interaction.update({
-          components: interaction.message.components as ActionRow<MessageActionRowComponent>[],
+          components: interaction.message
+            .components as ActionRow<MessageActionRowComponent>[],
         });
     }
 

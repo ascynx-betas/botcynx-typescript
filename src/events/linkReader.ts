@@ -69,7 +69,9 @@ export default new Event("messageCreate", async (message) => {
 
     if (typeof sourceGuildMember !== "undefined") {
       username = sourceGuildMember.user.tag;
-      avatarURL = sourceGuildMember.user.displayAvatarURL({ forceStatic: false });
+      avatarURL = sourceGuildMember.user.displayAvatarURL({
+        forceStatic: false,
+      });
     } else if (typeof source !== "undefined") {
       username = (source as Message<boolean>).author.username;
       avatarURL = (source as Message<boolean>).author.displayAvatarURL({
@@ -95,13 +97,11 @@ export default new Event("messageCreate", async (message) => {
     webhook = webhook.filter((webhook) => webhook.owner.id === botcynx.user.id);
 
     if (typeof webhook === "undefined" || webhook.size == 0) {
-      webhook = await (message.channel as TextChannel).createWebhook(
-        {
-          name: `${botcynx.user.username} Link reader`,
-          avatar: `${botcynx.user.displayAvatarURL({ forceStatic: false })}`,
-          reason: "request for non existing webhook",
-        }
-      );
+      webhook = await (message.channel as TextChannel).createWebhook({
+        name: `${botcynx.user.username} Link reader`,
+        avatar: `${botcynx.user.displayAvatarURL({ forceStatic: false })}`,
+        reason: "request for non existing webhook",
+      });
       return message.react("💀"); //webhook didn't exist
     }
     let id: any;
@@ -153,6 +153,9 @@ const checkLink = (link: string) => {
 };
 
 const isSupportedMessage = (messageType: MessageType): boolean =>
-  [MessageType.Default, MessageType.ChatInputCommand, MessageType.ContextMenuCommand, MessageType.Reply].includes(
-    messageType
-  );
+  [
+    MessageType.Default,
+    MessageType.ChatInputCommand,
+    MessageType.ContextMenuCommand,
+    MessageType.Reply,
+  ].includes(messageType);

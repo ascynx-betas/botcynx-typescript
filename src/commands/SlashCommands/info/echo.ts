@@ -17,7 +17,7 @@ export default new slashCommand({
       name: "channel",
       description: "in what channel you want to send it",
       type: ApplicationCommandOptionType.Channel,
-      required: false
+      required: false,
     },
     {
       name: "target",
@@ -28,9 +28,9 @@ export default new slashCommand({
   ],
 
   run: async ({ client, interaction }) => {
-    const message = (interaction.options.get("message").value as string);
+    const message = interaction.options.getString("message");
     const user = interaction.options.getUser("target");
-    const channel = interaction.options.get("channel").channel;
+    const channel = interaction.options.getChannel("channel");
     if (user) {
       user
         .send({

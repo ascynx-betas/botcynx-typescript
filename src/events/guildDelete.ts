@@ -8,8 +8,8 @@ export default new Event("guildDelete", (guild) => {
     .setTitle("Left server")
     .addFields({
       name: "Guild infos",
-      value: `${guild.name} (${guild.id})\n ${guild.memberCount} members`
-})
+      value: `${guild.name} (${guild.id})\n${guild.memberCount} members`,
+    })
     .setFooter({ text: `Now in ${botcynx.guilds.cache.size} guilds` })
     .setTimestamp(Date.now())
     .setThumbnail(guild.iconURL({ forceStatic: false }))

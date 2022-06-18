@@ -1,4 +1,9 @@
-import { EmbedFieldData, EmbedBuilder, Colors, ApplicationCommandOptionType } from "discord.js";
+import {
+  EmbedFieldData,
+  EmbedBuilder,
+  Colors,
+  ApplicationCommandOptionType,
+} from "discord.js";
 import { coolPeopleUUID, coolTypeToEmojis } from "../../../lib/coolPeople";
 import { verifyModel } from "../../../models/verifyModel";
 import { getPlayerByUuid, getStatus } from "../../../personal-modules/hypixel";
@@ -21,7 +26,7 @@ export default new slashCommand({
   ],
 
   run: async ({ interaction, client }) => {
-    let username = (interaction.options.get("username").value as string);
+    let username = interaction.options.get("username").value as string;
     let uuid: any;
     if (!username) {
       //!GET INFORMATION FROM DATABASE
@@ -81,12 +86,9 @@ export default new slashCommand({
     if (!discord) discord = "couldn't fetch discord";
     let coolRank: string;
     let displayName: string;
-    if (
-      coolPeopleUUID[uuid] ||
-      player.rank == "YOUTUBER"
-    ) {
+    if (coolPeopleUUID[uuid] || player.rank == "YOUTUBER") {
       coolRank =
-      coolPeopleUUID[uuid] != undefined
+        coolPeopleUUID[uuid] != undefined
           ? coolPeopleUUID[uuid]
           : "youtube rank";
       coolRank = coolTypeToEmojis[coolRank];
@@ -138,7 +140,10 @@ export default new slashCommand({
       .setFooter({ text: `requested by ${interaction.user.tag}` })
       .setThumbnail(`https://mc-heads.net/avatar/${username}/100`);
 
-    interaction.followUp({ embeds: [embed], allowedMentions: {parse: ["everyone", "roles"]} });
+    interaction.followUp({
+      embeds: [embed],
+      allowedMentions: { parse: ["everyone", "roles"] },
+    });
 
     //create embed / send it
   },

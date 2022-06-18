@@ -1,4 +1,8 @@
-import { ApplicationCommandType, GuildTextBasedChannel, MessageContextMenuCommandInteraction } from "discord.js";
+import {
+  ApplicationCommandType,
+  GuildTextBasedChannel,
+  MessageContextMenuCommandInteraction,
+} from "discord.js";
 import { MessageContextCommand } from "../../../structures/Commands";
 
 export default new MessageContextCommand({
@@ -14,12 +18,18 @@ export default new MessageContextCommand({
         try {
           const channel = await interaction.user.createDM(true);
 
-          channel.send({ content: `${JSON.stringify(message.toJSON())}`, allowedMentions: {parse: []} });
+          channel.send({
+            content: `${JSON.stringify(message.toJSON())}`,
+            allowedMentions: { parse: [] },
+          });
         } catch (e) {
           console.log(e);
         }
       });
 
-      (interaction as MessageContextMenuCommandInteraction).followUp({ content: "Done!", ephemeral: true });
+    (interaction as MessageContextMenuCommandInteraction).followUp({
+      content: "Done!",
+      ephemeral: true,
+    });
   },
 });

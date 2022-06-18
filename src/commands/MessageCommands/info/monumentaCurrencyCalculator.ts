@@ -39,7 +39,7 @@ export default new Command({
       } ${Compressedvalue}${
         !isShifted ? (args[0] == "R1" ? "CXP" : "CCS") : "CXP"
       }`,
-      allowedMentions: {parse: [], repliedUser: true}
+      allowedMentions: { parse: [], repliedUser: true },
     });
 
     //example of arguments

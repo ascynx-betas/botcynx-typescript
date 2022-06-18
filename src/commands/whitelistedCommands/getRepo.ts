@@ -1,4 +1,9 @@
-import { ActionRowBuilder, ApplicationCommandOptionType, ButtonBuilder, SelectMenuBuilder } from "discord.js";
+import {
+  ActionRowBuilder,
+  ApplicationCommandOptionType,
+  ButtonBuilder,
+  SelectMenuBuilder,
+} from "discord.js";
 import { searchRepositories } from "../../lib/repoPull";
 import { queryEmbed } from "../../lib/utils";
 import { WhitelistedCommand } from "../../structures/Commands";
@@ -17,7 +22,7 @@ export default new WhitelistedCommand({
   ],
 
   run: async ({ interaction, client }) => {
-    const queryParameter = interaction.options.get("query").value;
+    const queryParameter = interaction.options.getString("query");
 
     const query = encodeURIComponent(queryParameter);
 
@@ -34,41 +39,44 @@ export default new WhitelistedCommand({
       queryParameter
     );
 
-    const actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(buttonFields);
-    const componentRow = new ActionRowBuilder<SelectMenuBuilder>().addComponents(
-      new SelectMenuBuilder()
-        .addOptions({
-          value: "star-down",
-          label: "sort by stars a > b",
-        })
-        .addOptions({
-          value: "star-up",
-          label: "sort by stars a < b",
-        })
-        .addOptions({
-          value: "last-updated",
-          label: "last updated",
-        })
-        .addOptions({
-          value: "oldest-updated",
-          label: "oldest since updated",
-        })
-        .addOptions({
-          value: "forks-down",
-          label: "sort by forks a > b",
-        })
-        .addOptions({
-          value: "forks-up",
-          label: "sort by forks a < b",
-        })
-        .setCustomId(`sort-repo:${query}`)
-        .setPlaceholder("sorting technique")
+    const actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
+      buttonFields
     );
+    const componentRow =
+      new ActionRowBuilder<SelectMenuBuilder>().addComponents(
+        new SelectMenuBuilder()
+          .addOptions({
+            value: "star-down",
+            label: "sort by stars a > b",
+          })
+          .addOptions({
+            value: "star-up",
+            label: "sort by stars a < b",
+          })
+          .addOptions({
+            value: "last-updated",
+            label: "last updated",
+          })
+          .addOptions({
+            value: "oldest-updated",
+            label: "oldest since updated",
+          })
+          .addOptions({
+            value: "forks-down",
+            label: "sort by forks a > b",
+          })
+          .addOptions({
+            value: "forks-up",
+            label: "sort by forks a < b",
+          })
+          .setCustomId(`sort-repo:${query}`)
+          .setPlaceholder("sorting technique")
+      );
 
     interaction.followUp({
       embeds: [embed],
       components: [actionRow, componentRow],
-      allowedMentions: {parse: []}
+      allowedMentions: { parse: [] },
     });
   },
   register: ({ client, guild }) => {

@@ -67,10 +67,10 @@ export default new Event("messageCommandCreate", (message) => {
     if (!button) return;
 
     if (button?.temporary) {
-        message.channel.messages.cache
-          .get(messageId)
-          ?.edit({ components: [] })
-          .catch(null);
+      message.channel.messages.cache
+        .get(messageId)
+        ?.edit({ components: [] })
+        .catch(null);
     }
   });
 });

@@ -98,7 +98,8 @@ const setButtonRows = async function (
 ): Promise<ActionRowBuilder<ButtonBuilder>[]> {
   let arrayOfComponents: ActionRowBuilder<ButtonBuilder>[] = [];
   if (arrayOfButtons.length > 1) {
-    let component: ActionRowBuilder<ButtonBuilder> = new ActionRowBuilder<ButtonBuilder>();
+    let component: ActionRowBuilder<ButtonBuilder> =
+      new ActionRowBuilder<ButtonBuilder>();
     for (let i = 0; i < 5; i++) {
       component.addComponents(arrayOfButtons[i]);
       if (typeof arrayOfButtons[i + 1] == "undefined") break;

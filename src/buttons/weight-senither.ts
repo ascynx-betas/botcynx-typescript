@@ -1,4 +1,10 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Colors, EmbedBuilder } from "discord.js";
+import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  Colors,
+  EmbedBuilder,
+} from "discord.js";
 import { getUsername } from "../personal-modules/mojang";
 import {
   extractWeight,
@@ -51,6 +57,10 @@ export default new ButtonResponse({
         .setStyle(ButtonStyle.Secondary)
     );
 
-    return interaction.update({ embeds: [embed], components: [buttonRow], allowedMentions: {parse: []} });
+    return interaction.update({
+      embeds: [embed],
+      components: [buttonRow],
+      allowedMentions: { parse: [] },
+    });
   },
 });

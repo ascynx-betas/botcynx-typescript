@@ -4,6 +4,7 @@ import {
   EmbedBuilder,
   ButtonStyle,
 } from "discord.js";
+import { emojis } from "../../../lib/emojis";
 import { Command } from "../../../structures/Commands";
 
 export default new Command({
@@ -35,7 +36,7 @@ export default new Command({
     )
       return message.reply({
         content: `you cannot disable ${target} as it is not an available command / event`,
-        allowedMentions: {parse: []}
+        allowedMentions: { parse: [] },
       }); //doesn't exist
 
     if (target == "disable" || target == "exec")
@@ -49,7 +50,9 @@ export default new Command({
       if (flags == "-g") flag = "global";
 
       const embed = new EmbedBuilder()
-        .setDescription(`are you sure you want to disable/enable ${target}`)
+        .setDescription(
+          `${emojis.danger}are you sure you want to disable/enable ${target}`
+        )
         .setFooter({ text: `requested by ${message.author.tag}` });
 
       const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
@@ -63,7 +66,11 @@ export default new Command({
           .setStyle(ButtonStyle.Danger)
       );
 
-      message.reply({ embeds: [embed], components: [buttonRow], allowedMentions: {parse: []} });
+      message.reply({
+        embeds: [embed],
+        components: [buttonRow],
+        allowedMentions: { parse: [] },
+      });
     } else {
       return message.reply({ content: `there is no such command flag` });
     }

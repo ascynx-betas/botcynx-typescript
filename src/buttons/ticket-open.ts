@@ -69,7 +69,9 @@ export default new ButtonResponse({
           ? ChannelType.GuildPrivateThread
           : ChannelType.GuildPublicThread,
         reason: `created new ${
-          guild.features.includes(GuildFeature.PrivateThreads) ? "private" : "public"
+          guild.features.includes(GuildFeature.PrivateThreads)
+            ? "private"
+            : "public"
         } ticket`,
       });
 

@@ -1,5 +1,11 @@
 import { slashCommand } from "../../../structures/Commands";
-import { ApplicationCommandOptionType, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle } from "discord.js";
+import {
+  ApplicationCommandOptionType,
+  ActionRowBuilder,
+  ButtonBuilder,
+  EmbedBuilder,
+  ButtonStyle,
+} from "discord.js";
 import { verifyModel } from "../../../models/verifyModel";
 import { getUuidbyUsername } from "../../../personal-modules/mojang";
 import { getPlayerByUuid } from "../../../personal-modules/hypixel";
@@ -33,8 +39,8 @@ export default new slashCommand({
   ],
 
   run: async ({ interaction }) => {
-    let username: string = (interaction.options.get("username").value as string);
-    let profile: string = (interaction.options.get("profile").value as string);
+    let username: string = interaction.options.getString("username");
+    let profile: string = interaction.options.getString("profile");
     let uuid: uuid | string;
     let data: any;
 
@@ -141,7 +147,11 @@ export default new slashCommand({
     );
 
     interaction
-      .followUp({ embeds: [embed], components: [buttonRow], allowedMentions: {parse: []} })
+      .followUp({
+        embeds: [embed],
+        components: [buttonRow],
+        allowedMentions: { parse: [] },
+      })
       .catch(() => null);
   },
 });

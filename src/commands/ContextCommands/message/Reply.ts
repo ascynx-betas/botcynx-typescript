@@ -1,5 +1,9 @@
 import { MessageContextCommand } from "../../../structures/Commands";
-import { ApplicationCommandType, GuildTextBasedChannel, MessageContextMenuCommandInteraction } from "discord.js";
+import {
+  ApplicationCommandType,
+  GuildTextBasedChannel,
+  MessageContextMenuCommandInteraction,
+} from "discord.js";
 
 export default new MessageContextCommand({
   name: "reply",
@@ -14,7 +18,7 @@ export default new MessageContextCommand({
           (interaction as MessageContextMenuCommandInteraction).targetId
         ).content || "no content"
       }`,
-      allowedMentions: {parse: []}
+      allowedMentions: { parse: [] },
     });
   },
 });

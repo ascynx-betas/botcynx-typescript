@@ -19,20 +19,34 @@ export default new modalResponse({
             ? " (debug)"
             : ""
         )
-        .addFields({name: "Name: ", value: `${modal.member} | ${modal.user.tag}`})
-        .addFields({name: "Giveaway Item(s): ", value: modal.fields.getTextInputValue("item"), inline: true});
+        .addFields({
+          name: "Name: ",
+          value: `${modal.member} | ${modal.user.tag}`,
+        })
+        .addFields({
+          name: "Giveaway Item(s): ",
+          value: modal.fields.getTextInputValue("item"),
+          inline: true,
+        });
 
       if (modal.fields.getTextInputValue("username") != null)
-        embed.addFields({name: "username: ", value: modal.fields.getTextInputValue("username"), inline: true});
+        embed.addFields({
+          name: "username: ",
+          value: modal.fields.getTextInputValue("username"),
+          inline: true,
+        });
 
       const embedApi: APIEmbed = embed.data;
 
       if (modal.customId.split(":")[1] == "758015919451537522") {
         const channel = client.channels.cache.get("890996343085088778");
 
-        await (channel as GuildTextBasedChannel).send({ embeds: [embed], allowedMentions: {parse: []} });
+        await (channel as GuildTextBasedChannel).send({
+          embeds: [embed],
+          allowedMentions: { parse: [] },
+        });
       } else if (modal.customId.split(":")[1] == "779489942899785748") {
-        await sendInfoWebhook({embed: embedApi});
+        await sendInfoWebhook({ embed: embedApi });
       }
       modal.reply({ content: "successfully submitted", ephemeral: true });
     }

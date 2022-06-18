@@ -38,13 +38,19 @@ export default new slashCommand({
       return interaction.followUp({
         content: `there are too many categories to create enough buttons`,
       });
-    let components: ActionRowBuilder<ButtonBuilder>[] = await setButtonRows(arrayOfButtons);
+    let components: ActionRowBuilder<ButtonBuilder>[] = await setButtonRows(
+      arrayOfButtons
+    );
 
     const embed = new EmbedBuilder()
       .setDescription(description)
       .setTitle("Information")
       .setFooter({ text: `requested by ${interaction.user.tag}` });
 
-    interaction.followUp({ embeds: [embed], components: components, allowedMentions: {parse: []} });
+    interaction.followUp({
+      embeds: [embed],
+      components: components,
+      allowedMentions: { parse: [] },
+    });
   },
 });

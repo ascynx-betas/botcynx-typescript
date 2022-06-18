@@ -27,7 +27,7 @@ export class jsonCache extends cache {
   async reload() {
     try {
       this.data = JSON.parse(await linkContentPull(this.reloader));
-    }catch (e) {
+    } catch (e) {
       console.log(e);
     }
   }
@@ -64,7 +64,7 @@ export class repoLink {
     }/contents/${newPath}`;
 
     return this;
-  };
+  }
 
   /**
    * Reloads the repoLink
@@ -75,5 +75,5 @@ export class repoLink {
     }/contents/${this.#path}`;
 
     return this;
-  };
+  }
 }

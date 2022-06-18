@@ -36,10 +36,10 @@ export default new slashCommand({
   ],
 
   run: async ({ interaction }) => {
-    const username = (interaction.options.get("username").value as string);
+    const username = interaction.options.getString("username");
     const userTag = interaction.user.tag;
     const userId = interaction.user.id;
-    const action = interaction.options.get("action").value;
+    const action = interaction.options.getString("action");
 
     let uuid: any = await getUuidbyUsername(username).catch(() => null);
     if (uuid == null)
@@ -74,14 +74,19 @@ export default new slashCommand({
         new verifyModel({
           userId: userId,
           uuid,
-        }).save().catch((e) => {
-          return interaction.followUp({content: `There was an error while trying to save the data, please try again`});
-        }).then(() => {
-          return interaction.followUp({
-            content: `added ${userTag} as ${username} in database`,
-            allowedMentions: {parse: []}
-          });
         })
+          .save()
+          .catch((e) => {
+            return interaction.followUp({
+              content: `There was an error while trying to save the data, please try again`,
+            });
+          })
+          .then(() => {
+            return interaction.followUp({
+              content: `added ${userTag} as ${username} in database`,
+              allowedMentions: { parse: [] },
+            });
+          });
       } else {
         return interaction.followUp({
           content: `please link hypixel to your discord account\nyou can link it by following the steps in this video: https://i.gyazo.com/3a2358687dae9b4333fd2fef932e0a17.mp4`,
@@ -100,23 +105,24 @@ export default new slashCommand({
         });
 
       if (userTag == discord) {
-        verifyModel.updateOne(
-          { minecraftuuid: `${uuid}` },
-          {
-            $set: { userId: `${userId}` },
-            function(err: any) {
-              if (err)
-                return interaction.followUp({
-                  content: `there was an error while trying to update, please try again later`,
-                });
-            },
-          }
-        ).then(() => {
-          return interaction.followUp({
-            content: `successfully updated linked account`,
+        verifyModel
+          .updateOne(
+            { minecraftuuid: `${uuid}` },
+            {
+              $set: { userId: `${userId}` },
+              function(err: any) {
+                if (err)
+                  return interaction.followUp({
+                    content: `there was an error while trying to update, please try again later`,
+                  });
+              },
+            }
+          )
+          .then(() => {
+            return interaction.followUp({
+              content: `successfully updated linked account`,
+            });
           });
-        });
-
       } else {
         return interaction.followUp({
           content: `please link hypixel to your discord account\nyou can link it by following the steps in this video: https://i.gyazo.com/3a2358687dae9b4333fd2fef932e0a17.mp4`,
