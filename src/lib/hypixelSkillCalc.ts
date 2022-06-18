@@ -73,36 +73,22 @@ export const skillLevelCalculator = (
     type == "based"
       ? exp - basedskillRequiredExp[level + 1]
       : exp - dungeonSkillRequiredExp[level + 1];
-    xp = xp > 0 ? xp : 0;
+  xp = xp > 0 ? xp : 0;
 
   return xp > 0 ? skillLevelCalculator(xp, level + 1, type) : level;
 };
 
 export const skillAverageCalculator = (profile: profileMember) => {
-  let skill_alchemy = skillLevelCalculator(
-    profile?.experience_skill_alchemy
-  );
-  let skill_mining = skillLevelCalculator(
-    profile?.experience_skill_mining
-  );
+  let skill_alchemy = skillLevelCalculator(profile?.experience_skill_alchemy);
+  let skill_mining = skillLevelCalculator(profile?.experience_skill_mining);
   let skill_enchanting = skillLevelCalculator(
     profile?.experience_skill_enchanting
   );
-  let skill_farming = skillLevelCalculator(
-    profile?.experience_skill_farming
-  );
-  let skill_fishing = skillLevelCalculator(
-    profile?.experience_skill_fishing
-  );
-  let skill_foraging = skillLevelCalculator(
-    profile?.experience_skill_foraging
-  );
-  let skill_taming = skillLevelCalculator(
-    profile?.experience_skill_taming
-  );
-  let skill_combat = skillLevelCalculator(
-    profile?.experience_skill_combat
-  );
+  let skill_farming = skillLevelCalculator(profile?.experience_skill_farming);
+  let skill_fishing = skillLevelCalculator(profile?.experience_skill_fishing);
+  let skill_foraging = skillLevelCalculator(profile?.experience_skill_foraging);
+  let skill_taming = skillLevelCalculator(profile?.experience_skill_taming);
+  let skill_combat = skillLevelCalculator(profile?.experience_skill_combat);
 
   let average =
     (skill_alchemy +
@@ -115,8 +101,8 @@ export const skillAverageCalculator = (profile: profileMember) => {
       skill_combat) /
     8;
 
-    return average;
-}
+  return average;
+};
 
 export const dungeonSkillRequiredExp: { [key: number]: number } = {
   1: 50,

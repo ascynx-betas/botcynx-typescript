@@ -93,7 +93,7 @@ export default new slashCommand({
           type: ApplicationCommandOptionType.String,
         },
       ],
-    }
+    },
   ],
 
   run: async ({ interaction, client }) => {

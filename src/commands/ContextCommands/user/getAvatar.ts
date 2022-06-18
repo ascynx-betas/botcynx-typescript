@@ -1,5 +1,9 @@
 import { UserContextCommand } from "../../../structures/Commands";
-import { ApplicationCommandType, EmbedBuilder, UserContextMenuCommandInteraction } from "discord.js";
+import {
+  ApplicationCommandType,
+  EmbedBuilder,
+  UserContextMenuCommandInteraction,
+} from "discord.js";
 
 export default new UserContextCommand({
   name: "getAvatar",
@@ -7,7 +11,9 @@ export default new UserContextCommand({
   category: "information",
 
   run: async ({ client, interaction }) => {
-    const user = await client.users.fetch((interaction as UserContextMenuCommandInteraction).targetId);
+    const user = await client.users.fetch(
+      (interaction as UserContextMenuCommandInteraction).targetId
+    );
 
     const embed = new EmbedBuilder()
       .setAuthor({

@@ -144,7 +144,10 @@ export default new Event("messageCreate", async (message) => {
         : (recommendations += `\n\t• ${recommended}`);
 
     const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
-      new ButtonBuilder().setStyle(ButtonStyle.Link).setURL(logUrl).setLabel("view log")
+      new ButtonBuilder()
+        .setStyle(ButtonStyle.Link)
+        .setURL(logUrl)
+        .setLabel("view log")
     );
     await message.channel.send({
       content: `**${message.author}** sent a log, ${

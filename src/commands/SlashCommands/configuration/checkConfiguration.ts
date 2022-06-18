@@ -1,5 +1,10 @@
 import { slashCommand } from "../../../structures/Commands";
-import { ActionRowBuilder, Colors, EmbedBuilder, SelectMenuBuilder } from "discord.js";
+import {
+  ActionRowBuilder,
+  Colors,
+  EmbedBuilder,
+  SelectMenuBuilder,
+} from "discord.js";
 import { emojis } from "../../../lib/emojis";
 
 export default new slashCommand({

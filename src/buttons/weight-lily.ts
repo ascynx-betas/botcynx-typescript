@@ -1,4 +1,10 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Colors, EmbedBuilder } from "discord.js";
+import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  Colors,
+  EmbedBuilder,
+} from "discord.js";
 import { ButtonResponse } from "../structures/Commands";
 import lilyweight from "lilyweight";
 import { EmbedFieldData } from "discord.js";
@@ -69,6 +75,10 @@ export default new ButtonResponse({
         .setLabel("Press to get senither weight")
         .setStyle(ButtonStyle.Secondary)
     );
-    interaction.update({ embeds: [embed], components: [buttonrow], allowedMentions: {parse: []} });
+    interaction.update({
+      embeds: [embed],
+      components: [buttonrow],
+      allowedMentions: { parse: [] },
+    });
   },
 });

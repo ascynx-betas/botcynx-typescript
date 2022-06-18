@@ -4,10 +4,10 @@ import { botcynx } from "..";
 import { Event } from "../structures/Event";
 
 export default new Event("interactionCreate", (interaction) => {
-  if (!(interaction instanceof ModalSubmitInteraction)) return; 
+  if (!(interaction instanceof ModalSubmitInteraction)) return;
   const modalC = botcynx.modals.get(interaction.customId.split(":")[0]);
   if (!modalC)
-  interaction
+    interaction
       .reply({
         content: `The modal ${interaction.customId} does not exist`,
         ephemeral: true,

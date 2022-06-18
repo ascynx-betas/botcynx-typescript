@@ -47,13 +47,13 @@ export default new slashCommand({
       name: "channel",
       description: "only used for setting logchannel",
       type: ApplicationCommandOptionType.Channel,
-      required: false
+      required: false,
     },
   ],
 
   run: async ({ interaction, client }) => {
     const role = interaction.options.get("role").role;
-    const type = (interaction.options.get("type").value as string);
+    const type = interaction.options.get("type").value as string;
     const channel = interaction.options.get("channel").channel;
     const guild = interaction.guild;
     const guildId = guild.id;

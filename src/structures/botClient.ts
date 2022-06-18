@@ -23,7 +23,7 @@ import { reload } from "../lib/coolPeople";
 import chalk from "chalk";
 import { registerCooldownTask } from "../lib/Tasks/cooldownReset";
 import { registerGistReload } from "../lib/Tasks/gistLoadFail";
-import { PermissionFlagsBits } from 'discord-api-types/v10';
+import { PermissionFlagsBits } from "discord-api-types/v10";
 
 const globPromise = promisify(glob);
 
@@ -108,15 +108,19 @@ export class botClient extends Client {
       this.registerModule({
         path: filePath,
         callback: function (data: UserContextType) {
-
-          if (data?.userPermissions) {
+          if (data?.userPermissions) {//setup permissions
             data.default_member_permissions = BigInt(0);
             data?.userPermissions.forEach((permission) => {
-              (data.default_member_permissions as bigint) |= BigInt(PermissionFlagsBits[permission]);
+              (data.default_member_permissions as bigint) |= BigInt(
+                PermissionFlagsBits[permission]
+              );
             });
-            data.default_member_permissions = String(data.default_member_permissions);
-          };
-
+            data.default_member_permissions = String(
+              data.default_member_permissions
+            );
+          }
+          //set dm permissions (currently non-compatible)
+          data.dmPermission = false;
 
           botClient.getInstance().userContextCommands.set(data.name, data);
           botClient.getInstance().ArrayOfSlashCommands.set(data.name, data);
@@ -133,14 +137,19 @@ export class botClient extends Client {
       this.registerModule({
         path: filePath,
         callback: function (data: MessageContextType) {
-
-          if (data?.userPermissions) {
+          if (data?.userPermissions) {//setup permissions
             data.default_member_permissions = BigInt(0);
             data?.userPermissions.forEach((permission) => {
-              (data.default_member_permissions as bigint) |= BigInt(PermissionFlagsBits[permission]);
+              (data.default_member_permissions as bigint) |= BigInt(
+                PermissionFlagsBits[permission]
+              );
             });
-            data.default_member_permissions = String(data.default_member_permissions);
-          };
+            data.default_member_permissions = String(
+              data.default_member_permissions
+            );
+          }
+          //set dm permissions (currently non-compatible)
+          data.dmPermission = false;
 
           botClient.getInstance().messageContextCommands.set(data.name, data);
           botClient.getInstance().ArrayOfSlashCommands.set(data.name, data);
@@ -158,14 +167,19 @@ export class botClient extends Client {
       this.registerModule({
         path: filePath,
         callback: function (data: CommandType) {
-
-          if (data?.userPermissions) {
+          if (data?.userPermissions) {//setup permissions
             data.default_member_permissions = BigInt(0);
             data?.userPermissions.forEach((permission) => {
-              (data.default_member_permissions as bigint) |= BigInt(PermissionFlagsBits[permission]);
+              (data.default_member_permissions as bigint) |= BigInt(
+                PermissionFlagsBits[permission]
+              );
             });
-            data.default_member_permissions = String(data.default_member_permissions);
-          };
+            data.default_member_permissions = String(
+              data.default_member_permissions
+            );
+          }
+          //set dm permissions (currently non-compatible)
+          data.dmPermission = false;
 
           botClient.getInstance().ArrayOfSlashCommands.set(data.name, data);
           botClient.getInstance().slashCommands.set(data.name, data);
@@ -183,14 +197,19 @@ export class botClient extends Client {
       this.registerModule({
         path: filePath,
         callback: function (data: WhitelistedCommands) {
-
-          if (data?.userPermissions) {
+          if (data?.userPermissions) {//setup permissions
             data.default_member_permissions = BigInt(0);
             data?.userPermissions.forEach((permission) => {
-              (data.default_member_permissions as bigint) |= BigInt(PermissionFlagsBits[permission]);
+              (data.default_member_permissions as bigint) |= BigInt(
+                PermissionFlagsBits[permission]
+              );
             });
-            data.default_member_permissions = String(data.default_member_permissions);
-          };
+            data.default_member_permissions = String(
+              data.default_member_permissions
+            );
+          }
+          //set dm permissions (currently non-compatible)
+          data.dmPermission = false;
 
           botClient.getInstance().whitelistedCommands.set(data.name, data);
         },
@@ -248,14 +267,13 @@ export class botClient extends Client {
         });
         for (let command of this.whitelistedCommands.map((c) => c)) {
           try {
-          command.register({
-            client: this,
-            guild: this.guilds.cache.get(process?.env?.guildId),
-          });
-        } catch (e) {}
+            command.register({
+              client: this,
+              guild: this.guilds.cache.get(process?.env?.guildId),
+            });
+          } catch (e) {}
         }
       }
-
 
       if (reload()) registerGistReload(); //attempt to reload coolPeople list / if it fails register the error Task
     });

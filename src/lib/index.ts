@@ -6,7 +6,7 @@ export * from "./haste";
 export * from "./gistPull";
 export * from "./emojis";
 export * from "./coolPeople";
-export * from './hypixelSkillCalc';
+export * from "./hypixelSkillCalc";
 
 export * from "./customEvents/commandCreate";
 export * from "./customEvents/messageCommandCreate";

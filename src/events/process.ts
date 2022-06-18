@@ -35,7 +35,7 @@ const sendError = async (error: Error) => {
       ],
       username: `${botcynx.user?.tag || "preloading Error"}`,
       avatarURL: botcynx.user?.displayAvatarURL({ forceStatic: false }),
-      allowedMentions: {users: [process.env.developerId]}
+      allowedMentions: { users: [process.env.developerId] },
     })
   );
 };

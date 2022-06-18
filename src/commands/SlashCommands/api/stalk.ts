@@ -14,12 +14,12 @@ export default new slashCommand({
       name: "username",
       description: "the username of the person you want to stalk",
       required: true,
-      type: ApplicationCommandOptionType.String
+      type: ApplicationCommandOptionType.String,
     },
   ],
 
   run: async ({ interaction }) => {
-    const username = (interaction.options.get("username").value as string);
+    const username = interaction.options.get("username").value as string;
 
     let uuid = await getUuidbyUsername(username).catch(() => null);
 
@@ -40,7 +40,10 @@ export default new slashCommand({
         .setDescription(description)
         .setTitle(`Error 404: not found`)
         .setThumbnail(`https://mc-heads.net/avatar/${username}/100`);
-      return interaction.followUp({ embeds: [embed], allowedMentions: {parse: []} });
+      return interaction.followUp({
+        embeds: [embed],
+        allowedMentions: { parse: [] },
+      });
     }
 
     let offline = !data.session.online;
@@ -76,7 +79,10 @@ export default new slashCommand({
           .setDescription(description)
           .setTitle(`Error 404: couldn't get status information`)
           .setThumbnail(`https://mc-heads.net/avatar/${username}/100`);
-        return interaction.followUp({ embeds: [embed], allowedMentions: {parse: []} });
+        return interaction.followUp({
+          embeds: [embed],
+          allowedMentions: { parse: [] },
+        });
       }
       let description: string;
       if (typeof map == "undefined") {
@@ -127,7 +133,7 @@ export default new slashCommand({
         .setFooter({ text: `requested by ${interaction.user.tag}` })
         .setColor(Colors.Aqua)
         .setThumbnail(`https://mc-heads.net/avatar/${username}/100`);
-      interaction.followUp({ embeds: [embed], allowedMentions: {parse: []} });
+      interaction.followUp({ embeds: [embed], allowedMentions: { parse: [] } });
     }
   },
 });

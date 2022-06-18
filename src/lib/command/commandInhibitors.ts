@@ -14,7 +14,8 @@ const userPermissionInhibitor = function (
   data: { member: GuildMember; guild: Guild }
 ) {
   const requiredPermissions: PermissionsString[] = command.userPermissions;
-  const userPermissions: PermissionsString[] = data.member.permissions.toArray();
+  const userPermissions: PermissionsString[] =
+    data.member.permissions.toArray();
 
   if (
     requiredPermissions.some(
@@ -37,7 +38,8 @@ const userPermissionInhibitor = function (
  */
 const botPermissionInhibitor = async function (command, guild: Guild) {
   const requiredPermissions: PermissionsString[] = command.botPermissions;
-  const botPermissions: PermissionsString[] = guild.members.me.permissions.toArray();
+  const botPermissions: PermissionsString[] =
+    guild.members.me.permissions.toArray();
   if (
     requiredPermissions.some(
       (permission) => !botPermissions.includes(permission)

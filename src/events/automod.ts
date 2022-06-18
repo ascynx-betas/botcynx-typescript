@@ -33,9 +33,7 @@ export default new Event("messageCreate", (message) => {
         if (ignore.some((i) => contains(word, i))) DataArray.splice(index, 1);
       });
       if (DataArray.length >= 1) {
-        if (
-          !message.member.permissions.toArray().includes("MentionEveryone")
-        ) {
+        if (!message.member.permissions.toArray().includes("MentionEveryone")) {
           console.log(DataArray.length);
           Data = { isScamLink: true, cause: "Common scam detection" };
         }
@@ -84,7 +82,7 @@ export default new Event("messageCreate", (message) => {
       botcynx.channels.cache.get("903281241594413176") as GuildTextBasedChannel
     ).send({
       embeds: [embed],
-      allowedMentions: {parse: []}
+      allowedMentions: { parse: [] },
     });
   }
 });

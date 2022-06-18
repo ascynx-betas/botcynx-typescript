@@ -70,10 +70,10 @@ export default new Event(
       if (!button) return;
 
       if (button?.temporary) {
-          interaction.channel.messages.cache
-            .get(messageId)
-            ?.edit({ components: [] })
-            .catch(null);
+        interaction.channel.messages.cache
+          .get(messageId)
+          ?.edit({ components: [] })
+          .catch(null);
       }
     });
   }

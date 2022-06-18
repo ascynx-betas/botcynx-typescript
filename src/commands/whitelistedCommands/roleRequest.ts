@@ -1,5 +1,16 @@
-import { ApplicationCommandOptionType, GuildTextBasedChannel, EmbedBuilder, Role } from "discord.js";
-import { skillAverageCalculator, skillLevelCalculator } from "../../lib/hypixelSkillCalc";
+import {
+  ApplicationCommandOptionType,
+  GuildTextBasedChannel,
+  EmbedBuilder,
+  Role,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+} from "discord.js";
+import {
+  skillAverageCalculator,
+  skillLevelCalculator,
+} from "../../lib/hypixelSkillCalc";
 import { verifyModel } from "../../models/verifyModel";
 import { getPlayerByUuid, getProfiles } from "../../personal-modules/hypixel";
 import { getUuidbyUsername } from "../../personal-modules/mojang";
@@ -63,13 +74,26 @@ export default new WhitelistedCommand({
         `${interaction.user.username}#${interaction.user.discriminator}`;
     }
 
-    if (!verified && interaction.user.id != process.env.developerId) //added developer check for testing purposes
+    if (!verified && interaction.user.id != process.env.developerId) {
+      //added developer check for testing purposes
+      const buttonrow = new ActionRowBuilder<ButtonBuilder>().addComponents(
+        new ButtonBuilder()
+          .setLabel("See how I can Link My Account")
+          .setStyle(ButtonStyle.Link)
+          .setURL("https://i.gyazo.com/3a2358687dae9b4333fd2fef932e0a17.mp4")
+      );
+
       return interaction.followUp({
         content: `that account isn't linked to ${interaction.user.username}#${interaction.user.discriminator}`,
+        components: [buttonrow],
       });
+    }
 
     let hypixelData = await getProfiles(uuid);
-    if (hypixelData.size == 0) return interaction.followUp({content: `no data found`});
+    if (hypixelData.size == 0)
+      return interaction.followUp({
+        content: `Error 404: no informations found. Try again later.`,
+      });
 
     let profile = args.getString("profile")
       ? args.getString("profile").toLowerCase()
@@ -82,13 +106,15 @@ export default new WhitelistedCommand({
           .cute_name.toLowerCase();
 
     let member = args.getString("profile")
-      ? hypixelData?.filter(
+      ? hypixelData
+          ?.filter(
             (profile) =>
               profile.cute_name.toLowerCase() ==
               args.getString("profile").toLowerCase()
           )
           .first().members[uuid]
-      : hypixelData?.sort(
+      : hypixelData
+          ?.sort(
             (acc, curr) =>
               curr.members[uuid].last_save - acc.members[uuid].last_save
           )
@@ -96,7 +122,7 @@ export default new WhitelistedCommand({
 
     if (!whitelistedRoles[role.id])
       return interaction.followUp({
-        content: `<@&${role.id}> isn't in the whitelisted role list`,
+        content: `${role} isn't in the whitelisted role list`,
         allowedMentions: { parse: [] },
       });
 
@@ -110,13 +136,13 @@ export default new WhitelistedCommand({
         .add(role as Role)
         .catch((e) =>
           interaction.followUp({
-            content: `Error: couldn't give role <@&${role.id}>`,
+            content: `Error: couldn't give role ${role}`,
             allowedMentions: { parse: [] },
           })
         )
         .then((e) => {
           interaction.followUp({
-            content: `succesfully gave role <@&${role.id}>`,
+            content: `succesfully gave role ${role.id}`,
             allowedMentions: { parse: [] },
           });
           //Logging
@@ -138,7 +164,7 @@ export default new WhitelistedCommand({
         });
     } else {
       return interaction.followUp({
-        content: `You don't follow the requirement for <@&${role.id}>, try using another profile than ${profile}`,
+        content: `You don't follow the requirement for ${role.id}, try using another profile than ${profile}`,
         allowedMentions: { parse: [] },
       });
     }
@@ -277,7 +303,9 @@ export const whitelistedRoles: {
 
     return (
       skillLevelCalculator(
-        options?.member?.dungeons?.dungeon_types?.catacombs?.experience, 0, "dungeoneering"
+        options?.member?.dungeons?.dungeon_types?.catacombs?.experience,
+        0,
+        "dungeoneering"
       ) >= 25
     );
   },
@@ -286,7 +314,9 @@ export const whitelistedRoles: {
 
     return (
       skillLevelCalculator(
-        options?.member?.dungeons?.dungeon_types?.catacombs?.experience, 0, "dungeoneering"
+        options?.member?.dungeons?.dungeon_types?.catacombs?.experience,
+        0,
+        "dungeoneering"
       ) >= 30
     );
   },
@@ -295,7 +325,9 @@ export const whitelistedRoles: {
 
     return (
       skillLevelCalculator(
-        options?.member?.dungeons?.dungeon_types?.catacombs?.experience, 0, "dungeoneering"
+        options?.member?.dungeons?.dungeon_types?.catacombs?.experience,
+        0,
+        "dungeoneering"
       ) >= 35
     );
   },
@@ -304,7 +336,9 @@ export const whitelistedRoles: {
 
     return (
       skillLevelCalculator(
-        options?.member?.dungeons?.dungeon_types?.catacombs?.experience, 0, "dungeoneering"
+        options?.member?.dungeons?.dungeon_types?.catacombs?.experience,
+        0,
+        "dungeoneering"
       ) >= 40
     );
   },
@@ -313,7 +347,9 @@ export const whitelistedRoles: {
 
     return (
       skillLevelCalculator(
-        options?.member?.dungeons?.dungeon_types?.catacombs?.experience, 0, "dungeoneering"
+        options?.member?.dungeons?.dungeon_types?.catacombs?.experience,
+        0,
+        "dungeoneering"
       ) >= 45
     );
   },
@@ -322,7 +358,9 @@ export const whitelistedRoles: {
 
     return (
       skillLevelCalculator(
-        options?.member?.dungeons?.dungeon_types?.catacombs?.experience, 0, "dungeoneering"
+        options?.member?.dungeons?.dungeon_types?.catacombs?.experience,
+        0,
+        "dungeoneering"
       ) >= 50
     );
   },
@@ -406,7 +444,11 @@ export const whitelistedRoles: {
   },
   "901834684588249139": async function (options) {
     //test for dungeon xp
-    const s = skillLevelCalculator(options?.member?.dungeons?.dungeon_types?.catacombs?.experience, 0, "dungeoneering");
+    const s = skillLevelCalculator(
+      options?.member?.dungeons?.dungeon_types?.catacombs?.experience,
+      0,
+      "dungeoneering"
+    );
     console.log(s);
     return s >= 35;
   },
@@ -415,10 +457,10 @@ export const whitelistedRoles: {
     //50 skill avg
     let average = skillAverageCalculator(options?.member);
 
-      console.log(average);
+    console.log(average);
 
     return average >= 35;
-  }
+  },
 };
 
 //roleId: function (options => {}): boolean

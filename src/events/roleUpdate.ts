@@ -25,35 +25,32 @@ export default new Event(
     //  newMember.communicationDisabledUntilTimestamp
     //) {
     //  //user is timeouted
-//
+    //
     //  let auditLogs = await newMember.guild.fetchAuditLogs({
     //    type: "MEMBER_UPDATE",
     //  });
     //  auditLogs.entries.filter((log) => log.target.id == oldMember.id);
     //  let log = auditLogs.entries.get(auditLogs.entries.firstKey());
     //  const reason = log.reason;
-//
+    //
     //}
 
     if (config[0].disabledCommands.includes("roleLinked")) return;
     let { trigger, removable, bypass, logchannel } = config[0];
 
     if (trigger.length == 0 || removable.length == 0) return;
-    const oldMemberRoles = oldMember.roles.cache.map((r) => r.id);
-    const newMemberRoles = newMember.roles.cache.map((r) => r.id);
+    const oldRoles = oldMember.roles.cache.map((r) => r.id);
+    const newRoles = newMember.roles.cache.map((r) => r.id);
 
-    let TriggerSimilaritiesOldmember = ct(oldMemberRoles, trigger);
-    let TriggerSimilaritiesNewmember = ct(newMemberRoles, trigger);
+    let TSimOld = ct(oldRoles, trigger);
+    let TSimNew = ct(newRoles, trigger);
 
     if (
-      TriggerSimilaritiesOldmember.breakingcount <
-        TriggerSimilaritiesNewmember.breakingcount ||
-      (typeof TriggerSimilaritiesOldmember.breakingcount === "undefined" &&
-        TriggerSimilaritiesNewmember.breakingcount > 0)
+      TSimOld.breakingcount < TSimNew.breakingcount ||
+      (typeof TSimOld.breakingcount === "undefined" &&
+        TSimNew.breakingcount > 0)
     ) {
-      let differences = newMemberRoles.filter(
-        (x) => !oldMemberRoles.includes(x)
-      );
+      let differences = newRoles.filter((x) => !oldRoles.includes(x));
       return (botcynx.channels.cache.get(logchannel) as TextBasedChannel).send({
         content: `${oldMember.user.tag} now has trigger role <@&${differences[0]}>`,
         allowedMentions: { parse: [] },
@@ -61,14 +58,11 @@ export default new Event(
     }
 
     if (
-      TriggerSimilaritiesOldmember.breakingcount >
-        TriggerSimilaritiesNewmember.breakingcount ||
-      (typeof TriggerSimilaritiesNewmember.breakingcount === "undefined" &&
-        TriggerSimilaritiesOldmember.breakingcount > 0)
+      TSimOld.breakingcount > TSimNew.breakingcount ||
+      (typeof TSimNew.breakingcount === "undefined" &&
+        TSimOld.breakingcount > 0)
     ) {
-      let differences = oldMemberRoles.filter(
-        (x) => !newMemberRoles.includes(x)
-      );
+      let differences = oldRoles.filter((x) => !newRoles.includes(x));
       (botcynx.channels.cache.get(logchannel) as TextBasedChannel).send({
         content: `${newMember.user.tag} lost trigger role <@&${differences[0]}>`,
         allowedMentions: { parse: [] },
@@ -76,16 +70,14 @@ export default new Event(
       // fuse trigger and bypass and then check for them
 
       bypass = bypass.concat(trigger);
-      let compareResult = compare(newMemberRoles, bypass);
+      let compareResult = compare(newRoles, bypass);
       if (compareResult !== false) return;
 
-      let newMemberRemovables = newMemberRoles.filter((x) =>
-        removable.includes(x)
-      );
+      let newMemberRemovables = newRoles.filter((x) => removable.includes(x));
       newMemberRemovables.forEach(function (removable) {
         newMember.roles.remove(removable);
         (botcynx.channels.cache.get(logchannel) as TextBasedChannel).send({
-          content: `removed <@&${removable}> from ${newMember.user.tag}`,
+          content: `removed <@&${removable}> from ${newMember}(${newMember.user.tag})`,
           allowedMentions: { parse: [] },
         });
       });
