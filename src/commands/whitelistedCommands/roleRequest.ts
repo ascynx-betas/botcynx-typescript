@@ -142,7 +142,7 @@ export default new WhitelistedCommand({
         )
         .then((e) => {
           interaction.followUp({
-            content: `succesfully gave role ${role.id}`,
+            content: `succesfully gave role ${role}`,
             allowedMentions: { parse: [] },
           });
           //Logging
@@ -164,7 +164,7 @@ export default new WhitelistedCommand({
         });
     } else {
       return interaction.followUp({
-        content: `You don't follow the requirement for ${role.id}, try using another profile than ${profile}`,
+        content: `You don't follow the requirement for ${role}, try using another profile than ${profile}`,
         allowedMentions: { parse: [] },
       });
     }
