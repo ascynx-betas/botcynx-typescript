@@ -39,8 +39,8 @@ export default new slashCommand({
   ],
 
   run: async ({ interaction }) => {
-    let username: string = interaction.options.get("username").value as string;
-    let profile: string = interaction.options.get("profile").value as string;
+    let username: string = interaction.options.getString("username");
+    let profile: string = interaction.options.getString("profile");
     let uuid: uuid | string;
     let data: any;
 

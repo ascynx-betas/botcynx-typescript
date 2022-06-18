@@ -22,7 +22,7 @@ export default new WhitelistedCommand({
   ],
 
   run: async ({ interaction, client }) => {
-    const queryParameter = interaction.options.get("query").value;
+    const queryParameter = interaction.options.getString("query");
 
     const query = encodeURIComponent(queryParameter);
 

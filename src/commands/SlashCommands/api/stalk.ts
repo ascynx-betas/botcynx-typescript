@@ -19,7 +19,7 @@ export default new slashCommand({
   ],
 
   run: async ({ interaction }) => {
-    const username = interaction.options.get("username").value as string;
+    const username = interaction.options.getString("username");
 
     let uuid = await getUuidbyUsername(username).catch(() => null);
 

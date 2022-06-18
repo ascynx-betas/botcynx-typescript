@@ -28,9 +28,9 @@ export default new slashCommand({
   ],
 
   run: async ({ client, interaction }) => {
-    const message = interaction.options.get("message").value as string;
+    const message = interaction.options.getString("message");
     const user = interaction.options.getUser("target");
-    const channel = interaction.options.get("channel").channel;
+    const channel = interaction.options.getChannel("channel");
     if (user) {
       user
         .send({
