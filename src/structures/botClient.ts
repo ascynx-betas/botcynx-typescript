@@ -24,6 +24,7 @@ import chalk from "chalk";
 import { registerCooldownTask } from "../lib/Tasks/cooldownReset";
 import { registerGistReload } from "../lib/Tasks/gistLoadFail";
 import { PermissionFlagsBits } from "discord-api-types/v10";
+import { configModel } from "../models/config";
 
 const globPromise = promisify(glob);
 
@@ -254,6 +255,15 @@ export class botClient extends Client {
     });
 
     this.on("ready", async () => {
+      //check globally disabled commands
+      let config = await configModel.findOne({guildId: "global"});
+      this.ArrayOfSlashCommands.forEach((c: any) => {
+        if (config.disabledCommands.includes(c.name)) {
+          c.default_member_permissions = String(PermissionFlagsBits.Administrator);
+          this.ArrayOfSlashCommands.set(c.name, c);
+        };
+      });
+
       //register tags
       let guildsWithTags: any = await tagModel.find();
       guildsWithTags = guildsWithTags.map((g) => g.guildId);

@@ -10,6 +10,7 @@ export default new MessageContextCommand({
   type: ApplicationCommandType.Message,
   category: "other",
   userPermissions: ["ManageMessages"],
+  invisible: true,
 
   run: async ({ interaction, client }) => {
     (interaction.channel as GuildTextBasedChannel).messages
@@ -19,7 +20,7 @@ export default new MessageContextCommand({
           const channel = await interaction.user.createDM(true);
 
           channel.send({
-            content: `${JSON.stringify(message.toJSON())}`,
+            content: `${JSON.stringify(message.toJSON(), null, 2)}`,
             allowedMentions: { parse: [] },
           });
         } catch (e) {
