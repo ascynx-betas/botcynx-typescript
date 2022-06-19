@@ -9,6 +9,7 @@ import {
 import { RequireTest } from "../lib/personal-modules/commandHandler";
 import {
   botPermissionInhibitor,
+  isDisabled,
   userPermissionInhibitor,
 } from "../lib/command/commandInhibitors";
 

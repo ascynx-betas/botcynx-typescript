@@ -20,8 +20,7 @@ export default new slashCommand({
   ],
 
   run: async ({ interaction }) => {
-    let isTestRun =
-      interaction.options.getBoolean("testrun") || false;
+    let isTestRun = interaction.options.getBoolean("testrun") || false;
 
     const guild = interaction.guild;
     const guildId = guild.id;

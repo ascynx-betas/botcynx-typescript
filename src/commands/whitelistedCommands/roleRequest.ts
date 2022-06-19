@@ -12,7 +12,10 @@ import {
   skillLevelCalculator,
 } from "../../lib/hypixelSkillCalc";
 import { verifyModel } from "../../models/verifyModel";
-import { getPlayerByUuid, getProfiles } from "../../lib/personal-modules/hypixel";
+import {
+  getPlayerByUuid,
+  getProfiles,
+} from "../../lib/personal-modules/hypixel";
 import { getUuidbyUsername } from "../../lib/personal-modules/mojang";
 import { getSpecifiedProfile } from "../../lib/personal-modules/senither";
 import { WhitelistedCommand } from "../../structures/Commands";

@@ -108,7 +108,8 @@ export class botClient extends Client {
       this.registerModule({
         path: filePath,
         callback: function (data: UserContextType) {
-          if (data?.userPermissions) {//setup permissions
+          if (data?.userPermissions) {
+            //setup permissions
             data.default_member_permissions = BigInt(0);
             data?.userPermissions.forEach((permission) => {
               (data.default_member_permissions as bigint) |= BigInt(
@@ -137,7 +138,8 @@ export class botClient extends Client {
       this.registerModule({
         path: filePath,
         callback: function (data: MessageContextType) {
-          if (data?.userPermissions) {//setup permissions
+          if (data?.userPermissions) {
+            //setup permissions
             data.default_member_permissions = BigInt(0);
             data?.userPermissions.forEach((permission) => {
               (data.default_member_permissions as bigint) |= BigInt(
@@ -167,7 +169,8 @@ export class botClient extends Client {
       this.registerModule({
         path: filePath,
         callback: function (data: CommandType) {
-          if (data?.userPermissions) {//setup permissions
+          if (data?.userPermissions) {
+            //setup permissions
             data.default_member_permissions = BigInt(0);
             data?.userPermissions.forEach((permission) => {
               (data.default_member_permissions as bigint) |= BigInt(
@@ -197,7 +200,8 @@ export class botClient extends Client {
       this.registerModule({
         path: filePath,
         callback: function (data: WhitelistedCommands) {
-          if (data?.userPermissions) {//setup permissions
+          if (data?.userPermissions) {
+            //setup permissions
             data.default_member_permissions = BigInt(0);
             data?.userPermissions.forEach((permission) => {
               (data.default_member_permissions as bigint) |= BigInt(

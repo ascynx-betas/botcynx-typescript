@@ -13,15 +13,20 @@ export function hasScamLink(message: string) {
   words = words.filter((w) => isLink(w));
 
   for (const scam in scamLinks.data) {
-
-
     const scamRegExp = new RegExp(`.*${scamLinks.data[scam]}.*`, "gi");
 
-    if (words.some((word) => [...new Set([...safe, ...ignore])].some((safe) => new RegExp(`.*${safe}.*`, "gi").test(word)))) return (hasScamLink = false);
+    if (
+      words.some((word) =>
+        [...new Set([...safe, ...ignore])].some((safe) =>
+          new RegExp(`.*${safe}.*`, "gi").test(word)
+        )
+      )
+    )
+      return (hasScamLink = false);
 
     if (words.some((word) => scamRegExp.test(word))) {
       return (hasScamLink = true);
-    };
+    }
   }
 
   return hasScamLink;

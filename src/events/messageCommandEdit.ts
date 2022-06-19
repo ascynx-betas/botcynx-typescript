@@ -39,7 +39,7 @@ export default new Event(
       if (RequireValue == false) return;
     }
     const globalConfig = await configModel.findOne({ guildId: "global" });
-    if (!isDisabled(command, newMessage.guild))
+    if (!await isDisabled(command, newMessage?.guild))
       return newMessage.reply("This command is disabled");
 
     //cooldown

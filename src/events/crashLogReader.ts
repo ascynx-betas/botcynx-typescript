@@ -11,6 +11,7 @@ import { haste, isHaste } from "../lib/haste";
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
 import { containsLink, isLink } from "../lib/personal-modules/testFor";
 import { indexOf } from "lodash";
+import { isDisabled } from "../lib/command/commandInhibitors";
 
 export default new Event("messageCreate", async (message) => {
   if (message.author.bot || !message.guild) return;
@@ -22,8 +23,7 @@ export default new Event("messageCreate", async (message) => {
     return;
 
   if (process.env.environment != "dev") {
-    const config = await configModel.find({ guildId: message.guild.id });
-    if (config[0].disabledCommands.includes("crashLogReader")) return;
+    if (!await isDisabled({name: "crashLogReader"}, message.guild)) return;
   }
 
   if (

@@ -18,3 +18,10 @@ export * from "./cache/crashFix";
 export * from "./cache/scamlink";
 
 export * from "./personal-modules/index";
+
+//export models
+
+export * from "../models/config";
+export * from "../models/tag";
+export * from "../models/ticket";
+export * from "../models/verifyModel";

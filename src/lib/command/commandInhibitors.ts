@@ -57,15 +57,13 @@ const botPermissionInhibitor = async function (command, guild: Guild) {
  * @param {Guild} guild - The guild affected
  * @returns {boolean}
  */
-const isDisabled = async function (command, guild: Guild) {
-  const guildConfig = await configModel.find({ guildId: guild.id });
-  const globalConfig = await configModel.find({ guildId: "global" });
+const isDisabled = async function (command, guild?: Guild) {
+  let guildConfig = null;
+  if (guild) guildConfig = await configModel.findOne({ guildId: guild.id });
+  const globalConfig = await configModel.findOne({ guildId: "global" });
 
-  if (
-    guildConfig[0].disabledCommands.includes(command.name) ||
-    globalConfig[0].disabledCommands.includes(command.name)
-  )
-    return false;
+  if (guild && guildConfig?.disabledCommands?.includes(command.name)) return false;
+  if (globalConfig?.disabledCommands?.includes(command.name)) return false;
 
   return true;
 };

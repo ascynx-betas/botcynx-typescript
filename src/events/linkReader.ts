@@ -11,6 +11,7 @@ import { configModel } from "../models/config";
 import { isId } from "../lib/personal-modules/discordPlugin";
 import { containsLink } from "../lib/personal-modules/testFor";
 import { Event } from "../structures/Event";
+import { isDisabled } from "../lib/command/commandInhibitors";
 
 export default new Event("messageCreate", async (message) => {
   if (message.author.bot || !message.guild) return;
@@ -21,8 +22,7 @@ export default new Event("messageCreate", async (message) => {
   )
     return;
 
-  const config = await configModel.find({ guildId: message.guild.id });
-  if (config[0].disabledCommands.includes("linkReader")) return;
+    if (!await isDisabled({name: "linkReader"}, message.guild)) return;
 
   let results = containsLink(message.content);
   if (results.length == 0) return;

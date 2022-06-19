@@ -3,6 +3,7 @@ import { botcynx } from "..";
 import { configModel } from "../models/config";
 import { compare, ct } from "../lib/personal-modules/testFor";
 import { Event } from "../structures/Event";
+import { isDisabled } from "../lib/command/commandInhibitors";
 
 export default new Event(
   "guildMemberUpdate",
@@ -16,9 +17,11 @@ export default new Event(
       return; //permission check
 
     const guild = oldMember.guild;
-    const config = await configModel.find({
+    const config = await configModel.findOne({
       guildId: guild.id,
     });
+
+    if (config.disabledCommands.includes("roleLinked") || (await configModel.findOne({guildId: "global"})).disabledCommands.includes("roleLinked")) return;
 
     //if (
     //  !oldMember.communicationDisabledUntilTimestamp &&
@@ -34,8 +37,6 @@ export default new Event(
     //  const reason = log.reason;
     //
     //}
-
-    if (config[0].disabledCommands.includes("roleLinked")) return;
     let { trigger, removable, bypass, logchannel } = config[0];
 
     if (trigger.length == 0 || removable.length == 0) return;

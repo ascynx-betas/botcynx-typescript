@@ -5,6 +5,7 @@ import { CommandInteractionOptionResolver, GuildMember } from "discord.js";
 import { RequireTest } from "../lib/personal-modules/commandHandler";
 import {
   botPermissionInhibitor,
+  isDisabled,
   isOnCooldown,
   userPermissionInhibitor,
 } from "../lib/command/commandInhibitors";
@@ -56,6 +57,9 @@ export default new Event("interactionCreate", async (interaction) => {
             "You do not have the required permissions to run that command !",
         });
     }
+
+    if (!await isDisabled(command, interaction?.guild))
+      return interaction.reply({content: `This command is disabled!`});
 
     if (command.require) {
       let RequireValue = await RequireTest(command.require);
