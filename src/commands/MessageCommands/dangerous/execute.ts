@@ -17,6 +17,8 @@ export default new Command({
     let mongooseConnectionString = process.env.mongooseConnectionString;
     const hypixelapikey = process.env.hypixelapikey;
     const logwb = process.env.webhookLogLink;
+    const gitToken = process.env.githubToken;
+
     const badPhrases = ["delete", "destroy"];
 
     const clean = async (text: string) => {
@@ -96,7 +98,7 @@ export default new Command({
       let cleaned = await clean(evaled);
       cleaned = cleaned.replace(
         new RegExp(
-          [token, mongooseConnectionString, hypixelapikey, logwb].join("|"),
+          [token, mongooseConnectionString, hypixelapikey, logwb, gitToken].join("|"),
           "gi"
         ),
         ""
