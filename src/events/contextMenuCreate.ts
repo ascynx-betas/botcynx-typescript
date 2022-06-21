@@ -2,9 +2,10 @@ import { botcynx } from "..";
 import { Event } from "../structures/Event";
 import { MessageContextType, UserContextType } from "../typings/Command";
 import { CommandInteractionOptionResolver, GuildMember } from "discord.js";
-import { RequireTest } from "../personal-modules/commandHandler";
+import { RequireTest } from "../lib/personal-modules/commandHandler";
 import {
   botPermissionInhibitor,
+  isDisabled,
   isOnCooldown,
   userPermissionInhibitor,
 } from "../lib/command/commandInhibitors";
@@ -31,7 +32,7 @@ export default new Event("interactionCreate", async (interaction) => {
     if (command.cooldown && interaction.user.id != process.env.developerId) {
       if (!isOnCooldown(command, interaction.user))
         return interaction.reply({
-          content: "you are currently in cooldown from using that command",
+          content: "you are currently in cooldown from using that command", ephemeral: command.invisible
         });
     }
 
@@ -40,7 +41,7 @@ export default new Event("interactionCreate", async (interaction) => {
       if (!botPermissionInhibitor(command, interaction.guild))
         return interaction.reply({
           content:
-            "I do not have the permissions required to run that command !",
+            "I do not have the permissions required to run that command !", ephemeral: command.invisible
         });
     }
     //if user requires permission
@@ -53,15 +54,18 @@ export default new Event("interactionCreate", async (interaction) => {
       )
         return interaction.reply({
           content:
-            "You do not have the required permissions to run that command !",
+            "You do not have the required permissions to run that command !", ephemeral: command.invisible
         });
     }
+
+    if (!await isDisabled(command, interaction?.guild))
+      return interaction.reply({content: `This command is disabled!`, ephemeral: command.invisible});
 
     if (command.require) {
       let RequireValue = await RequireTest(command.require);
       if (RequireValue == false)
         return interaction.reply({
-          content: `Client cannot run this command as it's missing required values`,
+          content: `Client cannot run this command as it's missing required values`, ephemeral: command.invisible
         });
     }
 

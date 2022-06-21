@@ -9,6 +9,7 @@ export default new UserContextCommand({
   name: "getAvatar",
   type: ApplicationCommandType.User,
   category: "information",
+  invisible: true,
 
   run: async ({ client, interaction }) => {
     const user = await client.users.fetch(

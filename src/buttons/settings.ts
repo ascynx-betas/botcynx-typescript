@@ -1,6 +1,6 @@
 import { EmbedFieldData, EmbedBuilder } from "discord.js";
 import { configModel } from "../models/config";
-import { snowflakeToMention } from "../personal-modules/discordPlugin";
+import { snowflakeToMention } from "../lib/personal-modules/discordPlugin";
 import { ButtonResponse } from "../structures/Commands";
 
 export default new ButtonResponse({

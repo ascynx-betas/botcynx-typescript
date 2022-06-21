@@ -1,7 +1,7 @@
 import { botcynx } from "..";
 import { configModel } from "../models/config";
 import { Event } from "../structures/Event";
-import { RequireTest } from "../personal-modules/commandHandler";
+import { RequireTest } from "../lib/personal-modules/commandHandler";
 import {
   botPermissionInhibitor,
   isDisabled,
@@ -30,8 +30,8 @@ export default new Event("messageCreate", async (message) => {
 
   if (!command) return;
 
-  if (message.guild && !isDisabled(command, message.guild))
-    return message.reply("This command is disabled");
+
+  if (!await isDisabled(command, message?.guild)) return message.reply({content: `This command is disabled`})
 
   //cooldown
   if (

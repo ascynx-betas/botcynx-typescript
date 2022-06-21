@@ -8,7 +8,8 @@ import {
 import { ButtonResponse } from "../structures/Commands";
 import lilyweight from "lilyweight";
 import { EmbedFieldData } from "discord.js";
-import { getUsername } from "../personal-modules/mojang";
+import { getUsername } from "../lib/personal-modules/mojang";
+import { coolPeopleUUID, coolTypeToEmojis } from "../lib/coolPeople";
 
 export default new ButtonResponse({
   category: "weight",
@@ -21,6 +22,11 @@ export default new ButtonResponse({
     const uuid = IdFields[2];
     const profile = IdFields[3];
     const username = await getUsername(uuid);
+
+    let displayName: string;
+    if (coolPeopleUUID[uuid as string]) {
+      displayName = coolTypeToEmojis[coolPeopleUUID[uuid as string]];
+    };
 
     const lily = new lilyweight(process.env.hypixelapikey);
 
@@ -62,7 +68,7 @@ export default new ButtonResponse({
       })
       .setThumbnail(`https://mc-heads.net/avatar/${uuid}/100`)
       .setTitle(
-        `profile: **\`\`${profile}\`\`** username: **\`\`${username}\`\`**\nCurrent Stage: **\`\`unknown\`\`**`
+        `profile: **\`\`${profile}\`\`** username: ${displayName ? displayName + " " : ""}**\`\`${username}\`\`**\ncurrent stage: **\`\`unknown\`\`**`
       )
       .setColor(Colors.Red)
       .setAuthor({

@@ -4,8 +4,8 @@ import {
   ButtonStyle,
   ButtonBuilder,
 } from "discord.js";
-import { botcynx } from "..";
-import { snowflake } from "../typings/Client";
+import { botcynx } from "../..";
+import { snowflake } from "../../typings/Client";
 
 const permOverride = async function (permissionlist: any) {
   if (typeof permissionlist !== "object")

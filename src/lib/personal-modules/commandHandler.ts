@@ -1,5 +1,5 @@
 //this is for command handler things that are global to every commandCreate events
-import { postStartData } from "../events/ready";
+import { postStartData } from "../../events/ready";
 
 const RequireTest = async function (require: Array<string>) {
   let arrOfTest: Boolean[] = [];

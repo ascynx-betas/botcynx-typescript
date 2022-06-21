@@ -6,9 +6,10 @@ import {
   ActionRow,
   MessageActionRowComponent,
 } from "discord.js";
-import { RequireTest } from "../personal-modules/commandHandler";
+import { RequireTest } from "../lib/personal-modules/commandHandler";
 import {
   botPermissionInhibitor,
+  isDisabled,
   userPermissionInhibitor,
 } from "../lib/command/commandInhibitors";
 

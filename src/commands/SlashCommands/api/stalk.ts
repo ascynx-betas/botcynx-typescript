@@ -1,6 +1,9 @@
 import { ApplicationCommandOptionType, Colors, EmbedBuilder } from "discord.js";
-import { getPlayerByUuid, getStatus } from "../../../personal-modules/hypixel";
-import { getUuidbyUsername } from "../../../personal-modules/mojang";
+import {
+  getPlayerByUuid,
+  getStatus,
+} from "../../../lib/personal-modules/hypixel";
+import { getUuidbyUsername } from "../../../lib/personal-modules/mojang";
 import { slashCommand } from "../../../structures/Commands";
 
 export default new slashCommand({

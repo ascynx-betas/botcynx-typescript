@@ -6,7 +6,7 @@ import {
   Profile,
   skyblockProfiles,
   status,
-} from "../typings/Hypixel";
+} from "../../typings/Hypixel";
 const key = process.env.hypixelapikey;
 /**
  *
@@ -17,9 +17,8 @@ const getPlayerByUuid = async function (uuid: string) {
 
   //GET request
   return fetch(Url).then(async (body) => {
-    let data: any = await body.text();
-    let result: player = JSON.parse(data);
-    return result;
+    let data: player = await body.json();
+    return data;
   });
 };
 /**
@@ -31,9 +30,8 @@ const getStatus = async function (uuid: string) {
 
   //GET request
   return fetch(Url).then(async (body) => {
-    let data: any = await body.text();
-    let result: status = JSON.parse(data);
-    return result;
+    let data: status = await body.json();
+    return data;
   });
 };
 const getKeyInfo = async function () {
@@ -41,9 +39,8 @@ const getKeyInfo = async function () {
 
   //GET request
   return fetch(Url).then(async (body) => {
-    let data: any = await body.text();
-    let result: key = JSON.parse(data);
-    return result;
+    let data: key = await body.json();
+    return data;
   });
 };
 /**
@@ -55,10 +52,12 @@ const getProfiles = async function (uuid: string) {
 
   //GET request
   return fetch(Url).then(async (body) => {
-    let data: any = await body.text();
-    let result: skyblockProfiles = JSON.parse(data);
+    let data: skyblockProfiles = await body.json();
+
+    if (!data.success) return null;
+
     let Profiles: Collection<string, Profile> = new Collection();
-    result?.profiles?.forEach((profile) =>
+    data?.profiles?.forEach((profile) =>
       Profiles.set(profile.cute_name, profile)
     );
     return Profiles;

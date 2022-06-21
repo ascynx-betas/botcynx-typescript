@@ -3,7 +3,7 @@ import { botcynx } from "..";
 import { contains, hasScamLink, ignore, safe } from "../lib/cache/scamlink";
 import { isAdminOrHigherThanBot } from "../lib/command/commandInhibitors";
 import { similarityDetection } from "../lib/utils";
-import { isLink } from "../personal-modules/testFor";
+import { isLink } from "../lib/personal-modules/testFor";
 import { Event } from "../structures/Event";
 
 export default new Event("messageCreate", (message) => {

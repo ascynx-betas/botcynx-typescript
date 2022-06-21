@@ -7,7 +7,7 @@ export default new Event(
   "interactioncommandCreate",
   (interaction: botcynxInteraction) => {
     if (interaction == null) return;
-    const filter = (i) => i.message.interaction.id === interaction.id;
+    const filter = (i) => i?.message?.interaction?.id === interaction.id;
     const collector = interaction.channel.createMessageComponentCollector({
       filter,
       time: 300000,

@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import { profile, uuid } from "../typings/ApiInterface";
+import { profile, uuid } from "../../typings/ApiInterface";
 
 const getUuidbyUsername = async function (username: string) {
   username = username.toUpperCase();

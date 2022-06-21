@@ -3,7 +3,7 @@ import fetch from "node-fetch";
 import {
   senitherProfiles,
   senitherProfileSingular,
-} from "../typings/ApiInterface";
+} from "../../typings/ApiInterface";
 const key = process.env.hypixelapikey;
 
 const getProfiles = async function (uuid: string) {

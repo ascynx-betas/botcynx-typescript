@@ -7,7 +7,7 @@ import {
   userPermissionInhibitor,
 } from "../lib/command/commandInhibitors";
 import { configModel } from "../models/config";
-import { RequireTest } from "../personal-modules/commandHandler";
+import { RequireTest } from "../lib/personal-modules/commandHandler";
 import { Event } from "../structures/Event";
 
 export default new Event(
@@ -39,7 +39,7 @@ export default new Event(
       if (RequireValue == false) return;
     }
     const globalConfig = await configModel.findOne({ guildId: "global" });
-    if (!isDisabled(command, newMessage.guild))
+    if (!await isDisabled(command, newMessage?.guild))
       return newMessage.reply("This command is disabled");
 
     //cooldown

@@ -4,7 +4,7 @@ import {
   EmbedBuilder,
   ButtonStyle,
 } from "discord.js";
-import { setButtonRows } from "../../../personal-modules/discordPlugin";
+import { setButtonRows } from "../../../lib/personal-modules/discordPlugin";
 import { slashCommand } from "../../../structures/Commands";
 
 export default new slashCommand({

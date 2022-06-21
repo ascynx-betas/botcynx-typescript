@@ -6,9 +6,9 @@ import {
   ThreadChannel,
   Colors,
 } from "discord.js";
-import { permOverride } from "../../../personal-modules/discordPlugin";
+import { permOverride } from "../../../lib/personal-modules/discordPlugin";
 import { slashCommand } from "../../../structures/Commands";
-import * as bitfieldCalc from "../../../personal-modules/bitfieldCalculator";
+import * as bitfieldCalc from "../../../lib/personal-modules/bitfieldCalculator";
 import { ticketModel } from "../../../models/ticket";
 
 export default new slashCommand({

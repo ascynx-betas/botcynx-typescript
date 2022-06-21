@@ -5,11 +5,12 @@ import {
   Colors,
   EmbedBuilder,
 } from "discord.js";
-import { getUsername } from "../personal-modules/mojang";
+import { coolPeopleUUID, coolTypeToEmojis } from "../lib/coolPeople";
+import { getUsername } from "../lib/personal-modules/mojang";
 import {
   extractWeight,
   getSpecifiedProfile,
-} from "../personal-modules/senither";
+} from "../lib/personal-modules/senither";
 import { ButtonResponse } from "../structures/Commands";
 
 export default new ButtonResponse({
@@ -29,6 +30,11 @@ export default new ButtonResponse({
     );
     if (profile == null) return;
 
+    let displayName: string;
+    if (coolPeopleUUID[uuid as string]) {
+      displayName = coolTypeToEmojis[coolPeopleUUID[uuid as string]];
+    };
+
     const data = await extractWeight(profile);
 
     const embedFields = data.embedFields;
@@ -47,7 +53,7 @@ export default new ButtonResponse({
       })
       .setThumbnail(`https://mc-heads.net/avatar/${uuid}/100`)
       .setTitle(
-        `profile: **\`\`${profileName}\`\`** username: **\`\`${username}\`\`**\ncurrent stage: **\`\`${gameStage}\`\`**`
+        `profile: **\`\`${profileName}\`\`** username: ${displayName ? displayName + " " : ""}**\`\`${username}\`\`**\ncurrent stage: **\`\`${gameStage}\`\`**`
       );
 
     const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
