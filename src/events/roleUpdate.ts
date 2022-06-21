@@ -37,7 +37,7 @@ export default new Event(
     //  const reason = log.reason;
     //
     //}
-    let { trigger, removable, bypass, logchannel } = config[0];
+    let { trigger, removable, bypass, logchannel } = config;
 
     if (trigger.length == 0 || removable.length == 0) return;
     const oldRoles = oldMember.roles.cache.map((r) => r.id);
