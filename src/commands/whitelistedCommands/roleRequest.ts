@@ -48,7 +48,7 @@ export default new WhitelistedCommand({
   run: async ({ client, interaction, args }) => {
     let username: string = args.getString("username");
     let role = args.getRole("role");
-    let uuid: string;
+    let uuid:  any|string;
     let verified: boolean;
 
     if (!username) {
@@ -66,7 +66,10 @@ export default new WhitelistedCommand({
       uuid = userInfo?.minecraftuuid;
       verified = true;
     } else {
-      uuid = (await getUuidbyUsername(username))?.id;
+      uuid = (await getUuidbyUsername(username));
+      console.log(uuid);
+      uuid = uuid?.id;
+
       if (typeof uuid != "string") {
         return interaction.followUp({
           content: `Account doesn't exist or couldn't fetch it's uuid`,

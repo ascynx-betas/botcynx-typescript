@@ -31,7 +31,9 @@ export interface player extends request {
     socialMedia: {
       links: {
         DISCORD?: string;
+        YOUTUBE?: string;
       };
+      prompt?: boolean
     };
   };
 }

@@ -2,8 +2,10 @@ import fetch from "node-fetch";
 import { profile, uuid } from "../../typings/ApiInterface";
 
 const getUuidbyUsername = async function (username: string) {
-  username = username.toUpperCase();
-  let Url = `https://api.mojang.com/users/profiles/minecraft/${username}`;
+  username = (username.toLowerCase()).trim();
+
+  let uriComponent = encodeURIComponent(username);
+  let Url = `https://api.mojang.com/users/profiles/minecraft/${uriComponent}`;
 
   //GET request
   return fetch(Url).then(async (body) => {
@@ -15,6 +17,8 @@ const getUuidbyUsername = async function (username: string) {
 };
 
 const getProfilebyUuid = async function (uuid: string) {
+  uuid = (uuid.toLowerCase()).trim();
+
   let Url = `https://sessionserver.mojang.com/session/minecraft/profile/${uuid}`;
 
   //GET request
@@ -34,7 +38,7 @@ const fetchJSON = async (url) => {
   return json;
 };
 
-const getUsername = async (uuid) =>
-  (await fetchJSON(`https://api.mojang.com/user/profile/${uuid}`)).name;
+const getUsername = async (uuid): Promise<String> =>
+  (await fetchJSON(`https://api.mojang.com/user/profile/${encodeURIComponent((uuid.toLowerCase()).trim())}`)).name;
 
 export { getProfilebyUuid, getUuidbyUsername, getUsername };
