@@ -75,7 +75,7 @@ export default new WhitelistedCommand({
       }
       verified =
         (await getPlayerByUuid(uuid))?.player?.socialMedia?.links?.DISCORD ===
-        `${interaction.user.username}#${interaction.user.discriminator}`;
+        `${interaction.user.username.toLowerCase()}#${interaction.user.discriminator}`;
     }
 
     if (!verified && interaction.user.id != process.env.developerId) {
@@ -191,7 +191,7 @@ export const whitelistedRoles: {
     return options?.member?.slayer_bosses?.zombie.xp >= 100000;
   },
   "904674474455097375": function (options) {
-    //Revant Mercenary
+    //Revenant Mercenary
     return options?.member?.slayer_bosses?.zombie.xp >= 300000;
   },
   "904674523796865054": function (options) {
@@ -443,9 +443,9 @@ export const whitelistedRoles: {
     return profile?.data?.weight + profile?.data?.weight_overflow >= 10000;
   },
   "903022232270413875": async function (options) {
-    //slayer test (revenant 8)
-    console?.log(options?.member?.slayer_bosses?.zombie?.xp >= 300000);
-    return options?.member?.slayer_bosses?.zombie?.xp >= 300000;
+    //slayer test (revenant 7)
+    console?.log(options?.member?.slayer_bosses?.zombie?.xp >= 100000);
+    return options?.member?.slayer_bosses?.zombie?.xp >= 100000;
   },
   "901834684588249139": async function (options) {
     //test for dungeon xp

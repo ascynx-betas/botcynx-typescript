@@ -70,7 +70,7 @@ export default new slashCommand({
           content: `that account is already linked, if you want to change the linked account, use the update action`,
         });
 
-      if (discord == userTag) {
+      if (discord == userTag.toLowerCase()) {
         new verifyModel({
           userId: userId,
           uuid,
@@ -104,7 +104,7 @@ export default new slashCommand({
           content: `your account is already linked to that minecraft account`,
         });
 
-      if (userTag == discord) {
+      if (userTag.toLowerCase() == discord) {
         verifyModel
           .updateOne(
             { minecraftuuid: `${uuid}` },
