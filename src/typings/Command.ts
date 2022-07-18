@@ -1,9 +1,9 @@
 import {
-  AnyInteraction,
   ButtonInteraction,
   ChatInputApplicationCommandData,
   ChatInputCommandInteraction,
   CommandInteractionOptionResolver,
+  ContextMenuCommandInteraction,
   Guild,
   GuildMember,
   Message,
@@ -48,7 +48,7 @@ interface updateRunOptions extends baseRunOptions {
 }
 
 interface runContextOptions extends baseRunOptions {
-  interaction: AnyInteraction;
+  interaction: ContextMenuCommandInteraction;
   args: CommandInteractionOptionResolver;
 } //ContextCommands
 

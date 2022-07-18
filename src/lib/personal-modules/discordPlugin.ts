@@ -1,5 +1,5 @@
 import {
-  EmbedFieldData,
+  APIEmbedField,
   ActionRowBuilder,
   ButtonStyle,
   ButtonBuilder,
@@ -148,9 +148,9 @@ const infoEmbedCreation = function (category: string) {
   const descriptions = botcynx.ArrayOfSlashCommands.concat(botcynx.commands)
     .filter((c: any) => c.category === category)
     .map((c: any) => c.description || "not defined");
-  let fields: EmbedFieldData[] = [];
+  let fields: APIEmbedField[] = [];
   for (let i: number = 0; i < commands.length; i++) {
-    let field: EmbedFieldData = { name: ``, value: `` };
+    let field: APIEmbedField = { name: ``, value: `` };
     field.name = commands[i];
     field.value = descriptions[i];
     fields.push(field);

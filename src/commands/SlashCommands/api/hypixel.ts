@@ -1,5 +1,5 @@
 import {
-  EmbedFieldData,
+  APIEmbedField,
   EmbedBuilder,
   Colors,
   ApplicationCommandOptionType,
@@ -104,7 +104,7 @@ export default new slashCommand({
     if (uuid === null || username === null)
       return interaction.followUp({ content: `player not found` });
 
-    let embedFields: EmbedFieldData[] = [];
+    let embedFields: APIEmbedField[] = [];
     embedFields.push({
       name: "username:",
       value: displayName || username || "Error",

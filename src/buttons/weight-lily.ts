@@ -7,7 +7,7 @@ import {
 } from "discord.js";
 import { ButtonResponse } from "../structures/Commands";
 import lilyweight from "lilyweight";
-import { EmbedFieldData } from "discord.js";
+import { APIEmbedField } from "discord.js";
 import { getUsername } from "../lib/personal-modules/mojang";
 import { coolPeopleUUID, coolTypeToEmojis } from "../lib/coolPeople";
 
@@ -44,7 +44,7 @@ export default new ButtonResponse({
 
     let tslayer = Math.round(weight.slayer * 10) / 10;
 
-    let embedFields: EmbedFieldData[] = [];
+    let embedFields: APIEmbedField[] = [];
     embedFields.push({
       name: "Total weight: ",
       value: String(Math.round(weight.total * 10) / 10),

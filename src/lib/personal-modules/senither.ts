@@ -1,4 +1,4 @@
-import { EmbedFieldData } from "discord.js";
+import { APIEmbedField } from "discord.js";
 import fetch from "node-fetch";
 import {
   senitherProfiles,
@@ -99,7 +99,7 @@ const extractWeight = async function (data: senitherProfileSingular) {
   } else {
     gamestage = null;
   }
-  let embedFields: EmbedFieldData[] = [];
+  let embedFields: APIEmbedField[] = [];
   embedFields.push({ name: "Total weight:", value: `${rf}` });
   embedFields.push({
     name: "<:catacombs:914860327978532874> Dungeon weight",

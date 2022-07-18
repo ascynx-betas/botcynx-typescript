@@ -1,4 +1,4 @@
-import { EmbedFieldData, EmbedBuilder } from "discord.js";
+import { APIEmbedField, EmbedBuilder } from "discord.js";
 import { configModel } from "../models/config";
 import { snowflakeToMention } from "../lib/personal-modules/discordPlugin";
 import { ButtonResponse } from "../structures/Commands";
@@ -11,7 +11,7 @@ export default new ButtonResponse({
     let fields = interaction.customId.split(":");
     const type = fields[1];
     let name: string;
-    let embedFields: EmbedFieldData[] = [];
+    let embedFields: APIEmbedField[] = [];
 
     const config = await configModel.find({
       guildId: interaction.guild.id,
@@ -58,6 +58,7 @@ export default new ButtonResponse({
         name: `**Trigger roles**:`,
         value: trigger.join(", "),
       });
+
       embedFields.push({ name: `**Bypass roles**:`, value: bypass.join(", ") });
       embedFields.push({ name: `**Logging channel**:`, value: logchannel });
       embedFields.push({ name: `**Active**:`, value: activity });
@@ -69,7 +70,7 @@ export default new ButtonResponse({
       let activity: string;
 
       activity =
-        (await interaction.guild.fetchMe()).permissions.has("ManageWebhooks") &&
+        (await interaction.guild.members.me).permissions.has("ManageWebhooks") &&
         !guildConfig.disabledCommands.includes("linkReader")
           ? "🟢"
           : "🔴";

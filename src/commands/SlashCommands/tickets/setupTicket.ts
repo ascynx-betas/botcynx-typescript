@@ -55,7 +55,7 @@ export default new slashCommand({
     const welcomeMessage = interaction.options.getString("welcome-message");
     const welcomeButton = interaction.options.getString("description");
     let botPermissions = (
-      await interaction.guild.fetchMe()
+      await interaction.guild.members.me
     ).permissions.toArray();
 
     if (

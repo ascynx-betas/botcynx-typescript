@@ -1,5 +1,5 @@
 import {
-  EmbedFieldData,
+  APIEmbedField,
   ButtonBuilder,
   EmbedBuilder,
   Embed,
@@ -83,7 +83,7 @@ export const queryEmbed = (data, tag, query) => {
     });
   });
 
-  let fields: EmbedFieldData[] = [];
+  let fields: APIEmbedField[] = [];
   let buttonFields: ButtonBuilder[] = [];
 
   items.forEach((item) => {
