@@ -30,8 +30,8 @@ export default new Event("messageCreate", async (message) => {
 
   if (!command) return;
 
-
-  if (!await isDisabled(command, message?.guild)) return message.reply({content: `This command is disabled`})
+  if (!(await isDisabled(command, message?.guild)))
+    return message.reply({ content: `This command is disabled` });
 
   //cooldown
   if (

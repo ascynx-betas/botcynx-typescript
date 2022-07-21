@@ -33,7 +33,7 @@ export default new ButtonResponse({
     let displayName: string;
     if (coolPeopleUUID[uuid as string]) {
       displayName = coolTypeToEmojis[coolPeopleUUID[uuid as string]];
-    };
+    }
 
     const data = await extractWeight(profile);
 
@@ -53,7 +53,9 @@ export default new ButtonResponse({
       })
       .setThumbnail(`https://mc-heads.net/avatar/${uuid}/100`)
       .setTitle(
-        `profile: **\`\`${profileName}\`\`** username: ${displayName ? displayName + " " : ""}**\`\`${username}\`\`**\ncurrent stage: **\`\`${gameStage}\`\`**`
+        `profile: **\`\`${profileName}\`\`** username: ${
+          displayName ? displayName + " " : ""
+        }**\`\`${username}\`\`**\ncurrent stage: **\`\`${gameStage}\`\`**`
       );
 
     const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(

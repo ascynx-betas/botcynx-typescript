@@ -256,12 +256,14 @@ export class botClient extends Client {
 
     this.on("ready", async () => {
       //check globally disabled commands
-      let config = await configModel.findOne({guildId: "global"});
+      let config = await configModel.findOne({ guildId: "global" });
       this.ArrayOfSlashCommands.forEach((c: any) => {
         if (config.disabledCommands.includes(c.name)) {
-          c.default_member_permissions = String(PermissionFlagsBits.Administrator);
+          c.default_member_permissions = String(
+            PermissionFlagsBits.Administrator
+          );
           this.ArrayOfSlashCommands.set(c.name, c);
-        };
+        }
       });
 
       //register tags

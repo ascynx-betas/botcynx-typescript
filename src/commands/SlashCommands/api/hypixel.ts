@@ -127,14 +127,14 @@ export default new slashCommand({
       inline: true,
     });
 
-    if (uuid) {
-      embedFields.splice(1, 0, { name: "UUID:", value: uuid || "Error" });
-    } else {
-      embedFields.splice(1, 0, {
-        name: "UUID:",
-        value: verified[0].minecraftuuid || "Error",
-      });
-    }
+    embedFields.splice(1, 0, {
+      name: "UUID:",
+      value: uuid
+        ? uuid
+        : verified[0].minecraftuuid
+        ? verified[0].minecraftuuid
+        : "Error",
+    });
 
     let embed = new EmbedBuilder()
       .setTitle(`Informations about ${displayName || username || "Error"}`)

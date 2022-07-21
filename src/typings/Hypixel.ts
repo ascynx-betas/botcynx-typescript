@@ -33,7 +33,7 @@ export interface player extends request {
         DISCORD?: string;
         YOUTUBE?: string;
       };
-      prompt?: boolean
+      prompt?: boolean;
     };
   };
 }

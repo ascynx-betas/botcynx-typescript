@@ -1,4 +1,8 @@
-import { EmbedBuilder, PermissionFlagsBits, PermissionsString } from "discord.js";
+import {
+  EmbedBuilder,
+  PermissionFlagsBits,
+  PermissionsString,
+} from "discord.js";
 import { configModel } from "../models/config";
 import { ButtonResponse } from "../structures/Commands";
 
@@ -100,18 +104,26 @@ export default new ButtonResponse({
           }
         );
 
-        const c = client.application.commands.cache.filter((c) => c.name == command).first();
+        const c = client.application.commands.cache
+          .filter((c) => c.name == command)
+          .first();
 
-        const Localcommand: any = client.ArrayOfSlashCommands.filter((c: any) => c.name == command);
-        
+        const Localcommand: any = client.ArrayOfSlashCommands.filter(
+          (c: any) => c.name == command
+        );
+
         let value = BigInt(0);
 
-        (Localcommand.userPermissions as Array<PermissionsString>)?.forEach((c) => {
-          value |= PermissionFlagsBits[c];
-        });
+        (Localcommand.userPermissions as Array<PermissionsString>)?.forEach(
+          (c) => {
+            value |= PermissionFlagsBits[c];
+          }
+        );
         Localcommand.default_member_permissions = String(value);
-        
-        client?.application?.commands?.edit(c?.id, Localcommand).catch((e) => {});
+
+        client?.application?.commands
+          ?.edit(c?.id, Localcommand)
+          .catch((e) => {});
 
         const embed = new EmbedBuilder()
           .setTitle("Success")
@@ -143,12 +155,20 @@ export default new ButtonResponse({
           }
         );
 
-        const c = client.application.commands.cache.filter((c) => c.name == command).first();
+        const c = client.application.commands.cache
+          .filter((c) => c.name == command)
+          .first();
 
-        const Localcommand: any = client.ArrayOfSlashCommands.filter((c: any) => c.name == command);
-        Localcommand.default_member_permissions = String(PermissionFlagsBits.Administrator);
-        
-        client?.application?.commands?.edit(c?.id, Localcommand).catch((e) => {})
+        const Localcommand: any = client.ArrayOfSlashCommands.filter(
+          (c: any) => c.name == command
+        );
+        Localcommand.default_member_permissions = String(
+          PermissionFlagsBits.Administrator
+        );
+
+        client?.application?.commands
+          ?.edit(c?.id, Localcommand)
+          .catch((e) => {});
 
         const embed = new EmbedBuilder()
           .setTitle("Success")

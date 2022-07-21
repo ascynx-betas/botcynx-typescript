@@ -53,10 +53,9 @@ export default new Event(
 
       //disabled commands
       if (process.env.environment == "debug") console.log("isDisabled check");
-      if (!await isDisabled(command, interaction.guild)) {
+      if (!(await isDisabled(command, interaction.guild))) {
         console.log("test");
         return interaction.reply("This command is disabled");
-      
       }
 
       if (process.env.environment == "debug") console.log("isDevOnly check");

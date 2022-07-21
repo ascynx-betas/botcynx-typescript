@@ -23,7 +23,7 @@ export default new Event("messageCreate", async (message) => {
     return;
 
   if (process.env.environment != "dev") {
-    if (!await isDisabled({name: "crashLogReader"}, message.guild)) return;
+    if (!(await isDisabled({ name: "crashLogReader" }, message.guild))) return;
   }
 
   if (

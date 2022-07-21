@@ -62,7 +62,8 @@ const isDisabled = async function (command, guild?: Guild) {
   if (guild) guildConfig = await configModel.findOne({ guildId: guild.id });
   const globalConfig = await configModel.findOne({ guildId: "global" });
 
-  if (guild && guildConfig?.disabledCommands?.includes(command.name)) return false;
+  if (guild && guildConfig?.disabledCommands?.includes(command.name))
+    return false;
   if (globalConfig?.disabledCommands?.includes(command.name)) return false;
 
   return true;

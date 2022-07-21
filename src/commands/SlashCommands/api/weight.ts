@@ -118,11 +118,10 @@ export default new slashCommand({
     const profilename = result.profilename;
     const gameStage = result.gamestage;
 
-
     let displayName: string;
     if (coolPeopleUUID[uuid as string]) {
       displayName = coolTypeToEmojis[coolPeopleUUID[uuid as string]];
-    };
+    }
 
     const embed = new EmbedBuilder()
       .setFields(embedFields)
@@ -133,7 +132,9 @@ export default new slashCommand({
       })
       .setThumbnail(`https://mc-heads.net/avatar/${uuid}/100`)
       .setTitle(
-        `profile: **\`\`${profilename}\`\`** username: ${displayName ? displayName + " " : ""}**\`\`${username}\`\`**\ncurrent stage: **\`\`${gameStage}\`\`**`
+        `profile: **\`\`${profilename}\`\`** username: ${
+          displayName ? displayName + " " : ""
+        }**\`\`${username}\`\`**\ncurrent stage: **\`\`${gameStage}\`\`**`
       );
 
     const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(

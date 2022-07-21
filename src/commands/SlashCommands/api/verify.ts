@@ -3,6 +3,7 @@ import { verifyModel } from "../../../models/verifyModel";
 import { getPlayerByUuid } from "../../../lib/personal-modules/hypixel";
 import { getUuidbyUsername } from "../../../lib/personal-modules/mojang";
 import { slashCommand } from "../../../structures/Commands";
+import { checkHypixelLinked } from "../../../lib/utils";
 
 export default new slashCommand({
   name: "verify",
@@ -43,11 +44,15 @@ export default new slashCommand({
 
     let uuid: any = await getUuidbyUsername(username).catch(() => null);
     if (uuid == null)
-      return interaction.followUp({ content: `username is not valid` });
+      return interaction.followUp({
+        content: `Either account does not exist or I couldn't retrieve it from the API`,
+      });
     uuid = uuid.id;
 
     if (!uuid)
-      return interaction.followUp({ content: `username is not valid` });
+      return interaction.followUp({
+        content: `Either account does not exist or I couldn't retrieve it from the API`,
+      });
 
     const uuidInfo = await verifyModel.find({
       minecraftuuid: uuid,
@@ -70,7 +75,7 @@ export default new slashCommand({
           content: `that account is already linked, if you want to change the linked account, use the update action`,
         });
 
-      if (discord == userTag.toLowerCase()) {
+      if (checkHypixelLinked(interaction.user, discord)) {
         new verifyModel({
           userId: userId,
           uuid,
@@ -104,7 +109,7 @@ export default new slashCommand({
           content: `your account is already linked to that minecraft account`,
         });
 
-      if (userTag.toLowerCase() == discord) {
+      if (checkHypixelLinked(interaction.user, discord)) {
         verifyModel
           .updateOne(
             { minecraftuuid: `${uuid}` },

@@ -98,7 +98,13 @@ export default new Command({
       let cleaned = await clean(evaled);
       cleaned = cleaned.replace(
         new RegExp(
-          [token, mongooseConnectionString, hypixelapikey, logwb, gitToken].join("|"),
+          [
+            token,
+            mongooseConnectionString,
+            hypixelapikey,
+            logwb,
+            gitToken,
+          ].join("|"),
           "gi"
         ),
         ""

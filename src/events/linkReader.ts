@@ -22,7 +22,7 @@ export default new Event("messageCreate", async (message) => {
   )
     return;
 
-    if (!await isDisabled({name: "linkReader"}, message.guild)) return;
+  if (!(await isDisabled({ name: "linkReader" }, message.guild))) return;
 
   let results = containsLink(message.content);
   if (results.length == 0) return;

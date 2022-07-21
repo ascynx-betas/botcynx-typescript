@@ -26,7 +26,7 @@ export default new ButtonResponse({
     let displayName: string;
     if (coolPeopleUUID[uuid as string]) {
       displayName = coolTypeToEmojis[coolPeopleUUID[uuid as string]];
-    };
+    }
 
     const lily = new lilyweight(process.env.hypixelapikey);
 
@@ -68,7 +68,9 @@ export default new ButtonResponse({
       })
       .setThumbnail(`https://mc-heads.net/avatar/${uuid}/100`)
       .setTitle(
-        `profile: **\`\`${profile}\`\`** username: ${displayName ? displayName + " " : ""}**\`\`${username}\`\`**\ncurrent stage: **\`\`unknown\`\`**`
+        `profile: **\`\`${profile}\`\`** username: ${
+          displayName ? displayName + " " : ""
+        }**\`\`${username}\`\`**\ncurrent stage: **\`\`unknown\`\`**`
       )
       .setColor(Colors.Red)
       .setAuthor({

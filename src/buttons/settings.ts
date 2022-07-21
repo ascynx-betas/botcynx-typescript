@@ -70,8 +70,9 @@ export default new ButtonResponse({
       let activity: string;
 
       activity =
-        (await interaction.guild.members.me).permissions.has("ManageWebhooks") &&
-        !guildConfig.disabledCommands.includes("linkReader")
+        (await interaction.guild.members.me).permissions.has(
+          "ManageWebhooks"
+        ) && !guildConfig.disabledCommands.includes("linkReader")
           ? "🟢"
           : "🔴";
 

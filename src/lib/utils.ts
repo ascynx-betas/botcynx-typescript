@@ -5,6 +5,7 @@ import {
   Embed,
   ButtonStyle,
   APIEmbed,
+  User,
 } from "discord.js";
 import { botcynx } from "..";
 import { webhook } from "./personal-modules/discordPlugin";
@@ -124,6 +125,20 @@ export const sendInfoWebhook = async (options: {
     avatarURL: botcynx.user.avatarURL({ forceStatic: false }),
   });
 };
+
+export function checkHypixelLinked(user: User, linked: String): boolean {
+  let tag = user.tag;
+
+  if (
+    linked == tag ||
+    linked == tag.toLowerCase() ||
+    linked == tag.toUpperCase()
+  ) {
+    return true;
+  }
+
+  return false;
+}
 
 export const permissionTranslate = {
   CREATE_INSTANT_INVITE: "CreateInstantInvite",

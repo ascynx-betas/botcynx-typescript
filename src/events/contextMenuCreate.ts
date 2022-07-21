@@ -32,7 +32,8 @@ export default new Event("interactionCreate", async (interaction) => {
     if (command.cooldown && interaction.user.id != process.env.developerId) {
       if (!isOnCooldown(command, interaction.user))
         return interaction.reply({
-          content: "you are currently in cooldown from using that command", ephemeral: command.invisible
+          content: "you are currently in cooldown from using that command",
+          ephemeral: command.invisible,
         });
     }
 
@@ -41,7 +42,8 @@ export default new Event("interactionCreate", async (interaction) => {
       if (!botPermissionInhibitor(command, interaction.guild))
         return interaction.reply({
           content:
-            "I do not have the permissions required to run that command !", ephemeral: command.invisible
+            "I do not have the permissions required to run that command !",
+          ephemeral: command.invisible,
         });
     }
     //if user requires permission
@@ -54,18 +56,23 @@ export default new Event("interactionCreate", async (interaction) => {
       )
         return interaction.reply({
           content:
-            "You do not have the required permissions to run that command !", ephemeral: command.invisible
+            "You do not have the required permissions to run that command !",
+          ephemeral: command.invisible,
         });
     }
 
-    if (!await isDisabled(command, interaction?.guild))
-      return interaction.reply({content: `This command is disabled!`, ephemeral: command.invisible});
+    if (!(await isDisabled(command, interaction?.guild)))
+      return interaction.reply({
+        content: `This command is disabled!`,
+        ephemeral: command.invisible,
+      });
 
     if (command.require) {
       let RequireValue = await RequireTest(command.require);
       if (RequireValue == false)
         return interaction.reply({
-          content: `Client cannot run this command as it's missing required values`, ephemeral: command.invisible
+          content: `Client cannot run this command as it's missing required values`,
+          ephemeral: command.invisible,
         });
     }
 
