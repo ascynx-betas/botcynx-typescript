@@ -29,7 +29,7 @@ export default new slashCommand({
   ],
 
   run: async ({ interaction, client }) => {
-    let username = interaction.options.get("username").value as string;
+    let username = interaction.options.getString("username");
     let uuid: any;
     if (!username) {
       //!GET INFORMATION FROM DATABASE
