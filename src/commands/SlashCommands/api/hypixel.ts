@@ -32,8 +32,6 @@ export default new slashCommand({
     let username = interaction.options.getString("username");
     let uuid: any;
     if (!username) {
-      //!GET INFORMATION FROM DATABASE
-
       const userId = interaction.user.id;
 
       const userInfo = await verifyModel.find({
@@ -62,7 +60,8 @@ export default new slashCommand({
 
       if (!username)
         return interaction.followUp({
-          content: `it seems as though the player doesn't exist on the hypixel api`,
+          content: `it seems as though ${username} doesn't exist on the hypixel api`,
+          allowedMentions: { parse: [] },
         });
     }
     let isVerified: boolean;

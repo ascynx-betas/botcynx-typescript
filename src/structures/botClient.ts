@@ -43,6 +43,8 @@ export class botClient extends Client {
   tasks: Collection<string, NodeJS.Timer> = new Collection();
   modals: Collection<string, modalResponseType> = new Collection();
 
+  private debug: boolean = process.env.environment == "debug";
+
   //static values
   private static instance: botClient;
   package: any = JSON.parse(fs.readFileSync("package.json", "utf-8"));
@@ -71,29 +73,33 @@ export class botClient extends Client {
     return (await import(filePath))?.default;
   }
 
+  public isDebug(): boolean {
+    return this.debug;
+  }
+
   async registerModule(options: registerModulesOptions) {
     const data = await this.importFile(options.path);
 
     if (options.type == "command") {
       if (!data.name) return;
-      if (process.env.environment == "debug")
-        console.log("registering " + data.name + "!");
+      if (this.isDebug()) console.log("registering " + data.name + " !");
     } else if (options.type == "modal") {
       if (!data.name || !data.run) return;
-      if (process.env.environment == "debug")
-        console.log("registering " + data.name + "!");
+      if (this.isDebug()) console.log("registering " + data.name + " !");
     } else if (options.type == "button") {
       if (!data.category) return;
-      if (process.env.environment == "debug")
+      if (this.isDebug()) {
         console.log(
-          "registering " + typeof data.customId != "undefined"
-            ? data.category + ":" + data.customId
-            : data.category + "!"
+          "registering " +
+            (data.customId
+              ? data.category + ":" + data.customId
+              : data.category) +
+            " !"
         );
+      }
     }
 
-    if (process.env.environment == "debug")
-      console.log("――――――――――――――――――――――――――");
+    if (this.isDebug()) console.log("――――――――――――――――――――――――――");
 
     options.callback(data);
   }
@@ -121,8 +127,8 @@ export class botClient extends Client {
               data.default_member_permissions
             );
           }
-          //set dm permissions (currently non-compatible)
-          data.dmPermission = false;
+          //set dm permissions (generally non-compatible)
+          if (!data.dmPermission) data.dmPermission = false;
 
           botClient.getInstance().userContextCommands.set(data.name, data);
           botClient.getInstance().ArrayOfSlashCommands.set(data.name, data);
@@ -151,8 +157,8 @@ export class botClient extends Client {
               data.default_member_permissions
             );
           }
-          //set dm permissions (currently non-compatible)
-          data.dmPermission = false;
+          //set dm permissions (generally non-compatible)
+          if (!data.dmPermission) data.dmPermission = false;
 
           botClient.getInstance().messageContextCommands.set(data.name, data);
           botClient.getInstance().ArrayOfSlashCommands.set(data.name, data);
@@ -182,8 +188,8 @@ export class botClient extends Client {
               data.default_member_permissions
             );
           }
-          //set dm permissions (currently non-compatible)
-          data.dmPermission = false;
+          //set dm permissions (generally non-compatible)
+          if (!data.dmPermission) data.dmPermission = false;
 
           botClient.getInstance().ArrayOfSlashCommands.set(data.name, data);
           botClient.getInstance().slashCommands.set(data.name, data);
@@ -213,8 +219,8 @@ export class botClient extends Client {
               data.default_member_permissions
             );
           }
-          //set dm permissions (currently non-compatible)
-          data.dmPermission = false;
+          //set dm permissions (generally non-compatible)
+          if (!data.dmPermission) data.dmPermission = false;
 
           botClient.getInstance().whitelistedCommands.set(data.name, data);
         },

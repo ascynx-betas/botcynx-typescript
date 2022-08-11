@@ -32,7 +32,7 @@ const isId = function (potentialId: string) {
   if (typeof potentialId !== "string") return Error(`is not a String`);
   let atest = potentialId.replace(test, "");
   potentialId = atest;
-  if (potentialId.length != 18) return false;
+  if (potentialId.length > 19) return false;
 
   if (!allowed.test(potentialId)) return false;
   return true;

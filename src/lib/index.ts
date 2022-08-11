@@ -1,6 +1,6 @@
 export * from "discord.js";
 export * from "./repoPull";
-export * from "./Testlang";
+export * from "./Lang";
 export * from "./utils";
 export * from "./haste";
 export * from "./gistPull";

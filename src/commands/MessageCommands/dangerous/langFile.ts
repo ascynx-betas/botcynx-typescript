@@ -1,4 +1,4 @@
-import { getUpdaterFile } from "../../../lib/Testlang";
+import { LocalizationHandler } from "../../../lib/Lang";
 import { Command } from "../../../structures/Commands";
 
 export default new Command({
@@ -8,7 +8,7 @@ export default new Command({
   category: "other",
 
   run: async ({ client, message, args }) => {
-    const bufferLang: Buffer = getUpdaterFile();
+    const bufferLang: Buffer = LocalizationHandler.getInstance().toBuffer();
     message.reply({
       files: [{ attachment: bufferLang, name: "botcynx_lang_file" }],
     });

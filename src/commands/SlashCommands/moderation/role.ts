@@ -23,7 +23,7 @@ export default new slashCommand({
   ],
 
   run: async ({ interaction, client }) => {
-    if (process.env.environment == "debug") console.log("received command");
+    if (client.isDebug()) console.log("received command");
 
     const role = interaction.options.getRole("role");
     const target = interaction.options.getUser("user");

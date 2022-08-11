@@ -1,10 +1,12 @@
 import {
+  APIEmbed,
   GuildTextBasedChannel,
   Message,
-  MessageType,
+  MessagePayload,
   TextChannel,
   ThreadChannel,
   Webhook,
+  WebhookMessageOptions,
 } from "discord.js";
 import { botcynx } from "..";
 import { configModel } from "../models/config";
@@ -46,50 +48,14 @@ export default new Event("messageCreate", async (message) => {
           return message.react("📵");
         } /**the message does not exist */
       );
-
-    console.log((source as Message<boolean>).type);
-    if (!isSupportedMessage((source as Message<boolean>).type)) return;
-
     const sourceConfig = await configModel.find({
       guildId: fields[2],
     });
     let blocked = sourceConfig[0].blocked;
     if (blocked.includes(fields[3])) return message.react("🚫"); //blocked channel
     if (!source || source == null || typeof source === "undefined") return;
-    let username;
-    let avatarURL;
-    let content =
-      (source as Message<boolean>).content != null
-        ? (source as Message<boolean>).content
-        : null;
-
-    let sourceGuildMember = (
-      source as Message<boolean>
-    ).guild.members.cache.get((source as Message<boolean>).author.id);
-
-    if (typeof sourceGuildMember !== "undefined") {
-      username = sourceGuildMember.user.tag;
-      avatarURL = sourceGuildMember.user.displayAvatarURL({
-        forceStatic: false,
-      });
-    } else if (typeof source !== "undefined") {
-      username = (source as Message<boolean>).author.username;
-      avatarURL = (source as Message<boolean>).author.displayAvatarURL({
-        forceStatic: false,
-      });
-    } else {
-      username = "Unknown User";
-      avatarURL = null;
-    }
     let webhook: any;
     let isThread = message.channel.isThread();
-    let attachmentsUrls: any = (source as Message<boolean>).attachments.map(
-      (a) => a.url
-    );
-    //deprecated using deprecated property, might fail at any time
-    let embeds = (source as Message<boolean>).embeds.filter(
-      (embed) => embed.data.type === "rich"
-    );
 
     if (isThread == true) {
       webhook = await (message.channel as ThreadChannel).parent.fetchWebhooks();
@@ -111,24 +77,14 @@ export default new Event("messageCreate", async (message) => {
       .fetchWebhook(webhook.id, webhook.token)
       .catch(() => null);
     if (webhookClient == null) return;
-    webhookClient
-      .send({
-        content: content != null ? content : null,
-        username: username != null ? username : "Unknown",
-        avatarURL: avatarURL != null ? avatarURL : null,
-        threadId: message.channel.isThread() ? message.channel.id : null,
-        embeds: embeds != null ? embeds : null,
-        components:
-          (source as Message<boolean>).components != null
-            ? (source as Message<boolean>).components
-            : null,
-        allowedMentions: { parse: [] },
-        files: attachmentsUrls != null ? attachmentsUrls : null,
-      })
-      .catch((err) => {
-        message.react("🔇");
-        if (process.env.environment == "dev") console.log(err);
-      }); //empty message
+    if (handler(source as Message<boolean>, message)) {
+      webhookClient
+        .send(handler(source as Message<boolean>, message))
+        .catch((err) => {
+          message.react("🔇");
+          if (process.env.environment == "dev" || process.env.environment == "debug") console.log(err);
+        }); //empty message
+    }
   });
 });
 
@@ -152,10 +108,132 @@ const checkLink = (link: string) => {
   return true;
 };
 
-const isSupportedMessage = (messageType: MessageType): boolean =>
-  [
-    MessageType.Default,
-    MessageType.ChatInputCommand,
-    MessageType.ContextMenuCommand,
-    MessageType.Reply,
-  ].includes(messageType);
+const handler = (source: Message<boolean>, message: Message<boolean>) => {
+  let Handlers = [commandInputHandler, baseInputHandler];
+
+  for (let handler of Handlers) {
+    let out = handler(source, message);
+    if (out != null) return out;
+  }
+  return null;
+};
+
+const commandInputHandler = (
+  source: Message<boolean>,
+  message: Message<boolean>
+): string | MessagePayload | Omit<WebhookMessageOptions, "flags"> => {
+  if (![20, 23].includes(source.type)) return null; //chat input and context command type;
+
+  let username;
+  let avatarURL;
+  let content =
+    `${source.interaction.user} used ${
+      source.interaction.type == 2 ? "/" : ""
+    }${source.interaction.commandName}` +
+      ((source as Message<boolean>).content !=
+    null
+      ? "\n" + (source as Message<boolean>).content
+      : "");
+
+  let sourceGuildMember = (source as Message<boolean>).guild.members.cache.get(
+    (source as Message<boolean>).author.id
+  );
+
+  if (typeof sourceGuildMember !== "undefined") {
+    username = sourceGuildMember.user.tag;
+    avatarURL = sourceGuildMember.user.displayAvatarURL({
+      forceStatic: false,
+    });
+  } else if (typeof source !== "undefined") {
+    username = source.author.username;
+    avatarURL = source.author.displayAvatarURL({
+      forceStatic: false,
+    });
+  } else {
+    username = "Unknown User";
+    avatarURL = null;
+  }
+
+  let attachmentsUrls: any = (source as Message<boolean>).attachments.map(
+    (a) => a.url
+  );
+  let embeds = (source as Message<boolean>).embeds.filter((embed) =>
+    isRichEmbed(embed)
+  );
+
+  return {
+    content: content != null ? content : null,
+    username: username != null ? username : "Unknown",
+    avatarURL: avatarURL != null ? avatarURL : null,
+    threadId: message.channel.isThread() ? message.channel.id : null,
+    embeds: embeds != null ? embeds : null,
+    components:
+      (source as Message<boolean>).components != null
+        ? (source as Message<boolean>).components
+        : null,
+    allowedMentions: { parse: [] },
+    files: attachmentsUrls != null ? attachmentsUrls : null,
+  };
+};
+
+const baseInputHandler = (
+  source: Message<boolean>,
+  message: Message<boolean>
+): string | MessagePayload | Omit<WebhookMessageOptions, "flags"> => {
+  if (![0, 19].includes(source.type)) return null; //default and reply types
+
+  let username;
+  let avatarURL;
+  let content =
+    (source as Message<boolean>).content != null
+      ? (source as Message<boolean>).content
+      : null;
+
+  let sourceGuildMember = (source as Message<boolean>).guild.members.cache.get(
+    (source as Message<boolean>).author.id
+  );
+
+  if (typeof sourceGuildMember !== "undefined") {
+    username = sourceGuildMember.user.tag;
+    avatarURL = sourceGuildMember.user.displayAvatarURL({
+      forceStatic: false,
+    });
+  } else if (typeof source !== "undefined") {
+    username = source.author.username;
+    avatarURL = source.author.displayAvatarURL({
+      forceStatic: false,
+    });
+  } else {
+    username = "Unknown User";
+    avatarURL = null;
+  }
+  let isThread = message.channel.isThread();
+  let attachmentsUrls: any = (source as Message<boolean>).attachments.map(
+    (a) => a.url
+  );
+  let embeds = (source as Message<boolean>).embeds.filter((embed) =>
+    isRichEmbed(embed)
+  );
+
+  return {
+    content: content != null ? content : null,
+    username: username != null ? username : "Unknown",
+    avatarURL: avatarURL != null ? avatarURL : null,
+    threadId: message.channel.isThread() ? message.channel.id : null,
+    embeds: embeds != null ? embeds : null,
+    components:
+      (source as Message<boolean>).components != null
+        ? (source as Message<boolean>).components
+        : null,
+    allowedMentions: { parse: [] },
+    files: attachmentsUrls != null ? attachmentsUrls : null,
+  };
+};
+
+function isRichEmbed(Embed: APIEmbed): boolean {
+  if (Embed.provider != null) return false;
+  if (Embed.video != null) return false;
+  if (Embed.type && Embed.type != "rich") return false;
+
+  return true;
+}

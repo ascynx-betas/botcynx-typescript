@@ -1,6 +1,6 @@
 {
   "name": "botcynx-typescript",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "a discord bot made in typescript based on an earlier project",
   "main": "dist/index.js",
   "scripts": {
@@ -23,7 +23,7 @@
     "discord.js"
   ],
   "engines": {
-    "node": "16.14.0"
+    "node": ">16.14.0"
   },
   "author": "Ascynx",
   "license": "MIT",
@@ -32,7 +32,7 @@
     "ansi-regex": "^6.0.1",
     "chalk": "^4.1.2",
     "crypto-js": "^4.1.1",
-    "discord.js": "^14.0.1",
+    "discord.js": "^14.2.0",
     "dotenv": "^16.0.1",
     "ffmpeg-static": "^5.0.2",
     "form-data": "^4.0.0",
@@ -40,7 +40,7 @@
     "lilyweight": "github:Ascynx/lilyweight",
     "lodash": "^4.17.21",
     "lodash.get": "^4.4.2",
-    "mongoose": "^6.4.4",
+    "mongoose": "^6.5.2",
     "ms": "^2.1.3",
     "opusscript": "^0.0.8",
     "pako": "^2.0.4",
@@ -51,7 +51,7 @@
     "@types/glob": "^7.2.0",
     "@types/lodash.get": "^4.4.7",
     "@types/ms": "^0.7.31",
-    "@types/node": "^18.0.6",
+    "@types/node": "^18.7.1",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0",
     "typescript": "^4.7.4"

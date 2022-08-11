@@ -27,6 +27,8 @@ export let postStartData: postStartDataType = {
 };
 
 export default new Event("ready", async () => {
+  //sends to log the time it took for the bot to connect to the discord api
+  console.timeEnd("Login time");
   //post start data setup
   console.log(chalk.blue("----Status----"));
   console.log(chalk.green("Bot is now online"));

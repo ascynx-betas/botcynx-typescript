@@ -114,6 +114,8 @@ const isOnCooldown = function (command, user: User) {
 };
 
 const isAdminOrHigherThanBot = function (user: GuildMember) {
+  if (!user) return false;
+
   if (user.id == process.env.developerId) return true;
   if (user.id == user.guild.ownerId) return true;
   if (user.permissions.has("Administrator")) return true;

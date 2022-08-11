@@ -1,0 +1,5 @@
+{
+  "confirmation": "Est-ce que vous voulez confirmer {action} ?",
+  "delete": "Voulez vous supprimer {item} ?",
+  "error": "Une erreur est survenue, {error}"
+}
