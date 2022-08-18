@@ -4,6 +4,8 @@ import {
   EmbedBuilder,
   ButtonStyle,
 } from "discord.js";
+import { localeHandler } from "../../..";
+import { isDisabled } from "../../../lib/command/commandInhibitors";
 import { emojis } from "../../../lib/emojis";
 import { Command } from "../../../structures/Commands";
 
@@ -51,7 +53,7 @@ export default new Command({
 
       const embed = new EmbedBuilder()
         .setDescription(
-          `${emojis.danger}are you sure you want to disable/enable ${target}`
+          `${emojis.danger} ${localeHandler.getLang((await isDisabled({name: target}, message.guild)) ? "command.disable" : "command.enable").insert("command", target).get("en-gb")}`
         )
         .setFooter({ text: `requested by ${message.author.tag}` });
 

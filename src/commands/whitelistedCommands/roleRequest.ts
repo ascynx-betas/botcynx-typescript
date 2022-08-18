@@ -117,12 +117,26 @@ export default new WhitelistedCommand({
     let member;
 
     if (args.getString("profile") != null) {
-        let profiles = hypixelData?.filter((profile) => profile.cute_name.toLowerCase() == args.getString("profile").toLowerCase());
-        if (profiles.size < 1) return interaction.followUp({content: `${args.getString("profile")} couldn't be found.`, allowedMentions: { parse: []}});
-        member = profiles.first().members[uuid];
+      let profiles = hypixelData?.filter(
+        (profile) =>
+          profile.cute_name.toLowerCase() ==
+          args.getString("profile").toLowerCase()
+      );
+      if (profiles.size < 1)
+        return interaction.followUp({
+          content: `${args.getString("profile")} couldn't be found.`,
+          allowedMentions: { parse: [] },
+        });
+      member = profiles.first().members[uuid];
     } else {
-      let profiles = hypixelData?.sort((acc, curr) => curr.members[uuid].last_save - acc.members[uuid].last_save);
-      if (profiles.size < 1) return interaction.followUp({content: `Couldn't find a profile for user`});
+      let profiles = hypixelData?.sort(
+        (acc, curr) =>
+          curr.members[uuid].last_save - acc.members[uuid].last_save
+      );
+      if (profiles.size < 1)
+        return interaction.followUp({
+          content: `Couldn't find a profile for user`,
+        });
       member = profiles.first().members[uuid];
     }
 

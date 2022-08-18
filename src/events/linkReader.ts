@@ -82,7 +82,11 @@ export default new Event("messageCreate", async (message) => {
         .send(handler(source as Message<boolean>, message))
         .catch((err) => {
           message.react("🔇");
-          if (process.env.environment == "dev" || process.env.environment == "debug") console.log(err);
+          if (
+            process.env.environment == "dev" ||
+            process.env.environment == "debug"
+          )
+            console.log(err);
         }); //empty message
     }
   });
@@ -130,8 +134,7 @@ const commandInputHandler = (
     `${source.interaction.user} used ${
       source.interaction.type == 2 ? "/" : ""
     }${source.interaction.commandName}` +
-      ((source as Message<boolean>).content !=
-    null
+    ((source as Message<boolean>).content != null
       ? "\n" + (source as Message<boolean>).content
       : "");
 

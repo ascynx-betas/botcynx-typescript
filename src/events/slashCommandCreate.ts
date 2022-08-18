@@ -103,11 +103,16 @@ export default new Event(
       botcynx.emit("interactioncommandCreate", interaction);
 
       if (botcynx.isDebug()) console.log("running command");
-      await command.run({
-        args: interaction.options as CommandInteractionOptionResolver,
-        client: botcynx,
-        interaction: interaction as botcynxInteraction,
-      });
+
+      try {
+        await command.run({
+          args: interaction.options as CommandInteractionOptionResolver,
+          client: botcynx,
+          interaction: interaction as botcynxInteraction,
+        });
+      } catch (error) {
+        console.error(error);
+      }
     } else return;
   }
 );

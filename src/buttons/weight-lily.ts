@@ -17,7 +17,7 @@ export default new ButtonResponse({
   temporary: true,
   require: ["hypixelApiKey"],
   onlyAuthor: true,
-  run: async ({ interaction, client }) => {
+  run: async ({ interaction, client }) => {//TODO it seems like it's giving way too much weight (3k+ when at 8k weight)
     let IdFields = interaction.customId.split(":");
     const uuid = IdFields[2];
     const profile = IdFields[3];
@@ -30,7 +30,7 @@ export default new ButtonResponse({
 
     const lily = new lilyweight(process.env.hypixelapikey);
 
-    const weight = await lily.getProfileWeight(uuid, profile);
+    const weight = await lily.getProfileWeight(uuid, profile, false);
     //calculations
     const skillb = Math.round(weight.skill.base * 10) / 10;
     const skillo = Math.round(weight.skill.overflow * 10) / 10;
@@ -40,7 +40,7 @@ export default new ButtonResponse({
     const catab = Math.round(weight.catacombs.completion.base * 10) / 10;
     const catam = Math.round(weight.catacombs.completion.master * 10) / 10;
     const catae = Math.round(weight.catacombs.experience * 10) / 10;
-    const tcata = catab + catam + catae;
+    const tcata = Math.round((catab + catam + catae) * 10) / 10;
 
     let tslayer = Math.round(weight.slayer * 10) / 10;
 

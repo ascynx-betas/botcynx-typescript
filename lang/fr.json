@@ -1,5 +1,7 @@
 {
   "confirmation": "Est-ce que vous voulez confirmer {action} ?",
   "delete": "Voulez vous supprimer {item} ?",
-  "error": "Une erreur est survenue, {error}"
+  "error": "Une erreur est survenue, {error}",
+  "command.disable": "Est ce que vous voulez désactiver {command} ?",
+  "command.enable": "Voulez vous activer {command} ?" 
 }

@@ -37,7 +37,7 @@
     "ffmpeg-static": "^5.0.2",
     "form-data": "^4.0.0",
     "glob": "^8.0.3",
-    "lilyweight": "github:Ascynx/lilyweight",
+    "lilyweight": "github:Antonio32A/lilyweight",
     "lodash": "^4.17.21",
     "lodash.get": "^4.4.2",
     "mongoose": "^6.5.2",

@@ -1,4 +1,3 @@
-import { configModel } from "../models/config";
 import { Event } from "../structures/Event";
 import fetch from "node-fetch";
 import {
@@ -8,7 +7,12 @@ import {
   getMods,
 } from "../lib/cache/crashFix";
 import { haste, isHaste } from "../lib/haste";
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
+import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  Message,
+} from "discord.js";
 import { containsLink, isLink } from "../lib/personal-modules/testFor";
 import { indexOf } from "lodash";
 import { isDisabled } from "../lib/command/commandInhibitors";
@@ -32,14 +36,14 @@ export default new Event("messageCreate", async (message) => {
   )
     return;
 
-  let logs = [];
+  let logs: string[] = [];
 
   for (const [, { url }] of message.attachments) {
     if (!url.endsWith(".txt") && !url.endsWith(".log")) return;
 
     const log = await (await fetch(url)).text();
     if (checkIfLog(log) == false) return;
-    logs.push(log);
+    if (!logs.includes(log)) logs.push(log);
   }
 
   if (message.content.length > 0) {
@@ -49,12 +53,13 @@ export default new Event("messageCreate", async (message) => {
       let linkSplit = word.split("/");
       let link = word;
       if (linkSplit[3] != "raw")
-        link = linkSplit[0] + "//" + linkSplit[2] + "/raw/" + linkSplit[3]; //Example https://hst.sh/raw/ID
+        link = linkSplit[0] + "//" + linkSplit[2] + "/raw/" + linkSplit[3];
+        //Example https://hst.sh/raw/ID
 
       const log = await (await fetch(link)).text();
       const isLog = checkIfLog(log);
       if (isLog == false) continue;
-      logs.push(log);
+      if (!logs.includes(log)) logs.push(log);
     }
   }
 
@@ -62,19 +67,38 @@ export default new Event("messageCreate", async (message) => {
     const mods = getMods(log);
     const ModLoader = getML(log);
 
-    const AdditionalData = `\n\tBotcynx additional Data:\n\nMod Loader: ${
-      ModLoader.loader
-    } ${ModLoader.loaderVersion} \nMods: ${mods.map((m) => m.ID).join(", ")}`;
+    let AdditionalData = "";
+    if (!log.match(/Botcynx additional Data/)) {
+      AdditionalData += `\n\n\tBotcynx additional Data:\n\n\tMod Loader: ${
+        ModLoader.loader
+      } ${ModLoader.loaderVersion} \n\tMods: ${mods.map((m) => m.ID).join(", ")}`;
+    }
 
     const IDs = mods.map((m) => m.ID);
     const Statuses = mods.map((m) => m.state);
 
     let logUrl = await haste(log + AdditionalData);
+
+    if (ModLoader.loader == "Feather") {
+      let buttonRow = new ActionRowBuilder<ButtonBuilder>;
+      buttonRow.addComponents(new ButtonBuilder().setStyle(ButtonStyle.Link).setURL(logUrl).setLabel("view log"));
+      let content = "";
+      content+=`**${message.author}** sent a log`;
+
+      if (message.content) content += (", " + message.content);
+      content+="\n\n\t• Feather client is unsupported, issues that occur while using it must be reported to its support team.";
+
+      await sendLogMessage(content, buttonRow, message);
+      return;
+    }
+
     if (
       logUrl != "unable to post" &&
       message.channel.messages.cache.get(message.id)
     )
-      message.delete().catch();
+      try {
+        message.delete();
+      } catch (ignore) {}
 
     const fixes = crashFixCache.data.fixes; //type 1 => solution //type 2 => recommendations //type 0 => informations;
     let extraLogOutput: string[] = [];
@@ -122,9 +146,9 @@ export default new Event("messageCreate", async (message) => {
     }
 
     Statuses.forEach((status, index) => {
-      if (status.search(/.*E.*/) != -1) {
+      if (status != null && status.search(/.*E.*/) != -1) {
         extraLogOutput.push(
-          `${IDs[index]} errored, please report this to the developer.`
+          `${IDs[index]} ran into an error, please contact its support team with this log.`
         );
       }
     });
@@ -149,8 +173,8 @@ export default new Event("messageCreate", async (message) => {
         .setURL(logUrl)
         .setLabel("view log")
     );
-    await message.channel.send({
-      content: `**${message.author}** sent a log, ${
+    await sendLogMessage(
+      `**${message.author}** sent a log, ${
         message.content ? message.content : ""
       }\n${clientData.join(",\n")}\n\n ${
         extraLogOutput.length === 0 ? "" : `Solutions: \n${solutions}`
@@ -159,8 +183,19 @@ export default new Event("messageCreate", async (message) => {
           ? ""
           : `\nRecommendations: \n${recommendations}`
       }`,
-      components: [buttonRow],
-      allowedMentions: { users: [message.author.id] },
-    });
+      buttonRow,
+      message
+    );
   }
 });
+
+const sendLogMessage = async (
+  content: string,
+  components: ActionRowBuilder<ButtonBuilder>,
+  message: Message<boolean>
+): Promise<Message<boolean>> =>
+  await message.channel.send({
+    content: content,
+    components: [components],
+    allowedMentions: { users: [message.author.id] },
+  });
