@@ -192,7 +192,7 @@ export default new WhitelistedCommand({
         )
         .then((e) => {
           interaction.followUp({
-            content: `succesfully gave role ${role}`,
+            content: `successfully gave role ${role}`,
             allowedMentions: { parse: [] },
           });
           //Logging

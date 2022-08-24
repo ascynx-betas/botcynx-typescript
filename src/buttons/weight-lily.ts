@@ -11,13 +11,15 @@ import { APIEmbedField } from "discord.js";
 import { getUsername } from "../lib/personal-modules/mojang";
 import { coolPeopleUUID, coolTypeToEmojis } from "../lib/coolPeople";
 
+let lily = new lilyweight(process.env.hypixelapikey);
+
 export default new ButtonResponse({
   category: "weight",
   customId: "lily",
   temporary: true,
   require: ["hypixelApiKey"],
   onlyAuthor: true,
-  run: async ({ interaction, client }) => {//TODO it seems like it's giving way too much weight (3k+ when at 8k weight)
+  run: async ({ interaction, client }) => {
     let IdFields = interaction.customId.split(":");
     const uuid = IdFields[2];
     const profile = IdFields[3];
@@ -28,9 +30,7 @@ export default new ButtonResponse({
       displayName = coolTypeToEmojis[coolPeopleUUID[uuid as string]];
     }
 
-    const lily = new lilyweight(process.env.hypixelapikey);
-
-    const weight = await lily.getProfileWeight(uuid, profile, false);
+    const weight = await lily.getProfileWeight(uuid, profile);
     //calculations
     const skillb = Math.round(weight.skill.base * 10) / 10;
     const skillo = Math.round(weight.skill.overflow * 10) / 10;
