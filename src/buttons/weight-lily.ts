@@ -30,7 +30,7 @@ export default new ButtonResponse({
       displayName = coolTypeToEmojis[coolPeopleUUID[uuid as string]];
     }
 
-    const weight = await lily.getProfileWeight(uuid, profile);
+    const weight = await lily.getProfileWeight(uuid, profile, false);
     //calculations
     const skillb = Math.round(weight.skill.base * 10) / 10;
     const skillo = Math.round(weight.skill.overflow * 10) / 10;
