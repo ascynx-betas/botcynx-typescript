@@ -23,7 +23,7 @@
     "discord.js"
   ],
   "engines": {
-    "node": ">16.14.0"
+    "node": "18.1.0"
   },
   "author": "Ascynx",
   "license": "MIT",
