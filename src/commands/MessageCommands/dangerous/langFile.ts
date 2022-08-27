@@ -6,6 +6,7 @@ export default new Command({
   aliases: ["guf"],
   devonly: true,
   category: "other",
+  usage: `${process.env.botPrefix}getUpdaterFile`,
 
   run: async ({ client, message, args, request }) => {
     const bufferLang: Buffer = LocalizationHandler.getInstance().toBuffer();

@@ -92,6 +92,16 @@ export default new Event(
     )
       return; //In message commands, devonly means that it can only be used by the set developer.
 
-    await command.run({ client: botcynx, message: newMessage, args, request: messageRequestHandler.getRequest(newMessage) });
+      const request = messageRequestHandler.getRequest(newMessage);
+
+      if (command.usage && ["--usage", "-u", "--help", "-h"].includes(args[0])) {
+        request.send({
+          content: command.usage,
+          allowedMentions: { parse: []}
+        });
+        return;
+      }
+
+    await command.run({ client: botcynx, message: newMessage, args, request: request });
   }
 );

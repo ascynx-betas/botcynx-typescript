@@ -88,10 +88,20 @@ export default new Event("messageCreate", async (message) => {
 
   if (message.guild) botcynx.emit("messageCommandCreate", message);
 
+  const request = messageRequestHandler.createRequest(message);
+
+  if (command.usage && ["--usage", "-u", "--help", "-h"].includes(args[0])) {
+    request.send({
+      content: `\`\`\`"[]" is required\n"<>" is non required\n "|" means can be or can be\n"()" means it shares the same space but isn't the same type\nflags will just tell you what flags can be used with that command\n\`\`\`` + command.usage,
+      allowedMentions: { parse: []}
+    });
+    return;
+  }
+
   await command.run({
     client: botcynx,
     message,
     args,
-    request: messageRequestHandler.createRequest(message),
+    request: request,
   });
 });

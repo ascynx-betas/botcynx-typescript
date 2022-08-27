@@ -7,6 +7,7 @@ export default new Command({
   aliases: ["dban", "hban", "hb", "cb"],
   botPermissions: ["ManageMessages", "KickMembers", "ManageThreads"],
   userPermissions: ["ManageMessages", "KickMembers"],
+  usage: `(flags: -do, --delete-only) ${process.env.botPrefix}hackban [user (id or mention)]`,
 
   run: async ({ message, client, args, request }) => {
     let user: string = args[0];

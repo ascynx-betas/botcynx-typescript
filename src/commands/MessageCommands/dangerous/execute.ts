@@ -9,6 +9,7 @@ export default new Command({
   aliases: ["eval", "ev", "e", "ex", "execute", "evaluate"],
   devonly: true,
   category: "other",
+  usage: `(flags: "async", "sudo", "silent", "attachment") ${process.env.botPrefix}exec <if flags doesn't have attachment, code in message content else in message attachment>`,
 
   run: async ({ client, message, args, request }) => {
     if (args.length == 0) return;

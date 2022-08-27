@@ -7,6 +7,7 @@ export default new Command({
   category: "other",
   devonly: true,
   require: ["mongooseConnectionString"],
+  usage: `${process.env.botPrefix}superuser [user (id or mention)] <flags: -l, -g>`,
 
   run: async ({ message, client, args, request }) => {
     const user = args[0];

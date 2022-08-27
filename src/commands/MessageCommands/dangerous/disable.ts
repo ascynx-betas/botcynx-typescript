@@ -13,6 +13,7 @@ export default new Command({
   name: "disable",
   aliases: ["d", "enable"],
   userPermissions: ["ManageGuild"],
+  usage: `${process.env.botPrefix}disable [target (command name)] <flag (-l | -g)>`,
 
   run: async ({ message, client, args, request }) => {
     const target = args[0];

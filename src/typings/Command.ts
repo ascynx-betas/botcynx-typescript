@@ -140,6 +140,7 @@ export type MessageCommandType = {
   aliases?: String[];
   category?: string;
   cooldown?: number; //seconds
+  usage?: string;
   run: MessageRunFunction;
 }; // MessageCommands
 
