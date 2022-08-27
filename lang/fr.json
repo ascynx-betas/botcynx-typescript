@@ -3,5 +3,5 @@
   "delete": "Voulez vous supprimer {item} ?",
   "error": "Une erreur est survenue, {error}",
   "command.disable": "Est ce que vous voulez désactiver {command} ?",
-  "command.enable": "Voulez vous activer {command} ?" 
+  "command.enable": "Voulez vous activer {command} ?"
 }

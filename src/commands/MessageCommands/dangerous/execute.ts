@@ -10,7 +10,7 @@ export default new Command({
   devonly: true,
   category: "other",
 
-  run: async ({ client, message, args }) => {
+  run: async ({ client, message, args, request }) => {
     if (args.length == 0) return;
 
     const token = process.env.botToken;
@@ -57,7 +57,7 @@ export default new Command({
       activeFlags.includes("attachment") &&
       message.attachments.map((c) => c).length == 0
     )
-      return await message.reply({
+      return await request.send({
         content: `when using the attachment flag, please include code in attachment`,
       });
 
@@ -67,7 +67,7 @@ export default new Command({
       ) &&
       !activeFlags.includes("sudo")
     ) {
-      return await message.reply({
+      return await request.send({
         content: `This eval has been blocked by smooth brain protection™️`,
       });
     }
@@ -75,7 +75,7 @@ export default new Command({
     if (activeFlags.includes("attachment")) {
       for (const [, { url }] of message.attachments) {
         if (!url.endsWith(".txt") && !url.endsWith(".js"))
-          return await message.reply({
+          return await request.send({
             content: `when using the attachment flag, please attach a .js / .txt file`,
           });
 
@@ -142,7 +142,7 @@ export default new Command({
             }`,
           })
           .setFooter({ text: hastebin || `beans` });
-        message.channel.send({ embeds: [embed] });
+          request.send({ embeds: [embed] });
       }
     } catch (err) {
       let hastebin;
@@ -167,7 +167,7 @@ export default new Command({
           }`,
         })
         .setFooter({ text: hastebin || `beans` });
-      message.channel.send({ embeds: [embed] });
+        request.send({ embeds: [embed] });
     }
   },
 });

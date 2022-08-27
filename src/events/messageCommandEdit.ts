@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import { botcynx } from "..";
+import { botcynx, messageRequestHandler } from "..";
 import {
   botPermissionInhibitor,
   isDisabled,
@@ -20,6 +20,12 @@ export default new Event(
       !newMessage.content.toLowerCase().startsWith(process.env.botPrefix)
     )
       return;
+
+      try {
+        messageRequestHandler.getRequest(newMessage);
+      } catch (e) {
+        return;//doesn't have a request linked.
+      }
 
     const [cmd, ...args] = newMessage.content
       .slice(process.env.botPrefix.length)
@@ -86,6 +92,6 @@ export default new Event(
     )
       return; //In message commands, devonly means that it can only be used by the set developer.
 
-    await command.run({ client: botcynx, message: newMessage, args });
+    await command.run({ client: botcynx, message: newMessage, args, request: messageRequestHandler.getRequest(newMessage) });
   }
 );

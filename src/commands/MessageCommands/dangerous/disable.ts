@@ -14,7 +14,7 @@ export default new Command({
   aliases: ["d", "enable"],
   userPermissions: ["ManageGuild"],
 
-  run: async ({ message, client, args }) => {
+  run: async ({ message, client, args, request }) => {
     const target = args[0];
     const flags = args[1];
     //available flags: -l local(current guild) -g global(every guild)
@@ -26,7 +26,7 @@ export default new Command({
     );
 
     if (!target || typeof target == "undefined")
-      return message.reply({
+      return request.send({
         content: `please specify the command you want to disable`,
       });
 
@@ -36,13 +36,13 @@ export default new Command({
       target != "roleLinked" &&
       target != "crashLogReader"
     )
-      return message.reply({
+      return request.send({
         content: `you cannot disable ${target} as it is not an available command / event`,
         allowedMentions: { parse: [] },
       }); //doesn't exist
 
     if (target == "disable" || target == "exec")
-      return message.reply({
+      return request.send({
         content: `sorry but you cannot disable that command.`,
       });
 
@@ -53,7 +53,14 @@ export default new Command({
 
       const embed = new EmbedBuilder()
         .setDescription(
-          `${emojis.danger} ${localeHandler.getLang((await isDisabled({name: target}, message.guild)) ? "command.disable" : "command.enable").insert("command", target).get("en-gb")}`
+          `${emojis.danger} ${localeHandler
+            .getLang(
+              (await isDisabled({ name: target }, message.guild))
+                ? "command.disable"
+                : "command.enable"
+            )
+            .insert("command", target)
+            .get("en-gb")}`
         )
         .setFooter({ text: `requested by ${message.author.tag}` });
 
@@ -68,13 +75,13 @@ export default new Command({
           .setStyle(ButtonStyle.Danger)
       );
 
-      message.reply({
+      request.send({
         embeds: [embed],
         components: [buttonRow],
         allowedMentions: { parse: [] },
       });
     } else {
-      return message.reply({ content: `there is no such command flag` });
+      return request.send({ content: `there is no such command flag` });
     }
   },
 });

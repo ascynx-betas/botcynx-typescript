@@ -1,5 +1,5 @@
 import { Message, Collection, MessageType } from "discord.js";
-import { botcynx } from "../..";
+import { botcynx, messageRequestHandler } from "../..";
 import { Event } from "../../structures/Event";
 import { ButtonResponseType } from "../../typings/Command";
 
@@ -16,6 +16,9 @@ export default new Event("messageCommandCreate", (message) => {
     let customIds = collected.map((i) => i.customId);
     messages = [...new Set(messages)];
     customIds = [...new Set(customIds)];
+
+    messageRequestHandler.getRequest(message).invalidate();
+    messageRequestHandler.deleteRequest(message.id);
 
     if (collected.size == 0) {
       let messages: Collection<string, Message> =

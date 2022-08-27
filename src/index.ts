@@ -1,10 +1,12 @@
 require("dotenv").config();
 import { LocalizationHandler } from "./lib/Lang";
+import { RequestHandler } from "./lib/messageCommandRequest";
 import { botClient } from "./structures/botClient";
 
 export const botcynx = botClient.getInstance();
 
 export const localeHandler = LocalizationHandler.getInstance().load();
+export const messageRequestHandler = RequestHandler.getInstance();
 
 function main(args: string[]) {
   if (args.length > 0 && ["prod", "dev", "debug"].includes(args[0]))

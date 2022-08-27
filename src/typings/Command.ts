@@ -13,6 +13,7 @@ import {
   SelectMenuInteraction,
   UserApplicationCommandData,
 } from "discord.js";
+import { request } from "../lib/messageCommandRequest";
 import { botClient } from "../structures/botClient";
 
 export interface botcynxInteraction extends ChatInputCommandInteraction {
@@ -55,6 +56,7 @@ interface runContextOptions extends baseRunOptions {
 interface runOptionsMessage extends baseRunOptions {
   message: Message;
   args: any;
+  request: request;
 } //MessageCommands
 
 interface modalRunOption extends baseRunOptions {

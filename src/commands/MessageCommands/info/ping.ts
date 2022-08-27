@@ -3,9 +3,9 @@ import { Command } from "../../../structures/Commands";
 export default new Command({
   name: "ping",
   category: "other",
-  run: async ({ message, client, args }) => {
+  run: async ({ message, client, args, request }) => {
     if (message.author.id == process.env.developerId && args.length > 0)
       throw Error("beans");
-    message.reply({ content: ` ${client.ws.ping}ms!` });
+      request.send({ content: ` ${client.ws.ping}ms!` });
   },
 });

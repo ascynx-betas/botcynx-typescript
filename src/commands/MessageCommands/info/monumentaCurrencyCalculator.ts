@@ -4,19 +4,19 @@ export default new Command({
   name: "trade",
   aliases: ["t"],
 
-  run: async ({ message, client, args }) => {
+  run: async ({ message, client, args, request }) => {
     let isShifted = false;
     if (!["R1", "R2"].includes(args[0])) isShifted = true;
 
     let pricePerItem = Number.parseFloat(!isShifted ? args[1] : args[0]); //could create an error
     if (typeof pricePerItem !== "number")
-      return message.reply({
+      return request.send({
         content: `please enter a number as the second parameter (you can use a decimal)`,
       });
 
     let itemNumber = Number.parseInt(!isShifted ? args[2] : args[1]);
     if (typeof itemNumber != "number")
-      return message.reply({
+      return request.send({
         content: `please enter a number as the third argument`,
       });
     if (["HCS", "HXP", "H"].includes(!isShifted ? args[3] : args[2]))
@@ -25,7 +25,7 @@ export default new Command({
 
     const Compressedvalue = (itemNumber * pricePerItem) % 64;
 
-    message.reply({
+    request.send({
       content: `region: ${
         !isShifted ? args[0] : "R1"
       },\nPrice per unit: ${pricePerItem}${

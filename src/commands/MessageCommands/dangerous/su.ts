@@ -8,12 +8,12 @@ export default new Command({
   devonly: true,
   require: ["mongooseConnectionString"],
 
-  run: async ({ message, client, args }) => {
+  run: async ({ message, client, args, request }) => {
     const user = args[0];
     const flags = args[1];
 
     if (!user)
-      return message.reply({
+      return request.send({
         content: `please specify who you want to add or remove`,
       });
     //available flags on this command
@@ -24,7 +24,7 @@ export default new Command({
     const Id = user.replace(Regexp, "");
 
     if (Id.length != 18)
-      return message.channel.send({
+      return request.send({
         content: `the Id doesn't follow standards for an id`,
       });
 
@@ -45,14 +45,14 @@ export default new Command({
           { $pull: { su: `${Id}` } },
           function (err) {
             if (err)
-              return message.reply({
+              return request.send({
                 content: `there was an error while removing super user from <@${Id}>`,
                 allowedMentions: { parse: ["everyone", "roles"] },
               });
           }
         );
 
-        message.reply({
+        request.send({
           content: `successfully removed <@${Id}> from ${message.guild.name}'s super user list`,
           allowedMentions: { parse: ["everyone", "roles"] },
         });
@@ -66,14 +66,14 @@ export default new Command({
           { $addToSet: { su: `${Id}` } },
           function (err) {
             if (err)
-              return message.reply({
+              return request.send({
                 content: `there was an error while giving super user to <@${Id}>`,
                 allowedMentions: { parse: ["everyone", "roles"] },
               });
           }
         );
 
-        message.reply({
+        request.send({
           content: `successfully added <@${Id}> to ${message.guild.name}'s super user list`,
           allowedMentions: { parse: ["everyone", "roles"] },
         });
@@ -92,14 +92,14 @@ export default new Command({
           { $pull: { su: `${Id}` } },
           function (err) {
             if (err)
-              return message.reply({
+              return request.send({
                 content: `there was an error while removing super user from <@${Id}>`,
                 allowedMentions: { parse: ["everyone", "roles"] },
               });
           }
         );
 
-        message.reply({
+        request.send({
           content: `successfully removed <@${Id}> from global super user list`,
           allowedMentions: { parse: ["everyone", "roles"] },
         });
@@ -113,20 +113,20 @@ export default new Command({
           { $addToSet: { su: `${Id}` } },
           function (err) {
             if (err)
-              return message.reply({
+              return request.send({
                 content: `there was an error while giving super user to <@${Id}>`,
                 allowedMentions: { parse: ["everyone", "roles"] },
               });
           }
         );
 
-        message.reply({
+        request.send({
           content: `successfully added <@${Id}> to global super user list`,
           allowedMentions: { parse: ["everyone", "roles"] },
         });
       }
     } else {
-      return message.reply({ content: `I cannot process that flag` });
+      return request.send({ content: `I cannot process that flag` });
     }
   },
 });

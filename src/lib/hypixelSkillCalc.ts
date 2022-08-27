@@ -89,6 +89,7 @@ export const skillAverageCalculator = (profile: profileMember) => {
   let skill_foraging = skillLevelCalculator(profile?.experience_skill_foraging);
   let skill_taming = skillLevelCalculator(profile?.experience_skill_taming);
   let skill_combat = skillLevelCalculator(profile?.experience_skill_combat);
+  let skill_carp = skillLevelCalculator(profile?.experience_skill_carpentry);
 
   let average =
     (skill_alchemy +
@@ -98,8 +99,9 @@ export const skillAverageCalculator = (profile: profileMember) => {
       skill_fishing +
       skill_foraging +
       skill_taming +
-      skill_combat) /
-    8;
+      skill_combat +
+      skill_carp) /
+    9;
 
   return average;
 };

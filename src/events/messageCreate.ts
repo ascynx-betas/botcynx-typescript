@@ -1,4 +1,4 @@
-import { botcynx } from "..";
+import { botcynx, messageRequestHandler } from "..";
 import { configModel } from "../models/config";
 import { Event } from "../structures/Event";
 import { RequireTest } from "../lib/personal-modules/commandHandler";
@@ -88,5 +88,10 @@ export default new Event("messageCreate", async (message) => {
 
   if (message.guild) botcynx.emit("messageCommandCreate", message);
 
-  await command.run({ client: botcynx, message, args });
+  await command.run({
+    client: botcynx,
+    message,
+    args,
+    request: messageRequestHandler.createRequest(message),
+  });
 });

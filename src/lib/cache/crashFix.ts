@@ -151,7 +151,7 @@ const regexes = {
       regexes: [
         /Launched Version: (?<mcver>\d\.\d{1,2}(?:\.\d{1,2})?)-OptiFine_HD_U_(?<loaderver>[A-Z]\d)/gim,
       ],
-    }
+    },
   ],
 };
 
@@ -174,10 +174,12 @@ export function getML(log: string): {
     loader.regexes.forEach((regex) => (regex.lastIndex = 0));
     for (const match of matches) {
       if (match?.groups?.mcver) {
-        if (loaderData.mcVersion == "") loaderData.mcVersion = match.groups.mcver;
+        if (loaderData.mcVersion == "")
+          loaderData.mcVersion = match.groups.mcver;
       }
       if (match?.groups?.loaderver) {
-        if (loaderData.loaderVersion == "") loaderData.loaderVersion = match.groups.loaderver;
+        if (loaderData.loaderVersion == "")
+          loaderData.loaderVersion = match.groups.loaderver;
       }
 
       if (loaderData.loaderVersion || loaderData.mcVersion) {

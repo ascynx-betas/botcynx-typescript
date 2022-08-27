@@ -8,9 +8,9 @@ export default new Command({
   botPermissions: ["ManageMessages", "KickMembers", "ManageThreads"],
   userPermissions: ["ManageMessages", "KickMembers"],
 
-  run: async ({ message, client, args }) => {
+  run: async ({ message, client, args, request }) => {
     let user: string = args[0];
-    if (isId(user) == false) return message.reply({ content: `invalid user` });
+    if (isId(user) == false) return request.send({ content: `invalid user` });
 
     let deleteOnly = false;
     if (["-do", "--delete-only"].includes(args[1])) deleteOnly = true;
@@ -21,7 +21,7 @@ export default new Command({
 
     const member = message.guild.members.cache.get(user);
     if (!member)
-      return message.reply({ content: `this user isn't in this guild` });
+      return request.send({ content: `this user isn't in this guild` });
 
     const channels = message.guild.channels.cache.filter(
       (c) =>
@@ -30,7 +30,7 @@ export default new Command({
         c.type === ChannelType.GuildPrivateThread
     );
 
-    let me = await message.reply({
+    await request.send({
       content: `deleting messages from ${member}`,
       allowedMentions: { parse: [] },
     });
@@ -52,11 +52,11 @@ export default new Command({
           });
         }
       } catch (e) {
-        return me.edit({ content: `Missing permission to delete messages` });
+        return request.edit({ content: `Missing permission to delete messages` });
       }
 
       if (deleteOnly) {
-        await me.edit({
+        await request.edit({
           content: `Cleared ${total} message${
             total > 1 ? "s" : ""
           } from ${member}.`,
@@ -66,7 +66,7 @@ export default new Command({
         member
           .kick()
           .then((member) =>
-            me.edit({
+          request.edit({
               content: `Kicked ${member} and cleared ${total} message${
                 total > 1 ? "s" : ""
               }.`,
@@ -74,7 +74,7 @@ export default new Command({
             })
           )
           .catch(() => {
-            me.edit({
+            request.edit({
               content: `Couldn't kick ${member} but cleared ${total} message${
                 total > 1 ? "s" : ""
               }.`,

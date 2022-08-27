@@ -7,9 +7,9 @@ export default new Command({
   devonly: true,
   category: "other",
 
-  run: async ({ client, message, args }) => {
+  run: async ({ client, message, args, request }) => {
     const bufferLang: Buffer = LocalizationHandler.getInstance().toBuffer();
-    message.reply({
+    request.send({
       files: [{ attachment: bufferLang, name: "botcynx_lang_file" }],
     });
   },
