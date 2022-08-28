@@ -11,19 +11,19 @@
 - set all needed permissions to true
 
 - add botToken (the bot's token),
-  guildId (not obligatory, locally registers command),
+  guildId (not necessary, locally registers command),
 
-  environment (not obligatory, sets the environment),
+  environment (not necessary, sets the environment),
 
-  mongooseConnectionString ((string from mongoDB to connect) not obligatory but is recommended for the use of a lot of commands),
+  mongooseConnectionString ((string from mongoDB to connect) not necessary but is recommended for the use of a lot of commands),
 
-  webhookLogLink (not obligatory, recommended to get the error alerts),
+  webhookLogLink (not necessary, recommended to get the error alerts),
 
-  developerId (not obligatory, recommended to avoid permission issues),
+  developerId (not necessary, recommended to avoid permission issues),
 
-  hypixelapikey (not obligatory, used for commands that require the hypixel api),
+  hypixelapikey (not necessary, used for commands that require the hypixel api),
 
-  githubToken (not obligatory, recommended for crashlog reader and automod)
+  githubToken (not necessary, recommended for crashlog reader and automod)
 
   botprefix (currently needed)
 
