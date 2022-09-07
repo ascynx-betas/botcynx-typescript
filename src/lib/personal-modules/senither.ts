@@ -1,5 +1,6 @@
 import { APIEmbedField } from "discord.js";
 import fetch from "node-fetch";
+import { botcynx } from "../..";
 import {
   senitherProfiles,
   senitherProfileSingular,
@@ -11,6 +12,7 @@ const getProfiles = async function (uuid: string) {
   const options = {
     headers: {
       Authorization: `${key}`,
+      "user-agent": botcynx.getUserAgent()
     },
   };
 
@@ -27,6 +29,7 @@ const getFatterProfile = async function (uuid: string) {
   const options = {
     headers: {
       Authorization: `${key}`,
+      "user-agent": botcynx.getUserAgent()
     },
   };
 
@@ -43,6 +46,7 @@ const getSpecifiedProfile = async function (uuid: string, profile: string) {
   const options = {
     headers: {
       Authorization: `${key}`,
+      "user-agent": botcynx.getUserAgent()
     },
   };
 

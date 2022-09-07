@@ -11,7 +11,6 @@ export default new Command({
 
   run: async ({ message, client, args, request }) => {
     const user = args[0];
-    const flags = args[1];
 
     if (!user)
       return request.send({
@@ -29,7 +28,7 @@ export default new Command({
         content: `the Id doesn't follow standards for an id`,
       });
 
-    if (!flags || flags == "-l") {
+    if (request.getFlags().length == 0 || request.hasFlag("local")) {
       const config = await configModel.find({
         guildId: message.guild.id,
       });
@@ -79,7 +78,7 @@ export default new Command({
           allowedMentions: { parse: ["everyone", "roles"] },
         });
       }
-    } else if (flags == "-g") {
+    } else if (request.hasFlag("global")) {
       if (message.author.id != process.env.developerId) return;
 
       const config = await configModel.findOne({ guildId: "global" });
@@ -126,8 +125,6 @@ export default new Command({
           allowedMentions: { parse: ["everyone", "roles"] },
         });
       }
-    } else {
-      return request.send({ content: `I cannot process that flag` });
     }
   },
 });

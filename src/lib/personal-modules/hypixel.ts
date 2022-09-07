@@ -1,5 +1,6 @@
 import { Collection } from "discord.js";
 import fetch from "node-fetch";
+import { botcynx } from "../..";
 import {
   key,
   player,
@@ -16,7 +17,7 @@ const getPlayerByUuid = async function (uuid: string) {
   let Url = "https://api.hypixel.net/player?key=" + key + "&uuid=" + uuid;
 
   //GET request
-  return fetch(Url).then(async (body) => {
+  return fetch(Url, {headers: {"user-agent": botcynx.getUserAgent()}}).then(async (body) => {
     let data: player = await body.json();
     return data;
   });
@@ -29,7 +30,7 @@ const getStatus = async function (uuid: string) {
   let Url = "http://api.hypixel.net/status?key=" + key + "&uuid=" + uuid;
 
   //GET request
-  return fetch(Url).then(async (body) => {
+  return fetch(Url, {headers: {"user-agent": botcynx.getUserAgent()}}).then(async (body) => {
     let data: status = await body.json();
     return data;
   });
@@ -38,7 +39,7 @@ const getKeyInfo = async function () {
   let Url = "https://api.hypixel.net/key?key=" + key;
 
   //GET request
-  return fetch(Url).then(async (body) => {
+  return fetch(Url, {headers: {"user-agent": botcynx.getUserAgent()}}).then(async (body) => {
     let data: key = await body.json();
     return data;
   });
@@ -51,7 +52,7 @@ const getProfiles = async function (uuid: string) {
   let Url = `https://api.hypixel.net/skyblock/profiles?key=${key}&uuid=${uuid}`;
 
   //GET request
-  return fetch(Url).then(async (body) => {
+  return fetch(Url, {headers: {"user-agent": botcynx.getUserAgent()}}).then(async (body) => {
     let data: skyblockProfiles = await body.json();
 
     if (!data.success) return null;

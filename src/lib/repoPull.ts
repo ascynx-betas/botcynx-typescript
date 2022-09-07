@@ -1,4 +1,5 @@
 import fetch from "node-fetch";
+import { botcynx } from "..";
 type repoError = {
   code: number;
   cause: string;
@@ -12,7 +13,7 @@ class GitError extends Error {
 }
 const gitFetchJson = async (url) => {
   const body = await fetch(url, {
-    headers: { Authorization: `token ${process.env.githubToken}` },
+    headers: { Authorization: `token ${process.env.githubToken}`, "user-agent": botcynx.getUserAgent() },
   });
   const json = await body.json();
   if (json.ok == false) {

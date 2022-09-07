@@ -14,10 +14,10 @@ export default new Command({
   aliases: ["d", "enable"],
   userPermissions: ["ManageGuild"],
   usage: `${process.env.botPrefix}disable [target (command name)] <flag (-l | -g)>`,
+  category: "other",
 
   run: async ({ message, client, args, request }) => {
     const target = args[0];
-    const flags = args[1];
     //available flags: -l local(current guild) -g global(every guild)
 
     //events that can be disabled: linkReader and roleLinked and crashLogReader
@@ -47,10 +47,11 @@ export default new Command({
         content: `sorry but you cannot disable that command.`,
       });
 
-    if (!flags || flags == "-l" || flags == "-g") {
+    if (request.getFlags().length == 0 || request.hasFlag("local") || request.hasFlag("global")) {
       let flag: string;
-      if (flags == "-l" || !flag) flag = "local";
-      if (flags == "-g") flag = "global";
+      if (request.hasFlag("local") || request.getFlags().length == 0) {
+        flag = "local";
+      } else if (request.hasFlag("global")) flag = "global";
 
       const embed = new EmbedBuilder()
         .setDescription(

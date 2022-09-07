@@ -78,8 +78,7 @@ export default new Event("messageCreate", async (message) => {
     const su = info.su.concat(globalConfig.su);
     if (
       !su.includes(message.author.id) &&
-      message.author.id != process.env.developerId &&
-      message.author.id != message.guild.ownerId
+      message.author.id != process.env.developerId
     )
       return; //message commands can only be used by super-users or the developer
   }
@@ -101,7 +100,7 @@ export default new Event("messageCreate", async (message) => {
   await command.run({
     client: botcynx,
     message,
-    args,
+    args: request.getNonFlagArgs(),
     request: request,
   });
 });

@@ -48,6 +48,8 @@ export class botClient extends Client {
   //static values
   private static instance: botClient;
   package: any = JSON.parse(fs.readFileSync("package.json", "utf-8"));
+  private userAgent = `${this.package.name}/${this.package.version}`;
+
 
   private constructor() {
     super({ intents: 65535, partials: [Partials.Channel, Partials.Message] });
@@ -56,6 +58,10 @@ export class botClient extends Client {
   static getInstance(): botClient {
     if (!botClient.instance) botClient.instance = new botClient();
     return botClient.instance;
+  }
+
+  getUserAgent(): string {
+    return this.userAgent;
   }
 
   start() {

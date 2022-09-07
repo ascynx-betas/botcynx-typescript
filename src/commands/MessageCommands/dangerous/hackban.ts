@@ -8,13 +8,14 @@ export default new Command({
   botPermissions: ["ManageMessages", "KickMembers", "ManageThreads"],
   userPermissions: ["ManageMessages", "KickMembers"],
   usage: `(flags: -do, --delete-only) ${process.env.botPrefix}hackban [user (id or mention)]`,
+  category: "moderation",
 
   run: async ({ message, client, args, request }) => {
     let user: string = args[0];
     if (isId(user) == false) return request.send({ content: `invalid user` });
 
     let deleteOnly = false;
-    if (["-do", "--delete-only"].includes(args[1])) deleteOnly = true;
+    if (request.hasFlag("--delete-only") || request.hasFlag("-do")) deleteOnly = true;
 
     //clear junk in id
     let id = /[^[0-9]/gi;

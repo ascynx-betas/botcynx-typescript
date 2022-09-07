@@ -6,7 +6,7 @@ import {
   ReplyMessageOptions,
 } from "discord.js";
 
-export class RequestHandler {
+export class RequestHandler {//broken in dms
   private List: Collection<string, request>;
 
   private static instance: RequestHandler;
@@ -42,6 +42,7 @@ export class RequestHandler {
 
   getRequest(message: Message<boolean>) {
     if (this.List.get(message.id)) {
+      this.List.get(message.id).getFlags();
         return this.List.get(message.id);
     } else throw new Error("Message doesn't have a request linked to it");
   }
@@ -64,17 +65,18 @@ export class request {
   private response: Message<boolean>;
 
   private usable: boolean;
+  private flags: Flag[];
+
 
   constructor(request: Message<boolean>) {
     this.message = request;
     this.usable = true;
+    this.flags = this.getFlags();
   }
 
-  //content: string | MessageEditOptions | MessagePayload
   async send(
     options: string | MessagePayload | ReplyMessageOptions
   ): Promise<Message> {
-    //reply -> will do the same as edit if response already exists
     if (!this.usable)
       throw new Error(
         "This request was invalidated and cannot be responded to anymore."
@@ -94,10 +96,51 @@ export class request {
     }
   }
 
+  getFlags(): Flag[] {
+    let flags: Flag[] = [];
+
+    for (let arg of this.message.content.split(" ").slice(1)) {
+      if (arg.startsWith("-")) {
+        flags.push(new Flag(arg));
+      }
+    }
+
+    this.flags = flags;
+    return flags;
+  }
+
+  getNonFlagArgs(): string[] {
+    let args: string[] = [];
+    for (let arg of this.message.content.split(" ").slice(1)) {
+      if (arg[0] == "-") continue;
+      args.push(arg);
+    }
+    return args;
+  }
+
+  hasFlag(possibleFlag: string) {
+    for (let flag of this.flags) {
+        let testFlag = possibleFlag.startsWith("-") ?
+         new Flag(possibleFlag) :
+         new Flag((possibleFlag.length <= 3 ? "-" : "--") + possibleFlag);
+
+        if (testFlag.flagType == flag.flagType) {
+          if (testFlag.toString() === flag.toString()) {
+            return true;
+          }
+        } else if (testFlag.flagType == FlagType.LONG && flag.flagType == FlagType.SHORT) {
+          if (testFlag.getShort() === flag.toString()) {
+            return true;
+          }
+        }
+    }
+
+    return false;
+  }
+
   async edit(
     options: string | MessagePayload | MessageEditOptions
   ): Promise<Message> {
-    //edit -> gives error if #response doesn't exist
     if (!this.usable)
       throw new Error(
         "This request was invalidated and cannot be responded to anymore."
@@ -109,7 +152,6 @@ export class request {
   }
 
   async delete(): Promise<boolean> {
-    //returns a boolean depending on whether it was able to delete the response or not.
     if (!this.usable)
       throw new Error(
         "This request was invalidated and cannot be responded to anymore."
@@ -119,6 +161,7 @@ export class request {
     }
     if (this.response.deletable) {
       this.response.delete();
+      this.response = undefined;
       return true;
     } else {
       throw new Error("Couldn't delete response.");
@@ -137,4 +180,37 @@ export class request {
   getResponse() {
     return this.response;
   }
+}
+
+class Flag {
+  flagType: FlagType;
+  flag: string;
+  
+  constructor(flag: string) {
+    if (!flag.startsWith("-")) throw new Error("Not a flag");
+    if (flag[1] == "-") {
+      this.flagType = FlagType.LONG;
+    } else this.flagType = FlagType.SHORT;
+    this.flag = this.flagType == FlagType.SHORT ? flag.slice(1) : flag.slice(2);
+  }
+
+  getShort() {
+    if (this.flagType == FlagType.SHORT) return this.toString();
+    return this.toString().substring(0, 3).slice(1);
+  }
+
+  getLong() {
+    if (this.flagType == FlagType.LONG) return this.toString();
+    throw new Error("Can't create a long flag from a short type :I");
+  }
+
+  toString() {
+    return `${this.flagType == FlagType.SHORT ? "-" : "--"}${this.flag}`;
+  }
+
+}
+
+enum FlagType {
+  SHORT,
+  LONG
 }

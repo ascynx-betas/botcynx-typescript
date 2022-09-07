@@ -6,10 +6,13 @@ import {
   ButtonStyle,
   APIEmbed,
   User,
+  Message,
+  GuildTextBasedChannel,
 } from "discord.js";
 import { botcynx } from "..";
 import { webhook } from "./personal-modules/discordPlugin";
 import { emojis } from "./emojis";
+import { checkLink } from "../events/linkReader";
 
 export const similarityDetection = (
   word: string,
@@ -138,6 +141,32 @@ export function checkHypixelLinked(user: User, linked: String): boolean {
   }
 
   return false;
+}
+
+const linkRegex = /((?:(https:\/\/)|(http:\/\/)|())(?<host>.{0,6})\.)?discord\.com\/channels\/(?<guild>[0-9]+)\/(?<channel>[0-9]+)\/(?<message>[0-9]+)(\/.*)?/mi;
+
+export async function getMessage(link: string): Promise<Message<boolean>> {
+  if (!checkLink(link.replace(/(https:\/\/)|(http:\/\/)/, ""))) {
+    return null;
+  }
+
+  linkRegex.lastIndex = 0;
+  let match = linkRegex.exec(link);
+  if (match["groups"] != null && match["groups"] != undefined) {
+    let guild = match["groups"].guild;
+    if (botcynx.guilds.cache.get(guild) == null || botcynx.guilds.cache.get(guild) == undefined) {
+      return null;
+    }
+
+    let channel = match["groups"].channel;
+    let message = match["groups"].message;
+
+    let Message = (await (botcynx.channels.cache.get(channel) as GuildTextBasedChannel).messages.fetch(message));
+    return Message;
+
+  } else {
+    return null;
+  }
 }
 
 export const permissionTranslate = {

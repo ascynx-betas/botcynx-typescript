@@ -147,11 +147,12 @@ const infoEmbedCreation = function (category: string) {
     .map((c: any) => c.name);
   const descriptions = botcynx.ArrayOfSlashCommands.concat(botcynx.commands)
     .filter((c: any) => c.category === category)
-    .map((c: any) => c.description || "not defined");
+    .map((c: any) => (c.description || ((c as any).usage) || "not defined"));
   let fields: APIEmbedField[] = [];
   for (let i: number = 0; i < commands.length; i++) {
     let field: APIEmbedField = { name: ``, value: `` };
-    field.name = commands[i];
+    let id = botcynx.application.commands.cache.filter((c) => c.name == commands[i]).first();
+    field.name = id !== undefined ? "</" + commands[i] + ":" + id + ">" : commands[i];
     field.value = descriptions[i];
     fields.push(field);
   }

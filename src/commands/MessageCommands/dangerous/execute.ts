@@ -45,14 +45,13 @@ export default new Command({
 
     let activeFlags: string[] = [];
     let code: string[] | string = args;
-    let possibleFlags: string = args.at(args.length - 1);
-    if (possibleFlags.startsWith("-")) {
-      (code as string[]).splice(code.length - 1, 1);
+    if (request.getFlags().length > 0) {
       let flagList = ["async", "sudo", "silent", "attachment"];
-      let flags = possibleFlags.split("-");
-      flags.forEach((flag: string) => {
-        if (flagList.includes(flag)) activeFlags.push(flag);
-      });
+      for (let possibleFlag of flagList) {
+        if (request.hasFlag(possibleFlag)) {
+          activeFlags.push(possibleFlag);
+        }
+      }
     }
     if (
       activeFlags.includes("attachment") &&

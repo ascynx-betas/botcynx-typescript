@@ -23,7 +23,7 @@ async function haste(content: string) {
           method: "POST",
           body: content,
           headers: {
-            "user-agent": `${botcynx.package.name}/${botcynx.package.version} haste function, commonly used for when the output of commands exceeds the maximum character limit.`,
+            "user-agent": `${botcynx.getUserAgent()} haste function, commonly used for when the output of commands exceeds the maximum character limit.`,
           },
         })
       ).json();

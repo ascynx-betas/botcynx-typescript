@@ -92,14 +92,14 @@ export default new Event("messageCreate", async (message) => {
   });
 });
 
-const checkLink = (link: string) => {
+export const checkLink = (link: string) => {
   const discordSiteRegExp = /.{0,6}\.?discord\.com/gim;
   let fields = link.split("/");
 
   if (!discordSiteRegExp.test(fields[0])) return; //if the link isn't discord related (avoid getting a youtube link caught up in it 💀)
   if (fields[1] !== "channels") return;
   let Id = isId(fields[2]);
-  let regex = /[^[0-9]/gi;
+  let regex = /[^0-9]/gi;
   fields[2] = fields[2].replace(regex, "");
   if (Id == false) return false;
   Id = isId(fields[3]);

@@ -16,7 +16,6 @@ export default new Event(
     // MessageCommands
     if (
       newMessage.author.bot ||
-      !newMessage.guild ||
       !newMessage.content.toLowerCase().startsWith(process.env.botPrefix)
     )
       return;
@@ -49,20 +48,20 @@ export default new Event(
       return newMessage.reply("This command is disabled");
 
     //cooldown
-    if (command.cooldown && newMessage.author.id != process.env.developerId) {
+    if (command.cooldown && newMessage.author.id != process.env.developerId && newMessage.guild) {
       if (!isOnCooldown(command, newMessage.author))
         return newMessage.reply("You are currently in cooldown");
     }
 
     // if bot requires permissions
-    if (command.botPermissions) {
+    if (command.botPermissions && newMessage.guild) {
       if (!botPermissionInhibitor(command, newMessage.guild))
         return newMessage.reply(
           "I do not have the permissions required to run that command !"
         );
     }
     //if user requires permission
-    if (command.userPermissions) {
+    if (command.userPermissions && newMessage.guild) {
       if (
         !userPermissionInhibitor(command, {
           member: newMessage.member,
@@ -74,18 +73,23 @@ export default new Event(
         );
     }
 
-    const Guildinfo = await configModel.find({
-      guildId: newMessage.guildId,
-    });
-    let info = Guildinfo[0];
 
-    const su = info.su.concat(globalConfig.su);
-    if (
-      !su.includes(newMessage.author.id) &&
-      newMessage.author.id != process.env.developerId &&
-      newMessage.author.id != newMessage.guild.ownerId
-    )
-      return; //message commands can only be used by super-users, guild owners or the developer
+    if (newMessage.guild) {
+      const Guildinfo = await configModel.find({
+        guildId: newMessage.guildId,
+      });
+      let info = Guildinfo[0];
+
+      const su = info.su.concat(globalConfig.su);
+      if (
+        !su.includes(newMessage.author.id) &&
+        newMessage.author.id != process.env.developerId
+      )
+        return; //message commands can only be used by super-users or the developer
+    } else {
+      if (!globalConfig.su.includes(newMessage.author.id) &&
+      newMessage.author.id != process.env.developerId) return;
+    }
     if (
       command.devonly === true &&
       newMessage.author.id != process.env.developerId
@@ -102,6 +106,6 @@ export default new Event(
         return;
       }
 
-    await command.run({ client: botcynx, message: newMessage, args, request: request });
+    await command.run({ client: botcynx, message: newMessage, args: request.getNonFlagArgs(), request: request });
   }
 );
