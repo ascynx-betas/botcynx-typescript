@@ -4,20 +4,24 @@ import { webhook } from "../lib/personal-modules/discordPlugin";
 import { getTimeOfDay } from "../lib/personal-modules/testFor";
 import chalk from "chalk";
 import { postStartData } from "./ready";
+import { LoggerFactory, logLevel } from "../lib/Logger";
+
+const Logger = LoggerFactory.getLogger("PROCESS-CAUGHT");
 
 const sendError = async (error: Error) => {
   let stack = error.stack;
   let fields = stack?.split("\n");
-  if (typeof fields == "undefined") return console.log(error);
+  if (typeof fields == "undefined")
+    return Logger.log(error.toString(), logLevel.ERROR);
   if (
     fields[0].startsWith("DiscordAPIError") &&
     postStartData.environment != "dev"
   )
-    return console.log(error); //returns if DiscordAPIError when it isn't in dev environment
+    return Logger.log(error.toString(), logLevel.ERROR); //returns if DiscordAPIError when it isn't in dev environment
   stack = fields.slice(1, 5).join("\n\n");
   const err = "[" + getTimeOfDay() + "]" + " Caught error: \n" + stack;
 
-  console.log(chalk.red(`${fields.slice(0)[0]} ${err}`));
+  Logger.log(chalk.red(`${fields.slice(0)[0]} ${err}`), logLevel.ERROR);
 
   const info = webhook(process.env.webhookLogLink);
   if (!info) return;

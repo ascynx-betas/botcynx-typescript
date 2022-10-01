@@ -19,12 +19,16 @@ import {
 import { Event } from "./Event";
 import { connect } from "mongoose";
 import { tagModel } from "../models/tag";
-import { reload } from "../lib/coolPeople";
+import { reload } from "../lib";
 import chalk from "chalk";
 import { registerCooldownTask } from "../lib/Tasks/cooldownReset";
 import { registerGistReload } from "../lib/Tasks/gistLoadFail";
 import { PermissionFlagsBits } from "discord-api-types/v10";
 import { configModel } from "../models/config";
+import { LoggerFactory, logLevel } from "../lib";
+import { botcynx } from "..";
+import { clearCache } from "../lib/Tasks/slashInteractionReset";
+import {HypixelAPI} from "../lib";
 
 const globPromise = promisify(glob);
 
@@ -43,13 +47,24 @@ export class botClient extends Client {
   tasks: Collection<string, NodeJS.Timer> = new Collection();
   modals: Collection<string, modalResponseType> = new Collection();
 
-  private debug: boolean = process.env.environment == "debug";
-
   //static values
   private static instance: botClient;
   package: any = JSON.parse(fs.readFileSync("package.json", "utf-8"));
-  private userAgent = `${this.package.name}/${this.package.version}`;
+  public readonly userAgent = `${this.package.name}/${this.version}${process.env.environment == "dev" ? "-dev" : ""}`;
 
+  private get version() {
+    return this.package.version;
+  }
+
+  private logger = LoggerFactory.getLogger("CLIENT");
+
+  get getLogger() {
+    return this.logger;
+  }
+
+  private get debug(): boolean {
+    return process.env.environment === "debug";
+  }
 
   private constructor() {
     super({ intents: 65535, partials: [Partials.Channel, Partials.Message] });
@@ -66,12 +81,13 @@ export class botClient extends Client {
 
   start() {
     if (process.env.mongooseConnectionString) {
+      this.logger.log("connecting to mongoose", logLevel.DEBUG);
       connect(process.env.mongooseConnectionString);
     }
 
     this.registerModules();
     this.login(process.env.botToken).then(() =>
-      console.log(chalk.green(`successfully logged in`))
+      this.logger.log(chalk.green(`successfully logged in`), logLevel.INFO)
     );
   }
 
@@ -83,31 +99,34 @@ export class botClient extends Client {
     return this.debug;
   }
 
+  private registerTable: { type: string; name: string; registered: boolean }[] =
+    [];
+
   async registerModule(options: registerModulesOptions) {
     const data = await this.importFile(options.path);
+    let name = "";
+    let type = options.type;
 
     if (options.type == "command") {
       if (!data.name) return;
-      if (this.isDebug()) console.log("registering " + data.name + " !");
+      name = data.name;
     } else if (options.type == "modal") {
       if (!data.name || !data.run) return;
-      if (this.isDebug()) console.log("registering " + data.name + " !");
+      name = data.name;
     } else if (options.type == "button") {
       if (!data.category) return;
-      if (this.isDebug()) {
-        console.log(
-          "registering " +
-            (data.customId
-              ? data.category + ":" + data.customId
-              : data.category) +
-            " !"
-        );
-      }
+      name = data.customId
+        ? data.category + ":" + data.customId
+        : data.category;
     }
 
-    if (this.isDebug()) console.log("――――――――――――――――――――――――――");
-
-    options.callback(data);
+    try {
+      options.callback(data);
+      this.registerTable.push({ type, name, registered: true });
+    } catch (e) {
+      console.log(e);
+      this.registerTable.push({ type, name, registered: false });
+    }
   }
 
   async registerModules() {
@@ -136,8 +155,8 @@ export class botClient extends Client {
           //set dm permissions (generally non-compatible)
           if (!data.dmPermission) data.dmPermission = false;
 
-          botClient.getInstance().userContextCommands.set(data.name, data);
-          botClient.getInstance().ArrayOfSlashCommands.set(data.name, data);
+          botcynx.userContextCommands.set(data.name, data);
+          botcynx.ArrayOfSlashCommands.set(data.name, data);
         },
         type: "command",
       });
@@ -166,8 +185,8 @@ export class botClient extends Client {
           //set dm permissions (generally non-compatible)
           if (!data.dmPermission) data.dmPermission = false;
 
-          botClient.getInstance().messageContextCommands.set(data.name, data);
-          botClient.getInstance().ArrayOfSlashCommands.set(data.name, data);
+          botcynx.messageContextCommands.set(data.name, data);
+          botcynx.ArrayOfSlashCommands.set(data.name, data);
         },
         type: "command",
       });
@@ -197,8 +216,8 @@ export class botClient extends Client {
           //set dm permissions (generally non-compatible)
           if (!data.dmPermission) data.dmPermission = false;
 
-          botClient.getInstance().ArrayOfSlashCommands.set(data.name, data);
-          botClient.getInstance().slashCommands.set(data.name, data);
+          botcynx.ArrayOfSlashCommands.set(data.name, data);
+          botcynx.slashCommands.set(data.name, data);
         },
         type: "command",
       });
@@ -228,7 +247,7 @@ export class botClient extends Client {
           //set dm permissions (generally non-compatible)
           if (!data.dmPermission) data.dmPermission = false;
 
-          botClient.getInstance().whitelistedCommands.set(data.name, data);
+          botcynx.whitelistedCommands.set(data.name, data);
         },
         type: "command",
       });
@@ -241,7 +260,7 @@ export class botClient extends Client {
       this.registerModule({
         path: filePath,
         callback: function (data: modalResponseType) {
-          botClient.getInstance().modals.set(data.name, data);
+          botcynx.modals.set(data.name, data);
         },
         type: "modal",
       });
@@ -255,11 +274,12 @@ export class botClient extends Client {
         path: filePath,
         callback: function (data: ButtonResponseType) {
           if (!data.customId) {
-            botClient.getInstance().buttonCommands.set(data.category, data);
+            botcynx.buttonCommands.set(data.category, data);
           } else {
-            botClient
-              .getInstance()
-              .buttonCommands.set(`${data.category}:${data.customId}`, data);
+            botcynx.buttonCommands.set(
+              `${data.category}:${data.customId}`,
+              data
+            );
           }
         },
         type: "button",
@@ -274,7 +294,7 @@ export class botClient extends Client {
           c.default_member_permissions = String(
             PermissionFlagsBits.Administrator
           );
-          this.ArrayOfSlashCommands.set(c.name, c);
+          botcynx.ArrayOfSlashCommands.set(c.name, c);
         }
       });
 
@@ -315,11 +335,13 @@ export class botClient extends Client {
       this.registerModule({
         path: filePath,
         callback: function (data: MessageCommandType) {
-          botClient.getInstance().commands.set(data.name, data);
+          botcynx.commands.set(data.name, data);
         },
         type: "command",
       });
     });
+
+    this.logger.table(this.registerTable, logLevel.DEBUG);
 
     //Events
     const eventFiles = await globPromise(`${__dirname}/../events/*{.ts,.js}`);
@@ -346,6 +368,8 @@ export class botClient extends Client {
 
     //Tasks
     this.tasks.set("cooldown", await registerCooldownTask(this)); //register cooldown timer id
+    this.tasks.set("slashCommandCache", await clearCache());
+    this.tasks.set("hypixelApiReset", HypixelAPI.INSTANCE.task);
   }
 
   async killTasks() {
@@ -359,17 +383,23 @@ export class botClient extends Client {
   async registerCommands({ commands, guildId }: RegisterCommandsOptions) {
     if (guildId) {
       this.guilds.cache.get(guildId)?.commands.set(commands);
-      console.log(
+
+      this.logger.log(
         chalk.redBright(
           `Registering commands to ${this.guilds.cache.get(guildId).name}`
-        )
+        ),
+        logLevel.INFO
       );
     } else {
       this.application?.commands.set(commands);
 
-      console.log(chalk.green(`Registering global commands`));
+      this.logger.log(
+        chalk.green(`Registering global commands`),
+        logLevel.INFO
+      );
     }
   }
+
 
   async registerTags(guildId: string) {
     const guild = this.guilds.cache.get(guildId);
@@ -396,6 +426,10 @@ export class botClient extends Client {
       this.ArrayOfSlashCommands.set(command.name, command);
       tags.set(command.name, command);
     });
+    this.logger.log(
+      chalk.green(`Registering tags for (${guild.name}/${guildId})`),
+      logLevel.DEBUG
+    );
     this.guilds.cache.get(guildId)?.commands.set(tags);
   }
 }

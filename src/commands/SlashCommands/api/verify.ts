@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType } from "discord.js";
 import { verifyModel } from "../../../models/verifyModel";
-import { getPlayerByUuid } from "../../../lib/personal-modules/hypixel";
+import { getPlayerByUuid } from "../../../lib/HypixelAPIUtils";
 import { getUuidbyUsername } from "../../../lib/personal-modules/mojang";
 import { slashCommand } from "../../../structures/Commands";
 import { checkHypixelLinked } from "../../../lib/utils";

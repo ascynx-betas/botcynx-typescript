@@ -8,6 +8,9 @@ export * from "./emojis";
 export * from "./coolPeople";
 export * from "./hypixelSkillCalc";
 export * from "./messageCommandRequest";
+export * from "./Logger";
+export * from "./slashCommandRequestCache";
+export * from "./HypixelAPIUtils";
 
 export * from "./customEvents/commandCreate";
 export * from "./customEvents/messageCommandCreate";
@@ -19,6 +22,8 @@ export * from "./cache/crashFix";
 export * from "./cache/scamlink";
 
 export * from "./personal-modules/index";
+
+export * from "./feat/RepoGetter";
 
 //export models
 

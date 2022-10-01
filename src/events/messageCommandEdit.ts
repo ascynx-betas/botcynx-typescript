@@ -20,11 +20,11 @@ export default new Event(
     )
       return;
 
-      try {
-        messageRequestHandler.getRequest(newMessage);
-      } catch (e) {
-        return;//doesn't have a request linked.
-      }
+    try {
+      messageRequestHandler.getRequest(newMessage);
+    } catch (e) {
+      return; //doesn't have a request linked.
+    }
 
     const [cmd, ...args] = newMessage.content
       .slice(process.env.botPrefix.length)
@@ -48,7 +48,11 @@ export default new Event(
       return newMessage.reply("This command is disabled");
 
     //cooldown
-    if (command.cooldown && newMessage.author.id != process.env.developerId && newMessage.guild) {
+    if (
+      command.cooldown &&
+      newMessage.author.id != process.env.developerId &&
+      newMessage.guild
+    ) {
       if (!isOnCooldown(command, newMessage.author))
         return newMessage.reply("You are currently in cooldown");
     }
@@ -73,7 +77,6 @@ export default new Event(
         );
     }
 
-
     if (newMessage.guild) {
       const Guildinfo = await configModel.find({
         guildId: newMessage.guildId,
@@ -87,8 +90,11 @@ export default new Event(
       )
         return; //message commands can only be used by super-users or the developer
     } else {
-      if (!globalConfig.su.includes(newMessage.author.id) &&
-      newMessage.author.id != process.env.developerId) return;
+      if (
+        !globalConfig.su.includes(newMessage.author.id) &&
+        newMessage.author.id != process.env.developerId
+      )
+        return;
     }
     if (
       command.devonly === true &&
@@ -96,16 +102,21 @@ export default new Event(
     )
       return; //In message commands, devonly means that it can only be used by the set developer.
 
-      const request = messageRequestHandler.getRequest(newMessage);
+    const request = messageRequestHandler.getRequest(newMessage);
 
-      if (command.usage && ["--usage", "-u", "--help", "-h"].includes(args[0])) {
-        request.send({
-          content: command.usage,
-          allowedMentions: { parse: []}
-        });
-        return;
-      }
+    if (command.usage && ["--usage", "-u", "--help", "-h"].includes(args[0])) {
+      request.send({
+        content: command.usage,
+        allowedMentions: { parse: [] },
+      });
+      return;
+    }
 
-    await command.run({ client: botcynx, message: newMessage, args: request.getNonFlagArgs(), request: request });
+    await command.run({
+      client: botcynx,
+      message: newMessage,
+      args: request.getNonFlagArgs(),
+      request: request,
+    });
   }
 );

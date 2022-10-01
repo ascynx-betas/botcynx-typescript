@@ -9,7 +9,7 @@ import { verifyModel } from "../../../models/verifyModel";
 import {
   getPlayerByUuid,
   getStatus,
-} from "../../../lib/personal-modules/hypixel";
+} from "../../../lib/HypixelAPIUtils";
 import { getUuidbyUsername } from "../../../lib/personal-modules/mojang";
 import { slashCommand } from "../../../structures/Commands";
 

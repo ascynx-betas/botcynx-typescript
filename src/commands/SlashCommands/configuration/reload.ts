@@ -75,12 +75,8 @@ export default new slashCommand({
       if (index >= r.length - 1) {
         const affectedString =
           affectedMembers.join("\n") || "**no members were affected**";
-        let description: string;
-
-        if (isTestRun == true)
-          description = `Test run\n **Affected members**:\n${affectedString}`;
-        if (isTestRun == false)
-          description = `**Affected members**:\n${affectedString}`;
+          
+        let description = isTestRun ? `Test run\n **Affected members**:\n${affectedString}` : `**Affected members**:\n${affectedString}`;
 
         const embed = new EmbedBuilder()
           .setDescription(description)

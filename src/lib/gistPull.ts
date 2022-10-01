@@ -19,7 +19,9 @@ type githubFileResponse = {
  * @param {string} link provide a github gist api link
  */
 export const gistJSONPull = async (link: string) => {
-  return fetch(link, {headers: {"user-agent": botcynx.getUserAgent()}}).then(async (body) => {
+  return fetch(link, {
+    headers: { "user-agent": botcynx.getUserAgent() },
+  }).then(async (body) => {
     if (!body.ok) return new Error(body.status + body.statusText);
     const text = await body.text();
     const json = JSON.parse(text);
@@ -41,7 +43,9 @@ export const gistJSONPull = async (link: string) => {
  * @param {string} link provide a github gist api link
  */
 export const updateCoolPeople = async (link: string) => {
-  return fetch(link, {headers: {"user-agent": botcynx.getUserAgent()}}).then(async (body) => {
+  return fetch(link, {
+    headers: { "user-agent": botcynx.getUserAgent() },
+  }).then(async (body) => {
     if (!body.ok) return new Error(body.status + body.statusText);
     const text = await body.text();
     const json = JSON.parse(text);

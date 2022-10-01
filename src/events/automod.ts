@@ -11,15 +11,16 @@ export default new Event("messageCreate", (message) => {
 
   let Data: { isScamLink: boolean; cause: string } = {
     isScamLink: false,
-    cause: "",
+    cause: "If you see this in action, you've just encountered an error.",
   };
 
   //if in scamLink database
-  if (hasScamLink(message.content))
+  if (hasScamLink(message.content)) {
     Data = {
       isScamLink: true,
       cause: "Link detected in known database",
     };
+  }
 
   //common server scam method
   if (
@@ -33,7 +34,7 @@ export default new Event("messageCreate", (message) => {
       });
       if (DataArray.length >= 1) {
         if (!message.member.permissions.toArray().includes("MentionEveryone")) {
-          console.log(DataArray.length);
+          botcynx.getLogger.debug("Found " + DataArray.length + " links");
           Data = { isScamLink: true, cause: "Common scam detection" };
         }
       }
@@ -63,9 +64,10 @@ export default new Event("messageCreate", (message) => {
     });
 
   //if ping spam raid
-  if (message.mentions.users.size >= 5)
+  if (message.mentions.users.size >= 5) {
     Data = { isScamLink: true, cause: "Spam mention" };
-
+  }
+  
   if (Data.isScamLink == true && !isAdminOrHigherThanBot(message.member)) {
     const embed = new EmbedBuilder()
       .setAuthor({

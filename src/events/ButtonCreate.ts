@@ -6,12 +6,11 @@ import {
   ActionRow,
   MessageActionRowComponent,
 } from "discord.js";
-import { RequireTest } from "../lib/personal-modules/commandHandler";
+import { RequireTest } from "../lib";
 import {
   botPermissionInhibitor,
-  isDisabled,
   userPermissionInhibitor,
-} from "../lib/command/commandInhibitors";
+} from "../lib";
 
 export default new Event("interactionCreate", async (interaction) => {
   if (interaction.isSelectMenu()) {

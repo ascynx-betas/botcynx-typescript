@@ -14,9 +14,6 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "importHelpers": true,
-    "paths": {
-      "#lib": ["./src/lib/index.ts"]
-    },
     "removeComments": true
   },
   "include": ["src", "environment.d.ts"],

@@ -21,13 +21,7 @@ export default new Event(
       guildId: guild.id,
     });
 
-    if (
-      config.disabledCommands.includes("roleLinked") ||
-      (
-        await configModel.findOne({ guildId: "global" })
-      ).disabledCommands.includes("roleLinked")
-    )
-      return;
+    if (isDisabled({ name: "roleLinked" }, guild)) return;
 
     //if (
     //  !oldMember.communicationDisabledUntilTimestamp &&

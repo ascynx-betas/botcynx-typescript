@@ -1,34 +1,39 @@
 import { Collection } from "discord.js";
 import { jsonCache, repoLink } from "./cache";
 
+const logText = [
+  "net.minecraft.launchwrapper.Launch",
+  "# A fatal error has been detected by the Java Runtime Environment:",
+  "---- Minecraft Crash Report ----",
+  "A detailed walkthrough of the error",
+  "launchermeta.mojang.com",
+  "Running launcher core",
+  "Native Launcher Version:",
+  "[Client thread/INFO]: Setting user:",
+  "[Client thread/INFO]: (Session ID is",
+  "MojangTricksIntelDriversForPerformance",
+  "Loading for game Minecraft ",
+  "[main/INFO]: [FabricLoader] Loading ",
+  ".minecraft/libraries/net/fabricmc",
+  "net.fabricmc.loader.launch",
+  "net.fabricmc.loader.game",
+  "net.minecraftforge",
+  "gg.essential",
+  "club.sk1er",
+  "fabric-api",
+  "Environment: authHost='https://authserver.mojang.com'",
+  " with Fabric Loader ",
+];
+
 export function checkIfLog(possibleLog: string): boolean {
   let isLog = false;
 
-  const logText = [
-    "net.minecraft.launchwrapper.Launch",
-    "# A fatal error has been detected by the Java Runtime Environment:",
-    "---- Minecraft Crash Report ----",
-    "A detailed walkthrough of the error",
-    "launchermeta.mojang.com",
-    "Running launcher core",
-    "Native Launcher Version:",
-    "[Client thread/INFO]: Setting user:",
-    "[Client thread/INFO]: (Session ID is",
-    "MojangTricksIntelDriversForPerformance",
-    "Loading for game Minecraft ",
-    "[main/INFO]: [FabricLoader] Loading ",
-    ".minecraft/libraries/net/fabricmc",
-    "net.fabricmc.loader.launch",
-    "net.fabricmc.loader.game",
-    "net.minecraftforge",
-    "gg.essential",
-    "club.sk1er",
-    "fabric-api",
-    "Environment: authHost='https://authserver.mojang.com'",
-    " with Fabric Loader ",
-  ];
-
   for (const text of logText) {
+    if (text == "net.minecraftforge" && possibleLog.includes("import")) {
+      isLog = false;
+      break;//stops it from triggering on class
+    }
+
     if (possibleLog.includes(text)) {
       isLog = true;
       break;
@@ -56,52 +61,39 @@ export function getMods(Log: string): Collection<string, ModCollection> {
   //let IDs = [];
   //let Versions = [];
   //let Sources = [];
-  let lastEmptyInfo = {
-    index: 0,
-  };
+  let lastEmptyInfo = 0
 
-  let modsE: ModCollection[] = [];
-
-  modList.forEach((modInfo, index) => {
-    let lastMod = modsE[modsE.length - 1];
-    if (modInfo != "" && index >= 10) {
-      //is a mod info
-      if (index - 1 == lastEmptyInfo.index) {
-        if (lastMod == null || lastMod.state != null) {
-          modsE.push({ state: modInfo, ID: null, version: null, source: null });
-        } else {
-          modsE[modsE.length - 1].state = modInfo;
+  let modArray = [];
+  
+    modList.forEach((modInfo, index) => {
+      let lastMod = modArray[modArray.length - 1];
+      if (modInfo != "" && index >= 10) {
+        //is a mod info
+        if (index - 1 == lastEmptyInfo) {
+          if (lastMod == null || lastMod.state != null) {
+            modArray.push({ state: modInfo, ID: null, version: null, source: null });
+          } else {
+            modArray[modArray.length - 1].state = modInfo;
+          }
+          //statuses.push(modInfo);//isStatus
+        } else if (index - 2 === lastEmptyInfo) {
+          modArray[modArray.length - 1].ID = modInfo;
+          //IDs.push(modInfo);//isID
+        } else if (index - 3 === lastEmptyInfo) {
+          modArray[modArray.length - 1].version = modInfo;
+          //Versions.push(modInfo);//isVersion
+        } else if (index - 4 === lastEmptyInfo) {
+          modArray[modArray.length - 1].source = modInfo;
+          //Sources.push(modInfo);//isModSource
         }
-        //statuses.push(modInfo);//isStatus
-      } else if (index - 2 == lastEmptyInfo.index) {
-        modsE[modsE.length - 1].ID = modInfo;
-        //IDs.push(modInfo);//isID
-      } else if (index - 3 == lastEmptyInfo.index) {
-        modsE[modsE.length - 1].version = modInfo;
-        //Versions.push(modInfo);//isVersion
-      } else if (index - 4 == lastEmptyInfo.index) {
-        modsE[modsE.length - 1].source = modInfo;
-        //Sources.push(modInfo);//isModSource
+      } else if (modInfo === "") {
+        lastEmptyInfo = index;
       }
-    } else if (modInfo == "") {
-      lastEmptyInfo.index = index;
-    }
+    });
+  
+    modArray.forEach((mod) => {
+        mods.set(mod.ID, mod);
   });
-
-  modsE.forEach((v) => {
-    mods.set(v.ID, v);
-  });
-
-  //statuses.forEach((status, index) => {
-  //  let mod: ModCollection = {
-  //    state: status,
-  //    ID: IDs[index],
-  //    version: Versions[index],
-  //    source: Sources[index],
-  //  };
-  //
-  //  mods.set(IDs[index], mod);
-  //});
 
   return mods;
 }

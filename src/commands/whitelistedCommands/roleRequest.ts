@@ -16,12 +16,13 @@ import { verifyModel } from "../../models/verifyModel";
 import {
   getPlayerByUuid,
   getProfiles,
-} from "../../lib/personal-modules/hypixel";
+} from "../../lib/HypixelAPIUtils";
 import { getUuidbyUsername } from "../../lib/personal-modules/mojang";
 import { getSpecifiedProfile } from "../../lib/personal-modules/senither";
 import { WhitelistedCommand } from "../../structures/Commands";
 import { profileMember } from "../../typings/Hypixel";
 import { checkHypixelLinked } from "../../lib/utils";
+import { botcynx } from "../..";
 
 export default new WhitelistedCommand({
   name: "rolerequest",
@@ -109,7 +110,7 @@ export default new WhitelistedCommand({
       : hypixelData
           .sort(
             (acc, curr) =>
-              curr.members[uuid].last_save - acc.members[uuid].last_save
+              curr.last_save - acc.last_save
           )
           .first()
           .cute_name.toLowerCase();
@@ -131,7 +132,7 @@ export default new WhitelistedCommand({
     } else {
       let profiles = hypixelData?.sort(
         (acc, curr) =>
-          curr.members[uuid].last_save - acc.members[uuid].last_save
+          curr.last_save - acc.last_save
       );
       if (profiles.size < 1)
         return interaction.followUp({
@@ -219,8 +220,8 @@ export default new WhitelistedCommand({
       });
     }
   },
-  register: ({ client, guild }) => {
-    guild.commands.create(client.whitelistedCommands.get("rolerequest"));
+  register: ({ guild }) => {
+    guild.commands.create(botcynx.whitelistedCommands.get("rolerequest"));
   },
 });
 

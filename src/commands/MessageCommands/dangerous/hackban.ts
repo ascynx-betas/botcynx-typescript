@@ -15,7 +15,8 @@ export default new Command({
     if (isId(user) == false) return request.send({ content: `invalid user` });
 
     let deleteOnly = false;
-    if (request.hasFlag("--delete-only") || request.hasFlag("-do")) deleteOnly = true;
+    if (request.hasFlag("--delete-only") || request.hasFlag("-do"))
+      deleteOnly = true;
 
     //clear junk in id
     let id = /[^[0-9]/gi;
@@ -54,7 +55,9 @@ export default new Command({
           });
         }
       } catch (e) {
-        return request.edit({ content: `Missing permission to delete messages` });
+        return request.edit({
+          content: `Missing permission to delete messages`,
+        });
       }
 
       if (deleteOnly) {
@@ -68,7 +71,7 @@ export default new Command({
         member
           .kick()
           .then((member) =>
-          request.edit({
+            request.edit({
               content: `Kicked ${member} and cleared ${total} message${
                 total > 1 ? "s" : ""
               }.`,

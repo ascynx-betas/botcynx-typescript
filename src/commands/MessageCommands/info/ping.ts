@@ -6,6 +6,6 @@ export default new Command({
   usage: `${process.env.botPrefix}ping`,
 
   run: async ({ message, client, args, request }) => {
-      request.send({ content: ` ${client.ws.ping}ms!` });
+    request.send({ content: ` ${client.ws.ping}ms!` });
   },
 });

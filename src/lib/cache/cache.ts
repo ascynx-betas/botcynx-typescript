@@ -1,17 +1,34 @@
+import { finishedLoading } from "../..";
+import { LoggerFactory } from "../Logger";
 import { linkContentPull } from "../repoPull";
+
+const loadLoggerQueue: cache[] = [];
+
+export const LoadAllCaches = async() => {
+  for (let loader of loadLoggerQueue) {
+    await loader.reload();
+  }
+  loadLoggerQueue.length = 0;
+}
+
+const logger = LoggerFactory.getLogger("CACHE");
 
 export class cache {
   data;
   reloader: string;
+
   constructor(link: string | repoLink) {
     this.reloader = (link as repoLink).repoLink || (link as string);
-    this.data = this.reload();
+    if (!finishedLoading) {
+      loadLoggerQueue.push(this);
+    } else this.reload();
   }
 
   /**
    * Reloads the data stored
    */
   async reload() {
+    logger.debug("Reloading cache");
     this.data = await linkContentPull(this.reloader);
   }
 }
@@ -26,9 +43,10 @@ export class jsonCache extends cache {
    */
   async reload() {
     try {
+      logger.debug("Reloading cache " + this.reloader);
       this.data = JSON.parse(await linkContentPull(this.reloader));
     } catch (e) {
-      console.log(e);
+      logger.error(e);
     }
   }
 

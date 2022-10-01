@@ -175,7 +175,6 @@ type contest = {
 };
 export type profileMember = {
   experience_skill_combat: number;
-  last_save: number;
   inv_armor: { type: number; data: string };
   coop_invitation: {
     timestamp: number;
@@ -449,6 +448,8 @@ export type Profile = {
     transactions: transation[];
   };
   game_mode?: "island" | "ironman" | "bingo"; //if none then it's normal gamemode
+  last_save: number;
+  selected: boolean;
 };
 type bid = {
   auction_id: string;

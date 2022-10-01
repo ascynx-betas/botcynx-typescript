@@ -2,11 +2,47 @@ import {
   ActionRowBuilder,
   ApplicationCommandOptionType,
   ButtonBuilder,
+  ButtonStyle,
   SelectMenuBuilder,
 } from "discord.js";
+import { botcynx } from "../..";
 import { searchRepositories } from "../../lib/repoPull";
-import { queryEmbed } from "../../lib/utils";
+import { queryEmbed, returnEditQueryButton } from "../../lib/utils";
 import { WhitelistedCommand } from "../../structures/Commands";
+
+//! TODO create a query cache to avoid spamming the github api for data of the same query (e.g: getting data from the same list when moving pages)
+
+export const sortingRow =
+new ActionRowBuilder<SelectMenuBuilder>().addComponents(
+  new SelectMenuBuilder()
+    .addOptions({
+      value: "star-down",
+      label: "sort by stars a > b",
+    })
+    .addOptions({
+      value: "star-up",
+      label: "sort by stars a < b",
+    })
+    .addOptions({
+      value: "last-updated",
+      label: "last updated",
+    })
+    .addOptions({
+      value: "oldest-updated",
+      label: "oldest since updated",
+    })
+    .addOptions({
+      value: "forks-down",
+      label: "sort by forks a > b",
+    })
+    .addOptions({
+      value: "forks-up",
+      label: "sort by forks a < b",
+    })
+    .setCustomId(`sort-repo:`)
+    .setPlaceholder("sorting technique")
+);
+
 
 export default new WhitelistedCommand({
   name: "find-repo",
@@ -39,47 +75,15 @@ export default new WhitelistedCommand({
       queryParameter
     );
 
-    const actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
-      buttonFields
-    );
-    const componentRow =
-      new ActionRowBuilder<SelectMenuBuilder>().addComponents(
-        new SelectMenuBuilder()
-          .addOptions({
-            value: "star-down",
-            label: "sort by stars a > b",
-          })
-          .addOptions({
-            value: "star-up",
-            label: "sort by stars a < b",
-          })
-          .addOptions({
-            value: "last-updated",
-            label: "last updated",
-          })
-          .addOptions({
-            value: "oldest-updated",
-            label: "oldest since updated",
-          })
-          .addOptions({
-            value: "forks-down",
-            label: "sort by forks a > b",
-          })
-          .addOptions({
-            value: "forks-up",
-            label: "sort by forks a < b",
-          })
-          .setCustomId(`sort-repo:${query}`)
-          .setPlaceholder("sorting technique")
-      );
-
+    const queryButtons = new ActionRowBuilder<ButtonBuilder>().addComponents(buttonFields);
+    
     interaction.followUp({
       embeds: [embed],
-      components: [actionRow, componentRow],
+      components: [queryButtons, sortingRow, returnEditQueryButton(0, (data.total_count / 5))],
       allowedMentions: { parse: [] },
     });
   },
-  register: ({ client, guild }) => {
-    guild.commands.create(client.whitelistedCommands.get("find-repo"));
+  register: ({ guild }) => {
+    guild.commands.create(botcynx.whitelistedCommands.get("find-repo"));
   },
 });

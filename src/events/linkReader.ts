@@ -6,7 +6,7 @@ import {
   TextChannel,
   ThreadChannel,
   Webhook,
-  WebhookMessageOptions,
+  WebhookCreateMessageOptions,
 } from "discord.js";
 import { botcynx } from "..";
 import { configModel } from "../models/config";
@@ -37,7 +37,7 @@ export default new Event("messageCreate", async (message) => {
     let link = first.slice(8, message.content.length);
     let fields = link.split("/");
     if (!checkLink(link)) return;
-    if (!botcynx.guilds.cache.get(fields[2])) return message.react("📵"); // The guild isn't in the bot's cache
+    if (!botcynx.guilds.cache.get(fields[2])) return message.react("📵"); // The guild isn't in the bot's cache or the bot can't reach the guild.
 
     const source = await (
       botcynx.channels.cache.get(fields[3]) as GuildTextBasedChannel
@@ -70,7 +70,7 @@ export default new Event("messageCreate", async (message) => {
       });
       return message.react("💀"); //webhook didn't exist
     }
-    let id: any;
+    let id: string;
     id = webhook.map((w) => w.id);
     webhook = webhook.get(id[0]);
     const webhookClient: Webhook = await botcynx
@@ -85,8 +85,9 @@ export default new Event("messageCreate", async (message) => {
           if (
             process.env.environment == "dev" ||
             process.env.environment == "debug"
-          )
-            console.log(err);
+          ) {
+            botcynx.getLogger.error(err);
+          }
         }); //empty message
     }
   });
@@ -125,7 +126,7 @@ const handler = (source: Message<boolean>, message: Message<boolean>) => {
 const commandInputHandler = (
   source: Message<boolean>,
   message: Message<boolean>
-): string | MessagePayload | Omit<WebhookMessageOptions, "flags"> => {
+): string | MessagePayload | Omit<WebhookCreateMessageOptions, "flags"> => {
   if (![20, 23].includes(source.type)) return null; //chat input and context command type;
 
   let username;
@@ -182,7 +183,7 @@ const commandInputHandler = (
 const baseInputHandler = (
   source: Message<boolean>,
   message: Message<boolean>
-): string | MessagePayload | Omit<WebhookMessageOptions, "flags"> => {
+): string | MessagePayload | Omit<WebhookCreateMessageOptions, "flags"> => {
   if (![0, 19].includes(source.type)) return null; //default and reply types
 
   let username;

@@ -8,7 +8,7 @@ import {
 } from "discord.js";
 import { verifyModel } from "../../../models/verifyModel";
 import { getUuidbyUsername } from "../../../lib/personal-modules/mojang";
-import { getPlayerByUuid } from "../../../lib/personal-modules/hypixel";
+import { getPlayerByUuid } from "../../../lib/HypixelAPIUtils";
 import {
   extractWeight,
   getFatterProfile,
@@ -16,6 +16,7 @@ import {
 } from "../../../lib/personal-modules/senither";
 import { uuid } from "../../../typings/ApiInterface";
 import { coolPeopleUUID, coolTypeToEmojis } from "../../../lib/coolPeople";
+import {botcynx} from "../../../index";
 
 export default new slashCommand({
   name: "weight",
@@ -38,7 +39,7 @@ export default new slashCommand({
     },
   ],
 
-  run: async ({ interaction }) => {
+  run: async ({ interaction, client }) => {
     let username: string = interaction.options.getString("username");
     let profile: string = interaction.options.getString("profile");
     let uuid: uuid | string;
@@ -64,7 +65,7 @@ export default new slashCommand({
         });
       uuid = (uuid as uuid).id;
     } else {
-      const data = await getPlayerByUuid(uuid as string).catch(() => null);
+      const data = await getPlayerByUuid(uuid as string).catch((e) => botcynx.getLogger.error(e));
 
       if (!data)
         return interaction.followUp({
@@ -77,10 +78,10 @@ export default new slashCommand({
     if (profile) {
       profile = profile.toLowerCase();
       data = await getSpecifiedProfile(uuid as string, profile).catch(
-        () => null
+        (e) => client.getLogger.error(e)
       );
 
-      if (!data || data == null) {
+      if (!data) {
         const embed = new EmbedBuilder()
           .setDescription(`player not found or profile provided does not exist`)
           .setFooter({ text: `requested by ${interaction.user.tag}` })

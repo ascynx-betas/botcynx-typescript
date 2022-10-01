@@ -2,3 +2,9 @@ Whitelisted commands are commands that are registered to only a few guilds
 
 you can get access to those commands by asking Ascynx#0736 on discord via dms
 
+
+
+Whitelisted commands are commands that are generally only available in a few guilds.
+Those commands are either tailored to those guilds OR are considered dangerous.
+If you want access to those commands,
+You can possibly get them by asking Ascynx#0736 on discord via dms.

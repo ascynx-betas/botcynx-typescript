@@ -1,7 +1,7 @@
 import { ActionRowBuilder, ButtonBuilder, EmbedBuilder } from "discord.js";
 import {
   infoEmbedCreation,
-  SetActiveButton,
+  setActiveButton,
   setButtonRows,
 } from "../lib/personal-modules/discordPlugin";
 import { ButtonResponse } from "../structures/Commands";
@@ -28,7 +28,7 @@ export default new ButtonResponse({
       messageComponents[1]
     );
     let idArray = newMessageComponents.map((c) => c.customId);
-    const buttonStyles = await SetActiveButton(interaction.customId, idArray);
+    const buttonStyles = setActiveButton(interaction.customId, idArray);
     types.forEach(function (type, index) {
       const button = new ButtonBuilder()
         .setCustomId(`info:${type}`)
@@ -41,7 +41,7 @@ export default new ButtonResponse({
       return interaction.followUp({
         content: `there are too many categories to create enough buttons`,
       });
-    let components: ActionRowBuilder<ButtonBuilder>[] = await setButtonRows(
+    let components: ActionRowBuilder<ButtonBuilder>[] = setButtonRows(
       arrayOfButtons
     );
 

@@ -47,7 +47,11 @@ export default new Command({
         content: `sorry but you cannot disable that command.`,
       });
 
-    if (request.getFlags().length == 0 || request.hasFlag("local") || request.hasFlag("global")) {
+    if (
+      request.getFlags().length == 0 ||
+      request.hasFlag("local") ||
+      request.hasFlag("global")
+    ) {
       let flag: string;
       if (request.hasFlag("local") || request.getFlags().length == 0) {
         flag = "local";
