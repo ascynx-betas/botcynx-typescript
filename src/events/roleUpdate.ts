@@ -37,8 +37,6 @@ export default new Event(
     //  const reason = log.reason;
     //
     //}
-
-    oldMember.timeout(0, "wick, I don't like you")
     let { trigger, removable, bypass, logchannel } = config;
 
     if (trigger.length == 0 || removable.length == 0) return;

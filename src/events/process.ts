@@ -5,6 +5,7 @@ import { getTimeOfDay } from "../lib/personal-modules/testFor";
 import chalk from "chalk";
 import { postStartData } from "./ready";
 import { LoggerFactory, logLevel } from "../lib/Logger";
+import { DiscordAPIError } from "discord.js";
 
 const Logger = LoggerFactory.getLogger("PROCESS-CAUGHT");
 
@@ -14,10 +15,10 @@ const sendError = async (error: Error) => {
   if (typeof fields == "undefined")
     return Logger.log(error.toString(), logLevel.ERROR);
   if (
-    fields[0].startsWith("DiscordAPIError") &&
-    showDiscordAPIErrors
+    error instanceof DiscordAPIError &&
+    !showDiscordAPIErrors
   )
-    return Logger.log(error.toString(), logLevel.ERROR); //returns if DiscordAPIError when it isn't in dev environment
+    return;
   stack = fields.slice(1, 5).join("\n\n");
   const err = "[" + getTimeOfDay() + "]" + " Caught error: \n" + stack;
 
