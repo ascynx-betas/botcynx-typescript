@@ -1,17 +1,18 @@
 {
   "name": "botcynx-typescript",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "a discord bot made in typescript based on an earlier project",
   "main": "dist/index.js",
   "scripts": {
     "pretest": "eslint --ignore-path .gitignore",
     "start": "node dist/index.js",
-    "start:dev": "ts-node-dev src/index.ts",
     "build": "tsc",
     "watch": "tsc -w",
     "quickstart": "tsc && node dist/index.js",
     "test:api": "node dist/lib/test/gitPull.js",
-    "start:prod": "node dist/index.js prod"
+    "start:prod": "node dist/index.js --setEnv prod",
+    "quickstart:dev": "tsc && node dist/index.js --setEnv dev --showCallStack true --showDiscordAPIErrors true",
+    "quickstart:debug": "tsc && node dist/index.js --setEnv debug --showCallStack true --showDiscordAPIErrors true"
   },
   "repository": {
     "type": "git",
@@ -32,8 +33,9 @@
     "ansi-regex": "^6.0.1",
     "chalk": "^4.1.2",
     "crypto-js": "^4.1.1",
-    "discord.js": "^14.3.0",
+    "discord.js": "^14.5.0",
     "dotenv": "^16.0.1",
+    "express": "^4.18.1",
     "ffmpeg-static": "^5.0.2",
     "form-data": "^4.0.0",
     "glob": "^8.0.3",
@@ -54,6 +56,7 @@
     "@types/node": "^18.7.13",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^4.8.2"
+    "typescript": "^4.8.2",
+    "@types/node-fetch": "^2.6.2"
   }
 }

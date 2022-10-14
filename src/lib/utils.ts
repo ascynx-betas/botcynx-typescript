@@ -8,11 +8,13 @@ import {
   User,
   Message,
   GuildTextBasedChannel,
+  ActionRowBuilder,
 } from "discord.js";
 import { botcynx } from "..";
 import { webhook } from "./personal-modules/discordPlugin";
 import { emojis } from "./emojis";
 import { checkLink } from "../events/linkReader";
+import { RepoProfile } from "./cache/repoCache";
 
 export const similarityDetection = (
   word: string,
@@ -53,38 +55,32 @@ export const similarityDetection = (
   else return { result: false, percentage: percentageOfSimilarities };
 };
 
-export const queryEmbed = (data, tag, query) => {
-  if (data.total_count >= 5) data.items = data.items.slice(0, 5);
+export const returnEditQueryButton = (page = 0, maxPage = 1) => {
+  let backwardButton = new ButtonBuilder().setCustomId("querypage:" + (page - 1)).setEmoji("◀️").setStyle(ButtonStyle.Primary);
+  let editButton = new ButtonBuilder().setCustomId("newquery").setLabel("New query").setStyle(ButtonStyle.Secondary);
+  let forwardButton = new ButtonBuilder().setCustomId("querypage:" + (page + 1)).setEmoji("▶️").setStyle(ButtonStyle.Primary);
+  if (page == 0) {
+    backwardButton.setDisabled(true);
+  }
+  if (page == maxPage) {
+    forwardButton.setDisabled(true);
+  }
 
-  let items: {
-    name: string;
-    owner: string;
-    description: string;
-    repoURL: string;
-    stars: number;
-    forks: number;
-  }[] = [];
-  data.items.forEach((item) => {
-    let description: string;
-    if (item.description?.length <= 200) description = item.description;
-    else if (item.description?.length >= 200) {
-      description = item.description.slice(0, 196) + "... ";
-    } else description = "no description set";
+  return new ActionRowBuilder<ButtonBuilder>().addComponents([
+    backwardButton,
+    editButton,
+    forwardButton
+  ]);
+}
 
-    let name = item.name;
-    let owner = item.owner.login;
-    let repoURL = item.html_url;
-    let stargazers = item.stargazers_count;
-    let forks = item.forks_count;
+export const queryEmbed = (data, tag, query, page = 0) => {
+  let pageFirstElement = (page*5) > 0 ? (page*5)-1 : (page*5);
+  if (data.total_count >= 5) data.items = data.items.slice(pageFirstElement, pageFirstElement + 5);
+  //expected result (if page = 0 return 5 first elements, else return page * 5 as first element and 5 later as max)
 
-    items.push({
-      description: description,
-      name: name,
-      owner: owner,
-      repoURL: repoURL,
-      stars: stargazers,
-      forks: forks,
-    });
+  let items: RepoProfile[] = [];
+  data.items.forEach((item: RepoItem) => {
+    items.push(new RepoProfile(item));
   });
 
   let fields: APIEmbedField[] = [];
@@ -108,9 +104,9 @@ export const queryEmbed = (data, tag, query) => {
       `${items.length === 1 ? `${items[0].name}` : `results for ${query}`}`
     )
     .setFields(fields)
-    .setFooter({ text: `requested by ${tag}` });
+    .setFooter({ text: `requested by ${tag} - ${data.total_count} results` });
 
-  return { embed, buttonFields }; //not sure how it's gonna work out
+  return { embed, buttonFields };
 };
 
 export const sendInfoWebhook = async (options: {
@@ -119,8 +115,8 @@ export const sendInfoWebhook = async (options: {
 }) => {
   const { message, embed } = options;
   const infoWebhook = webhook(process.env.webhookLogLink);
-  const hook = await botcynx.fetchWebhook(infoWebhook.id, infoWebhook.token);
-  hook.send({
+
+  (await botcynx.fetchWebhook(infoWebhook.id, infoWebhook.token)).send({
     content: message != null ? message : null,
     embeds: embed != null ? [embed] : null,
     allowedMentions: { parse: ["roles", "users"] },
@@ -143,7 +139,8 @@ export function checkHypixelLinked(user: User, linked: String): boolean {
   return false;
 }
 
-const linkRegex = /((?:(https:\/\/)|(http:\/\/)|())(?<host>.{0,6})\.)?discord\.com\/channels\/(?<guild>[0-9]+)\/(?<channel>[0-9]+)\/(?<message>[0-9]+)(\/.*)?/mi;
+const linkRegex =
+  /((?:(https:\/\/)|(http:\/\/)|())(?<host>.{0,6})\.)?discord\.com\/channels\/(?<guild>[0-9]+)\/(?<channel>[0-9]+)\/(?<message>[0-9]+)(\/.*)?/im;
 
 export async function getMessage(link: string): Promise<Message<boolean>> {
   if (!checkLink(link.replace(/(https:\/\/)|(http:\/\/)/, ""))) {
@@ -154,16 +151,20 @@ export async function getMessage(link: string): Promise<Message<boolean>> {
   let match = linkRegex.exec(link);
   if (match["groups"] != null && match["groups"] != undefined) {
     let guild = match["groups"].guild;
-    if (botcynx.guilds.cache.get(guild) == null || botcynx.guilds.cache.get(guild) == undefined) {
+    if (
+      botcynx.guilds.cache.get(guild) == null ||
+      botcynx.guilds.cache.get(guild) == undefined
+    ) {
       return null;
     }
 
     let channel = match["groups"].channel;
     let message = match["groups"].message;
 
-    let Message = (await (botcynx.channels.cache.get(channel) as GuildTextBasedChannel).messages.fetch(message));
+    let Message = await (
+      botcynx.channels.cache.get(channel) as GuildTextBasedChannel
+    ).messages.fetch(message);
     return Message;
-
   } else {
     return null;
   }

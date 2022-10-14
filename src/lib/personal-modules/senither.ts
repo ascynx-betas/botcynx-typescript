@@ -1,61 +1,50 @@
 import { APIEmbedField } from "discord.js";
-import fetch from "node-fetch";
-import { botcynx } from "../..";
 import {
   senitherProfiles,
   senitherProfileSingular,
 } from "../../typings/ApiInterface";
-const key = process.env.hypixelapikey;
+import { Senither } from "../SenitherUtils";
 
-const getProfiles = async function (uuid: string) {
-  const url = `https://hypixel-api.senither.com/v1/profiles/${uuid}`;
-  const options = {
-    headers: {
-      Authorization: `${key}`,
-      "user-agent": botcynx.getUserAgent()
-    },
-  };
+const getProfiles = async function (uuid: string): Promise<senitherProfiles> {
+  const data = await Senither.getProfiles(uuid);
 
-  //GET request
-  return fetch(url, options).then(async (body) => {
-    let data: string = await body.text();
-    let result: senitherProfiles = JSON.parse(data);
-    return result;
-  });
+  if (data) {
+    return data;
+  }
+
+  return null;
 };
 
-const getFatterProfile = async function (uuid: string) {
-  const url = `https://hypixel-api.senither.com/v1/profiles/${uuid}/weight`;
-  const options = {
-    headers: {
-      Authorization: `${key}`,
-      "user-agent": botcynx.getUserAgent()
-    },
-  };
+const getFatterProfile = async function (uuid: string): Promise<senitherProfileSingular> {
+  const data = await Senither.getProfiles(uuid);
 
-  //GET request
-  return fetch(url, options).then(async (body) => {
-    let data: string = await body.text();
-    let result: senitherProfileSingular = JSON.parse(data);
-    return result;
-  });
+  if (data) {
+    data.data.sort((a, b) => 
+      (b.weight + b.weight_overflow) - (a.weight + a.weight_overflow)
+    );
+    return  {
+      status: 200,
+      data: data.data[0]
+    };
+  }
+
+  return null;
 };
 
-const getSpecifiedProfile = async function (uuid: string, profile: string) {
-  const url = `https://hypixel-api.senither.com/v1/profiles/${uuid}/${profile}`;
-  const options = {
-    headers: {
-      Authorization: `${key}`,
-      "user-agent": botcynx.getUserAgent()
-    },
-  };
 
-  //GET request
-  return fetch(url, options).then(async (body) => {
-    let data: string = await body.text();
-    let result: senitherProfileSingular = JSON.parse(data);
-    return result;
-  });
+const getSpecifiedProfile = async function (uuid: string, profile: string): Promise<senitherProfileSingular> {
+  const data = await Senither.getProfiles(uuid);
+
+  if (data) {
+    data.data.filter((a) => a.name == profile);
+
+    return {
+      status: 200,
+      data: data.data[0]
+    };
+  }
+
+  return null;
 };
 
 const extractWeight = async function (data: senitherProfileSingular) {

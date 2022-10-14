@@ -11,9 +11,12 @@ class GitError extends Error {
     this.possibilities = possibilities;
   }
 }
-const gitFetchJson = async (url) => {
+const gitFetchJson = async (url: string) => {
   const body = await fetch(url, {
-    headers: { Authorization: `token ${process.env.githubToken}`, "user-agent": botcynx.getUserAgent() },
+    headers: {
+      Authorization: `token ${process.env.githubToken}`,
+      "user-agent": botcynx.userAgent,
+    },
   });
   const json = await body.json();
   if (json.ok == false) {

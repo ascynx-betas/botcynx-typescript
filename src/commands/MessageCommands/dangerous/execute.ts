@@ -3,6 +3,9 @@ import { Command } from "../../../structures/Commands";
 import { inspect } from "util";
 import * as lib from "../../../lib/index";
 import fetch from "node-fetch";
+import { LoggerFactory } from "../../../lib/index";
+
+const ExecLogger = LoggerFactory.getLogger("EVAL");
 
 export default new Command({
   name: "exec",
@@ -15,7 +18,7 @@ export default new Command({
     if (args.length == 0) return;
 
     const token = process.env.botToken;
-    let mongooseConnectionString = process.env.mongooseConnectionString;
+    const mongooseConnectionString = process.env.mongooseConnectionString;
     const hypixelapikey = process.env.hypixelapikey;
     const logwb = process.env.webhookLogLink;
     const gitToken = process.env.githubToken;
@@ -34,6 +37,14 @@ export default new Command({
 
       // Send off the cleaned up result
       return text;
+    };
+
+    const removeSensitiveInfo = (text: string) => {
+      let regex = new RegExp(
+        `(.*${token}.*|.*${hypixelapikey}.*|.*${logwb}.*|.*${gitToken}.*|.*${mongooseConnectionString}.*)`
+      );
+
+      return text.replace(regex, "[REDACTED INFORMATION]");
     };
     const cut = function (text: string) {
       let length = text.length;
@@ -96,19 +107,7 @@ export default new Command({
         throw Error("not happening m8");
       let evaled = eval(code);
       let cleaned = await clean(evaled);
-      cleaned = cleaned.replace(
-        new RegExp(
-          [
-            token,
-            mongooseConnectionString,
-            hypixelapikey,
-            logwb,
-            gitToken,
-          ].join("|"),
-          "gi"
-        ),
-        ""
-      );
+      cleaned = removeSensitiveInfo(cleaned);
       let cool = code;
       if (cool.includes("client") && cool.includes("config"))
         throw Error("nope");
@@ -117,9 +116,14 @@ export default new Command({
       let hastebin;
       if (cool.length > 1000) cool = cut(cool);
       if (cleaned.length > 1000) {
-        hastebin = await lib.haste(cleaned);
+        hastebin = await lib.HasteUtils.post(cleaned);
         cleaned = cut(cleaned);
       }
+
+      if (activeFlags.includes("sudo")) {
+        ExecLogger.warn("Received code evaluation with sudo flag.");
+      }
+
       if (!activeFlags.includes("silent")) {
         const embed = new EmbedBuilder()
           .setFields([
@@ -142,18 +146,26 @@ export default new Command({
             }`,
           })
           .setFooter({ text: hastebin || `beans` });
-          request.send({ embeds: [embed] });
+        request.send({ embeds: [embed] });
       }
     } catch (err) {
       let hastebin;
       let cool = code;
+      cool = removeSensitiveInfo(cool);
       cool = `\`\`\`js\n${cool}\n\`\`\``;
       err = `\`\`\`\n${err}\n\`\`\``;
       if (cool.length > 1000) cool = cut(cool);
       if (err.length > 1000) {
-        hastebin = await lib.haste(err);
+        hastebin = await lib.HasteUtils.post(err);
         err = cut(err);
       }
+
+      if (activeFlags.includes("sudo")) {
+        ExecLogger.warn(
+          "Received code evalution with sudo flag leading to an error."
+        );
+      }
+
       const embed = new EmbedBuilder()
         .setFields([
           { name: "**input:**", value: cool },
@@ -167,7 +179,7 @@ export default new Command({
           }`,
         })
         .setFooter({ text: hastebin || `beans` });
-        request.send({ embeds: [embed] });
+      request.send({ embeds: [embed] });
     }
   },
 });

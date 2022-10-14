@@ -38,7 +38,7 @@ export default new slashCommand({
       return interaction.followUp({
         content: `there are too many categories to create enough buttons`,
       });
-    let components: ActionRowBuilder<ButtonBuilder>[] = await setButtonRows(
+    let components: ActionRowBuilder<ButtonBuilder>[] = setButtonRows(
       arrayOfButtons
     );
 

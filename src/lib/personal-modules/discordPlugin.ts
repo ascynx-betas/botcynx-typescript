@@ -81,65 +81,36 @@ const snowflakeToMention = function (array: Array<string>, type: snowflake) {
   return result;
 };
 
-const SetActiveButton = async function (
-  buttonId: string,
-  arrayOfCustomId: string[]
-): Promise<ButtonStyle[]> {
-  let arrOfStyles: ButtonStyle[] = [];
-  arrayOfCustomId.forEach(function (customId, index) {
-    if (buttonId == customId) {
-      arrOfStyles[index] = ButtonStyle.Primary;
-    } else arrOfStyles[index] = ButtonStyle.Secondary;
-  });
-  return arrOfStyles;
-};
-const setButtonRows = async function (
-  arrayOfButtons: ButtonBuilder[]
-): Promise<ActionRowBuilder<ButtonBuilder>[]> {
-  let arrayOfComponents: ActionRowBuilder<ButtonBuilder>[] = [];
-  if (arrayOfButtons.length > 1) {
-    let component: ActionRowBuilder<ButtonBuilder> =
-      new ActionRowBuilder<ButtonBuilder>();
-    for (let i = 0; i < 5; i++) {
-      component.addComponents(arrayOfButtons[i]);
-      if (typeof arrayOfButtons[i + 1] == "undefined") break;
-    }
-    arrayOfComponents.push(component);
+const setActiveButton = function (buttonId: string, arrayOfCustomIds: string[]): ButtonStyle[] {
+  let styles: ButtonStyle[] = [];
+
+  for (let i = 0; i < arrayOfCustomIds.length; i++) {
+    styles[i] = (buttonId == arrayOfCustomIds[i] ? ButtonStyle.Primary : ButtonStyle.Secondary);
   }
-  if (arrayOfButtons.length > 5) {
-    let component = new ActionRowBuilder<ButtonBuilder>();
-    for (let i = 5; i < 10; i++) {
-      if (typeof arrayOfButtons[i] == "undefined") break;
-      component.addComponents(arrayOfButtons[i]);
+
+  return styles;
+}
+
+const MaxButtonPerRow = 5;
+
+const setButtonRows = function (buttons: ButtonBuilder[]): ActionRowBuilder<ButtonBuilder>[] {
+  let components: ActionRowBuilder<ButtonBuilder>[] = [];
+  if (buttons && buttons.length < 1) throw new Error("Provide a non-empty array.");
+
+
+  for (let i = 0; i < buttons.length; i++) {
+    let currentRowIndex = Math.floor(i / 5);
+    let currentButtonIndex = (i % MaxButtonPerRow);
+    if (currentRowIndex > 4) throw new Error("Too many buttons for creation.");
+
+    if (currentButtonIndex == 0) {
+      //create new component array
+      components[currentRowIndex] = new ActionRowBuilder<ButtonBuilder>();
     }
-    arrayOfComponents.push(component);
+    components[currentRowIndex].addComponents(buttons[i]);
   }
-  if (arrayOfButtons.length > 10) {
-    let component = new ActionRowBuilder<ButtonBuilder>();
-    for (let i = 10; i < 15; i++) {
-      if (typeof arrayOfButtons[i] == "undefined") break;
-      component.addComponents(arrayOfButtons[i]);
-    }
-    arrayOfComponents.push(component);
-  }
-  if (arrayOfButtons.length > 15) {
-    let component = new ActionRowBuilder<ButtonBuilder>();
-    for (let i = 15; i < 20; i++) {
-      if (typeof arrayOfButtons[i] == "undefined") break;
-      component.addComponents(arrayOfButtons[i]);
-    }
-    arrayOfComponents.push(component);
-  }
-  if (arrayOfButtons.length > 20) {
-    let component = new ActionRowBuilder<ButtonBuilder>();
-    for (let i = 20; i < 25; i++) {
-      if (typeof arrayOfButtons[i] == "undefined") break;
-      component.addComponents(arrayOfButtons[i]);
-    }
-    arrayOfComponents.push(component);
-  }
-  return arrayOfComponents;
-};
+  return components;
+}
 
 const infoEmbedCreation = function (category: string) {
   const commands = botcynx.ArrayOfSlashCommands.concat(botcynx.commands)
@@ -147,12 +118,15 @@ const infoEmbedCreation = function (category: string) {
     .map((c: any) => c.name);
   const descriptions = botcynx.ArrayOfSlashCommands.concat(botcynx.commands)
     .filter((c: any) => c.category === category)
-    .map((c: any) => (c.description || ((c as any).usage) || "not defined"));
+    .map((c: any) => c.description || (c as any).usage || "not defined");
   let fields: APIEmbedField[] = [];
   for (let i: number = 0; i < commands.length; i++) {
     let field: APIEmbedField = { name: ``, value: `` };
-    let id = botcynx.application.commands.cache.filter((c) => c.name == commands[i]).first();
-    field.name = id !== undefined ? "</" + commands[i] + ":" + id + ">" : commands[i];
+    let id = botcynx.application.commands.cache
+      .filter((c) => c.name == commands[i])
+      .first();
+    field.name =
+      id !== undefined ? "</" + commands[i] + ":" + id + ">" : commands[i];
     field.value = descriptions[i];
     fields.push(field);
   }
@@ -167,7 +141,7 @@ export {
   isInvite,
   permOverride,
   snowflakeToMention,
-  SetActiveButton,
   setButtonRows,
   infoEmbedCreation,
+  setActiveButton
 };

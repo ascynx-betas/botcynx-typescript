@@ -9,12 +9,14 @@ const getUuidbyUsername = async function (username: string) {
   let Url = `https://api.mojang.com/users/profiles/minecraft/${uriComponent}`;
 
   //GET request
-  return fetch(Url, {headers: {"user-agent": botcynx.getUserAgent()}}).then(async (body) => {
-    let data: any = await body.text();
-    if (typeof data === "undefined" || !data) return null;
-    let result: uuid = JSON.parse(data);
-    return result;
-  });
+  return fetch(Url, { headers: { "user-agent": botcynx.getUserAgent() } }).then(
+    async (body) => {
+      let data: any = await body.text();
+      if (typeof data === "undefined" || !data) return null;
+      let result: uuid = JSON.parse(data);
+      return result;
+    }
+  );
 };
 
 const getProfilebyUuid = async function (uuid: string) {
@@ -23,16 +25,20 @@ const getProfilebyUuid = async function (uuid: string) {
   let Url = `https://sessionserver.mojang.com/session/minecraft/profile/${uuid}`;
 
   //GET request
-  return fetch(Url, {headers: {"user-agent": botcynx.getUserAgent()}}).then(async (body) => {
-    let data: any = await body.text();
-    if (typeof data === "undefined" || !data) return null;
-    let result: profile = JSON.parse(data);
-    return result;
-  });
+  return fetch(Url, { headers: { "user-agent": botcynx.getUserAgent() } }).then(
+    async (body) => {
+      let data: any = await body.text();
+      if (typeof data === "undefined" || !data) return null;
+      let result: profile = JSON.parse(data);
+      return result;
+    }
+  );
 };
 
 const fetchJSON = async (url) => {
-  const body = await fetch(url, {headers: {"user-agent": botcynx.getUserAgent()}});
+  const body = await fetch(url, {
+    headers: { "user-agent": botcynx.getUserAgent() },
+  });
   const json = await body.json();
   if (json.success === false)
     throw Error("Request to API Failed: " + json.error);

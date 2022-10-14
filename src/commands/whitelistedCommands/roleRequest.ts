@@ -16,12 +16,13 @@ import { verifyModel } from "../../models/verifyModel";
 import {
   getPlayerByUuid,
   getProfiles,
-} from "../../lib/personal-modules/hypixel";
+} from "../../lib/HypixelAPIUtils";
 import { getUuidbyUsername } from "../../lib/personal-modules/mojang";
 import { getSpecifiedProfile } from "../../lib/personal-modules/senither";
 import { WhitelistedCommand } from "../../structures/Commands";
-import { profileMember } from "../../typings/Hypixel";
+import { ProfileMember } from "../../typings/Hypixel";
 import { checkHypixelLinked } from "../../lib/utils";
+import { botcynx } from "../..";
 
 export default new WhitelistedCommand({
   name: "rolerequest",
@@ -109,7 +110,7 @@ export default new WhitelistedCommand({
       : hypixelData
           .sort(
             (acc, curr) =>
-              curr.members[uuid].last_save - acc.members[uuid].last_save
+              curr.last_save - acc.last_save
           )
           .first()
           .cute_name.toLowerCase();
@@ -131,7 +132,7 @@ export default new WhitelistedCommand({
     } else {
       let profiles = hypixelData?.sort(
         (acc, curr) =>
-          curr.members[uuid].last_save - acc.members[uuid].last_save
+          curr.last_save - acc.last_save
       );
       if (profiles.size < 1)
         return interaction.followUp({
@@ -219,8 +220,8 @@ export default new WhitelistedCommand({
       });
     }
   },
-  register: ({ client, guild }) => {
-    guild.commands.create(client.whitelistedCommands.get("rolerequest"));
+  register: ({ guild }) => {
+    guild.commands.create(botcynx.whitelistedCommands.get("rolerequest"));
   },
 });
 
@@ -228,7 +229,7 @@ class WhitelistedRoles {
   List: {
     [key: string]: {
       [key: string]: (options: {
-        member?: profileMember;
+        member?: ProfileMember;
         profile?: { cute_name: string; uuid: string };
       }) => boolean | Promise<boolean>;
     };
@@ -237,7 +238,7 @@ class WhitelistedRoles {
   constructor(list: {
     [key: string]: {
       [key: string]: (options: {
-        member?: profileMember;
+        member?: ProfileMember;
         profile?: { cute_name: string; uuid: string };
       }) => boolean | Promise<boolean>;
     };
@@ -248,13 +249,13 @@ class WhitelistedRoles {
   getRoleFunction(
     RoleId: string
   ): (options: {
-    member?: profileMember;
+    member?: ProfileMember;
     profile?: { cute_name: string; uuid: string };
   }) => boolean | Promise<boolean> {
     for (let category in this.List) {
       let ids: {
         [key: string]: (options: {
-          member?: profileMember;
+          member?: ProfileMember;
           profile?: { cute_name: string; uuid: string };
         }) => boolean | Promise<boolean>;
       } = this.List[category];
@@ -278,7 +279,7 @@ class WhitelistedRoles {
     for (let category in this.List) {
       let ids: {
         [key: string]: (options: {
-          member?: profileMember;
+          member?: ProfileMember;
           profile?: { cute_name: string; uuid: string };
         }) => boolean | Promise<boolean>;
       } = this.List[category];

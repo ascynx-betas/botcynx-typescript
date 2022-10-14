@@ -3,10 +3,16 @@ import {
   Message,
   MessageEditOptions,
   MessagePayload,
-  ReplyMessageOptions,
+  MessageReplyOptions,
 } from "discord.js";
 
-export class RequestHandler {//broken in dms
+class RequestError extends Error {
+  constructor(message?: string, options?: ErrorOptions) {
+    super(message, options);
+  }
+}
+
+export class RequestHandler {
   private List: Collection<string, request>;
 
   private static instance: RequestHandler;
@@ -32,19 +38,20 @@ export class RequestHandler {//broken in dms
 
   createRequest(message: Message<boolean>) {
     if (!this.List.get(message.id)) {
-        let req = new request(message);
-        this.List.set(message.id, req);
-        return req;
+      let req = new request(message);
+      this.List.set(message.id, req);
+      return req;
     } else {
-        throw new Error("Message already has a request linked to it");
+      throw new RequestError("Message already has a request linked to it");
     }
   }
 
   getRequest(message: Message<boolean>) {
     if (this.List.get(message.id)) {
       this.List.get(message.id).getFlags();
-        return this.List.get(message.id);
-    } else throw new Error("Message doesn't have a request linked to it");
+      return this.List.get(message.id);
+    } else
+      throw new RequestError("Message doesn't have a request linked to it");
   }
 
   contains(message: Message<boolean>) {
@@ -53,7 +60,7 @@ export class RequestHandler {//broken in dms
 
   deleteRequest(messageId: string) {
     if (!this.List.get(messageId)) {
-      throw new Error("Message doesn't exist in list");
+      throw new RequestError("Message doesn't exist in list");
     } else {
       this.List.delete(messageId);
     }
@@ -67,7 +74,6 @@ export class request {
   private usable: boolean;
   private flags: Flag[];
 
-
   constructor(request: Message<boolean>) {
     this.message = request;
     this.usable = true;
@@ -75,10 +81,10 @@ export class request {
   }
 
   async send(
-    options: string | MessagePayload | ReplyMessageOptions
+    options: string | MessagePayload | MessageReplyOptions
   ): Promise<Message> {
     if (!this.usable)
-      throw new Error(
+      throw new RequestError(
         "This request was invalidated and cannot be responded to anymore."
       );
     if (!this.response) {
@@ -100,7 +106,7 @@ export class request {
     let flags: Flag[] = [];
 
     for (let arg of this.message.content.split(" ").slice(1)) {
-      if (arg.startsWith("-")) {
+      if (arg.match(/--?\w+/)) {
         flags.push(new Flag(arg));
       }
     }
@@ -112,7 +118,7 @@ export class request {
   getNonFlagArgs(): string[] {
     let args: string[] = [];
     for (let arg of this.message.content.split(" ").slice(1)) {
-      if (arg[0] == "-") continue;
+      if (arg.match(/--?\w+/)) continue;
       args.push(arg);
     }
     return args;
@@ -120,19 +126,22 @@ export class request {
 
   hasFlag(possibleFlag: string) {
     for (let flag of this.flags) {
-        let testFlag = possibleFlag.startsWith("-") ?
-         new Flag(possibleFlag) :
-         new Flag((possibleFlag.length <= 3 ? "-" : "--") + possibleFlag);
+      let testFlag = possibleFlag.match(/--?\w+/)
+        ? new Flag(possibleFlag)
+        : new Flag((possibleFlag.length <= 3 ? "-" : "--") + possibleFlag);
 
-        if (testFlag.flagType == flag.flagType) {
-          if (testFlag.toString() === flag.toString()) {
-            return true;
-          }
-        } else if (testFlag.flagType == FlagType.LONG && flag.flagType == FlagType.SHORT) {
-          if (testFlag.getShort() === flag.toString()) {
-            return true;
-          }
+      if (testFlag.flagType == flag.flagType) {
+        if (testFlag.toString() === flag.toString()) {
+          return true;
         }
+      } else if (
+        testFlag.flagType == FlagType.LONG &&
+        flag.flagType == FlagType.SHORT
+      ) {
+        if (testFlag.getShort() === flag.toString()) {
+          return true;
+        }
+      }
     }
 
     return false;
@@ -142,34 +151,37 @@ export class request {
     options: string | MessagePayload | MessageEditOptions
   ): Promise<Message> {
     if (!this.usable)
-      throw new Error(
+      throw new RequestError(
         "This request was invalidated and cannot be responded to anymore."
       );
     if (!this.response) {
-      throw new Error("Response doesn't exist, couldn't execute edit.");
+      throw new RequestError("Response doesn't exist, couldn't execute edit.");
     }
     return this.response.edit(options);
   }
 
   async delete(): Promise<boolean> {
     if (!this.usable)
-      throw new Error(
+      throw new RequestError(
         "This request was invalidated and cannot be responded to anymore."
       );
     if (!this.response) {
-      throw new Error("Response doesn't exist, couldn't execute deletion.");
+      throw new RequestError(
+        "Response doesn't exist, couldn't execute deletion."
+      );
     }
     if (this.response.deletable) {
       this.response.delete();
       this.response = undefined;
       return true;
     } else {
-      throw new Error("Couldn't delete response.");
+      throw new RequestError("Couldn't delete response.");
     }
   }
 
   invalidate() {
-    if (!this.usable) throw new Error("This request was already invalidated");
+    if (!this.usable)
+      throw new RequestError("This request was already invalidated");
     this.usable = false;
   }
 
@@ -185,13 +197,18 @@ export class request {
 class Flag {
   flagType: FlagType;
   flag: string;
-  
+  index?: number;
+
   constructor(flag: string) {
-    if (!flag.startsWith("-")) throw new Error("Not a flag");
+    if (!flag.startsWith("-")) throw new RequestError("Not a flag");
     if (flag[1] == "-") {
       this.flagType = FlagType.LONG;
     } else this.flagType = FlagType.SHORT;
     this.flag = this.flagType == FlagType.SHORT ? flag.slice(1) : flag.slice(2);
+  }
+
+  set setIndex(i: number) {
+    this.index = i;
   }
 
   getShort() {
@@ -201,16 +218,72 @@ class Flag {
 
   getLong() {
     if (this.flagType == FlagType.LONG) return this.toString();
-    throw new Error("Can't create a long flag from a short type :I");
+    throw new RequestError("Can't create a long flag from a short type :I");
   }
 
   toString() {
     return `${this.flagType == FlagType.SHORT ? "-" : "--"}${this.flag}`;
   }
+}
 
+export class FlagHandler {
+  static getFlags(searchString: string): Collection<string, Flag> {
+    let flags: Collection<string, Flag> = new Collection<string, Flag>();
+    let args = searchString.split(" ");
+
+    for (let i = 0; i < args.length; i++) {
+      let arg = args[i];
+      if (arg.startsWith("-")) {
+        let flag = new Flag(arg);
+        flag.setIndex = i;
+        flags.set(arg.replaceAll("-", ""), flag);
+      }
+    }
+
+    return flags;
+  }
+
+  static getNonFlagArgs(
+    searchString: string
+  ): { text: string; index: number }[] {
+    let args: { text: string; index: number }[] = [];
+    let as = searchString.split(" ");
+    for (let i = 0; i < as.length; i++) {
+      let arg = as[i];
+      if (arg[0] == "-") continue;
+      args.push({ text: arg, index: i });
+    }
+    return args;
+  }
+
+  static hasFlag(searchString: string, possibleFlag: string) {
+    let flags = this.getFlags(searchString);
+    for (let flagEntry of flags) {
+      let flag = flagEntry[1];
+
+      let testFlag = possibleFlag.startsWith("-")
+        ? new Flag(possibleFlag)
+        : new Flag((possibleFlag.length <= 3 ? "-" : "--") + possibleFlag);
+
+      if (testFlag.flagType == flag.flagType) {
+        if (testFlag.toString() === flag.toString()) {
+          return true;
+        }
+      } else if (
+        testFlag.flagType == FlagType.LONG &&
+        flag.flagType == FlagType.SHORT
+      ) {
+        if (testFlag.getShort() === flag.toString()) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
 }
 
 enum FlagType {
   SHORT,
-  LONG
+  LONG,
 }

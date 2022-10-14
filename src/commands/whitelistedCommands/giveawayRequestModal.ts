@@ -4,6 +4,7 @@ import {
   ModalBuilder,
   TextInputStyle,
 } from "discord.js";
+import { botcynx } from "../..";
 import { WhitelistedCommand } from "../../structures/Commands";
 
 export default new WhitelistedCommand({
@@ -42,7 +43,7 @@ export default new WhitelistedCommand({
       );
     interaction.showModal(modal);
   },
-  register: ({ client, guild }) => {
-    guild.commands.create(client.whitelistedCommands.get("giveawayrequest"));
+  register: ({ guild }) => {
+    guild.commands.create(botcynx.whitelistedCommands.get("giveawayrequest"));
   },
 });

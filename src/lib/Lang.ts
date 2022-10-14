@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import { LoggerFactory, logLevel } from "./Logger";
 
 export interface Localization {
   [key: string]: LocalizedString;
@@ -55,7 +56,7 @@ export class LocalizedString {
 export class LocalizationHandler {
   private cache: Localization;
   private static INSTANCE: LocalizationHandler = new LocalizationHandler();
-
+  private logger = LoggerFactory.getLogger("LOCALIZATION-HANDLER");
   constructor(cache?: Localization) {
     this.cache = cache ? cache : {};
   }
@@ -101,6 +102,7 @@ export class LocalizationHandler {
   }
 
   public load(): LocalizationHandler {
+    this.logger.log("Started Loading", logLevel.DEBUG);
     let path = process.cwd() + "/lang";
     for (let dir of fs.readdirSync(path)) {
       let object = JSON.parse(
@@ -111,6 +113,7 @@ export class LocalizationHandler {
         this.addKey(dir.split(".")[0], key, v);
       }
     }
+    this.logger.log("Finished Loading", logLevel.DEBUG);
     return this;
   }
 

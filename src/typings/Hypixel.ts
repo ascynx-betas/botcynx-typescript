@@ -1,12 +1,12 @@
-export interface request {
+export interface Request {
   success: boolean;
   cause?: string;
 }
-export interface ressources extends request {
+export interface Resources extends Request {
   lastUpdated: number;
 }
 
-export interface key extends request {
+export interface Key extends Request {
   record?: {
     key: string;
     owner: string;
@@ -16,7 +16,7 @@ export interface key extends request {
   };
 }
 
-export interface player extends request {
+export interface Player extends Request {
   player?: {
     uuid: string;
     displayname: string;
@@ -35,9 +35,12 @@ export interface player extends request {
       };
       prompt?: boolean;
     };
+    achievements?: {
+      [key: string]: any
+    };
   };
 }
-export interface friends extends request {
+export interface Friends extends Request {
   uuid?: string;
   records?: [
     {
@@ -48,7 +51,7 @@ export interface friends extends request {
     }
   ];
 }
-export interface recentgames extends request {
+export interface Recentgames extends Request {
   uuid?: string;
   games: [
     {
@@ -60,7 +63,7 @@ export interface recentgames extends request {
     }
   ];
 }
-export interface status extends request {
+export interface Status extends Request {
   uuid?: string;
   session: {
     online: boolean;
@@ -69,17 +72,17 @@ export interface status extends request {
     map: string;
   };
 }
-export interface guild extends request {
+export interface Guild extends Request {
   guild: object;
 }
-export interface rankedSkywars extends request {
+export interface RankedSkywars extends Request {
   result?: {
     key: string;
     position: number;
     score: number;
   };
 }
-export interface gameInfo extends ressources {
+export interface GameInfo extends Resources {
   games: {
     _: {
       id: number;
@@ -89,49 +92,49 @@ export interface gameInfo extends ressources {
     };
   };
 }
-export interface achievements extends ressources {
+export interface Achievements extends Resources {
   achievements: object;
 }
-export interface challenges extends ressources {
+export interface Challenges extends Resources {
   challenges: object;
 }
-export interface quests extends ressources {
+export interface Quests extends Resources {
   quests: object;
 }
-export interface guildAchievements extends ressources {
+export interface GuildAchievements extends Resources {
   one_time: object;
   tiered: object;
 }
-export interface vanityPets extends ressources {
+export interface VanityPets extends Resources {
   types: object;
   rarities: object;
 }
-export interface vanityCompanions extends ressources {
+export interface VanityCompanions extends Resources {
   types: object;
   rarities: object;
 }
-export interface skyblockCollections extends ressources {
+export interface SkyblockCollections extends Resources {
   version: string;
   collections: object;
 }
-export interface skyblockSkills extends ressources {
+export interface SkyblockSkills extends Resources {
   version: string;
   skills: object;
 }
-type skyblockItem = {
+type SkyblockItem = {
   material: string;
   color?: string;
   name: string;
   skin: string;
   category: string;
-  tier: rarity;
-  stats?: stat[];
+  tier: Rarity;
+  stats?: Stat[];
   npc_sell_price?: number;
   id: string;
   museum?: boolean;
   description?: string;
 };
-export type profilePet = {
+export type ProfilePet = {
   uuid: string;
   type: string;
   exp: number;
@@ -139,19 +142,20 @@ export type profilePet = {
   held_item: string;
   candyUsed: number;
   skin: string;
+  active: boolean;
 };
-type slayer = {
-  claimed_levels: {
+export type Slayer = {
+  claimed_levels?: {
     [key: string]: number;
   };
-  boss_kills_tier_0: number;
-  xp: number;
-  boss_kills_tier_1: number;
-  boss_kills_tier_2: number;
-  boss_kills_tier_3: number;
-  boss_kills_tier_4: number;
+  boss_kills_tier_0?: number;
+  xp?: number;
+  boss_kills_tier_1?: number;
+  boss_kills_tier_2?: number;
+  boss_kills_tier_3?: number;
+  boss_kills_tier_4?: number;
 };
-type bestDungeon = {
+type BestDungeon = {
   timestamp: number;
   score_exploration: number;
   score_speed: number;
@@ -167,15 +171,15 @@ type bestDungeon = {
   damage_mitigated: number;
   ally_healing: number;
 };
-type contest = {
+type Contest = {
   collected: number;
   claimed_rewards: boolean;
   claimed_position: number;
   claimed_participants: number;
 };
-export type profileMember = {
+export type ProfileMember = {
+  selected: boolean;
   experience_skill_combat: number;
-  last_save: number;
   inv_armor: { type: number; data: string };
   coop_invitation: {
     timestamp: number;
@@ -213,13 +217,13 @@ export type profileMember = {
   death_count: number;
   achievement_spawned_island_types: string[];
   slayer_bosses: {
-    zombie: slayer;
-    spider: slayer;
-    wolf: slayer;
-    enderman: slayer;
-    blaze: slayer;
+    zombie: Slayer;
+    spider: Slayer;
+    wolf: Slayer;
+    enderman: Slayer;
+    blaze: Slayer;
   };
-  pets: profilePet[];
+  pets: ProfilePet[];
   dungeons: {
     dungeon_types: {
       catacombs: {
@@ -227,7 +231,14 @@ export type profileMember = {
         experience: number;
         tier_completions: { [key: number]: number };
         fastest_time: { [key: number]: number };
-        best_runs: { [key: number]: bestDungeon[] };
+        best_runs: { [key: number]: BestDungeon[] };
+      };
+      master_catacombs: {
+        times_played: { [key: number]: number };
+        experience: number;
+        tier_completions: { [key: number]: number };
+        fastest_time: { [key: number]: number };
+        best_runs: { [key: number]: BestDungeon[] };
       };
     };
     player_classes: { [key: string]: { experience: number } };
@@ -259,7 +270,7 @@ export type profileMember = {
     perks: {
       double_drops: number;
     };
-    contests: { [key: string]: contest };
+    contests: { [key: string]: Contest };
     talked: boolean;
   };
   experimentation: {
@@ -419,13 +430,13 @@ export type profileMember = {
   candy_inventory_contents: { type: number; data: string };
   experience_skill_carpentry: number;
 };
-type transation = {
+type Transation = {
   amount: number;
   timestamp: number;
   action: "DEPOSIT" | "WITHDRAW";
   initiator_name: string;
 };
-type upgrade = {
+type Upgrade = {
   upgrade: string;
   tier: number;
   started_ms: number;
@@ -436,28 +447,29 @@ type upgrade = {
 };
 export type Profile = {
   profile_id: string;
-  members: { [key: string]: profileMember };
+  members: { [key: string]: ProfileMember };
   community_upgrades: {
     currently_upgrading: {
       currently_upgrading: unknown;
-      upgrade_states: upgrade[];
+      upgrade_states: Upgrade[];
     };
   };
   cute_name: string;
   banking: {
     balance: number;
-    transactions: transation[];
+    transactions: Transation[];
   };
   game_mode?: "island" | "ironman" | "bingo"; //if none then it's normal gamemode
+  last_save: number;
 };
-type bid = {
+type Bid = {
   auction_id: string;
   bidder: string;
   profile_id: string;
   amount: number;
   timestamp: number;
 };
-export type rarity =
+export type Rarity =
   | "COMMON"
   | "UNCOMMON"
   | "RARE"
@@ -467,7 +479,7 @@ export type rarity =
   | "DIVINE"
   | "SPECIAL"
   | "VERY SPECIAL";
-type stat = {
+type Stat = {
   HEALTH?: number;
   DEFENSE?: number;
   STRENGTH?: number;
@@ -487,7 +499,7 @@ type stat = {
   PRISTINE?: number;
   SEA_CREATURE_CHANCE?: number;
 };
-type auction = {
+type Auction = {
   _id: string;
   uuid: string;
   auctioneer: string;
@@ -499,7 +511,7 @@ type auction = {
   item_lore: string;
   extra: string;
   category: string;
-  tier: rarity;
+  tier: Rarity;
   starting_bid: number;
   item_bytes: {
     type: number;
@@ -508,49 +520,49 @@ type auction = {
   claimed: boolean;
   claimed_bidders: any[];
   highest_bid_amount: number;
-  bids: bid[];
+  bids: Bid[];
 };
-export interface skyblockItems extends ressources {
-  items: Array<skyblockItem>;
+export interface skyblockItems extends Resources {
+  items: Array<SkyblockItem>;
 }
-export interface skyblockNews extends request {
+export interface SkyblockNews extends Request {
   items: Array<any>;
 }
-export interface skyblockAuction extends request {
-  auctions: Array<auction>; //skyblock auction
+export interface SkyblockAuction extends Request {
+  auctions: Array<Auction>; //skyblock auction
 }
-export interface skyblockActiveAuctions extends ressources {
+export interface SkyblockActiveAuctions extends Resources {
   page: number;
   totalPages: number;
   totalAuctions: number;
-  auctions: Array<auction>; //skyblock auction
+  auctions: Array<Auction>; //skyblock auction
 }
-export interface skyblockInactiveAuctions extends ressources {
+export interface SkyblockInactiveAuctions extends Resources {
   auctions: Array<object>;
 }
-export interface skyblockBazaar extends ressources {
+export interface SkyblockBazaar extends Resources {
   products: object;
 }
-export interface skyblockProfile extends request {
+export interface SkyblockProfile extends Request {
   profile: Profile; //skyblock profile
 }
-export interface skyblockProfiles extends request {
+export interface SkyblockProfiles extends Request {
   profiles: Array<Profile>; // Skyblock profile
 }
-export interface activeNetworkBoosters extends request {
+export interface ActiveNetworkBoosters extends Request {
   boosters: Array<object> | object; //Array of ActiveBooster or QueuedBooster
   boosterState: {
     decrementing: boolean;
   };
 }
-export interface playerCount extends request {
+export interface PlayerCount extends Request {
   playerCount: number;
   games: object;
 }
-export interface currentLeaderboards extends request {
+export interface CurrentLeaderboards extends Request {
   leaderboards: object;
 }
-export interface punishmentStatistics extends request {
+export interface PunishmentStatistics extends Request {
   watchdog_lastMinute: number;
   staff_rollingDaily: number;
   watchdog_total: number;

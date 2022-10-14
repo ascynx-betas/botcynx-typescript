@@ -6,7 +6,7 @@ import {
   getML,
   getMods,
 } from "../lib/cache/crashFix";
-import { haste, isHaste } from "../lib/haste";
+import { HasteUtils } from "../lib/hasteUtils";
 import {
   ActionRowBuilder,
   ButtonBuilder,
@@ -42,23 +42,23 @@ export default new Event("messageCreate", async (message) => {
     if (!url.endsWith(".txt") && !url.endsWith(".log")) return;
 
     const log = await (await fetch(url)).text();
-    if (checkIfLog(log) == false) return;
+    if (!checkIfLog(log)) return;
     if (!logs.includes(log)) logs.push(log);
   }
 
   if (message.content.length > 0) {
     for (const word of message.content.replaceAll("\n", " ").split(" ")) {
-      if (!isLink(word) || !isHaste(word)) continue;
+      if (!isLink(word) || !HasteUtils.isHaste(word)) continue;
 
       let linkSplit = word.split("/");
       let link = word;
       if (linkSplit[3] != "raw")
         link = linkSplit[0] + "//" + linkSplit[2] + "/raw/" + linkSplit[3];
-        //Example https://hst.sh/raw/ID
+      //Example https://hst.sh/raw/ID
 
       const log = await (await fetch(link)).text();
       const isLog = checkIfLog(log);
-      if (isLog == false) continue;
+      if (!isLog) continue;
       if (!logs.includes(log)) logs.push(log);
     }
   }
@@ -69,27 +69,48 @@ export default new Event("messageCreate", async (message) => {
 
     let AdditionalData = "";
     if (!log.match(/Botcynx additional Data/)) {
-      AdditionalData += `\n\n\tBotcynx additional Data:\n\n\tMod Loader: ${
-        ModLoader.loader
-      } ${ModLoader.loaderVersion} \n\tMods: ${mods.map((m) => m.ID).join(", ")}`;
+      AdditionalData += `\n\n\tBotcynx additional Data:`;
+
+      if (ModLoader && ModLoader.loader != "") {
+        AdditionalData += `\n\n\tMod Loader: ${ModLoader.loader}${ModLoader.loaderVersion != "" ? ` ${ModLoader.loaderVersion}` : ""}`;
+      }
+
+      if (mods.size > 0) {
+        AdditionalData += `\n\tMods: ${mods.map((mod) => mod.ID).join(", ")}`;
+      }
     }
 
     const IDs = mods.map((m) => m.ID);
     const Statuses = mods.map((m) => m.state);
 
-    let logUrl = await haste(log + AdditionalData);
+    let logUrl = await HasteUtils.post(log + AdditionalData);
+
+    let extraLogOutput: string[] = [];
+    let recommendedOutput: string[] = [];
+    let clientData: string[] = [];
 
     if (ModLoader.loader == "Feather") {
-      let buttonRow = new ActionRowBuilder<ButtonBuilder>;
-      buttonRow.addComponents(new ButtonBuilder().setStyle(ButtonStyle.Link).setURL(logUrl).setLabel("view log"));
+      if (message.author.id == process.env.developerId) {
+        recommendedOutput.push("Feather client is unsupported, issues that occur while using it must be reported to its support team.");
+      } else {
+        let buttonRow = new ActionRowBuilder<ButtonBuilder>();
+      buttonRow.addComponents(
+        new ButtonBuilder()
+          .setStyle(ButtonStyle.Link)
+          .setURL(logUrl)
+          .setLabel("view log")
+      );
       let content = "";
-      content+=`**${message.author}** sent a log`;
+      content += `**${message.author}** sent a log`;
 
-      if (message.content) content += (", " + message.content);
-      content+="\n\n\t• Feather client is unsupported, issues that occur while using it must be reported to its support team.";
+      if (message.content) content += ", " + message.content;
+      content +=
+        "\n\n\t• Feather client is unsupported, issues that occur while using it must be reported to its support team.";
 
-      await sendLogMessage(content, buttonRow, message);
-      return;
+
+        await sendLogMessage(content, buttonRow, message);
+        return;
+      }
     }
 
     if (
@@ -97,61 +118,70 @@ export default new Event("messageCreate", async (message) => {
       message.channel.messages.cache.get(message.id)
     )
       try {
-        message.delete();
+        if (message.deletable) message.delete();
       } catch (ignore) {}
 
-    const fixes = crashFixCache.data.fixes; //type 1 => solution //type 2 => recommendations //type 0 => informations;
-    let extraLogOutput: string[] = [];
-    let recommendedOutput: string[] = [];
-    let clientData: string[] = [];
-    clientData.push(
-      `user is using ${ModLoader.loader} ${ModLoader.loaderVersion}`
-    );
-    clientData.push(`user is on minecraft version ${ModLoader.mcVersion}`);
+    const fixes = crashFixCache.data.fixes ? crashFixCache.data.fixes : []; //type 1 => solution //type 2 => recommendations //type 0 => informations;
+
+    if (ModLoader) {
+      if (ModLoader.loader && ModLoader.loader != "") {
+        clientData.push(
+        `user is using ${ModLoader.loader} ${ModLoader.loaderVersion}`
+        );
+      }
+
+      if (ModLoader.mcVersion && ModLoader.mcVersion != "") {
+        clientData.push(`user is on minecraft version ${ModLoader.mcVersion}`);
+      }
+
+    }
 
     for (const fix of fixes) {
-      let completedProblems = 0;
-      let maxProblems = fix.causes.length;
-
+      let foundProblems = 0;
+      let maxCauses = fix.causes.length;
+                  
       for (const cause of fix.causes) {
         if (cause.method === "contains") {
           if (log.includes(cause.value)) {
-            completedProblems += 1;
+            foundProblems += 1;
           }
         }
         if (cause.method === "contains_not") {
           if (!log.includes(cause.value)) {
-            completedProblems += 1;
+            foundProblems += 1;
           }
         }
         if (cause.method === "regex") {
           const regex = new RegExp(cause.value);
           if (regex.test(log)) {
-            completedProblems += 1;
+            foundProblems += 1;
           }
         }
         if (cause.method === "regex_not") {
           const regex = new RegExp(cause.value);
           if (!regex.test(cause.value)) {
-            completedProblems += 1;
+            foundProblems += 1;
           }
         }
       }
 
-      if (completedProblems === maxProblems) {
+      if (foundProblems === maxCauses) {
         if (fix.fixtype == 1) extraLogOutput.push(fix.fix);
         else if (fix.fixtype == 2) recommendedOutput.push(fix.fix);
         else if (fix.fixtype == 0) clientData.push(fix.fix);
       }
     }
 
-    Statuses.forEach((status, index) => {
-      if (status != null && status.search(/.*E.*/) != -1) {
+    for (let i = 0; i < Statuses.length; i++) {
+      const status = Statuses[i];
+      if (status == null) continue;
+
+      if (status.search(/.E.*/) != -1) {
         extraLogOutput.push(
-          `${IDs[index]} ran into an error, please contact its support team with this log.`
+          `${IDs[i]} ran into an error, please contact its support team with this log.`
         );
       }
-    });
+    }
 
     let solutions = "";
     for (const fix of extraLogOutput)
@@ -164,7 +194,7 @@ export default new Event("messageCreate", async (message) => {
     let recommendations = "";
     for (const recommended of recommendedOutput)
       recommendations.length === 0
-        ? recommendations == `\t• ${recommended}`
+        ? recommendations = `\t• ${recommended}`
         : (recommendations += `\n\t• ${recommended}`);
 
     const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
@@ -176,7 +206,7 @@ export default new Event("messageCreate", async (message) => {
     await sendLogMessage(
       `**${message.author}** sent a log, ${
         message.content ? message.content : ""
-      }\n${clientData.join(",\n")}\n\n ${
+      }\n${clientData.join(",\n")}${clientData.length > 0 ? "\n\n" : ""} ${
         extraLogOutput.length === 0 ? "" : `Solutions: \n${solutions}`
       }${
         recommendedOutput.length === 0

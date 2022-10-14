@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, EmbedBuilder } from "discord.js";
 import { configModel } from "../../../models/config";
-import { ct } from "../../../lib/personal-modules/testFor";
+import { compareTest } from "../../../lib/personal-modules/testFor";
 import { slashCommand } from "../../../structures/Commands";
 
 export default new slashCommand({
@@ -52,9 +52,9 @@ export default new slashCommand({
           .get(member.id)
           .roles.cache.map((r) => r.id);
         if (roles.includes(removable)) {
-          let has;
+          let has: { success: any; breakingcount?: number; };
           if (bypass.length > 0) {
-            has = ct(roles, bypass);
+            has = compareTest(roles, bypass);
           } else {
             has = { success: false };
           }
@@ -75,12 +75,8 @@ export default new slashCommand({
       if (index >= r.length - 1) {
         const affectedString =
           affectedMembers.join("\n") || "**no members were affected**";
-        let description: string;
-
-        if (isTestRun == true)
-          description = `Test run\n **Affected members**:\n${affectedString}`;
-        if (isTestRun == false)
-          description = `**Affected members**:\n${affectedString}`;
+          
+        let description = isTestRun ? `Test run\n **Affected members**:\n${affectedString}` : `**Affected members**:\n${affectedString}`;
 
         const embed = new EmbedBuilder()
           .setDescription(description)
