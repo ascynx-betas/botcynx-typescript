@@ -1,5 +1,5 @@
 import process from "process";
-import { botcynx } from "..";
+import { botcynx, showDiscordAPIErrors } from "..";
 import { webhook } from "../lib/personal-modules/discordPlugin";
 import { getTimeOfDay } from "../lib/personal-modules/testFor";
 import chalk from "chalk";
@@ -15,7 +15,7 @@ const sendError = async (error: Error) => {
     return Logger.log(error.toString(), logLevel.ERROR);
   if (
     fields[0].startsWith("DiscordAPIError") &&
-    postStartData.environment != "dev"
+    showDiscordAPIErrors
   )
     return Logger.log(error.toString(), logLevel.ERROR); //returns if DiscordAPIError when it isn't in dev environment
   stack = fields.slice(1, 5).join("\n\n");

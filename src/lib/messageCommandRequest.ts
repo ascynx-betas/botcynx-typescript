@@ -106,7 +106,7 @@ export class request {
     let flags: Flag[] = [];
 
     for (let arg of this.message.content.split(" ").slice(1)) {
-      if (arg.startsWith("-")) {
+      if (arg.match(/--?\w+/)) {
         flags.push(new Flag(arg));
       }
     }
@@ -118,7 +118,7 @@ export class request {
   getNonFlagArgs(): string[] {
     let args: string[] = [];
     for (let arg of this.message.content.split(" ").slice(1)) {
-      if (arg[0] == "-") continue;
+      if (arg.match(/--?\w+/)) continue;
       args.push(arg);
     }
     return args;
@@ -126,7 +126,7 @@ export class request {
 
   hasFlag(possibleFlag: string) {
     for (let flag of this.flags) {
-      let testFlag = possibleFlag.startsWith("-")
+      let testFlag = possibleFlag.match(/--?\w+/)
         ? new Flag(possibleFlag)
         : new Flag((possibleFlag.length <= 3 ? "-" : "--") + possibleFlag);
 

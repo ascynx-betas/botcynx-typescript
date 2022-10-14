@@ -17,13 +17,19 @@ export class LoggerFactory {
     string,
     Logger
   >();
-  private static renderTime: boolean = false;
-  private static showCallStack: boolean = false;
+
+  private static inheritedValues: {renderTime: boolean, showCallStack: boolean} = {renderTime: false, showCallStack: false};
 
   static getLogger(loggerName: string) {
     if (!this.loggers.get(loggerName)) {
       let logger = new Logger(loggerName);
-      logger.shouldRenderTime = this.renderTime;
+      for (let key of Object.keys(this.inheritedValues)) {
+        let value = this.inheritedValues[key];
+        if (logger[key] != null) {
+          //exists
+          logger[key] = value;
+        }
+      }
 
       this.loggers.set(loggerName, logger);
     }
@@ -31,33 +37,29 @@ export class LoggerFactory {
   }
 
   static set shouldRenderTime(bool: boolean) {
-    if (this.renderTime === bool) return;
-    this.renderTime = bool;
+    if (this.inheritedValues.renderTime === bool) return;
+    this.inheritedValues.renderTime = bool;
     this.loggers.forEach((logger) => {
-      logger.shouldRenderTime = bool;
+      logger.renderTime = bool;
     });
   }
 
   static set shouldShowCallStack(bool: boolean) {
-    if (this.showCallStack == bool) return;
-    this.showCallStack = bool;
+    if (this.inheritedValues.showCallStack == bool) return;
+    this.inheritedValues.showCallStack = bool;
     this.loggers.forEach((logger) => {
-      logger.shouldShowCallStack = true;
+      logger.showCallStack = true;
     })
   }
 }
 
 class Logger {
   private name: string;
-  private renderTime: boolean;
-  private showCallStack: boolean = false;
+  public renderTime: boolean;
+  public showCallStack: boolean = false;
 
-  set shouldRenderTime(bool: boolean) {
-    this.renderTime = bool;
-  }
-  
-  set shouldShowCallStack(bool: boolean) {
-    this.showCallStack = bool;
+  public getName() {
+    return this.name;
   }
 
   private get currentTime() {

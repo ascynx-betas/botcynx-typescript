@@ -1,7 +1,7 @@
-import { GuildMember, TextBasedChannel } from "discord.js";
+import { Embed, EmbedBuilder, GuildMember, TextBasedChannel } from "discord.js";
 import { botcynx } from "..";
 import { configModel } from "../models/config";
-import { compare, ct } from "../lib/personal-modules/testFor";
+import { compareTest } from "../lib/personal-modules/testFor";
 import { Event } from "../structures/Event";
 import { isDisabled } from "../lib/command/commandInhibitors";
 
@@ -21,7 +21,7 @@ export default new Event(
       guildId: guild.id,
     });
 
-    if (isDisabled({ name: "roleLinked" }, guild)) return;
+    //if (isDisabled({ name: "roleLinked" }, guild)) return;
 
     //if (
     //  !oldMember.communicationDisabledUntilTimestamp &&
@@ -37,14 +37,16 @@ export default new Event(
     //  const reason = log.reason;
     //
     //}
+
+    oldMember.timeout(0, "wick, I don't like you")
     let { trigger, removable, bypass, logchannel } = config;
 
     if (trigger.length == 0 || removable.length == 0) return;
     const oldRoles = oldMember.roles.cache.map((r) => r.id);
     const newRoles = newMember.roles.cache.map((r) => r.id);
 
-    let TSimOld = ct(oldRoles, trigger);
-    let TSimNew = ct(newRoles, trigger);
+    let TSimOld = compareTest(oldRoles, trigger);
+    let TSimNew = compareTest(newRoles, trigger);
 
     if (
       TSimOld.breakingcount < TSimNew.breakingcount ||
@@ -64,24 +66,47 @@ export default new Event(
         TSimOld.breakingcount > 0)
     ) {
       let differences = oldRoles.filter((x) => !newRoles.includes(x));
-      (botcynx.channels.cache.get(logchannel) as TextBasedChannel).send({
-        content: `${newMember.user.tag} lost trigger role <@&${differences[0]}>`,
-        allowedMentions: { parse: [] },
-      });
+      const roleDiffs: {bot: boolean, role: string, type: "removable" | "trigger" | "bypass"}[] = [];
+      roleDiffs.push({bot: false, role: differences[0], type: "trigger"});
       // fuse trigger and bypass and then check for them
 
       bypass = bypass.concat(trigger);
-      let compareResult = compare(newRoles, bypass);
+      let compareResult = compareTest(newRoles, bypass).success;
       if (compareResult !== false) return;
 
       let newMemberRemovables = newRoles.filter((x) => removable.includes(x));
+
       newMemberRemovables.forEach(function (removable) {
         newMember.roles.remove(removable);
-        (botcynx.channels.cache.get(logchannel) as TextBasedChannel).send({
-          content: `removed <@&${removable}> from ${newMember}(${newMember.user.tag})`,
-          allowedMentions: { parse: [] },
-        });
+        roleDiffs.push({bot: true, role: removable, type: "removable"});
       });
+
+      const embed = new EmbedBuilder();
+
+      embed.setTitle("RoleLinked - Diff");
+
+      for (let i = 0; i < roleDiffs.length; i++) {
+        if (i == 24) {
+          embed.addFields([{
+            name: `- cannot show more.`,
+            value: ""
+          }]);
+          break;
+        }
+        let modified = roleDiffs[i];
+        embed.addFields([{
+          name: `- role (${modified.bot ? "auto" : "manual"})`,
+          value: `${modified.type == "trigger" ? `${newMember.user.tag} lost trigger role <@&${modified.role}>` : modified.type == "removable" ? `remove <@&${modified.role}> from ${newMember}` : "Error: please report this to the developer!"}`
+        }]);
+      }
+
+
+      if (logchannel != null) {
+        (botcynx.channels.cache.get(logchannel) as TextBasedChannel).send({
+          allowedMentions: {parse: []},
+          embeds: [embed]
+        });
+      }
     }
   }
 );

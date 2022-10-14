@@ -1,6 +1,6 @@
 import {botcynx} from "../index";
 import fetch from "node-fetch";
-import {key, player, skyblockProfiles, status, Profile} from "../typings/Hypixel";
+import {Key, Player, SkyblockProfiles, Status, Profile} from "../typings/Hypixel";
 import {Collection} from "discord.js";
 
 export class HypixelAPI {
@@ -8,14 +8,14 @@ export class HypixelAPI {
 
     private key = process.env.hypixelapikey;
     private keyStatus: {valid: boolean} = {valid: true};
-    private USER_AGENT;
+    private USER_AGENT: string;
     private readonly baseLink = "https://api.hypixel.net/";
 
-    private lastReset;//every 60000 reset APICallsLastMinute
-    private APICallsLastMinute;
-    private ReachedMax;
+    private lastReset: number;//every 60000 reset APICallsLastMinute
+    private APICallsLastMinute: number;
+    private ReachedMax: boolean;
 
-    readonly task;
+    readonly task: NodeJS.Timer;
 
     private static instance: HypixelAPI;
 
@@ -76,10 +76,12 @@ export class HypixelAPI {
             hasKey = true;
         }
 
+        //pre-request errors.
         if (hasKey && !this.keyStatus.valid) {
-            throw new HypixelError(500, "API key has been detected as invalid, please change the provided api key");
-        } else if (this.ReachedMax) {
-            throw new HypixelError(429, "Total API call limit reached last minute");
+            throw new HypixelError(500, "API key has been detected as invalid, please change the provided api key", false);
+        } else if (this.ReachedMax || this.APICallsLastMinute > 120) {
+            this.ReachedMax = true;
+            throw new HypixelError(429, "Total API call limit reached last minute", false);
         }
 
         return(fetch(link, { headers: { "user-agent": HypixelAPI.INSTANCE.USER_AGENT } } )).then(
@@ -116,26 +118,36 @@ export class HypixelAPI {
 export const getPlayerByUuid = async function (uuid: string) {
     const req = HypixelAPI.INSTANCE.createRequest("player", true, {uuid: uuid});
 
-    return (await HypixelAPI.INSTANCE.fetchHypixelAPI(req) as player);
+    return (await HypixelAPI.INSTANCE.fetchHypixelAPI(req) as Player);
 }
 
 export const getStatus = async function (uuid: string) {
     const req = HypixelAPI.INSTANCE.createRequest("status", true, {uuid});
 
-    return (await HypixelAPI.INSTANCE.fetchHypixelAPI(req) as status);
+    return (await HypixelAPI.INSTANCE.fetchHypixelAPI(req) as Status);
 }
 
 export const getKeyInfo = async function () {
     const req = HypixelAPI.INSTANCE.createRequest("key", true);
 
-    return (await HypixelAPI.INSTANCE.fetchHypixelAPI(req) as key);
+    return (await HypixelAPI.INSTANCE.fetchHypixelAPI(req) as Key);
 }
 
 export const getProfiles = async function (uuid: string) {
     const req = HypixelAPI.INSTANCE.createRequest("skyblock/profiles", true, {uuid});
 
-    let data: skyblockProfiles = await HypixelAPI.INSTANCE.fetchHypixelAPI(req);
+    let data: SkyblockProfiles = await HypixelAPI.INSTANCE.fetchHypixelAPI(req);
     let profiles: Collection<string, Profile> = new Collection();
+
+    if (data?.profiles && data?.profiles == null) {
+        throw new HypixelError(404, "Player doesn't have profiles", false);
+    }
+
+    //sort by last saved profile
+    profiles.sort((pA, pB) => {
+        return pB.last_save - pA.last_save;
+    })
+
     for (let profile of data?.profiles) {
         profiles.set(profile.cute_name, profile);
     }
@@ -144,7 +156,15 @@ export const getProfiles = async function (uuid: string) {
 }
 
 export class HypixelError extends Error {
-    constructor(code: number, cause: string) {
-        super(`Hypixel API returned code ${code} for reason: ${cause}`);
+    constructor(code: number, cause: string, thrownByAPI: boolean = true) {
+        let message: string;
+
+        if (thrownByAPI == true) {
+            message = `Hypixel API returned code ${code} for reason: ${cause}`;
+        } else {
+            message = `Stopped request with code ${code} for reason: ${cause}`;
+        }
+
+        super(message);
     }
 }

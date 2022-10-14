@@ -81,6 +81,9 @@ export default new slashCommand({
         (e) => client.getLogger.error(e)
       );
 
+      console.log(data);
+      console.log("trolling")
+
       if (!data) {
         const embed = new EmbedBuilder()
           .setDescription(`player not found or profile provided does not exist`)
@@ -90,9 +93,9 @@ export default new slashCommand({
         return interaction.followUp({ embeds: [embed] });
       }
     } else {
-      data = await getFatterProfile(uuid as string).catch(() => null);
+      data = await getFatterProfile(uuid as string).catch((e) => botcynx.getLogger.error(e));
 
-      if (!data || data == null) {
+      if (!data) {
         const embed = new EmbedBuilder()
           .setDescription(`player not found or profile provided does not exist`)
           .setFooter({ text: `requested by ${interaction.user.tag}` })

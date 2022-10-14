@@ -6,7 +6,7 @@ import {
   getML,
   getMods,
 } from "../lib/cache/crashFix";
-import { haste, isHaste } from "../lib/haste";
+import { HasteUtils } from "../lib/hasteUtils";
 import {
   ActionRowBuilder,
   ButtonBuilder,
@@ -48,7 +48,7 @@ export default new Event("messageCreate", async (message) => {
 
   if (message.content.length > 0) {
     for (const word of message.content.replaceAll("\n", " ").split(" ")) {
-      if (!isLink(word) || !isHaste(word)) continue;
+      if (!isLink(word) || !HasteUtils.isHaste(word)) continue;
 
       let linkSplit = word.split("/");
       let link = word;
@@ -83,7 +83,7 @@ export default new Event("messageCreate", async (message) => {
     const IDs = mods.map((m) => m.ID);
     const Statuses = mods.map((m) => m.state);
 
-    let logUrl = await haste(log + AdditionalData);
+    let logUrl = await HasteUtils.post(log + AdditionalData);
 
     let extraLogOutput: string[] = [];
     let recommendedOutput: string[] = [];

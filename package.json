@@ -1,6 +1,6 @@
 {
   "name": "botcynx-typescript",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "a discord bot made in typescript based on an earlier project",
   "main": "dist/index.js",
   "scripts": {
@@ -11,8 +11,8 @@
     "quickstart": "tsc && node dist/index.js",
     "test:api": "node dist/lib/test/gitPull.js",
     "start:prod": "node dist/index.js --setEnv prod",
-    "quickstart:dev": "tsc && node dist/index.js --setEnv dev --showCallStack true",
-    "quickstart:debug": "tsc && node dist/index.js --setEnv debug --showCallStack true"
+    "quickstart:dev": "tsc && node dist/index.js --setEnv dev --showCallStack true --showDiscordAPIErrors true",
+    "quickstart:debug": "tsc && node dist/index.js --setEnv debug --showCallStack true --showDiscordAPIErrors true"
   },
   "repository": {
     "type": "git",
@@ -30,7 +30,6 @@
   "license": "MIT",
   "dependencies": {
     "@discordjs/opus": "github:discordjs/opus",
-    "@types/express": "^4.17.13",
     "ansi-regex": "^6.0.1",
     "chalk": "^4.1.2",
     "crypto-js": "^4.1.1",
@@ -57,6 +56,7 @@
     "@types/node": "^18.7.13",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^4.8.2"
+    "typescript": "^4.8.2",
+    "@types/node-fetch": "^2.6.2"
   }
 }

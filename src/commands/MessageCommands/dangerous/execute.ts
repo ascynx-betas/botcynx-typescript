@@ -116,7 +116,7 @@ export default new Command({
       let hastebin;
       if (cool.length > 1000) cool = cut(cool);
       if (cleaned.length > 1000) {
-        hastebin = await lib.haste(cleaned);
+        hastebin = await lib.HasteUtils.post(cleaned);
         cleaned = cut(cleaned);
       }
 
@@ -156,7 +156,7 @@ export default new Command({
       err = `\`\`\`\n${err}\n\`\`\``;
       if (cool.length > 1000) cool = cut(cool);
       if (err.length > 1000) {
-        hastebin = await lib.haste(err);
+        hastebin = await lib.HasteUtils.post(err);
         err = cut(err);
       }
 

@@ -20,7 +20,7 @@ import {
 import { getUuidbyUsername } from "../../lib/personal-modules/mojang";
 import { getSpecifiedProfile } from "../../lib/personal-modules/senither";
 import { WhitelistedCommand } from "../../structures/Commands";
-import { profileMember } from "../../typings/Hypixel";
+import { ProfileMember } from "../../typings/Hypixel";
 import { checkHypixelLinked } from "../../lib/utils";
 import { botcynx } from "../..";
 
@@ -229,7 +229,7 @@ class WhitelistedRoles {
   List: {
     [key: string]: {
       [key: string]: (options: {
-        member?: profileMember;
+        member?: ProfileMember;
         profile?: { cute_name: string; uuid: string };
       }) => boolean | Promise<boolean>;
     };
@@ -238,7 +238,7 @@ class WhitelistedRoles {
   constructor(list: {
     [key: string]: {
       [key: string]: (options: {
-        member?: profileMember;
+        member?: ProfileMember;
         profile?: { cute_name: string; uuid: string };
       }) => boolean | Promise<boolean>;
     };
@@ -249,13 +249,13 @@ class WhitelistedRoles {
   getRoleFunction(
     RoleId: string
   ): (options: {
-    member?: profileMember;
+    member?: ProfileMember;
     profile?: { cute_name: string; uuid: string };
   }) => boolean | Promise<boolean> {
     for (let category in this.List) {
       let ids: {
         [key: string]: (options: {
-          member?: profileMember;
+          member?: ProfileMember;
           profile?: { cute_name: string; uuid: string };
         }) => boolean | Promise<boolean>;
       } = this.List[category];
@@ -279,7 +279,7 @@ class WhitelistedRoles {
     for (let category in this.List) {
       let ids: {
         [key: string]: (options: {
-          member?: profileMember;
+          member?: ProfileMember;
           profile?: { cute_name: string; uuid: string };
         }) => boolean | Promise<boolean>;
       } = this.List[category];

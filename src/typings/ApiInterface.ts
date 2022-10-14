@@ -1,4 +1,4 @@
-import { rarity } from "./Hypixel";
+import { Rarity } from "./Hypixel";
 
 // MOJANG API INTERFACES
 export interface uuid {
@@ -57,7 +57,7 @@ type slayerboss = {
 };
 type pet = {
   type: string;
-  tier: rarity;
+  tier: Rarity;
   level: number;
   xp: number;
   heldItem: string | null;
