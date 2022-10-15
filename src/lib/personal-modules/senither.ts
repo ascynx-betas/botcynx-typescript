@@ -23,7 +23,7 @@ const getFatterProfile = async function (uuid: string): Promise<senitherProfileS
       (b.weight + b.weight_overflow) - (a.weight + a.weight_overflow)
     );
     return  {
-      status: 200,
+      status: data.status,
       data: data.data[0]
     };
   }
@@ -36,12 +36,14 @@ const getSpecifiedProfile = async function (uuid: string, profile: string): Prom
   const data = await Senither.getProfiles(uuid);
 
   if (data) {
-    data.data.filter((a) => a.name == profile);
+    const filtered = data.data.find((E) => E.name.toLowerCase().trim() == profile.toLowerCase().trim());
 
-    return {
-      status: 200,
-      data: data.data[0]
-    };
+    if (filtered) {
+      return {
+        status: data.status,
+        data: filtered
+      }
+    }
   }
 
   return null;

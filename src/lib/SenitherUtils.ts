@@ -93,7 +93,7 @@ export class Senither {
         return result;
     }
 
-    public static mergeSkyblockProfileAndPlayer(profile: { id: any; name: any; last_save_at: any; weight: any; weight_overflow: any; fairy_souls: any; skills: any; slayers: any; dungeons: any; pets: any; coins: { bank: any; purse: any; }; }, player: Player) {
+    public static mergeSkyblockProfileAndPlayer(profile: { id: string; name: string; last_save_at: any; weight: any; weight_overflow: number; fairy_souls: number; skills: any; slayers: any; dungeons: any; pets: any; coins: { bank: number; purse: number; }; }, player: Player) {
         return {
             id: profile.id,
             name: profile.name,

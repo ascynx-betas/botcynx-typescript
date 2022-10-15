@@ -564,7 +564,7 @@ export const newWhitelistedRoles: WhitelistedRoles = new WhitelistedRoles({
         options?.profile?.uuid,
         options?.profile?.cute_name
       );
-      console?.log(profile);
+      console.log("weight: " + (profile?.data?.weight + profile?.data?.weight_overflow));
       return profile?.data?.weight + profile?.data?.weight_overflow >= 10000;
     },
     "903022232270413875": async function (options) {

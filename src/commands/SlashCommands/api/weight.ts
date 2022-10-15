@@ -81,9 +81,6 @@ export default new slashCommand({
         (e) => client.getLogger.error(e)
       );
 
-      console.log(data);
-      console.log("trolling")
-
       if (!data) {
         const embed = new EmbedBuilder()
           .setDescription(`player not found or profile provided does not exist`)
