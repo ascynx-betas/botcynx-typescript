@@ -1,18 +1,12 @@
 import { Guild, GuildMember, PermissionsString, User } from "discord.js";
 import { botcynx } from "../..";
 import { configModel } from "../../models/config";
-import { commandCooldown } from "../../typings/Command";
+import { ButtonResponseType, commandCooldown, CommandSimili, CommandType, MessageCommandType, MessageContextType, UserContextType } from "../../typings/Command";
 
-/**
- * an inhibitor allowing to see if the user has the permissions required to run that command
- * @param command - The command which has been instantiated
- * @param {member: GuildMember, guild: Guild} data - The data about the guild and member affected
- * @returns {boolean} - Whether it failed or not. (true = passed, false = failed)
- */
 const userPermissionInhibitor = function (
-  command,
+  command: CommandType | UserContextType | MessageContextType | MessageCommandType | ButtonResponseType,
   data: { member: GuildMember; guild: Guild }
-) {
+): boolean {
   const requiredPermissions: PermissionsString[] = command.userPermissions;
   const userPermissions: PermissionsString[] =
     data.member.permissions.toArray();
@@ -30,13 +24,7 @@ const userPermissionInhibitor = function (
   return true;
 };
 
-/**
- * an inhibitor allowing to see if the bot has the permissions required to run that command
- * @param command The command which has been instantiated
- * @param {Guild} guild - The data about the guild, member and channel affected
- * @returns {boolean} - Whether it failed or not. (true = passed, false = failed)
- */
-const botPermissionInhibitor = async function (command, guild: Guild) {
+const botPermissionInhibitor = async function (command: CommandType | UserContextType | MessageContextType | MessageCommandType | ButtonResponseType, guild: Guild): Promise<boolean> {
   const requiredPermissions: PermissionsString[] = command.botPermissions;
   const botPermissions: PermissionsString[] =
     guild.members.me.permissions.toArray();
@@ -51,13 +39,8 @@ const botPermissionInhibitor = async function (command, guild: Guild) {
   return true;
 };
 
-/**
- * Allows to see if the command is disabled or not
- * @param command - The command which has been instantiated
- * @param {Guild} guild - The guild affected
- * @returns {boolean}
- */
-const isDisabled = async function (command, guild?: Guild) {
+const isDisabled = async function (command: CommandType | UserContextType | MessageContextType | CommandSimili | MessageCommandType, guild?: Guild): Promise<boolean> {
+  if (botcynx.isDev()) return true;
   let guildConfig = null;
   if (guild) guildConfig = await configModel.findOne({ guildId: guild.id });
   const globalConfig = await configModel.findOne({ guildId: "global" });
@@ -74,19 +57,13 @@ const isDisabled = async function (command, guild?: Guild) {
  * @param user - The user affected
  * @returns {boolean} - Whether it failed or not. (true = passed, false = failed)
  */
-const isDevOnly = function (user: User) {
+const isDevOnly = function (user: User): boolean {
   if (user.id != process.env.developerId) return false;
 
   return true;
 };
 
-/**
- * If the command is on cooldown for the user or not
- * @param command - The command instantiated
- * @param {User} user - The user affected
- * @returns {boolean} - Whether it failed or not. (true = passed, false = failed)
- */
-const isOnCooldown = function (command, user: User) {
+const isOnCooldown = function (command: CommandType | UserContextType | MessageContextType | MessageCommandType, user: User): boolean {
   const time = command.cooldown * 1000; //set seconds to milliseconds
   let userCooldowns = botcynx.cooldowns.get(`${user.id}-${command.name}`);
 

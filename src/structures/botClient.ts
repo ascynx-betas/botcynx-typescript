@@ -66,6 +66,10 @@ export class botClient extends Client {
     return process.env.environment === "debug";
   }
 
+  public isDev(): boolean {
+    return process.env.environment === "dev";
+  }
+
   private constructor() {
     super({ intents: 65535, partials: [Partials.Channel, Partials.Message] });
   }

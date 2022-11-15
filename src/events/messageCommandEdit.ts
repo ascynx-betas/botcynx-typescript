@@ -15,6 +15,7 @@ export default new Event(
   async (oldMessage: Message, newMessage: Message) => {
     // MessageCommands
     if (
+      !newMessage.author ||
       newMessage.author.bot ||
       !newMessage.content.toLowerCase().startsWith(process.env.botPrefix)
     )

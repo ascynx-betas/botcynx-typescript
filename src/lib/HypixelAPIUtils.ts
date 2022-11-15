@@ -2,10 +2,20 @@ import {botcynx} from "../index";
 import fetch from "node-fetch";
 import {Key, Player, SkyblockProfiles, Status, Profile} from "../typings/Hypixel";
 import {Collection} from "discord.js";
+import EventEmitter from "events";
+import { HypixelAPIEvents } from "../structures/Event";
 
-export class HypixelAPI {
+declare type Awaitable<T> = PromiseLike<T> | T;
 
+  declare interface HypixelEmitter {
+    on<K extends keyof HypixelAPIEvents>(event: K, listener: (...args: HypixelAPIEvents[K]) => Awaitable<void>): this;
+    on<S extends string | symbol>(
+    event: Exclude<S, keyof HypixelAPIEvents>,
+    listener: (...args: any[]) => Awaitable<void>,
+    ): this;
+  }
 
+export class HypixelAPI extends EventEmitter implements HypixelEmitter {
     private key = process.env.hypixelapikey;
     private keyStatus: {valid: boolean} = {valid: true};
     private USER_AGENT: string;
@@ -14,6 +24,8 @@ export class HypixelAPI {
     private lastReset: number;//every 60000 reset APICallsLastMinute
     private APICallsLastMinute: number;
     private ReachedMax: boolean;
+
+    private activityLog: {[key: string]: number} = {};//functionName: number of calls
 
     readonly task: NodeJS.Timer;
 
@@ -27,6 +39,7 @@ export class HypixelAPI {
     }
 
     private constructor() {
+        super();
         this.USER_AGENT = botcynx.getUserAgent();
         this.lastReset = Date.now();
         this.APICallsLastMinute = 0;
@@ -36,9 +49,12 @@ export class HypixelAPI {
 
     private initTask() {
         return setInterval(async () => {
+            this.emit("reset", {lastReset: this.lastReset, APICallsLastMinute: this.APICallsLastMinute, ReachedMax: this.ReachedMax, activityLog: this.activityLog});
+
             this.lastReset = Date.now();
             this.APICallsLastMinute = 0;
             this.ReachedMax = false;
+            this.activityLog = {};
         }, 60000);
     }
 
@@ -63,11 +79,23 @@ export class HypixelAPI {
         for (let key of Object.keys(queries)) {
           if (isFirstQuery) {
               newLink += "?" + key + "=" + queries[key];
+              isFirstQuery = false;
           } else {
               newLink += "&" + key + "=" + queries[key];
           }
         }
         return newLink;
+    }
+
+    private parseRequest(link: string) {
+        let testString = link.replace(this.baseLink, "");
+        const r = /\/?(?<endpoint>[a-zA-Z0-9;,/:@&=+$\-_.!]*)(?:\?[a-zA-Z0-9;,/?:@&=+$\-_.!]*$|$)/gmi;
+
+        const result = r.exec(testString);
+        if (result?.groups && Object.hasOwn(result.groups, "endpoint")) {
+            return result.groups["endpoint"];
+        }
+        return "unknown";
     }
 
     async fetchHypixelAPI(link: string) {
@@ -81,24 +109,38 @@ export class HypixelAPI {
             throw new HypixelError(500, "API key has been detected as invalid, please change the provided api key", false);
         } else if (this.ReachedMax || this.APICallsLastMinute > 120) {
             this.ReachedMax = true;
+            this.emit("rateLimit", {eventType: "client"})
             throw new HypixelError(429, "Total API call limit reached last minute", false);
         }
+
+        //Log which endpoint is used.
+        const endpoint = this.parseRequest(link);
+        !Object.hasOwn(this.activityLog, endpoint) ?
+            this.activityLog[endpoint] = 1 :
+            this.activityLog[endpoint] += 1;
+        
 
         return(fetch(link, { headers: { "user-agent": HypixelAPI.INSTANCE.USER_AGENT } } )).then(
             async (body) => {
                 let data = await body.json();
 
-                if (data.success == false) {
-                    //handle all error codes
+                if (endpoint == "key" && data.success === true) {
+                    //piggyback off of api call to sync.
+                    this.APICallsLastMinute = data.record.queriesInPastMin;
+                    this.ReachedMax = this.APICallsLastMinute > data.record.limit;
+                }
 
+                if (data.success == false) {
+                    //handle all known error codes
                     switch (body.status) {
                         case 429: {
                             //api limit reached
                             //TODO add queue for failed hypixel api request?
+                            this.emit("rateLimit", {eventType: "server"})
                             break;
                         }
                         case 403: {
-                            //forbidden, requires api key (not provided or invalid)
+                            //forbidden request, requires api key (not provided or invalid)
                             if (hasKey) {
                                 this.keyStatus.valid = false;
                             }

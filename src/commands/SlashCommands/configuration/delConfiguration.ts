@@ -60,7 +60,7 @@ export default new slashCommand({
     });
 
     if (!config || config.length == 0) {
-      new configModel({
+      let conf = new configModel({
         name: guild.name,
         guildId: guildId,
         trigger: [],
@@ -69,11 +69,9 @@ export default new slashCommand({
         logchannel: "",
         su: [],
         blocked: [],
-      }).save();
-
-      return interaction.followUp({
-        content: `configuration was missing, please re-execute the command.`,
       });
+      conf.save();
+      config.push(conf);
     }
     const guildConfig = config[0];
 

@@ -1,0 +1,12 @@
+botToken= token of the bot
+developerId= User considered as developer (in id form)
+botPrefix= Prefix used for message commands
+
+guildId= guild where commands will be registered (non required, generally used for fast update times)
+webhookLogLink= Link used for the bot to log any non-caught errors
+
+environment= environment of the bot (dev or debug or prod)
+
+mongooseConnectionString= Connection link used for mongoose (mongoDB db link)
+hypixelapikey= Hypixel api key (gained by using /api new on the hypixel network)
+githubToken= Token used for github interactions

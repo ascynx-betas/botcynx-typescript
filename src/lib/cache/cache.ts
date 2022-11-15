@@ -14,7 +14,7 @@ export const LoadAllCaches = async() => {
 const logger = LoggerFactory.getLogger("CACHE");
 
 export class cache {
-  data;
+  data: any;
   reloader: string;
 
   constructor(link: string | repoLink) {

@@ -92,6 +92,10 @@ export type CommandType = {
   default_member_permissions?: bigint | string; //bitfield or string
 } & ChatInputApplicationCommandData; //SlashCommands
 
+export type CommandSimili = {
+  name: string;
+}
+
 /**
  * interaction commands that are whitelisted
  */
