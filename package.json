@@ -12,7 +12,11 @@
     "test:api": "node dist/lib/test/gitPull.js",
     "start:prod": "node dist/index.js --setEnv prod",
     "quickstart:dev": "tsc && node dist/index.js --setEnv dev --showCallStack true --showDiscordAPIErrors true",
-    "quickstart:debug": "tsc && node dist/index.js --setEnv debug --showCallStack true --showDiscordAPIErrors true"
+    "quickstart:debug": "tsc && node dist/index.js --setEnv debug --showCallStack true --showDiscordAPIErrors true",
+    "pm2:prod": "pm2 start --name botcynx-prod dist/index.js -- --setEnv prod",
+    "pm2:dev": "pm2 start --no-daemon --name botcynx-dev dist/index.js -- --setEnv dev --showCallStack true --showDiscordAPIErrors true",
+    "pm2:debug": "pm2 start --no-daemon --name botcynx-debug dist/index.js -- --setEnv debug --showCallStack true --showDiscordAPIErrors true",
+    "pm2:stop": "pm2 stop all"
   },
   "repository": {
     "type": "git",
