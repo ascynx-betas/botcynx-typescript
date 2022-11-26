@@ -146,6 +146,7 @@ export type MessageCommandType = {
   cooldown?: number; //seconds
   usage?: string;
   run: MessageRunFunction;
+  advancedFlags?: boolean;
 }; // MessageCommands
 
 export type ButtonResponseType = {

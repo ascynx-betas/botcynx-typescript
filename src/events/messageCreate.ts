@@ -89,7 +89,7 @@ export default new Event("messageCreate", async (message) => {
 
   message.content.startsWith;
 
-  const request = messageRequestHandler.createRequest(message);
+  const request = messageRequestHandler.createRequest(message, command);
 
   if (command.usage && ["--usage", "-u", "--help", "-h"].includes(args[0])) {
     request.send({

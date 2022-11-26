@@ -6,7 +6,7 @@ import { RequireTest } from "../lib/personal-modules/commandHandler";
 import { tagModel } from "../models/tag";
 import {
   botPermissionInhibitor,
-  isDevOnly,
+  userIsDev,
   isDisabled,
   isOnCooldown,
   userPermissionInhibitor,
@@ -57,7 +57,7 @@ export default new Event(
 
       CommandLogger.log("isDevOnly check", logLevel.DEBUG);
       if (command.devonly) {
-        if (!isDevOnly(interaction.user))
+        if (!userIsDev(interaction.user))
           return interaction.reply("this command is developer only");
       }
 

@@ -53,11 +53,11 @@ const isDisabled = async function (command: CommandType | UserContextType | Mess
 };
 
 /**
- * Allows to see if the command is only for developer
+ * Allows to see if the user is the for developer
  * @param user - The user affected
  * @returns {boolean} - Whether it failed or not. (true = passed, false = failed)
  */
-const isDevOnly = function (user: User): boolean {
+const userIsDev = function (user: User): boolean {
   if (user.id != process.env.developerId) return false;
 
   return true;
@@ -101,7 +101,7 @@ const isAdminOrHigherThanBot = function (user: GuildMember) {
 };
 
 export {
-  isDevOnly,
+  userIsDev,
   isOnCooldown,
   isDisabled,
   botPermissionInhibitor,

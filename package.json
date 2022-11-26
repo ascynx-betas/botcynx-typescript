@@ -49,6 +49,7 @@
     "opusscript": "^0.0.8",
     "pako": "^2.0.4",
     "qrcode-reader": "^1.0.4",
+    "sh": "^0.0.3",
     "tweetnacl": "^1.0.3"
   },
   "devDependencies": {
