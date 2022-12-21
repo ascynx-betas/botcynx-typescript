@@ -43,16 +43,19 @@ export default new Command({
 
     const removeSensitiveInfo = (text: string) => {
       let regex = new RegExp(
-        `(.*${token}.*|.*${hypixelapikey}.*|.*${logwb}.*|.*${gitToken}.*|.*${mongooseConnectionString}.*)`
+        `(.*${token}.*|.*${hypixelapikey}.*|.*${logwb}.*|.*${gitToken}.*|.*${mongooseConnectionString}.*)`, "g"
       );
 
-      return text.replace(regex, "[REDACTED INFORMATION]");
+      return text.replaceAll(regex, "[REDACTED INFORMATION]");
     };
     const cut = function (text: string) {
       let length = text.length;
-      length = length - 998;
-      text = text.slice(0, 998);
-      text = text.concat(`\n${length} char left\n\`\`\``);
+      const toAppend = `\n${length} char left`;
+
+      let newLength = length - (1024 - toAppend.length);
+      text = text.slice(0, (1024 - (toAppend.length + 18)));
+      text = text.concat(toAppend.replace(length.toString(), newLength.toString()));
+      
       return text;
     };
 
@@ -84,7 +87,7 @@ export default new Command({
       });
     }
 
-    if (/sh\.?.*/.test(message.content) && !activeFlags.includes("sudo") && lib.userIsDev(message.author)) {
+    if (/.+sh\.?.*/.test(message.content) && !activeFlags.includes("sudo") && lib.userIsDev(message.author)) {
       return await request.send({
         content: `No using command outside of sudo mode`
       })
@@ -157,6 +160,7 @@ export default new Command({
         request.send({ embeds: [embed] });
       }
     } catch (err) {
+      console.log(err);
       let hastebin;
       let cool = code;
       cool = removeSensitiveInfo(cool);

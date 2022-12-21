@@ -13,7 +13,7 @@ import {
 } from "../lib";
 
 export default new Event("interactionCreate", async (interaction) => {
-  if (interaction.isSelectMenu()) {
+  if (interaction.isStringSelectMenu()) {
     const category = interaction.customId;
     const Id = interaction.values;
 

@@ -6,3 +6,4 @@ node_modules/
 .json
 WIP/
 .idea
+src/commands/SlashCommands/test/

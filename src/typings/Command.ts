@@ -23,7 +23,7 @@ export interface botcynxInteraction extends ChatInputCommandInteraction {
 /**
  * required values.
  */
-export type require =
+type requireType =
   | "webhookLogLink"
   | "hypixelApiKey"
   | "ticketBlockedNames"
@@ -35,7 +35,7 @@ export type require =
  * interaction - the informations linked to this interaction
  * args - the interaction options
  */
-interface baseRunOptions {
+export interface baseRunOptions {
   client: botClient;
 }
 
@@ -55,7 +55,7 @@ interface runContextOptions extends baseRunOptions {
 
 interface runOptionsMessage extends baseRunOptions {
   message: Message;
-  args: any;
+  args: string[];
   request: request;
 } //MessageCommands
 
@@ -80,7 +80,7 @@ type RegisterWhitelistedFunction = (options: {
  * all arguments for the environment in which the commands will be executed
  */
 export type CommandType = {
-  require?: require[];
+  require?: requireType[];
   userPermissions?: PermissionsString[];
   botPermissions?: PermissionsString[];
   devonly?: boolean;
@@ -112,7 +112,7 @@ export type modalResponseType = {
 };
 
 export type UserContextType = {
-  require?: require[];
+  require?: requireType[];
   userPermissions?: PermissionsString[];
   botPermissions?: PermissionsString[];
   devonly?: boolean;
@@ -124,7 +124,7 @@ export type UserContextType = {
 } & UserApplicationCommandData; //User Context Commands
 
 export type MessageContextType = {
-  require?: require[];
+  require?: requireType[];
   userPermissions?: PermissionsString[];
   botPermissions?: PermissionsString[];
   devonly?: boolean;
@@ -136,7 +136,7 @@ export type MessageContextType = {
 } & MessageApplicationCommandData; //Chat Context Commands
 
 export type MessageCommandType = {
-  require?: require[];
+  require?: requireType[];
   name: string;
   userPermissions?: PermissionsString[];
   botPermissions?: PermissionsString[];
@@ -150,7 +150,7 @@ export type MessageCommandType = {
 }; // MessageCommands
 
 export type ButtonResponseType = {
-  require?: require[];
+  require?: requireType[];
   category: string; //1st field of customId
   customId?: string; //2nd field of customId //if multiple choices for 1st field
   temporary?: boolean;

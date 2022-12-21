@@ -11,6 +11,7 @@ export * from "./messageCommandRequest";
 export * from "./Logger";
 export * from "./slashCommandRequestCache";
 export * from "./HypixelAPIUtils";
+export * from "./soopyAPI";
 
 export * from "./customEvents/commandCreate";
 export * from "./customEvents/messageCommandCreate";
@@ -34,3 +35,7 @@ export * from "../models/config";
 export * from "../models/tag";
 export * from "../models/ticket";
 export * from "../models/verifyModel";
+
+//export other misc stuff
+
+export * from "../events/guildMemberAdd";
