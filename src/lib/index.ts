@@ -35,7 +35,3 @@ export * from "../models/config";
 export * from "../models/tag";
 export * from "../models/ticket";
 export * from "../models/verifyModel";
-
-//export other misc stuff
-
-export * from "../events/guildMemberAdd";

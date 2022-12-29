@@ -19,7 +19,7 @@ export class HypixelAPI extends EventEmitter implements HypixelEmitter {
     private key = process.env.hypixelapikey;
     private keyStatus: {valid: boolean} = {valid: true};
     private USER_AGENT: string;
-    private readonly baseLink = "https://api.hypixel.net/";
+    private readonly baseURL = "https://api.hypixel.net/";
 
     private lastReset: number;//every 60000 reset APICallsLastMinute
     private APICallsLastMinute: number;
@@ -65,37 +65,27 @@ export class HypixelAPI extends EventEmitter implements HypixelEmitter {
      * @param queries the queries added to the endpoint
      * @return link
      */
-    createRequest(endpoint: string, useAPIKey: boolean, queries: {[key: string]: string} = {}): string {
+    createRequest(endpoint: string, useAPIKey: boolean = false, queries: {[key: string]: string} = {}): string {
         if (endpoint.startsWith("/")) {
             endpoint = endpoint.slice(1);
         }
 
-        let newLink = this.baseLink + endpoint;
+        let url = new URL(this.baseURL + endpoint);
+
         if (useAPIKey) {
-            newLink += "?key=" + this.key;
+            url.searchParams.append("key", this.key);
         }
 
-        let isFirstQuery = !useAPIKey;
         for (let key of Object.keys(queries)) {
-          if (isFirstQuery) {
-              newLink += "?" + key + "=" + queries[key];
-              isFirstQuery = false;
-          } else {
-              newLink += "&" + key + "=" + queries[key];
-          }
+            url.searchParams.append(key, queries[key]);
         }
-        return newLink;
+
+        return url.toString();
     }
 
     private parseRequest(link: string) {
-        let testString = link.replace(this.baseLink, "");
-        const r = /\/?(?<endpoint>[a-zA-Z0-9;,/:@&=+$\-_.!]*)(?:\?[a-zA-Z0-9;,/?:@&=+$\-_.!]*$|$)/gmi;
-
-        const result = r.exec(testString);
-        if (result?.groups && Object.hasOwn(result.groups, "endpoint")) {
-            return result.groups["endpoint"];
-        }
-        return "unknown";
+        let url = new URL(link);
+        return url.pathname;
     }
 
     async fetchHypixelAPI(link: string) {
@@ -175,15 +165,22 @@ export const getKeyInfo = async function () {
     return (await HypixelAPI.INSTANCE.fetchHypixelAPI(req) as Key);
 }
 
-export const getProfiles = async function (uuid: string) {
+export const getRawProfiles = async function (uuid: string) {
     const req = HypixelAPI.INSTANCE.createRequest("skyblock/profiles", true, {uuid});
 
-    let data: SkyblockProfiles = await HypixelAPI.INSTANCE.fetchHypixelAPI(req);
-    let profiles: Collection<string, Profile> = new Collection();
+    const data = await HypixelAPI.INSTANCE.fetchHypixelAPI(req);
 
     if (data?.profiles && data?.profiles == null) {
         throw new HypixelError(404, "Player doesn't have profiles", false);
     }
+
+    return data;
+}
+
+
+export const getProfiles = async function (uuid: string) {
+    let data = await getRawProfiles(uuid);
+    let profiles: Collection<string, Profile> = new Collection();
 
     //sort by last saved profile
     profiles.sort((pA, pB) => {

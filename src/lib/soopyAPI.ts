@@ -1,14 +1,19 @@
+import { RequestInit } from "node-fetch";
+import fetch from 'node-fetch';
 import { botcynx } from "..";
+import * as lib from "./index";
+import * as zlib from "zlib";
 
+
+//seems like it requires a keep-alive connection (pain)
 export class SoopyAPI {
-    private readonly baseURL = "https://soopy.dev/api/v2";
+    private readonly baseURL = "https://soopy.dev/api/v2/";
     private USER_AGENT: string;
 
     private nextResetAt: number;
-    private APICallsLastMinute: number;
     private ReachedMax: boolean;
 
-    private activityLog: {[key: string]: number} = {}; //functionName: number of calls
+    private activityLog: {[key: string]: number} = {}; //endpoint name: number of calls
 
     private static instance: SoopyAPI;
 
@@ -23,43 +28,36 @@ export class SoopyAPI {
     private constructor() {
         this.USER_AGENT = botcynx.getUserAgent();
         this.nextResetAt = 0;
-        this.APICallsLastMinute = 0;
         this.ReachedMax = false;
     }
 
-    createRequest(endpoint: string, queries: {[key: string]: string} = {}): string {
+    createRequest(endpoint: string, queries: {[key: string]: string} = {}): URL {
         if (endpoint.startsWith("/")) {
             endpoint = endpoint.slice(1);
         }
 
-        let newLink = this.baseURL + endpoint;
-        
-        let isFirstQuery = false;
+        let url = new URL(this.baseURL + endpoint);
 
         for (let key of Object.keys(queries)) {
-            if (isFirstQuery) {
-                newLink += "?" + key + "=" + queries[key];
-                isFirstQuery = false;
-            } else {
-                newLink += "&" + key + "=" + queries[key];
-            }
+            url.searchParams.append(key, queries[key]);
         }
 
-        return newLink;
+        return url;
     }
 
-    private parseRequest(link: string) {
-        let testString = link.replace(this.baseURL, "");
-        const r = /\/?(?<endpoint>[a-zA-Z0-9;,/:@&=+$\-_.!]*)(?:\?[a-zA-Z0-9;,/?:@&=+$\-_.!]*$|$)/gmi;
+    private parseRequest(link: string | URL) {
+        let url = link instanceof URL ? link : new URL(link);
+        return url.pathname;
+    }
 
-        const result = r.exec(testString);
-        if (result?.groups && Object.hasOwn(result.groups, "endpoint")) {
-            return result.groups["endpoint"];
+    async fetchSoopyAPI(link: string | URL, method: "POST" | "GET"  | "PATCH" = "GET", data: any = {}) {
+        console.log(link);
+        if (this.nextResetAt <= Date.now()) {
+            // manually reset if should have reset by now.
+            this.ReachedMax = false;
+            this.nextResetAt = 0;
         }
-        return "unknown";
-    }
 
-    async fetchSoopyAPI(link: string, method: "POST" | "GET"  | "PATCH" = "GET", data: any = {}) {
         if (this.ReachedMax && this.nextResetAt > 0) {
             throw new APIError(429, "Total API call limit reached", false);
         }
@@ -69,55 +67,82 @@ export class SoopyAPI {
             this.activityLog[endpoint] = 1 :
             this.activityLog[endpoint] += 1;
 
-            return (fetch(link, { headers: {"user-agent": SoopyAPI.INSTANCE.USER_AGENT}, method: method, body: data})).then(
-                async (body) => {
-                    let data = await body.json();
 
-                    if (data["rateLimitInfo"]) {
-                        //uses
-                        //resetsIn
-                        //rateLimitLeft
-                        //rateLimitMax
-                        //20 max
+        const requestInit: RequestInit =  { headers: { "User-Agent": SoopyAPI.INSTANCE.USER_AGENT, "Connection": "Keep-Alive" }, method: method, timeout: 30000};
 
-                        this.nextResetAt = Date.now() + data["rateLimitInfo"]["resetsIn"];
+        if (Object.keys(data).length > 0) {
+            requestInit.body = data;
+            requestInit.headers["Content-Type"] = "application/json";
+        }
 
-                        if (data["rateLimitInfo"]["uses"] == data["rateLimitInfo"]["rateLimitMax"]) {
+
+        return (fetch(link, requestInit)).then(
+            async (res) => {
+                if(!res.ok) {
+                    console.log("failed request");
+                    console.log(res);
+                    return null;
+                }
+                let data;
+                console.log(res);
+                if (res.headers.get("content-encoding") && res.headers.get("content-encoding") == "gzip") {
+                    //incorrect header check error
+                    let buf = (await res.buffer());
+                    console.log(buf.toString());
+                    data = zlib.gunzipSync(buf).toJSON();
+                } else {
+                    data = await res.json();
+                }
+
+                if (data["rateLimitInfo"]) {
+                    //uses
+                    //resetsIn
+                    //rateLimitLeft
+                    //rateLimitMax
+                    //20 max
+
+                    this.nextResetAt = Date.now() + data["rateLimitInfo"]["resetsIn"];
+
+                    if (data["rateLimitInfo"]["uses"] == data["rateLimitInfo"]["rateLimitMax"]) {
+                        this.ReachedMax = true;
+                    }
+                }
+
+                if (!data.success) {//either false or null
+                    switch (res.status) {
+                        case 429: {
                             this.ReachedMax = true;
                         }
-                    }
-
-                    if (!data.success) {//either false or null
-                        switch (body.status) {
-                            case 429: {
-                                this.ReachedMax = true;
-                            }
                             
-                        }
-
-                        throw new APIError(body.status, data.error.description);//data.cause could not exist
                     }
 
-                    return data;
+                    throw new APIError(res.status, data.error.description);//data.cause could not exist
                 }
-            )
+
+                return data;
+            }
+        )
     }
 }
 
 export const getPlayerNetworth = async function (uuid: string) {
-    const req = SoopyAPI.INSTANCE.createRequest("player_skyblock/" + uuid, {
-        items: "true",
-        networth: "true"
-    });
+    //{
+    //    items: "true",
+    //    networth: "true"
+    //}
+    const req = SoopyAPI.INSTANCE.createRequest("player_skyblock/" + uuid);
 
-    return (await SoopyAPI.INSTANCE.fetchSoopyAPI(req) as sbProfileWithItemAndNetworth);
+    let data = await lib.getRawProfiles(uuid);
+    console.log("got profiles");
+
+    return (await SoopyAPI.INSTANCE.fetchSoopyAPI(req, "POST", JSON.stringify(data["profiles"])) as sbProfileWithItemAndNetworth);
 }
 
 export class APIError extends Error {
     constructor(code: number, cause: string, thrownByAPI: boolean = true) {
         let message: string;
 
-        if (thrownByAPI == true) {
+        if (thrownByAPI) {
             message = `API returned code ${code} for reason: ${cause}`;
         } else {
             message = `Stopped request with code ${code} for reason: ${cause}`;

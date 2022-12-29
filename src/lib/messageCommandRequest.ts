@@ -125,11 +125,13 @@ export class request {
     return flags;
   }
 
+  readonly flagMatch = /^--?\w+$/;
+
   getFlagsFrom(request: string): Flag[] {
     let flags: Flag[] = [];
 
     for (let arg of request.split(" ")) {
-      if (arg.match(/--?\w+/)) {
+      if (this.flagMatch.test(arg)) {
         flags.push(new Flag(arg));
       }
     }
@@ -141,7 +143,7 @@ export class request {
     let args: string[] = [];
     let foundEmptyArg = false;
     for (let arg of this.message.content.split(" ").slice(1)) {
-      if (arg.match(/--?\w+/) && !this.command.advancedFlags) continue;
+      if (this.flagMatch.test(arg) && !this.command.advancedFlags) continue;
       if (foundEmptyArg) continue;
       if (this.command.advancedFlags) {
         if (arg.match("--$")) {
@@ -156,7 +158,7 @@ export class request {
 
   hasFlag(possibleFlag: string) {
     for (let flag of this.flags) {
-      let testFlag = possibleFlag.match(/--?\w+/)
+      let testFlag = this.flagMatch.test(possibleFlag)
         ? new Flag(possibleFlag)
         : new Flag((possibleFlag.length <= 3 ? "-" : "--") + possibleFlag);
 
