@@ -2,7 +2,6 @@ import { RequestInit } from "node-fetch";
 import fetch from 'node-fetch';
 import { botcynx } from "..";
 import * as lib from "./index";
-import * as zlib from "zlib";
 
 
 //seems like it requires a keep-alive connection (pain)
@@ -89,7 +88,7 @@ export class SoopyAPI {
                     //incorrect header check error
                     let buf = (await res.buffer());
                     console.log(buf.toString());
-                    data = zlib.gunzipSync(buf).toJSON();
+                    data = buf.toString()
                 } else {
                     data = await res.json();
                 }

@@ -15,7 +15,7 @@ class RequestError extends Error {
 }
 
 export class RequestHandler {
-  private requests: Collection<string, request>;
+  private requests: Collection<string, Request>;
 
   private static instance: RequestHandler;
 
@@ -30,9 +30,9 @@ export class RequestHandler {
 
   GetOrCreateRequest(message: Message<boolean>) {
     if (!this.requests.get(message.id)) {
-      let req = new request(message);
-      this.requests.set(message.id, req);
-      return req;
+      let request = new Request(message);
+      this.requests.set(message.id, request);
+      return request;
     } else {
       return this.requests.get(message.id);
     }
@@ -40,9 +40,9 @@ export class RequestHandler {
 
   createRequest(message: Message<boolean>, command?: MessageCommandType) {
     if (!this.requests.get(message.id)) {
-      let req = new request(message, command);
-      this.requests.set(message.id, req);
-      return req;
+      let request = new Request(message, command);
+      this.requests.set(message.id, request);
+      return request;
     } else {
       throw new RequestError("Message already has a request linked to it");
     }
@@ -70,7 +70,7 @@ export class RequestHandler {
   }
 }
 
-export class request {
+export class Request {
   private message: Message<boolean>;
   private response: Message<boolean>;
   private command: MessageCommandType;
@@ -78,21 +78,22 @@ export class request {
   private usable: boolean;
   private flags: Flag[];
 
-  constructor(request: Message<boolean>, command?: MessageCommandType) {
-    this.message = request;
+  constructor(message: Message<boolean>, command?: MessageCommandType) {
+    this.message = message;
     this.usable = true;
     this.command = command;
 
     let advancedFlags = "";
     if (command.advancedFlags) {
-      const index = request.content.split(" ").indexOf("--");
+      const index = message.content.split(" ").indexOf("--");
 
       if (index > 0) {
-        advancedFlags = request.content.split(" ").filter((v, i) => i > index).join(" ");
+        advancedFlags = message.content.split(" ").filter((v, i) => i > index).join(" ");
       }
     }
 
-    this.flags = command.advancedFlags ? this.getFlags() : advancedFlags != "" ? this.getFlagsFrom(advancedFlags) : [];
+    this.flags = !command.advancedFlags ? this.getFlags() : advancedFlags != "" ? this.getFlagsFrom(advancedFlags) : [];
+    console.log(this.flags);
   }
 
   async send(
@@ -160,7 +161,7 @@ export class request {
     for (let flag of this.flags) {
       let testFlag = this.flagMatch.test(possibleFlag)
         ? new Flag(possibleFlag)
-        : new Flag((possibleFlag.length <= 3 ? "-" : "--") + possibleFlag);
+        : new Flag((possibleFlag.length == 1 ? "-" : "--") + possibleFlag);
 
       if (testFlag.flagType == flag.flagType) {
         if (testFlag.toString() === flag.toString()) {
@@ -245,12 +246,12 @@ class Flag {
 
   getShort() {
     if (this.flagType == FlagType.SHORT) return this.toString();
-    return this.toString().substring(0, 3).slice(1);
+    return this.toString().substring(1, 2);
   }
 
   getLong() {
     if (this.flagType == FlagType.LONG) return this.toString();
-    throw new RequestError("Can't create a long flag from a short type :I");
+    throw new RequestError("Cannot create long flag from short type");
   }
 
   toString() {

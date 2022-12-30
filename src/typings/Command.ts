@@ -10,10 +10,10 @@ import {
   MessageApplicationCommandData,
   ModalSubmitInteraction,
   PermissionsString,
-  SelectMenuInteraction,
+  AnySelectMenuInteraction,
   UserApplicationCommandData,
 } from "discord.js";
-import { request } from "../lib/messageCommandRequest";
+import { Request } from "../lib/messageCommandRequest";
 import { botClient } from "../structures/botClient";
 
 export interface botcynxInteraction extends ChatInputCommandInteraction {
@@ -45,7 +45,7 @@ interface runOptions extends baseRunOptions {
 } //SlashCommands
 
 interface updateRunOptions extends baseRunOptions {
-  interaction: ButtonInteraction | SelectMenuInteraction;
+  interaction: ButtonInteraction | AnySelectMenuInteraction;
 }
 
 interface runContextOptions extends baseRunOptions {
@@ -56,7 +56,7 @@ interface runContextOptions extends baseRunOptions {
 interface runOptionsMessage extends baseRunOptions {
   message: Message;
   args: string[];
-  request: request;
+  request: Request;
 } //MessageCommands
 
 interface modalRunOption extends baseRunOptions {

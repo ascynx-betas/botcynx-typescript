@@ -9,7 +9,7 @@ import {
 import { configModel } from "../models/config";
 import { RequireTest } from "../lib/personal-modules/commandHandler";
 import { Event } from "../structures/Event";
-import { request } from "../lib";
+import { Request } from "../lib";
 
 export default new Event(
   "messageUpdate",
@@ -22,7 +22,7 @@ export default new Event(
     )
       return;
 
-    let request: request;
+    let request: Request;
     try {
       request = messageRequestHandler.getRequest(newMessage);
     } catch (e) {
