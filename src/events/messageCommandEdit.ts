@@ -9,19 +9,22 @@ import {
 import { configModel } from "../models/config";
 import { RequireTest } from "../lib/personal-modules/commandHandler";
 import { Event } from "../structures/Event";
+import { Request } from "../lib";
 
 export default new Event(
   "messageUpdate",
   async (oldMessage: Message, newMessage: Message) => {
     // MessageCommands
     if (
+      !newMessage.author ||
       newMessage.author.bot ||
       !newMessage.content.toLowerCase().startsWith(process.env.botPrefix)
     )
       return;
 
+    let request: Request;
     try {
-      messageRequestHandler.getRequest(newMessage);
+      request = messageRequestHandler.getRequest(newMessage);
     } catch (e) {
       return; //doesn't have a request linked.
     }
@@ -101,8 +104,6 @@ export default new Event(
       newMessage.author.id != process.env.developerId
     )
       return; //In message commands, devonly means that it can only be used by the set developer.
-
-    const request = messageRequestHandler.getRequest(newMessage);
 
     if (command.usage && ["--usage", "-u", "--help", "-h"].includes(args[0])) {
       request.send({

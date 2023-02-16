@@ -14,7 +14,6 @@ import {
   Message,
 } from "discord.js";
 import { containsLink, isLink } from "../lib/personal-modules/testFor";
-import { indexOf } from "lodash";
 import { isDisabled } from "../lib/command/commandInhibitors";
 
 export default new Event("messageCreate", async (message) => {
@@ -94,12 +93,12 @@ export default new Event("messageCreate", async (message) => {
         recommendedOutput.push("Feather client is unsupported, issues that occur while using it must be reported to its support team.");
       } else {
         let buttonRow = new ActionRowBuilder<ButtonBuilder>();
-      buttonRow.addComponents(
-        new ButtonBuilder()
+        buttonRow.addComponents(
+       new ButtonBuilder()
           .setStyle(ButtonStyle.Link)
           .setURL(logUrl)
           .setLabel("view log")
-      );
+        );
       let content = "";
       content += `**${message.author}** sent a log`;
 
@@ -187,7 +186,7 @@ export default new Event("messageCreate", async (message) => {
     for (const fix of extraLogOutput)
       solutions.length === 0
         ? (solutions += `\t• ${fix}`)
-        : extraLogOutput.length - indexOf(extraLogOutput, fix) > 1
+        : extraLogOutput.length - extraLogOutput.indexOf(fix) > 1
         ? (solutions += `\n\t• ${fix}`)
         : (solutions += `\n\t• ${fix}\n`);
 

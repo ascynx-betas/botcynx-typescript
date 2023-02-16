@@ -82,24 +82,24 @@ class Logger {
     this.name = name;
   }
 
-  info(message: string) {
-    this.log(message, logLevel.INFO);
+  info(message: any) {
+    this.log(message instanceof String ? message : message.toString(), logLevel.INFO);
   }
-  warn(message: string) {
-    this.log(message, logLevel.WARN);
+  warn(message: any) {
+    this.log(message instanceof String ? message : message.toString(), logLevel.WARN);
   }
   error(error: Error) {
     this.log(this.showCallStack ? error.stack : error.message, logLevel.ERROR);
   }
-  debug(message: string) {
-    this.log(message, logLevel.DEBUG);
+  debug(message: any) {
+    this.log(message instanceof String ? message : message.toString(), logLevel.DEBUG);
   }
 
-  fatal(message: string) {
-    this.log(message, logLevel.FATAL);
+  fatal(message: any) {
+    this.log(message instanceof String ? message : message.toString(), logLevel.FATAL);
   }
 
-  log(message: string, level: logLevel, bypassQueue: boolean = false) {
+  log(message: any, level: logLevel, bypassQueue: boolean = false) {
     if (!finishedLoading && !bypassQueue) {
       loggerQueue.push({message, level, logger: this});
       this.log("Added log to queue", logLevel.DEBUG, true);

@@ -2,18 +2,30 @@ import {botcynx} from "../index";
 import fetch from "node-fetch";
 import {Key, Player, SkyblockProfiles, Status, Profile} from "../typings/Hypixel";
 import {Collection} from "discord.js";
+import EventEmitter from "events";
+import { HypixelAPIEvents } from "../structures/Event";
 
-export class HypixelAPI {
+declare type Awaitable<T> = PromiseLike<T> | T;
 
+  declare interface HypixelEmitter {
+    on<K extends keyof HypixelAPIEvents>(event: K, listener: (...args: HypixelAPIEvents[K]) => Awaitable<void>): this;
+    on<S extends string | symbol>(
+    event: Exclude<S, keyof HypixelAPIEvents>,
+    listener: (...args: any[]) => Awaitable<void>,
+    ): this;
+  }
 
+export class HypixelAPI extends EventEmitter implements HypixelEmitter {
     private key = process.env.hypixelapikey;
     private keyStatus: {valid: boolean} = {valid: true};
     private USER_AGENT: string;
-    private readonly baseLink = "https://api.hypixel.net/";
+    private readonly baseURL = "https://api.hypixel.net/";
 
     private lastReset: number;//every 60000 reset APICallsLastMinute
     private APICallsLastMinute: number;
     private ReachedMax: boolean;
+
+    private activityLog: {[key: string]: number} = {};//functionName: number of calls
 
     readonly task: NodeJS.Timer;
 
@@ -27,6 +39,7 @@ export class HypixelAPI {
     }
 
     private constructor() {
+        super();
         this.USER_AGENT = botcynx.getUserAgent();
         this.lastReset = Date.now();
         this.APICallsLastMinute = 0;
@@ -36,9 +49,12 @@ export class HypixelAPI {
 
     private initTask() {
         return setInterval(async () => {
+            this.emit("reset", {lastReset: this.lastReset, APICallsLastMinute: this.APICallsLastMinute, ReachedMax: this.ReachedMax, activityLog: this.activityLog});
+
             this.lastReset = Date.now();
             this.APICallsLastMinute = 0;
             this.ReachedMax = false;
+            this.activityLog = {};
         }, 60000);
     }
 
@@ -49,25 +65,27 @@ export class HypixelAPI {
      * @param queries the queries added to the endpoint
      * @return link
      */
-    createRequest(endpoint: string, useAPIKey: boolean, queries: {[key: string]: string} = {}): string {
+    createRequest(endpoint: string, useAPIKey: boolean = false, queries: {[key: string]: string} = {}): string {
         if (endpoint.startsWith("/")) {
             endpoint = endpoint.slice(1);
         }
 
-        let newLink = this.baseLink + endpoint;
+        let url = new URL(this.baseURL + endpoint);
+
         if (useAPIKey) {
-            newLink += "?key=" + this.key;
+            url.searchParams.append("key", this.key);
         }
 
-        let isFirstQuery = !useAPIKey;
         for (let key of Object.keys(queries)) {
-          if (isFirstQuery) {
-              newLink += "?" + key + "=" + queries[key];
-          } else {
-              newLink += "&" + key + "=" + queries[key];
-          }
+            url.searchParams.append(key, queries[key]);
         }
-        return newLink;
+
+        return url.toString();
+    }
+
+    private parseRequest(link: string) {
+        let url = new URL(link);
+        return url.pathname;
     }
 
     async fetchHypixelAPI(link: string) {
@@ -81,24 +99,38 @@ export class HypixelAPI {
             throw new HypixelError(500, "API key has been detected as invalid, please change the provided api key", false);
         } else if (this.ReachedMax || this.APICallsLastMinute > 120) {
             this.ReachedMax = true;
+            this.emit("rateLimit", {eventType: "client"})
             throw new HypixelError(429, "Total API call limit reached last minute", false);
         }
+
+        //Log which endpoint is used.
+        const endpoint = this.parseRequest(link);
+        !Object.hasOwn(this.activityLog, endpoint) ?
+            this.activityLog[endpoint] = 1 :
+            this.activityLog[endpoint] += 1;
+        
 
         return(fetch(link, { headers: { "user-agent": HypixelAPI.INSTANCE.USER_AGENT } } )).then(
             async (body) => {
                 let data = await body.json();
 
-                if (data.success == false) {
-                    //handle all error codes
+                if (endpoint == "key" && data.success === true) {
+                    //piggyback off of api call to sync.
+                    this.APICallsLastMinute = data.record.queriesInPastMin;
+                    this.ReachedMax = this.APICallsLastMinute > data.record.limit;
+                }
 
+                if (data.success == false) {
+                    //handle all known error codes
                     switch (body.status) {
                         case 429: {
                             //api limit reached
                             //TODO add queue for failed hypixel api request?
+                            this.emit("rateLimit", {eventType: "server"})
                             break;
                         }
                         case 403: {
-                            //forbidden, requires api key (not provided or invalid)
+                            //forbidden request, requires api key (not provided or invalid)
                             if (hasKey) {
                                 this.keyStatus.valid = false;
                             }
@@ -133,15 +165,22 @@ export const getKeyInfo = async function () {
     return (await HypixelAPI.INSTANCE.fetchHypixelAPI(req) as Key);
 }
 
-export const getProfiles = async function (uuid: string) {
+export const getRawProfiles = async function (uuid: string) {
     const req = HypixelAPI.INSTANCE.createRequest("skyblock/profiles", true, {uuid});
 
-    let data: SkyblockProfiles = await HypixelAPI.INSTANCE.fetchHypixelAPI(req);
-    let profiles: Collection<string, Profile> = new Collection();
+    const data = await HypixelAPI.INSTANCE.fetchHypixelAPI(req);
 
     if (data?.profiles && data?.profiles == null) {
         throw new HypixelError(404, "Player doesn't have profiles", false);
     }
+
+    return data;
+}
+
+
+export const getProfiles = async function (uuid: string) {
+    let data = await getRawProfiles(uuid);
+    let profiles: Collection<string, Profile> = new Collection();
 
     //sort by last saved profile
     profiles.sort((pA, pB) => {

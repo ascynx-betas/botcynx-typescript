@@ -10,10 +10,10 @@ import {
   MessageApplicationCommandData,
   ModalSubmitInteraction,
   PermissionsString,
-  SelectMenuInteraction,
+  AnySelectMenuInteraction,
   UserApplicationCommandData,
 } from "discord.js";
-import { request } from "../lib/messageCommandRequest";
+import { Request } from "../lib/messageCommandRequest";
 import { botClient } from "../structures/botClient";
 
 export interface botcynxInteraction extends ChatInputCommandInteraction {
@@ -23,7 +23,7 @@ export interface botcynxInteraction extends ChatInputCommandInteraction {
 /**
  * required values.
  */
-export type require =
+type requireType =
   | "webhookLogLink"
   | "hypixelApiKey"
   | "ticketBlockedNames"
@@ -35,7 +35,7 @@ export type require =
  * interaction - the informations linked to this interaction
  * args - the interaction options
  */
-interface baseRunOptions {
+export interface baseRunOptions {
   client: botClient;
 }
 
@@ -45,7 +45,7 @@ interface runOptions extends baseRunOptions {
 } //SlashCommands
 
 interface updateRunOptions extends baseRunOptions {
-  interaction: ButtonInteraction | SelectMenuInteraction;
+  interaction: ButtonInteraction | AnySelectMenuInteraction;
 }
 
 interface runContextOptions extends baseRunOptions {
@@ -55,8 +55,8 @@ interface runContextOptions extends baseRunOptions {
 
 interface runOptionsMessage extends baseRunOptions {
   message: Message;
-  args: any;
-  request: request;
+  args: string[];
+  request: Request;
 } //MessageCommands
 
 interface modalRunOption extends baseRunOptions {
@@ -80,7 +80,7 @@ type RegisterWhitelistedFunction = (options: {
  * all arguments for the environment in which the commands will be executed
  */
 export type CommandType = {
-  require?: require[];
+  require?: requireType[];
   userPermissions?: PermissionsString[];
   botPermissions?: PermissionsString[];
   devonly?: boolean;
@@ -91,6 +91,10 @@ export type CommandType = {
   run: RunFunction;
   default_member_permissions?: bigint | string; //bitfield or string
 } & ChatInputApplicationCommandData; //SlashCommands
+
+export type CommandSimili = {
+  name: string;
+}
 
 /**
  * interaction commands that are whitelisted
@@ -108,7 +112,7 @@ export type modalResponseType = {
 };
 
 export type UserContextType = {
-  require?: require[];
+  require?: requireType[];
   userPermissions?: PermissionsString[];
   botPermissions?: PermissionsString[];
   devonly?: boolean;
@@ -120,7 +124,7 @@ export type UserContextType = {
 } & UserApplicationCommandData; //User Context Commands
 
 export type MessageContextType = {
-  require?: require[];
+  require?: requireType[];
   userPermissions?: PermissionsString[];
   botPermissions?: PermissionsString[];
   devonly?: boolean;
@@ -132,7 +136,7 @@ export type MessageContextType = {
 } & MessageApplicationCommandData; //Chat Context Commands
 
 export type MessageCommandType = {
-  require?: require[];
+  require?: requireType[];
   name: string;
   userPermissions?: PermissionsString[];
   botPermissions?: PermissionsString[];
@@ -142,10 +146,11 @@ export type MessageCommandType = {
   cooldown?: number; //seconds
   usage?: string;
   run: MessageRunFunction;
+  advancedFlags?: boolean;
 }; // MessageCommands
 
 export type ButtonResponseType = {
-  require?: require[];
+  require?: requireType[];
   category: string; //1st field of customId
   customId?: string; //2nd field of customId //if multiple choices for 1st field
   temporary?: boolean;

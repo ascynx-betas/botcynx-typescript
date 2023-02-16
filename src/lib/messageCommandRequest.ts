@@ -5,6 +5,8 @@ import {
   MessagePayload,
   MessageReplyOptions,
 } from "discord.js";
+import { MessageCommandType } from "../typings/Command";
+import { LoggerFactory } from "./Logger";
 
 class RequestError extends Error {
   constructor(message?: string, options?: ErrorOptions) {
@@ -13,12 +15,12 @@ class RequestError extends Error {
 }
 
 export class RequestHandler {
-  private List: Collection<string, request>;
+  private requests: Collection<string, Request>;
 
   private static instance: RequestHandler;
 
   private constructor() {
-    this.List = new Collection();
+    this.requests = new Collection();
   }
 
   static getInstance() {
@@ -27,57 +29,71 @@ export class RequestHandler {
   }
 
   GetOrCreateRequest(message: Message<boolean>) {
-    if (!this.List.get(message.id)) {
-      let req = new request(message);
-      this.List.set(message.id, req);
-      return req;
+    if (!this.requests.get(message.id)) {
+      let request = new Request(message);
+      this.requests.set(message.id, request);
+      return request;
     } else {
-      return this.List.get(message.id);
+      return this.requests.get(message.id);
     }
   }
 
-  createRequest(message: Message<boolean>) {
-    if (!this.List.get(message.id)) {
-      let req = new request(message);
-      this.List.set(message.id, req);
-      return req;
+  createRequest(message: Message<boolean>, command?: MessageCommandType) {
+    if (!this.requests.get(message.id)) {
+      let request = new Request(message, command);
+      this.requests.set(message.id, request);
+      return request;
     } else {
       throw new RequestError("Message already has a request linked to it");
     }
   }
 
   getRequest(message: Message<boolean>) {
-    if (this.List.get(message.id)) {
-      this.List.get(message.id).getFlags();
-      return this.List.get(message.id);
+    if (this.requests.get(message.id)) {
+      this.requests.get(message.id).getFlags();
+      return this.requests.get(message.id);
     } else
       throw new RequestError("Message doesn't have a request linked to it");
   }
 
   contains(message: Message<boolean>) {
-    return this.List.get(message.id) != null;
+    return this.requests.get(message.id) != null;
   }
 
   deleteRequest(messageId: string) {
-    if (!this.List.get(messageId)) {
+    if (!this.requests.get(messageId)) {
       throw new RequestError("Message doesn't exist in list");
     } else {
-      this.List.delete(messageId);
+      LoggerFactory.getLogger("RequestHandler").debug("Deleting request tied to "+messageId)
+      this.requests.delete(messageId);
     }
   }
 }
 
-export class request {
+export class Request {
   private message: Message<boolean>;
   private response: Message<boolean>;
+  private command: MessageCommandType;
 
   private usable: boolean;
   private flags: Flag[];
 
-  constructor(request: Message<boolean>) {
-    this.message = request;
+  constructor(message: Message<boolean>, command?: MessageCommandType) {
+    this.message = message;
     this.usable = true;
-    this.flags = this.getFlags();
+    this.command = command;
+
+    let advancedFlags = "";
+    if (command.advancedFlags) {
+      const index = message.content.split(" ").indexOf("--");
+
+      if (index > 0) {
+        advancedFlags = message.content.split(" ").filter((v, i) => i > index).join(" ");
+      }
+    }
+
+    this.flags = !command.advancedFlags ? this.getFlags() : advancedFlags != "" ? this.getFlagsFrom(advancedFlags) : [];
+    console.log(this.flags);
   }
 
   async send(
@@ -103,22 +119,39 @@ export class request {
   }
 
   getFlags(): Flag[] {
+    let flags: Flag[] = this.getFlagsFrom(
+      this.message.content.replace(process.env.botPrefix + " ", "")
+      );
+    this.flags = flags;
+    return flags;
+  }
+
+  readonly flagMatch = /^--?\w+$/;
+
+  getFlagsFrom(request: string): Flag[] {
     let flags: Flag[] = [];
 
-    for (let arg of this.message.content.split(" ").slice(1)) {
-      if (arg.match(/--?\w+/)) {
+    for (let arg of request.split(" ")) {
+      if (this.flagMatch.test(arg)) {
         flags.push(new Flag(arg));
       }
     }
 
-    this.flags = flags;
     return flags;
   }
 
   getNonFlagArgs(): string[] {
     let args: string[] = [];
+    let foundEmptyArg = false;
     for (let arg of this.message.content.split(" ").slice(1)) {
-      if (arg.match(/--?\w+/)) continue;
+      if (this.flagMatch.test(arg) && !this.command.advancedFlags) continue;
+      if (foundEmptyArg) continue;
+      if (this.command.advancedFlags) {
+        if (arg.match("--$")) {
+          foundEmptyArg = true;
+          continue;
+        }
+      }
       args.push(arg);
     }
     return args;
@@ -126,9 +159,9 @@ export class request {
 
   hasFlag(possibleFlag: string) {
     for (let flag of this.flags) {
-      let testFlag = possibleFlag.match(/--?\w+/)
+      let testFlag = this.flagMatch.test(possibleFlag)
         ? new Flag(possibleFlag)
-        : new Flag((possibleFlag.length <= 3 ? "-" : "--") + possibleFlag);
+        : new Flag((possibleFlag.length == 1 ? "-" : "--") + possibleFlag);
 
       if (testFlag.flagType == flag.flagType) {
         if (testFlag.toString() === flag.toString()) {
@@ -213,12 +246,12 @@ class Flag {
 
   getShort() {
     if (this.flagType == FlagType.SHORT) return this.toString();
-    return this.toString().substring(0, 3).slice(1);
+    return this.toString().substring(1, 2);
   }
 
   getLong() {
     if (this.flagType == FlagType.LONG) return this.toString();
-    throw new RequestError("Can't create a long flag from a short type :I");
+    throw new RequestError("Cannot create long flag from short type");
   }
 
   toString() {

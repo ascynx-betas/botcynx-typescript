@@ -1,31 +1,21 @@
+<p align="center">
+  <img src="https://img.shields.io/github/stars/ascynx-betas/botcynx-typescript?colorA=363a4f&colorB=b7bdf8&style=for-the-badge">
+  <img src="https://img.shields.io/tokei/lines/github/ascynx-betas/botcynx-typescript?style=for-the-badge">
+</p>
+
 # How to set up
 
-- Install node 16.14.0 and npm
+- Install node 16.14.0 or higher and npm
 
-- run `npm i` in your terminal
-
-- create a .env file in the root of the project
+- run the command `npm i` in your terminal
 
 - create a bot in the discord developer portal
 
 - set all needed permissions to true
 
-- add botToken (the bot's token),
-  guildId (not necessary, locally registers command),
+- create a .env file in the root of the project
 
-  environment (not necessary, sets the environment),
-
-  mongooseConnectionString ((string from mongoDB to connect) not necessary but is recommended for the use of a lot of commands),
-
-  webhookLogLink (not necessary, recommended to get the error alerts),
-
-  developerId (not necessary, recommended to avoid permission issues),
-
-  hypixelapikey (not necessary, used for commands that require the hypixel api),
-
-  githubToken (not necessary, recommended for crashlog reader and automod)
-
-  botprefix (currently needed)
+- Fill the [.env variables](https://github.com/ascynx-betas/botcynx-typescript/blob/main/example-env), be it using a .env file or from any other sources
 
 - either run `npm run build` and `npm run start:prod` or `npm run quickstart`
 
@@ -37,7 +27,7 @@ linkReader =>
 
 **needs**: manage webhooks or Administrator permission
 
-![action](https://cdn.discordapp.com/attachments/903281241594413176/931176014925688852/unknown.png)
+![image](https://user-images.githubusercontent.com/78341107/197343383-cdd31b09-edb3-4ae6-b00d-49f7b03ef870.png)
 
 action: when a message is sent that contains a discord message link, it will send the message through a webhook
 
@@ -119,3 +109,8 @@ botInfo =>
 
 follow [How to set up](#how-to-set-up) and once you finish your changes,
 create a pull-request (I might not see it directly as I am generally busy)
+# 
+
+<p align="center">
+  <img src="https://img.shields.io/github/license/ascynx-betas/botcynx-typescript?colorA=363a4f&colorB=yellow&style=for-the-badge">
+</p>

@@ -4,6 +4,7 @@ import { inspect } from "util";
 import * as lib from "../../../lib/index";
 import fetch from "node-fetch";
 import { LoggerFactory } from "../../../lib/index";
+import sh from "sh";
 
 const ExecLogger = LoggerFactory.getLogger("EVAL");
 
@@ -13,6 +14,7 @@ export default new Command({
   devonly: true,
   category: "other",
   usage: `(flags: "async", "sudo", "silent", "attachment") ${process.env.botPrefix}exec <if flags doesn't have attachment, code in message content else in message attachment>`,
+  advancedFlags: true,
 
   run: async ({ client, message, args, request }) => {
     if (args.length == 0) return;
@@ -41,24 +43,26 @@ export default new Command({
 
     const removeSensitiveInfo = (text: string) => {
       let regex = new RegExp(
-        `(.*${token}.*|.*${hypixelapikey}.*|.*${logwb}.*|.*${gitToken}.*|.*${mongooseConnectionString}.*)`
+        `(.*${token}.*|.*${hypixelapikey}.*|.*${logwb}.*|.*${gitToken}.*|.*${mongooseConnectionString}.*)`, "g"
       );
 
-      return text.replace(regex, "[REDACTED INFORMATION]");
+      return text.replaceAll(regex, "[REDACTED INFORMATION]");
     };
     const cut = function (text: string) {
       let length = text.length;
-      length = length - 998;
-      text = text.slice(0, 998);
-      text = text.concat(`\n${length} char left\n\`\`\``);
+      const toAppend = `\n${length} char left`;
+
+      let newLength = length - (1024 - toAppend.length);
+      text = text.slice(0, (1024 - (toAppend.length + 18)));
+      text = text.concat(toAppend.replace(length.toString(), newLength.toString()));
+      
       return text;
     };
 
     let activeFlags: string[] = [];
     let code: string[] | string = args;
     if (request.getFlags().length > 0) {
-      let flagList = ["async", "sudo", "silent", "attachment"];
-      for (let possibleFlag of flagList) {
+      for (let possibleFlag of ["async", "sudo", "silent", "attachment"]) {
         if (request.hasFlag(possibleFlag)) {
           activeFlags.push(possibleFlag);
         }
@@ -81,6 +85,12 @@ export default new Command({
       return await request.send({
         content: `This eval has been blocked by smooth brain protection™️`,
       });
+    }
+
+    if (/.+sh\.?.*/.test(message.content) && !activeFlags.includes("sudo") && lib.userIsDev(message.author)) {
+      return await request.send({
+        content: `No using command outside of sudo mode`
+      })
     }
 
     if (activeFlags.includes("attachment")) {
@@ -111,14 +121,15 @@ export default new Command({
       let cool = code;
       if (cool.includes("client") && cool.includes("config"))
         throw Error("nope");
-      cool = `\`\`\`js\n ${cool}\n\`\`\``;
-      cleaned = `\`\`\`js\n ${cleaned}\n\`\`\``;
-      let hastebin;
+      let hastebin: string;
       if (cool.length > 1000) cool = cut(cool);
       if (cleaned.length > 1000) {
         hastebin = await lib.HasteUtils.post(cleaned);
         cleaned = cut(cleaned);
       }
+
+      cool = `\`\`\`js\n ${cool}\n\`\`\``;
+      cleaned = `\`\`\`js\n ${cleaned}\n\`\`\``;
 
       if (activeFlags.includes("sudo")) {
         ExecLogger.warn("Received code evaluation with sudo flag.");
@@ -149,6 +160,7 @@ export default new Command({
         request.send({ embeds: [embed] });
       }
     } catch (err) {
+      console.log(err);
       let hastebin;
       let cool = code;
       cool = removeSensitiveInfo(cool);

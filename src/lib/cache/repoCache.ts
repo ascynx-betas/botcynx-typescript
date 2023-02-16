@@ -16,8 +16,6 @@ export class RepoCache {
             this.instance = new RepoCache();
         }
 
-        console.log(this.caller);
-
         return this.instance;
     }
 

@@ -1,5 +1,5 @@
 require("dotenv").config();
-import { LoadAllCaches } from "./lib";
+import { HypixelAPI, LoadAllCaches } from "./lib";
 import { LocalizationHandler } from "./lib/Lang";
 import { LoggerFactory, logLevel, postLoadingLogs } from "./lib/Logger";
 import { FlagHandler, RequestHandler } from "./lib/messageCommandRequest";
@@ -74,6 +74,15 @@ function main(args: string[]) {
 
   console.time("Login time");
   botcynx.start();
+  listenAPI();
+}
+
+function listenAPI() {
+  if (!botcynx.isDebug()) return;
+
+  HypixelAPI.INSTANCE.on("reset", (data) => {
+    console.log(data);
+  });
 }
 
 export const finishLoading = async () => {

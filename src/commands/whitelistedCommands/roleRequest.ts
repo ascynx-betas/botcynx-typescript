@@ -69,7 +69,7 @@ export default new WhitelistedCommand({
       uuid = userInfo?.minecraftuuid;
       verified = true;
     } else {
-      uuid = (await getUuidbyUsername(username)).id;
+      uuid = (await getUuidbyUsername(username))?.id;
 
       if (typeof uuid != "string") {
         return interaction.followUp({

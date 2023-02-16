@@ -25,22 +25,17 @@ export const compareTest = function (arr1: string[], arr2: string[]) {
   return output;
 }
 
-const getTimeOfDay = function (): string {
-  let event = Date.now();
-  let d = new Date(event);
-  let sd = d.toTimeString();
-  let fields = sd.split(" ");
-  let time = fields[0];
+function getTimeOfDay() {
+  //create new date using current millis then set as string and take the current time as HH:MM:SS
+  return new Date(Date.now()).toTimeString().split(" ")[0]
+}
 
-  return time;
-};
-
-const isLink = function (potentiallink): boolean {
+const isLink = function (potentialLink: string): boolean {
   let http = /http:\/\/./;
   let https = /https:\/\/./;
 
-  let r1 = http.test(potentiallink);
-  let r2 = https.test(potentiallink);
+  let r1 = http.test(potentialLink);
+  let r2 = https.test(potentialLink);
   if (r1 == true || r2 == true) {
     return true;
   } else return false;

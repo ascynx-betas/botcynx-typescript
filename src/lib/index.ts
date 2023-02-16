@@ -11,6 +11,7 @@ export * from "./messageCommandRequest";
 export * from "./Logger";
 export * from "./slashCommandRequestCache";
 export * from "./HypixelAPIUtils";
+export * from "./soopyAPI";
 
 export * from "./customEvents/commandCreate";
 export * from "./customEvents/messageCommandCreate";

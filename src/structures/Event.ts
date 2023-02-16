@@ -13,3 +13,10 @@ export interface extendedClientEvents extends ClientEvents {
   messageCommandCreate: [message: Message];
   finishedLoading: any;
 } //add custom events here
+
+export interface HypixelAPIEvents {
+  reset: [data: {lastReset: number, APICallsLastMinute: number, ReachedMax: boolean, activityLog: {[key: string]: number}}];
+  rateLimit: [data: {eventType: "server" | "client"}];
+  serverRateLimit: [data: {}];
+  clientRateLimit: [data: {}]
+}
