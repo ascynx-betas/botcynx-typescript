@@ -10,9 +10,9 @@ import {
 } from "discord.js";
 import { postStartData } from "../../../events/ready";
 import { ticketModel } from "../../../models/ticket";
-import { slashCommand } from "../../../structures/Commands";
+import { SlashCommand } from "../../../structures/Commands";
 
-export default new slashCommand({
+export default new SlashCommand({
   name: "setup-ticket",
   description: "create a ticket message",
   require: ["mongooseConnectionString"],

@@ -6,9 +6,9 @@ import {
   MessageCommandType,
   MessageContextType,
   ButtonResponseType,
-  commandCooldown,
+  CommandCooldown,
   WhitelistedCommands,
-  modalResponseType,
+  ModalResponseType,
 } from "../typings/Command";
 import glob from "glob";
 import { promisify } from "util";
@@ -32,7 +32,7 @@ import {HypixelAPI} from "../lib";
 
 const globPromise = promisify(glob);
 
-export class botClient extends Client {
+export class BotClient extends Client {
   //dynamic Collections
   slashCommands: Collection<string, CommandType> = new Collection();
   userContextCommands: Collection<string, UserContextType> = new Collection();
@@ -43,12 +43,12 @@ export class botClient extends Client {
   buttonCommands: Collection<string, ButtonResponseType> = new Collection();
   whitelistedCommands: Collection<string, WhitelistedCommands> =
     new Collection();
-  cooldowns: Collection<string, commandCooldown> = new Collection();
+  cooldowns: Collection<string, CommandCooldown> = new Collection();
   tasks: Collection<string, NodeJS.Timer> = new Collection();
-  modals: Collection<string, modalResponseType> = new Collection();
+  modals: Collection<string, ModalResponseType> = new Collection();
 
   //static values
-  private static instance: botClient;
+  private static instance: BotClient;
   package: any = JSON.parse(fs.readFileSync("package.json", "utf-8"));
   public readonly userAgent = `${this.package.name}/${this.version}${process.env.environment == "dev" ? "-dev" : ""}`;
 
@@ -74,9 +74,9 @@ export class botClient extends Client {
     super({ intents: 65535, partials: [Partials.Channel, Partials.Message] });
   }
 
-  static getInstance(): botClient {
-    if (!botClient.instance) botClient.instance = new botClient();
-    return botClient.instance;
+  static getInstance(): BotClient {
+    if (!BotClient.instance) BotClient.instance = new BotClient();
+    return BotClient.instance;
   }
 
   getUserAgent(): string {
@@ -263,7 +263,7 @@ export class botClient extends Client {
     modalFiles.forEach(async (filePath) => {
       this.registerModule({
         path: filePath,
-        callback: function (data: modalResponseType) {
+        callback: function (data: ModalResponseType) {
           botcynx.modals.set(data.name, data);
         },
         type: "modal",

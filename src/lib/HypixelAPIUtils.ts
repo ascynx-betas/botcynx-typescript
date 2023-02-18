@@ -18,6 +18,15 @@ declare type Awaitable<T> = PromiseLike<T> | T;
 export class HypixelAPI extends EventEmitter implements HypixelEmitter {
     private key = process.env.hypixelapikey;
     private keyStatus: {valid: boolean} = {valid: true};
+
+    public setKeyStatus(isValid: boolean): boolean {
+        this.keyStatus.valid = isValid;
+        if (!isValid) {
+            this.emit("invalidAPIKey");
+        }
+        return isValid;
+    }
+
     private USER_AGENT: string;
     private readonly baseURL = "https://api.hypixel.net/";
 
@@ -50,7 +59,6 @@ export class HypixelAPI extends EventEmitter implements HypixelEmitter {
     private initTask() {
         return setInterval(async () => {
             this.emit("reset", {lastReset: this.lastReset, APICallsLastMinute: this.APICallsLastMinute, ReachedMax: this.ReachedMax, activityLog: this.activityLog});
-
             this.lastReset = Date.now();
             this.APICallsLastMinute = 0;
             this.ReachedMax = false;
@@ -132,7 +140,7 @@ export class HypixelAPI extends EventEmitter implements HypixelEmitter {
                         case 403: {
                             //forbidden request, requires api key (not provided or invalid)
                             if (hasKey) {
-                                this.keyStatus.valid = false;
+                                this.setKeyStatus(false);
                             }
                             break;
                         }

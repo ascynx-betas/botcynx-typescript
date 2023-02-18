@@ -1,21 +1,21 @@
 import { Collection, Interaction } from "discord.js";
 
-export class slashCommandRequestCache {
-    private cache: Collection<string, slashCommandRequest>;
+export class SlashCommandRequestCache {
+    private cache: Collection<string, SlashCommandRequest>;
 
-    private static INSTANCE: slashCommandRequestCache;
+    private static INSTANCE: SlashCommandRequestCache;
 
     private constructor() {
         this.cache = new Collection();
     }
 
     public static getInstance() {
-        if (!this.INSTANCE) this.INSTANCE = new slashCommandRequestCache();
+        if (!this.INSTANCE) this.INSTANCE = new SlashCommandRequestCache();
         return this.INSTANCE;
     }
 
     public addToCache(interaction: Interaction, bool: boolean) {
-        this.cache.set(interaction.id, new slashCommandRequest(interaction, bool, Date.now()));
+        this.cache.set(interaction.id, new SlashCommandRequest(interaction, bool, Date.now()));
     }
     public getFromCache(interactionId: string) {
         return this.cache.get(interactionId);
@@ -34,7 +34,7 @@ export class slashCommandRequestCache {
     }
 
 }
-export class slashCommandRequest {
+export class SlashCommandRequest {
     private interaction: Interaction;
     private shouldCache: boolean;
     private creationTime: number;

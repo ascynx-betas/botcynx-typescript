@@ -3,9 +3,9 @@ import { HypixelAPI, LoadAllCaches } from "./lib";
 import { LocalizationHandler } from "./lib/Lang";
 import { LoggerFactory, logLevel, postLoadingLogs } from "./lib/Logger";
 import { FlagHandler, RequestHandler } from "./lib/messageCommandRequest";
-import { botClient } from "./structures/botClient";
+import { BotClient } from "./structures/botClient";
 
-export const botcynx = botClient.getInstance();
+export const botcynx = BotClient.getInstance();
 
 export const localeHandler = LocalizationHandler.getInstance().load();
 export const messageRequestHandler = RequestHandler.getInstance();
@@ -74,20 +74,35 @@ function main(args: string[]) {
 
   console.time("Login time");
   botcynx.start();
-  listenAPI();
+  listenDebugAPI();
 }
 
-function listenAPI() {
-  if (!botcynx.isDebug()) return;
-
+function listenDebugAPI() {
   HypixelAPI.INSTANCE.on("reset", (data) => {
+    if (!botcynx.isDebug) return;
     console.log(data);
+  });
+
+  HypixelAPI.INSTANCE.on("invalidAPIKey", async () => {
+    console.log("Hypixel api key is currently invalid");
+    if (process.env.developerId && process.env.hypixelapikey) {
+      //only send if the developer and the key were defined
+      let dmChannel = botcynx.users.cache.get(process.env.developerId).dmChannel;
+      if (dmChannel) {
+        //the dm channel exists
+        await dmChannel.send("The provided api key is currently invalid, please fix this issue.");
+      } else {
+        dmChannel = await botcynx.users.cache.get(process.env.developerId).createDM();
+        dmChannel.send("The provided api key is currently invalid, please fix this issue.");
+      }
+    }
   });
 }
 
 export const finishLoading = async () => {
   finishedLoading = true;
   botcynx.getLogger.log("Finished Loading", logLevel.DEBUG, true);
+  botcynx.emit("finishedLoading");
   postLoadingLogs();
   LoadAllCaches();
 }

@@ -1,6 +1,6 @@
-import { botClient } from "../../structures/botClient";
+import { BotClient } from "../../structures/botClient";
 
-const resetCooldown = async (client: botClient) => {
+const resetCooldown = async (client: BotClient) => {
   const cooldowns = client.cooldowns;
 
   cooldowns.forEach((cooldown) => {
@@ -10,7 +10,7 @@ const resetCooldown = async (client: botClient) => {
   });
 };
 
-export const registerCooldownTask = async (client: botClient) => {
+export const registerCooldownTask = async (client: BotClient) => {
   //auto clear cooldowns from memory if the inhibitor is not used
   return setInterval(() => {
     resetCooldown(client);

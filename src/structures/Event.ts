@@ -18,5 +18,6 @@ export interface HypixelAPIEvents {
   reset: [data: {lastReset: number, APICallsLastMinute: number, ReachedMax: boolean, activityLog: {[key: string]: number}}];
   rateLimit: [data: {eventType: "server" | "client"}];
   serverRateLimit: [data: {}];
-  clientRateLimit: [data: {}]
+  clientRateLimit: [data: {}];
+  invalidAPIKey: [data: undefined];
 }

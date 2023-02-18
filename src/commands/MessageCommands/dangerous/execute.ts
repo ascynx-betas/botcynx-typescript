@@ -174,7 +174,7 @@ export default new Command({
 
       if (activeFlags.includes("sudo")) {
         ExecLogger.warn(
-          "Received code evalution with sudo flag leading to an error."
+          "Received code evaluation with sudo flag leading to an error."
         );
       }
 

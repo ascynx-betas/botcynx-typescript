@@ -1,8 +1,8 @@
 import { ApplicationCommandOptionType, TextBasedChannel } from "discord.js";
 import { configModel } from "../../../models/config";
-import { slashCommand } from "../../../structures/Commands";
+import { SlashCommand } from "../../../structures/Commands";
 
-export default new slashCommand({
+export default new SlashCommand({
   name: "delconfig",
   description: "delete information from server configuration",
   require: ["mongooseConnectionString"],

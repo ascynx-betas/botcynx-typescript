@@ -4,6 +4,7 @@ export default new Command({
   name: "trade",
   aliases: ["t"],
   usage: `${process.env.botPrefix}trade [price per item|region(R1|R2)] [price per item|number of items] ([number of items] | <H | HXP | HCS to make the price be in Hyper compressed>)`,
+  category: "other",
 
   run: async ({ message, client, args, request }) => {
     let isShifted = false;

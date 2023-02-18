@@ -1,17 +1,17 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle } from "discord.js";
 import { sortingRow } from "../commands/whitelistedCommands/getRepo";
 import { searchRepositories } from "../lib/repoPull";
-import { slashCommandRequestCache } from "../lib/slashCommandRequestCache";
+import { SlashCommandRequestCache } from "../lib/slashCommandRequestCache";
 import { queryEmbed, returnEditQueryButton } from "../lib/utils";
-import { modalResponse } from "../structures/Commands";
+import { ModalResponse } from "../structures/Commands";
 
-export default new modalResponse({
+export default new ModalResponse({
     name: "newquery",
     once: false,
 
     run: async ({ client, modal }) => {
         let interactionId = modal.customId.split(":")[1];
-        const interaction = slashCommandRequestCache.getInstance().getFromCache(interactionId);
+        const interaction = SlashCommandRequestCache.getInstance().getFromCache(interactionId);
 
         const queryParameter = modal.fields.getTextInputValue("query");
         const query = encodeURIComponent(queryParameter);
@@ -39,7 +39,7 @@ export default new modalResponse({
         });
 
         //delete the request to avoid having duplicates
-        slashCommandRequestCache.getInstance().deleteElement(interactionId);
+        SlashCommandRequestCache.getInstance().deleteElement(interactionId);
 
         modal.reply({content: "Updated query", ephemeral: true});//required to avoid discord sending an error to the user
     }

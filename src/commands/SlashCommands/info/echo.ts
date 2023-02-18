@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, TextChannel } from "discord.js";
-import { slashCommand } from "../../../structures/Commands";
+import { SlashCommand } from "../../../structures/Commands";
 
-export default new slashCommand({
+export default new SlashCommand({
   name: "echo",
   description: "allows the person to send a message via the bot",
   userPermissions: ["ManageMessages"],

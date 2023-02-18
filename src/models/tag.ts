@@ -1,18 +1,18 @@
 import * as mongoose from "mongoose";
 
-export interface tag {
+export interface Tag {
   name: string;
   guildId: string;
   description: string;
   text: string;
 }
 
-const schema = new mongoose.Schema<tag>({
+const schema = new mongoose.Schema<Tag>({
   name: String,
   guildId: String,
   description: String,
   text: String,
 });
-const tagModel = mongoose.model<tag>("tag", schema);
+const tagModel = mongoose.model<Tag>("tag", schema);
 
 export { tagModel };

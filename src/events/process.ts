@@ -3,7 +3,6 @@ import { botcynx, showDiscordAPIErrors } from "..";
 import { webhook } from "../lib/personal-modules/discordPlugin";
 import { getTimeOfDay } from "../lib/personal-modules/testFor";
 import chalk from "chalk";
-import { postStartData } from "./ready";
 import { LoggerFactory, logLevel } from "../lib/Logger";
 import { DiscordAPIError } from "discord.js";
 
