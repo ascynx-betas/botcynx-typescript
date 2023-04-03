@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle } from "discord.js";
-import { sortingRow } from "../commands/whitelistedCommands/getRepo";
+import { getSortingRowForQuery } from "../commands/whitelistedCommands/getRepo";
 import { searchRepositories } from "../lib/repoPull";
 import { SlashCommandRequestCache } from "../lib/slashCommandRequestCache";
 import { queryEmbed, returnEditQueryButton } from "../lib/utils";
@@ -34,7 +34,7 @@ export default new ModalResponse({
         //edit the original message
         (interaction.Interaction as ButtonInteraction).editReply({
             embeds: [embed],
-            components: [queryButtons, sortingRow, returnEditQueryButton(0, (data.total_count / 5))],
+            components: [queryButtons, getSortingRowForQuery(query), returnEditQueryButton(0, (data.total_count / 5))],
             allowedMentions: { parse: [] }
         });
 

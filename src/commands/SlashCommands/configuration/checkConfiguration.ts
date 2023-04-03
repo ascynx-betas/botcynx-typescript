@@ -3,7 +3,7 @@ import {
   ActionRowBuilder,
   Colors,
   EmbedBuilder,
-  SelectMenuBuilder,
+  StringSelectMenuBuilder,
 } from "discord.js";
 import { emojis } from "../../../lib/emojis";
 
@@ -23,8 +23,8 @@ export default new SlashCommand({
       .setColor(Colors.Blue)
       .setTimestamp(Date.now());
 
-    const row = new ActionRowBuilder<SelectMenuBuilder>().addComponents(
-      new SelectMenuBuilder()
+    const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
+      new StringSelectMenuBuilder()
         .addOptions([
           {
             label: "roleLinked configuration",

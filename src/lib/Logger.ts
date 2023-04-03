@@ -8,6 +8,7 @@ export const postLoadingLogs = () => {
   for (let queueItem of loggerQueue) {
     queueItem.logger.log(queueItem.message, queueItem.level);
   }
+  //clear array
   loggerQueue.length = 0;
 
 }
@@ -83,20 +84,20 @@ class Logger {
   }
 
   info(message: any) {
-    this.log(message instanceof String ? message : message.toString(), logLevel.INFO);
+    this.log(message instanceof String ? message : JSON.stringify(message), logLevel.INFO);
   }
   warn(message: any) {
-    this.log(message instanceof String ? message : message.toString(), logLevel.WARN);
+    this.log(message instanceof String ? message : JSON.stringify(message), logLevel.WARN);
   }
   error(error: Error) {
     this.log(this.showCallStack ? error.stack : error.message, logLevel.ERROR);
   }
   debug(message: any) {
-    this.log(message instanceof String ? message : message.toString(), logLevel.DEBUG);
+    this.log(message instanceof String ? message : JSON.stringify(message), logLevel.DEBUG);
   }
 
   fatal(message: any) {
-    this.log(message instanceof String ? message : message.toString(), logLevel.FATAL);
+    this.log(message instanceof String ? message : JSON.stringify(message), logLevel.FATAL);
   }
 
   log(message: any, level: logLevel, bypassQueue: boolean = false) {
@@ -158,6 +159,9 @@ class Logger {
       case logLevel.ERROR:
       case logLevel.FATAL: {
         return chalk.hex("#800000");
+      }
+      case logLevel.INFO: {
+        return chalk.greenBright;
       }
       default: {
         return chalk.white;

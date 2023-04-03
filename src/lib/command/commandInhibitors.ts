@@ -1,7 +1,7 @@
 import { Guild, GuildMember, PermissionsString, User } from "discord.js";
 import { botcynx } from "../..";
 import { configModel } from "../../models/config";
-import { ButtonResponseType, commandCooldown, CommandSimili, CommandType, MessageCommandType, MessageContextType, UserContextType } from "../../typings/Command";
+import { ButtonResponseType, CommandCooldown, CommandSimili, CommandType, MessageCommandType, MessageContextType, UserContextType } from "../../typings/Command";
 
 const userPermissionInhibitor = function (
   command: CommandType | UserContextType | MessageContextType | MessageCommandType | ButtonResponseType,
@@ -77,15 +77,15 @@ const isOnCooldown = function (command: CommandType | UserContextType | MessageC
       //ended
 
       botcynx.cooldowns.delete(`${user.id}-${command.name}`);
-      const newCoolDown = new commandCooldown(user.id, time, command.name);
-      botcynx.cooldowns.set(`${user.id}-${command.name}`, newCoolDown);
+      const newCooldown = new CommandCooldown(user.id, time, command.name);
+      botcynx.cooldowns.set(`${user.id}-${command.name}`, newCooldown);
       return true;
     }
   } else {
     //doesn't exist
 
-    const newCoolDown = new commandCooldown(user.id, time, command.name);
-    botcynx.cooldowns.set(`${user.id}-${command.name}`, newCoolDown);
+    const newCooldown = new CommandCooldown(user.id, time, command.name);
+    botcynx.cooldowns.set(`${user.id}-${command.name}`, newCooldown);
     return true;
   }
 };

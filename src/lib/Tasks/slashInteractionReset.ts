@@ -1,7 +1,7 @@
-import { slashCommandRequestCache } from "../slashCommandRequestCache"
+import { SlashCommandRequestCache } from "../slashCommandRequestCache"
 
 export const clearCache = async () => {
-    const cache = slashCommandRequestCache.getInstance();
+    const cache = SlashCommandRequestCache.getInstance();
     return setInterval(() => {
         cache.resetCache();
     }, 900000)

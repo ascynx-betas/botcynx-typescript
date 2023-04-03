@@ -29,6 +29,7 @@ import { LoggerFactory, logLevel } from "../lib";
 import { botcynx } from "..";
 import { clearCache } from "../lib/Tasks/slashInteractionReset";
 import {HypixelAPI} from "../lib";
+import { RepositoryCacheHandler } from "../lib/cache/repoCache";
 
 const globPromise = promisify(glob);
 
@@ -371,13 +372,14 @@ export class BotClient extends Client {
     });
 
     //Tasks
-    this.tasks.set("cooldown", await registerCooldownTask(this)); //register cooldown timer id
-    this.tasks.set("slashCommandCache", await clearCache());
-    this.tasks.set("hypixelApiReset", HypixelAPI.INSTANCE.task);
+    this.tasks.set("cooldown", await registerCooldownTask(this));                 //register cooldown timer id
+    this.tasks.set("slashCommandCache", await clearCache());                      //Clear interactions when dropped
+    this.tasks.set("hypixelApiReset", HypixelAPI.INSTANCE.task);                  //Reset api calls clientside
+    this.tasks.set("githubRepoResetDirt", RepositoryCacheHandler.INSTANCE.task);  //Reset "dirty" repositories
   }
 
   async killTasks() {
-    // kill all registered tasks, what did you expect?
+    // kill all registered tasks, what did you expect? -> Killswitches are always useful
     for (let task of this.tasks.map((t) => t)) {
       clearInterval(task);
       this.tasks.delete(this.tasks.findKey((t) => t == task));

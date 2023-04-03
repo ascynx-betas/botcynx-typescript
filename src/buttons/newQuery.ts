@@ -1,5 +1,5 @@
 import { ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
-import { slashCommandRequestCache } from "../lib/slashCommandRequestCache";
+import { SlashCommandRequestCache } from "../lib/slashCommandRequestCache";
 import { ButtonResponse } from "../structures/Commands";
 
 export default new ButtonResponse({
@@ -22,7 +22,7 @@ export default new ButtonResponse({
 
         }
 
-        slashCommandRequestCache.getInstance().addToCache(interaction, true);
+        SlashCommandRequestCache.getInstance().addToCache(interaction, true);
 
         let modal = new ModalBuilder()
             .setCustomId("newquery:" + interaction.id)

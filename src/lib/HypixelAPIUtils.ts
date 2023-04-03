@@ -1,9 +1,10 @@
 import {botcynx} from "../index";
 import fetch from "node-fetch";
-import {Key, Player, SkyblockProfiles, Status, Profile} from "../typings/Hypixel";
+import {Key, Player, Status, Profile} from "../typings/Hypixel";
 import {Collection} from "discord.js";
 import EventEmitter from "events";
 import { HypixelAPIEvents } from "../structures/Event";
+import { LoggerFactory } from "./Logger";
 
 declare type Awaitable<T> = PromiseLike<T> | T;
 
@@ -16,6 +17,12 @@ declare type Awaitable<T> = PromiseLike<T> | T;
   }
 
 export class HypixelAPI extends EventEmitter implements HypixelEmitter {
+    private LOGGER = LoggerFactory.getLogger("HYPIXEL");
+
+    getLogger() {
+        return this.LOGGER;
+    }
+
     private key = process.env.hypixelapikey;
     private keyStatus: {valid: boolean} = {valid: true};
 

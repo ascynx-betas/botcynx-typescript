@@ -2,10 +2,10 @@ import { Event } from "../structures/Event";
 import { getKeyInfo } from "../lib/HypixelAPIUtils";
 import { ticketBlockedName } from "../config";
 import chalk from "chalk";
-import { botcynx, finishLoading } from "..";
+import { botcynx, runPostLoadingEvents } from "..";
 import { logLevel } from "../lib/Logger";
 
-type postStartDataType = {
+type PostStartDataType = {
   maxTimeout: string;
   ticketblockedNames: string[];
   mongooseconnectionstring: boolean;
@@ -16,7 +16,7 @@ type postStartDataType = {
   githubtoken: boolean;
 };
 
-export let postStartData: postStartDataType = {
+export let postStartData: PostStartDataType = {
   maxTimeout: "",
   ticketblockedNames: [],
   mongooseconnectionstring: false,
@@ -28,7 +28,7 @@ export let postStartData: postStartDataType = {
 };
 
 export default new Event("ready", async () => {
-  await finishLoading();
+  await runPostLoadingEvents();
   //sends to log the time it took for the bot to connect to the discord api
   console.timeEnd("Login time");
   //post start data setup

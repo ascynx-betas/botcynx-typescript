@@ -11,7 +11,7 @@ import {
   ActionRowBuilder,
 } from "discord.js";
 import { botcynx } from "..";
-import { webhook } from "./personal-modules/discordPlugin";
+import { getWebhook } from "./personal-modules/discordPlugin";
 import { emojis } from "./emojis";
 import { checkLink } from "../events/linkReader";
 import { RepoProfile } from "./cache/repoCache";
@@ -114,9 +114,9 @@ export const sendInfoWebhook = async (options: {
   embed?: Embed | APIEmbed;
 }) => {
   const { message, embed } = options;
-  const infoWebhook = webhook(process.env.webhookLogLink);
+  const webhook = getWebhook(process.env.webhookLogLink);
 
-  (await botcynx.fetchWebhook(infoWebhook.id, infoWebhook.token)).send({
+  (await botcynx.fetchWebhook(webhook.id, webhook.token)).send({
     content: message != null ? message : null,
     embeds: embed != null ? [embed] : null,
     allowedMentions: { parse: ["roles", "users"] },

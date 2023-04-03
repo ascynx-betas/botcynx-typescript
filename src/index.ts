@@ -1,5 +1,5 @@
 require("dotenv").config();
-import { HypixelAPI, LoadAllCaches } from "./lib";
+import { HypixelAPI, loadAllCaches } from "./lib";
 import { LocalizationHandler } from "./lib/Lang";
 import { LoggerFactory, logLevel, postLoadingLogs } from "./lib/Logger";
 import { FlagHandler, RequestHandler } from "./lib/messageCommandRequest";
@@ -14,7 +14,7 @@ export let finishedLoading = false;
 export let showDiscordAPIErrors = false;
 
 const parseBool = (bool: string) => {
-  return bool == "true" ? true : bool == "false" ? false : undefined;
+  return bool == "true" ? true : bool == "false" ? false : null;
 }
 
 function main(args: string[]) {
@@ -37,8 +37,9 @@ function main(args: string[]) {
       let index = flags.get("renderTime").index;
       let bool = args[index + 1];
       let renderTime = parseBool(bool);
-      if (renderTime == undefined)
+      if (renderTime === null)
         throw new Error("Cannot set renderTime to " + bool);
+
       LoggerFactory.shouldRenderTime = renderTime;
 
       botcynx.getLogger.info(
@@ -50,7 +51,9 @@ function main(args: string[]) {
       let index = flags.get("showCallStack").index;
       let bool = args[index + 1];
       let showCallStack = parseBool(bool);
-      if (showCallStack == undefined) throw new Error("Cannot set showCallStack to " + bool);
+      if (showCallStack === null)
+        throw new Error("Cannot set showCallStack to " + bool);
+
       LoggerFactory.shouldShowCallStack = showCallStack;
 
       botcynx.getLogger.info(
@@ -63,7 +66,9 @@ function main(args: string[]) {
       let bool = args[index + 1];
       let showDiscordErrors = parseBool(bool);
 
-      if (showDiscordErrors == undefined) throw new Error("Cannot set showDiscordAPIErrors to " + bool);
+      if (showDiscordErrors === null)
+       throw new Error("Cannot set showDiscordAPIErrors to " + bool);
+
       showDiscordAPIErrors = showDiscordErrors;
 
       botcynx.getLogger.info(
@@ -74,13 +79,12 @@ function main(args: string[]) {
 
   console.time("Login time");
   botcynx.start();
-  listenDebugAPI();
 }
 
 function listenDebugAPI() {
   HypixelAPI.INSTANCE.on("reset", (data) => {
-    if (!botcynx.isDebug) return;
-    console.log(data);
+    if (!botcynx.isDebug()) return;
+    HypixelAPI.INSTANCE.getLogger().debug(data);
   });
 
   HypixelAPI.INSTANCE.on("invalidAPIKey", async () => {
@@ -99,12 +103,19 @@ function listenDebugAPI() {
   });
 }
 
-export const finishLoading = async () => {
+
+//register events that run after bot is loaded
+botcynx.on("finishedLoading", listenDebugAPI);
+botcynx.on("finishedLoading", postLoadingLogs);
+botcynx.on("finishedLoading", loadAllCaches);
+
+export const runPostLoadingEvents = async () => {
   finishedLoading = true;
   botcynx.getLogger.log("Finished Loading", logLevel.DEBUG, true);
   botcynx.emit("finishedLoading");
-  postLoadingLogs();
-  LoadAllCaches();
 }
 
+/**
+ * Bot Entrypoint
+ */
 main(process.argv.slice(2));

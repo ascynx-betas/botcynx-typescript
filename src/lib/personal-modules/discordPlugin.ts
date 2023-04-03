@@ -44,7 +44,7 @@ const isInvite = function (potentialInvite: string) {
   if (!invite.test(potentialInvite)) return false;
   return true;
 };
-const webhook = function (webhooklink: string) {
+const getWebhook = function (webhooklink: string) {
   let link = webhooklink;
   link = link.slice(8, link.length);
   let fields = link.split("/");
@@ -136,7 +136,7 @@ const infoEmbedCreation = function (category: string) {
 };
 
 export {
-  webhook,
+  getWebhook,
   isId,
   isInvite,
   permOverride,

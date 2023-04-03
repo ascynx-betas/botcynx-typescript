@@ -1,5 +1,5 @@
 import { Collection } from "discord.js";
-import { jsonCache, repoLink } from "./cache";
+import { JsonCache, RepoLink } from "./cache";
 
 const logText = [
   "net.minecraft.launchwrapper.Launch",
@@ -188,6 +188,6 @@ export function getML(log: string): {
 
 //original source of getML, regexes and Loaders after update 1.8.5(saturday 7th of may 2022) https://github.com/FireDiscordBot/bot/blob/master/src/modules/mclogs.ts
 
-export const crashFixCache = new jsonCache(
-  new repoLink("SkyblockClient", "CrashData", "crashes.json")
+export const crashFixCache = new JsonCache(
+  new RepoLink("SkyblockClient", "CrashData", "crashes.json")
 );
