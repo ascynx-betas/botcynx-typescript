@@ -84,20 +84,20 @@ class Logger {
   }
 
   info(message: any) {
-    this.log(message instanceof String ? message : JSON.stringify(message), logLevel.INFO);
+    this.log(typeof(message) == "string" ? message : JSON.stringify(message), logLevel.INFO);
   }
   warn(message: any) {
-    this.log(message instanceof String ? message : JSON.stringify(message), logLevel.WARN);
+    this.log(typeof(message) == "string" ? message : JSON.stringify(message), logLevel.WARN);
   }
   error(error: Error) {
     this.log(this.showCallStack ? error.stack : error.message, logLevel.ERROR);
   }
   debug(message: any) {
-    this.log(message instanceof String ? message : JSON.stringify(message), logLevel.DEBUG);
+    this.log(typeof(message) == "string" ? message : JSON.stringify(message), logLevel.DEBUG);
   }
 
   fatal(message: any) {
-    this.log(message instanceof String ? message : JSON.stringify(message), logLevel.FATAL);
+    this.log(typeof(message) == "string" ? message : JSON.stringify(message), logLevel.FATAL);
   }
 
   log(message: any, level: logLevel, bypassQueue: boolean = false) {

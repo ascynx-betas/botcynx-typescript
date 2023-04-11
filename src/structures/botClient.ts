@@ -16,7 +16,7 @@ import {
   RegisterCommandsOptions,
   registerModulesOptions,
 } from "../typings/Client";
-import { Event } from "./Event";
+import { Event, extendedClientEvents } from "./Event";
 import { connect } from "mongoose";
 import { tagModel } from "../models/tag";
 import { reload } from "../lib";
@@ -102,6 +102,14 @@ export class BotClient extends Client {
 
   public isDebug(): boolean {
     return this.debug;
+  }
+
+  public emitLater<K extends keyof extendedClientEvents, E extends keyof ClientEvents>(event: K, ...args: extendedClientEvents[K|E]) {
+    const task = setInterval(() => {
+      clearInterval(task);
+      //make it think it's one of its own events :)
+      this.emit(event as unknown as E, ...args as ClientEvents[E]);
+    }, 1000);
   }
 
   private registerTable: { type: string; name: string; registered: boolean }[] =

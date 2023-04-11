@@ -9,7 +9,7 @@ export class Event<Key extends keyof extendedClientEvents> {
 }
 
 export interface extendedClientEvents extends ClientEvents {
-  interactioncommandCreate: [interaction: botcynxInteraction];
+  interactionCommandCreate: [interaction: botcynxInteraction];
   messageCommandCreate: [message: Message];
   finishedLoading: any;
 } //add custom events here
