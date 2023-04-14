@@ -29,12 +29,10 @@ export default new ModalResponse({
 
         const queryButtons = new ActionRowBuilder<ButtonBuilder>().addComponents(buttonFields);
 
-        const newQueryButton = new ActionRowBuilder<ButtonBuilder>().addComponents(new ButtonBuilder().setCustomId("newquery").setLabel("New query").setStyle(ButtonStyle.Primary));
-
         //edit the original message
         (interaction.Interaction as ButtonInteraction).editReply({
             embeds: [embed],
-            components: [queryButtons, getSortingRowForQuery(query), returnEditQueryButton(0, (data.total_count / 5))],
+            components: [queryButtons, getSortingRowForQuery(query), returnEditQueryButton(0, (data.total_count / 5), query)],
             allowedMentions: { parse: [] }
         });
 

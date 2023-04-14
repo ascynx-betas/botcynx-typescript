@@ -14,7 +14,7 @@ import { botcynx } from "..";
 import { getWebhook } from "./personal-modules/discordPlugin";
 import { emojis } from "./emojis";
 import { checkLink } from "../events/linkReader";
-import { RepoProfile } from "./cache/repoCache";
+import { RepoProfile, RepositoryCacheHandler } from "./cache/repoCache";
 
 export const similarityDetection = (
   word: string,
@@ -55,14 +55,14 @@ export const similarityDetection = (
   else return { result: false, percentage: percentageOfSimilarities };
 };
 
-export const returnEditQueryButton = (page = 0, maxPage = 1) => {
-  let backwardButton = new ButtonBuilder().setCustomId("querypage:" + (page - 1)).setEmoji("◀️").setStyle(ButtonStyle.Primary);
+export const returnEditQueryButton = (page = 0, maxPage = 1, query: string) => {
+  let backwardButton = new ButtonBuilder().setCustomId(`querypage:${query}:${(page - 1)}`).setEmoji("◀️").setStyle(ButtonStyle.Primary);
   let editButton = new ButtonBuilder().setCustomId("newquery").setLabel("New query").setStyle(ButtonStyle.Secondary);
-  let forwardButton = new ButtonBuilder().setCustomId("querypage:" + (page + 1)).setEmoji("▶️").setStyle(ButtonStyle.Primary);
+  let forwardButton = new ButtonBuilder().setCustomId(`querypage:${query}:${(page + 1)}`).setEmoji("▶️").setStyle(ButtonStyle.Primary);
   if (page == 0) {
     backwardButton.setDisabled(true);
   }
-  if (page == maxPage) {
+  if ((page + 1) >= maxPage) {
     forwardButton.setDisabled(true);
   }
 
@@ -73,15 +73,9 @@ export const returnEditQueryButton = (page = 0, maxPage = 1) => {
   ]);
 }
 
-export const queryEmbed = (data, tag, query, page = 0) => {
-  let pageFirstElement = (page*5) > 0 ? (page*5)-1 : (page*5);
-  if (data.total_count >= 5) data.items = data.items.slice(pageFirstElement, pageFirstElement + 5);
-  //expected result (if page = 0 return 5 first elements, else return page * 5 as first element and 5 later as max)
-
-  let items: RepoProfile[] = [];
-  data.items.forEach((item: RepoItem) => {
-    items.push(new RepoProfile(item));
-  });
+export const queryEmbed = (data, tag: string, query: string, page = 0) => {
+  if (!RepositoryCacheHandler.INSTANCE.hasQuery(query)) throw Error("Query is not registered!");
+  let items: RepoProfile[] = RepositoryCacheHandler.INSTANCE.getQuery(query).getPage(page);
 
   let fields: APIEmbedField[] = [];
   let buttonFields: ButtonBuilder[] = [];
@@ -101,7 +95,7 @@ export const queryEmbed = (data, tag, query, page = 0) => {
 
   const embed = new EmbedBuilder()
     .setTitle(
-      `${items.length === 1 ? `${items[0].name}` : `results for ${query}`}`
+      `${items.length === 1 ? `${items[0].name}` : `results for ${query}`} ${page != 0 ? ` - page ${page + 1}` : ""}`
     )
     .setFields(fields)
     .setFooter({ text: `requested by ${tag} - ${data.total_count} results` });

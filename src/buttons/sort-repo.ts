@@ -19,23 +19,9 @@ export default new ButtonResponse({
     const decodedQuery = decodeURIComponent(query);
 
     if (sortby == "last-updated") {
-      data.items.forEach((item, index: number) => {
-        const date: string = item.pushed_at;
-        const parsedData = Date.parse(date); //! Might bug
-
-        data.items[index].pushed_at = parsedData; //change date to timestamp
-      });
-
-      data.items.sort((a, b) => b.pushed_at - a.pushed_at);
+      data.items.sort((a, b) => b.pushed_at_parsed - a.pushed_at_parsed);
     } else if (sortby == "oldest-updated") {
-      data.items.forEach((item, index: number) => {
-        const date: string = item.pushed_at;
-        const parsedData = Date.parse(date); //! Might bug
-
-        data.items[index].pushed_at = parsedData; //change date to timestamp
-      });
-
-      data.items.sort((a, b) => a.pushed_at - b.pushed_at);
+      data.items.sort((a, b) => a.pushed_at_parsed - b.pushed_at_parsed);
     } else if (sortby == "forks-up") {
       data.items.sort((a, b) => a.forks_count - b.forks_count);
     } else if (sortby == "forks-down") {
@@ -61,7 +47,7 @@ export default new ButtonResponse({
         actionRow,
         interaction.message
           .components[1] as ActionRow<MessageActionRowComponent>,
-          returnEditQueryButton(0, (data.total_count / 5))
+        returnEditQueryButton(0, (data.total_count / 5), query)
       ],
     });
   },

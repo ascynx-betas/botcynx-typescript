@@ -19,16 +19,18 @@ export class RepositoryCacheHandler {
     }
 
     hasQuery(query: string) {
-        return this.profileCache.has(query);
+        return this.profileCache.has(decodeURIComponent(query));
     }
     addCachedQuery(query: CachedQuery) {
         if (!this.hasQuery(query.getQuery)) {
             this.profileCache.set(query.getQuery, query);
         }
+        return query;
     }
     removeCachedQuery(query: string) {
-        if (this.hasQuery(query)) {
-            this.profileCache.delete(query);
+        const decodedQuery = decodeURIComponent(query);
+        if (this.hasQuery(decodedQuery)) {
+            this.profileCache.delete(decodedQuery);
         }
     }
 
@@ -54,6 +56,10 @@ export class RepositoryCacheHandler {
     getDirtyQueries() {
         return this.profileCache.filter((a) => a.lastUpdatedTimestamp < Date.now() + RepositoryCacheHandler.DIRTY_TIMESTAMP);
     }
+
+    public getQuery(query: string) {
+        return this.profileCache.get(decodeURIComponent(query));
+    }
 }
 
 export class CachedQuery {
@@ -66,13 +72,21 @@ export class CachedQuery {
     lastUpdatedTimestamp: number;
 
     constructor(query: string, ...repositories: RepoProfile[]) {
-        query = query;
+        this.query = decodeURIComponent(query);
         this.cache = [...repositories];
         this.lastUpdatedTimestamp = Date.now();
     }
 
     getPage(page: number) {
-        return this.cache.slice((page*5), ((page*5)-1)+5);
+        return this.cache.slice((page * 5), (page * 5) + 5);
+    }
+
+    get total_count() {
+        return this.cache.length;
+    }
+
+    get items() {
+        return this.cache;
     }
 }
 
@@ -83,6 +97,14 @@ export class RepoProfile {
     repoURL: string;
     stars: number;
     forks: number;
+    stargazers_count: number;
+    watchers: number;
+    watchers_count: number;
+    
+    pushed_at: string;
+    pushed_at_parsed: number;//timestamp
+
+    forks_count: number;
 
     constructor(item: RepoItem) {
         let description: string;
@@ -98,5 +120,14 @@ export class RepoProfile {
         this.repoURL = item.html_url;
         this.stars = item.stargazers_count;
         this.forks = item.forks;
+        this.stargazers_count = item.stargazers_count;
+        this.watchers = item.watchers;
+        this.watchers_count = item.watchers_count;
+        this.forks_count = item.forks_count;
+
+        //deal with date stuff
+        this.pushed_at = item.pushed_at;
+        const parsedDate = Date.parse(this.pushed_at);//! Might bug
+        this.pushed_at_parsed = parsedDate;
     }
   }

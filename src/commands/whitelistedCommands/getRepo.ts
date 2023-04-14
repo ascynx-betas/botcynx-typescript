@@ -79,7 +79,7 @@ export default new WhitelistedCommand({
     
     interaction.followUp({
       embeds: [embed],
-      components: [queryButtons, getSortingRowForQuery(query), returnEditQueryButton(0, (data.total_count / 5))],
+      components: [queryButtons, getSortingRowForQuery(query), returnEditQueryButton(0, (data.total_count / 5), query)],
       allowedMentions: { parse: [] },
     });
   },

@@ -1,5 +1,6 @@
 import fetch from "node-fetch";
 import { botcynx } from "..";
+import { CachedQuery, RepoProfile, RepositoryCacheHandler } from "./cache/repoCache";
 type RepoError = {
   code: number;
   cause: string;
@@ -123,10 +124,18 @@ const linkContentPull = async (link: string) => {
 //search with name
 
 const searchRepositories = async (query: string) => {
+  if (RepositoryCacheHandler.INSTANCE.hasQuery(query)) {
+    return RepositoryCacheHandler.INSTANCE.getQuery(query);
+  }
   let requestUrl = `https://api.github.com/search/repositories?q=${query}`;
 
   const data = await gitFetchJson(requestUrl);
-  return data;
+
+  const items: RepoProfile[] = [];
+  data.items.forEach((item: RepoItem) => {
+    items.push(new RepoProfile(item));
+  });
+  return RepositoryCacheHandler.INSTANCE.addCachedQuery(new CachedQuery(query, ...items));
 };
 
 export {

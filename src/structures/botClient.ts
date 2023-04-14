@@ -317,6 +317,7 @@ export class BotClient extends Client {
       guildsWithTags = [...new Set(guildsWithTags)];
       guildsWithTags.forEach((guild) => this.registerTags(guild));
       //register commands
+      //TODO check commands to make sure they aren't the same and if they are then don't try to register them again **SHOULD CHECK BOTH IN LOCAL REGISTERING AND GLOBAL REGISTERING
       if (!process?.env?.guildId)
         this.registerCommands({
           commands: this.ArrayOfSlashCommands,
