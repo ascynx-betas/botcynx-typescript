@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonInteraction } from "discord.js";
 import { getSortingRowForQuery } from "../commands/whitelistedCommands/getRepo";
 import { searchRepositories } from "../lib/repoPull";
 import { SlashCommandRequestCache } from "../lib/slashCommandRequestCache";
@@ -6,7 +6,7 @@ import { queryEmbed, returnEditQueryButton } from "../lib/utils";
 import { ModalResponse } from "../structures/Commands";
 
 export default new ModalResponse({
-    name: "newquery",
+    name: "findrepo",
     once: false,
 
     run: async ({ client, modal }) => {
@@ -22,7 +22,6 @@ export default new ModalResponse({
         data.items.sort((a, b) => b.stargazers_count - a.stargazers_count);
 
         const {embed, buttonFields} = queryEmbed(
-            data,
             modal.user.tag,
             queryParameter
         );
@@ -39,6 +38,6 @@ export default new ModalResponse({
         //delete the request to avoid having duplicates
         SlashCommandRequestCache.getInstance().deleteElement(interactionId);
 
-        modal.reply({content: "Updated query", ephemeral: true});//required to avoid discord sending an error to the user
+        modal.reply({content: "Updated query to: " + query, ephemeral: true});//required to avoid discord sending an error to the user
     }
 })

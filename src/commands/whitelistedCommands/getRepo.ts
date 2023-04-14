@@ -70,7 +70,6 @@ export default new WhitelistedCommand({
     data.items.sort((a, b) => b.stargazers_count - a.stargazers_count);
 
     const { embed, buttonFields } = queryEmbed(
-      data,
       interaction.user.tag,
       queryParameter
     );

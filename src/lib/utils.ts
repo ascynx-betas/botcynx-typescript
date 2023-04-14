@@ -57,7 +57,7 @@ export const similarityDetection = (
 
 export const returnEditQueryButton = (page = 0, maxPage = 1, query: string) => {
   let backwardButton = new ButtonBuilder().setCustomId(`querypage:${query}:${(page - 1)}`).setEmoji("◀️").setStyle(ButtonStyle.Primary);
-  let editButton = new ButtonBuilder().setCustomId("newquery").setLabel("New query").setStyle(ButtonStyle.Secondary);
+  let editButton = new ButtonBuilder().setCustomId("newquery:" + query).setLabel("New query").setStyle(ButtonStyle.Secondary);
   let forwardButton = new ButtonBuilder().setCustomId(`querypage:${query}:${(page + 1)}`).setEmoji("▶️").setStyle(ButtonStyle.Primary);
   if (page == 0) {
     backwardButton.setDisabled(true);
@@ -73,9 +73,10 @@ export const returnEditQueryButton = (page = 0, maxPage = 1, query: string) => {
   ]);
 }
 
-export const queryEmbed = (data, tag: string, query: string, page = 0) => {
+export const queryEmbed = (tag: string, query: string, page = 0) => {
   if (!RepositoryCacheHandler.INSTANCE.hasQuery(query)) throw Error("Query is not registered!");
-  let items: RepoProfile[] = RepositoryCacheHandler.INSTANCE.getQuery(query).getPage(page);
+  let queryData = RepositoryCacheHandler.INSTANCE.getQuery(query);
+  let items: RepoProfile[] = queryData.getPage(page);
 
   let fields: APIEmbedField[] = [];
   let buttonFields: ButtonBuilder[] = [];
@@ -98,7 +99,7 @@ export const queryEmbed = (data, tag: string, query: string, page = 0) => {
       `${items.length === 1 ? `${items[0].name}` : `results for ${query}`} ${page != 0 ? ` - page ${page + 1}` : ""}`
     )
     .setFields(fields)
-    .setFooter({ text: `requested by ${tag} - ${data.total_count} results` });
+    .setFooter({ text: `requested by ${tag} - ${queryData.total_count} results - ${Math.floor(queryData.total_count / 5)} page${queryData.total_count / 5 > 2 ? "s" : "" }` });
 
   return { embed, buttonFields };
 };

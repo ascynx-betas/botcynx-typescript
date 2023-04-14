@@ -9,30 +9,19 @@ export default new ButtonResponse({
 
     run: ({ client, interaction }) => {
         //create modal and send it then respond to modal
-
-        let oldQuery: string;
-
-        if (interaction.message.embeds && interaction.message.embeds[0].title) {
-          let title = interaction.message.embeds[0].title;
-          let rgx = /results for (?<query>.*)/gi
-          if (rgx.test(title)) {
-            rgx.lastIndex = 0;
-            oldQuery = rgx.exec(title).groups["query"];
-          }
-
-        }
+        let oldQuery: string = interaction.customId.split(":")[1];
 
         SlashCommandRequestCache.getInstance().addToCache(interaction, true);
 
         let modal = new ModalBuilder()
-            .setCustomId("newquery:" + interaction.id)
+            .setCustomId("findrepo:" + interaction.id)
             .setTitle("Enter new repository query")
             .addComponents(
                 ...[
                 new ActionRowBuilder<TextInputBuilder>().addComponents(
                   new TextInputBuilder({
                     customId: "query",
-                    label: "Enter query here",
+                    label: "Enter the new query here",
                     style: TextInputStyle.Paragraph,
                     minLength: 1,
                     maxLength: 200,

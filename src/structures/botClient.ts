@@ -327,12 +327,19 @@ export class BotClient extends Client {
           commands: this.ArrayOfSlashCommands,
           guildId: process.env.guildId,
         });
-        for (let command of this.whitelistedCommands.map((c) => c)) {
+        for (let lCommand of this.whitelistedCommands.map((c) => c)) {
           try {
-            command.register({
-              client: this,
-              guild: this.guilds.cache.get(process?.env?.guildId),
-            });
+            let existingCommands = this.guilds.cache.get(process?.env?.guildId).commands.cache.filter((dCommand) => dCommand.name == lCommand.name);
+            if (existingCommands.size > 0 ) {
+              if (!existingCommands.first().equals(lCommand, false).valueOf()) {
+                existingCommands.first().edit(lCommand);
+              }
+            } else {
+              lCommand.register({
+                client: this,
+                guild: this.guilds.cache.get(process?.env?.guildId),
+              });
+            }
           } catch (e) {}
         }
       }
@@ -414,7 +421,6 @@ export class BotClient extends Client {
       );
     }
   }
-
 
   async registerTags(guildId: string) {
     const guild = this.guilds.cache.get(guildId);

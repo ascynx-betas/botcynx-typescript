@@ -33,7 +33,6 @@ export default new ButtonResponse({
     } else return;//  unexpected sorting method
 
     const { embed, buttonFields } = queryEmbed(
-      data,
       interaction.user.tag,
       decodedQuery
     );

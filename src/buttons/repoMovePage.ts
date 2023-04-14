@@ -16,7 +16,6 @@ export default new ButtonResponse({
         const pageInt = parseInt(page);
 
         const { embed, buttonFields } = queryEmbed(
-            data,
             interaction.user.tag,
             decodedQuery,
             pageInt
