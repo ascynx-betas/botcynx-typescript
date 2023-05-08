@@ -1,9 +1,10 @@
 import {botcynx} from "../index";
 import fetch from "node-fetch";
-import {Key, Player, SkyblockProfiles, Status, Profile} from "../typings/Hypixel";
+import {Key, Player, Status, Profile} from "../typings/Hypixel";
 import {Collection} from "discord.js";
 import EventEmitter from "events";
 import { HypixelAPIEvents } from "../structures/Event";
+import { LoggerFactory } from "./Logger";
 
 declare type Awaitable<T> = PromiseLike<T> | T;
 
@@ -16,8 +17,23 @@ declare type Awaitable<T> = PromiseLike<T> | T;
   }
 
 export class HypixelAPI extends EventEmitter implements HypixelEmitter {
+    private LOGGER = LoggerFactory.getLogger("HYPIXEL");
+
+    getLogger() {
+        return this.LOGGER;
+    }
+
     private key = process.env.hypixelapikey;
     private keyStatus: {valid: boolean} = {valid: true};
+
+    public setKeyStatus(isValid: boolean): boolean {
+        this.keyStatus.valid = isValid;
+        if (!isValid) {
+            this.emit("invalidAPIKey");
+        }
+        return isValid;
+    }
+
     private USER_AGENT: string;
     private readonly baseURL = "https://api.hypixel.net/";
 
@@ -50,7 +66,6 @@ export class HypixelAPI extends EventEmitter implements HypixelEmitter {
     private initTask() {
         return setInterval(async () => {
             this.emit("reset", {lastReset: this.lastReset, APICallsLastMinute: this.APICallsLastMinute, ReachedMax: this.ReachedMax, activityLog: this.activityLog});
-
             this.lastReset = Date.now();
             this.APICallsLastMinute = 0;
             this.ReachedMax = false;
@@ -132,7 +147,7 @@ export class HypixelAPI extends EventEmitter implements HypixelEmitter {
                         case 403: {
                             //forbidden request, requires api key (not provided or invalid)
                             if (hasKey) {
-                                this.keyStatus.valid = false;
+                                this.setKeyStatus(false);
                             }
                             break;
                         }

@@ -4,9 +4,9 @@ import {
   getStatus,
 } from "../../../lib/HypixelAPIUtils";
 import { getUuidbyUsername } from "../../../lib/personal-modules/mojang";
-import { slashCommand } from "../../../structures/Commands";
+import { SlashCommand } from "../../../structures/Commands";
 
-export default new slashCommand({
+export default new SlashCommand({
   name: "stalk",
   description: "Allows to see the activity of a user on hypixel",
   require: ["hypixelApiKey"],

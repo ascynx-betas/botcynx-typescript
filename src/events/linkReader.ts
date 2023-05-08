@@ -6,7 +6,7 @@ import {
   TextChannel,
   ThreadChannel,
   Webhook,
-  WebhookCreateMessageOptions,
+  WebhookMessageCreateOptions,
 } from "discord.js";
 import { botcynx } from "..";
 import { configModel } from "../models/config";
@@ -126,7 +126,7 @@ const handler = (source: Message<boolean>, message: Message<boolean>) => {
 const commandInputHandler = (
   source: Message<boolean>,
   message: Message<boolean>
-): string | MessagePayload | Omit<WebhookCreateMessageOptions, "flags"> => {
+): string | MessagePayload | Omit<WebhookMessageCreateOptions, "flags"> => {
   if (![20, 23].includes(source.type)) return null; //chat input and context command type;
 
   let username;
@@ -183,7 +183,7 @@ const commandInputHandler = (
 const baseInputHandler = (
   source: Message<boolean>,
   message: Message<boolean>
-): string | MessagePayload | Omit<WebhookCreateMessageOptions, "flags"> => {
+): string | MessagePayload | Omit<WebhookMessageCreateOptions, "flags"> => {
   if (![0, 19].includes(source.type)) return null; //default and reply types
 
   let username;

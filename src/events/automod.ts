@@ -63,7 +63,7 @@ export default new Event("messageCreate", (message) => {
       });
     });
 
-  //if ping spam raid
+  //lf ping spam raid
   if (message.mentions.users.size >= 5) {
     Data = { isScamLink: true, cause: "Spam mention" };
   }

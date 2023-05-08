@@ -1,8 +1,8 @@
 import { GuildTextBasedChannel, EmbedBuilder, APIEmbed } from "discord.js";
 import { sendInfoWebhook } from "../lib/utils";
-import { modalResponse } from "../structures/Commands";
+import { ModalResponse } from "../structures/Commands";
 
-export default new modalResponse({
+export default new ModalResponse({
   name: "giveawayrequest",
   once: false,
 

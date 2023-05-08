@@ -1,6 +1,6 @@
 import * as mongoose from "mongoose";
 
-export interface config {
+export interface Config {
   name: string;
   guildId: string;
   trigger: Array<string>;
@@ -13,7 +13,7 @@ export interface config {
   disabledCommands: Array<string>;
 }
 
-const schema = new mongoose.Schema<config>({
+const schema = new mongoose.Schema<Config>({
   name: String,
   guildId: String,
   trigger: Array,
@@ -25,6 +25,6 @@ const schema = new mongoose.Schema<config>({
   blocked: Array,
   disabledCommands: Array,
 });
-const configModel = mongoose.model<config>("config", schema);
+const configModel = mongoose.model<Config>("config", schema);
 
 export { configModel };

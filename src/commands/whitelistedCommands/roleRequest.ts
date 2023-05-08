@@ -93,7 +93,7 @@ export default new WhitelistedCommand({
       );
 
       return interaction.followUp({
-        content: `that account isn't linked to ${interaction.user.username}#${interaction.user.discriminator}`,
+        content: `that account isn't linked to ${interaction.user.tag}`,
         components: [buttonrow],
       });
     }

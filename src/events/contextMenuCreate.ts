@@ -76,7 +76,7 @@ export default new Event("interactionCreate", async (interaction) => {
         });
     }
 
-    botcynx.emit("interactioncommandCreate", interaction);
+    botcynx.emit("interactionCommandCreate", interaction);
 
     command.run({
       args: interaction.options as CommandInteractionOptionResolver,

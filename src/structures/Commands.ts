@@ -3,16 +3,16 @@ import { botcynx } from "..";
 import { configModel } from "../models/config";
 import {
   ButtonResponseType,
-  commandCooldown,
+  CommandCooldown,
   CommandType,
   MessageCommandType,
   MessageContextType,
-  modalResponseType,
+  ModalResponseType,
   UserContextType,
   WhitelistedCommands,
 } from "../typings/Command";
 
-class baseCommand {
+class BaseCommand {
   private command = this;
   /**
    * an inhibitor allowing to see if the user has the permissions required to run that command
@@ -117,7 +117,7 @@ class baseCommand {
         //ended
 
         botcynx.cooldowns.delete(`${user.id}-${this.command.name}`);
-        const newCoolDown = new commandCooldown(
+        const newCoolDown = new CommandCooldown(
           user.id,
           time,
           this.command.name
@@ -128,7 +128,7 @@ class baseCommand {
     } else {
       //doesn't exist
 
-      const newCoolDown = new commandCooldown(user.id, time, this.command.name);
+      const newCoolDown = new CommandCooldown(user.id, time, this.command.name);
       botcynx.cooldowns.set(`${user.id}-${this.command.name}`, newCoolDown);
       return true;
     }
@@ -143,46 +143,46 @@ class baseCommand {
   };
 }
 
-export class slashCommand extends baseCommand {
+export class SlashCommand extends BaseCommand {
   constructor(commandOptions: CommandType) {
     super();
     Object.assign(this, commandOptions);
   }
 } // SlashCommands
-export class Command extends baseCommand {
+export class Command extends BaseCommand {
   constructor(commandOptions: MessageCommandType) {
     super();
     Object.assign(this, commandOptions);
   }
 } //MessageCommand
-export class UserContextCommand extends baseCommand {
+export class UserContextCommand extends BaseCommand {
   constructor(commandOptions: UserContextType) {
     super();
     Object.assign(this, commandOptions);
   }
 } //User Context Commands
-export class MessageContextCommand extends baseCommand {
+export class MessageContextCommand extends BaseCommand {
   constructor(commandOptions: MessageContextType) {
     super();
     Object.assign(this, commandOptions);
   }
 } //Message Context Commands
-export class ButtonResponse extends baseCommand {
+export class ButtonResponse extends BaseCommand {
   constructor(commandOptions: ButtonResponseType) {
     super();
     Object.assign(this, commandOptions);
   }
 } //Buttons
 
-export class WhitelistedCommand extends baseCommand {
+export class WhitelistedCommand extends BaseCommand {
   constructor(commandOptions: WhitelistedCommands) {
     super();
     Object.assign(this, commandOptions);
   }
 }
 
-export class modalResponse extends baseCommand {
-  constructor(commandOptions: modalResponseType) {
+export class ModalResponse extends BaseCommand {
+  constructor(commandOptions: ModalResponseType) {
     super();
     Object.assign(this, commandOptions);
   }

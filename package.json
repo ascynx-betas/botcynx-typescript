@@ -1,6 +1,6 @@
 {
   "name": "botcynx-typescript",
-  "version": "2.4.4",
+  "version": "2.5",
   "description": "a discord bot made in typescript based on an earlier project",
   "main": "dist/index.js",
   "scripts": {
@@ -37,7 +37,7 @@
     "ansi-regex": "^6.0.1",
     "chalk": "^4.1.2",
     "crypto-js": "^4.1.1",
-    "discord.js": "^14.7.1",
+    "discord.js": "^14.11.0",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "ffmpeg-static": "^5.0.2",

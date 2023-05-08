@@ -102,7 +102,7 @@ export default new Event(
 
       CommandLogger.log("sending interactionCommand event", logLevel.DEBUG);
       if (!command.isModalCommand) await interaction.deferReply();
-      botcynx.emit("interactioncommandCreate", interaction);
+      botcynx.emit("interactionCommandCreate", interaction);
 
       CommandLogger.log("running command", logLevel.DEBUG);
 

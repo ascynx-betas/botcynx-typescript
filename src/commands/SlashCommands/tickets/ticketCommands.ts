@@ -7,11 +7,11 @@ import {
   Colors,
 } from "discord.js";
 import { permOverride } from "../../../lib/personal-modules/discordPlugin";
-import { slashCommand } from "../../../structures/Commands";
+import { SlashCommand } from "../../../structures/Commands";
 import * as bitfieldCalc from "../../../lib/personal-modules/bitfieldCalculator";
 import { ticketModel } from "../../../models/ticket";
 
-export default new slashCommand({
+export default new SlashCommand({
   name: "ticket",
   description: "allows to modify ticket config / execute ticket commands",
   require: ["mongooseConnectionString"],

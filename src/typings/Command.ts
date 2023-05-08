@@ -14,7 +14,7 @@ import {
   UserApplicationCommandData,
 } from "discord.js";
 import { Request } from "../lib/messageCommandRequest";
-import { botClient } from "../structures/botClient";
+import { BotClient } from "../structures/botClient";
 
 export interface botcynxInteraction extends ChatInputCommandInteraction {
   member: GuildMember;
@@ -23,7 +23,7 @@ export interface botcynxInteraction extends ChatInputCommandInteraction {
 /**
  * required values.
  */
-type requireType =
+type RequireType =
   | "webhookLogLink"
   | "hypixelApiKey"
   | "ticketBlockedNames"
@@ -36,7 +36,7 @@ type requireType =
  * args - the interaction options
  */
 export interface baseRunOptions {
-  client: botClient;
+  client: BotClient;
 }
 
 interface runOptions extends baseRunOptions {
@@ -66,13 +66,13 @@ interface modalRunOption extends baseRunOptions {
 /**
  * all run functions
  */
-type updateRunFunction = (options: updateRunOptions) => any;
+type UpdateRunFunction = (options: updateRunOptions) => any;
 type RunFunction = (options: runOptions) => any;
 type MessageRunFunction = (options: runOptionsMessage) => any;
 type ContextRunFunction = (options: runContextOptions) => any;
-type modalRunFunction = (options: modalRunOption) => any;
+type ModalRunFunction = (options: modalRunOption) => any;
 type RegisterWhitelistedFunction = (options: {
-  client: botClient;
+  client: BotClient;
   guild: Guild;
 }) => any;
 
@@ -80,7 +80,7 @@ type RegisterWhitelistedFunction = (options: {
  * all arguments for the environment in which the commands will be executed
  */
 export type CommandType = {
-  require?: requireType[];
+  require?: RequireType[];
   userPermissions?: PermissionsString[];
   botPermissions?: PermissionsString[];
   devonly?: boolean;
@@ -105,14 +105,14 @@ export type WhitelistedCommands = {
 } & CommandType &
   ChatInputApplicationCommandData; //Whitelisted Interaction Commands (slash)
 
-export type modalResponseType = {
+export type ModalResponseType = {
   once?: boolean;
-  run: modalRunFunction;
+  run: ModalRunFunction;
   name: string;
 };
 
 export type UserContextType = {
-  require?: requireType[];
+  require?: RequireType[];
   userPermissions?: PermissionsString[];
   botPermissions?: PermissionsString[];
   devonly?: boolean;
@@ -124,7 +124,7 @@ export type UserContextType = {
 } & UserApplicationCommandData; //User Context Commands
 
 export type MessageContextType = {
-  require?: requireType[];
+  require?: RequireType[];
   userPermissions?: PermissionsString[];
   botPermissions?: PermissionsString[];
   devonly?: boolean;
@@ -136,7 +136,7 @@ export type MessageContextType = {
 } & MessageApplicationCommandData; //Chat Context Commands
 
 export type MessageCommandType = {
-  require?: requireType[];
+  require?: RequireType[];
   name: string;
   userPermissions?: PermissionsString[];
   botPermissions?: PermissionsString[];
@@ -150,7 +150,7 @@ export type MessageCommandType = {
 }; // MessageCommands
 
 export type ButtonResponseType = {
-  require?: requireType[];
+  require?: RequireType[];
   category: string; //1st field of customId
   customId?: string; //2nd field of customId //if multiple choices for 1st field
   temporary?: boolean;
@@ -158,13 +158,13 @@ export type ButtonResponseType = {
   cooldown?: number; //seconds
   userPermissions?: PermissionsString[];
   botPermissions?: PermissionsString[];
-  run: updateRunFunction;
+  run: UpdateRunFunction;
 };
 
 /**
  * Cooldowns linked to commands
  */
-export class commandCooldown {
+export class CommandCooldown {
   command: string;
   user: string;
   timestamp: number;

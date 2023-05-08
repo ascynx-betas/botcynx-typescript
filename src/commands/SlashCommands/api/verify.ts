@@ -2,10 +2,10 @@ import { ApplicationCommandOptionType } from "discord.js";
 import { verifyModel } from "../../../models/verifyModel";
 import { getPlayerByUuid } from "../../../lib/HypixelAPIUtils";
 import { getUuidbyUsername } from "../../../lib/personal-modules/mojang";
-import { slashCommand } from "../../../structures/Commands";
+import { SlashCommand } from "../../../structures/Commands";
 import { checkHypixelLinked } from "../../../lib/utils";
 
-export default new slashCommand({
+export default new SlashCommand({
   name: "verify",
   description: "verifies or update the user's discord info into the database",
   require: ["hypixelApiKey", "mongooseConnectionString"],

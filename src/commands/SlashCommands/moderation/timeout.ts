@@ -1,9 +1,9 @@
-import { slashCommand } from "../../../structures/Commands";
+import { SlashCommand } from "../../../structures/Commands";
 import ms from "ms";
 import { postStartData } from "../../../events/ready";
 import { ApplicationCommandOptionType } from "discord.js";
 
-export default new slashCommand({
+export default new SlashCommand({
   name: "timeout",
   description: "timeout a user for a specified amount of time",
   userPermissions: ["ModerateMembers"],

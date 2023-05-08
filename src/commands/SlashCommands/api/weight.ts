@@ -1,4 +1,4 @@
-import { slashCommand } from "../../../structures/Commands";
+import { SlashCommand } from "../../../structures/Commands";
 import {
   ApplicationCommandOptionType,
   ActionRowBuilder,
@@ -16,9 +16,9 @@ import {
 } from "../../../lib/personal-modules/senither";
 import { uuid } from "../../../typings/ApiInterface";
 import { coolPeopleUUID, coolTypeToEmojis } from "../../../lib/coolPeople";
-import {botcynx} from "../../../index";
+import { botcynx } from "../../../index";
 
-export default new slashCommand({
+export default new SlashCommand({
   name: "weight",
   description: "get the weight of someone",
   require: ["hypixelApiKey", "mongooseConnectionString"],

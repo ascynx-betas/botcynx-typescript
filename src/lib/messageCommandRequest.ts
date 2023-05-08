@@ -93,7 +93,6 @@ export class Request {
     }
 
     this.flags = !command.advancedFlags ? this.getFlags() : advancedFlags != "" ? this.getFlagsFrom(advancedFlags) : [];
-    console.log(this.flags);
   }
 
   async send(

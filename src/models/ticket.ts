@@ -1,6 +1,6 @@
 import * as mongoose from "mongoose";
 
-export interface ticket {
+export interface Ticket {
   channel: string;
   name: string;
   welcomemessage: string;
@@ -9,7 +9,7 @@ export interface ticket {
   blocked: string;
 }
 
-const schema = new mongoose.Schema<ticket>({
+const schema = new mongoose.Schema<Ticket>({
   channel: String,
   name: String,
   welcomemessage: String,
@@ -17,6 +17,6 @@ const schema = new mongoose.Schema<ticket>({
   guildId: String,
   blocked: String,
 });
-const ticketModel = mongoose.model<ticket>("ticket", schema);
+const ticketModel = mongoose.model<Ticket>("ticket", schema);
 
 export { ticketModel };

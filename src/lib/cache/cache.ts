@@ -2,9 +2,9 @@ import { finishedLoading } from "../..";
 import { LoggerFactory } from "../Logger";
 import { linkContentPull } from "../repoPull";
 
-const loadLoggerQueue: cache[] = [];
+const loadLoggerQueue: Cache[] = [];
 
-export const LoadAllCaches = async() => {
+export const loadAllCaches = async() => {
   for (let loader of loadLoggerQueue) {
     await loader.reload();
   }
@@ -13,12 +13,12 @@ export const LoadAllCaches = async() => {
 
 const logger = LoggerFactory.getLogger("CACHE");
 
-export class cache {
+export class Cache {
   data: any;
   reloader: string;
 
-  constructor(link: string | repoLink) {
-    this.reloader = (link as repoLink).repoLink || (link as string);
+  constructor(link: string | RepoLink) {
+    this.reloader = (link as RepoLink).repoLink || (link as string);
     if (!finishedLoading) {
       loadLoggerQueue.push(this);
     } else this.reload();
@@ -33,8 +33,8 @@ export class cache {
   }
 }
 
-export class jsonCache extends cache {
-  constructor(link: string | repoLink) {
+export class JsonCache extends Cache {
+  constructor(link: string | RepoLink) {
     super(link);
   }
 
@@ -59,7 +59,7 @@ export class jsonCache extends cache {
   }
 }
 
-export class repoLink {
+export class RepoLink {
   repoLink: string;
   #owner: string;
   #repo: string;
