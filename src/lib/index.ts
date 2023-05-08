@@ -20,6 +20,7 @@ export * from "./command/commandInhibitors";
 export * from "./cache/cache";
 export * from "./cache/crashFix";
 export * from "./cache/scamlink";
+export * from "./cache/repoCache";
 
 export * from "./personal-modules/index";
 

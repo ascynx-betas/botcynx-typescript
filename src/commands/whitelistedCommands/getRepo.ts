@@ -9,8 +9,6 @@ import { searchRepositories } from "../../lib/repoPull";
 import { queryEmbed, returnEditQueryButton } from "../../lib/utils";
 import { WhitelistedCommand } from "../../structures/Commands";
 
-//! TODO create a query cache to avoid spamming the github api for data of the same query (e.g: getting data from the same list when moving pages)
-
 export function getSortingRowForQuery(query: string) {
   return new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
     new StringSelectMenuBuilder()
