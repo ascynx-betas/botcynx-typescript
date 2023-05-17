@@ -77,9 +77,7 @@ export class RepoLink {
    */
   changePath(newPath: string) {
     this.#path = newPath;
-    this.repoLink = `https://api.github.com/repos/${this.#owner}/${
-      this.#repo
-    }/contents/${newPath}`;
+    this.repoLink = `https://api.github.com/repos/${this.#owner}/${this.#repo}/contents/${newPath}`;
 
     return this;
   }
@@ -88,9 +86,7 @@ export class RepoLink {
    * Reloads the repoLink
    */
   reloadLink() {
-    this.repoLink = `https://api.github.com/repos/${this.#owner}/${
-      this.#repo
-    }/contents/${this.#path}`;
+    this.repoLink = `https://api.github.com/repos/${this.#owner}/${this.#repo}/contents/${this.#path}`;
 
     return this;
   }

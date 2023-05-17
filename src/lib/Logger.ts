@@ -1,8 +1,8 @@
-import chalk from "chalk";
+import chalk, { Chalk } from "chalk";
 import { Collection } from "discord.js";
 import { botcynx, finishedLoading } from "..";
 
-const loggerQueue: {message: string, level: logLevel, logger: Logger}[] = [];
+const loggerQueue: {message: string, level: LogLevel, logger: Logger}[] = [];
 
 export const postLoadingLogs = () => {
   for (let queueItem of loggerQueue) {
@@ -19,7 +19,11 @@ export class LoggerFactory {
     Logger
   >();
 
-  private static inheritedValues: {renderTime: boolean, showCallStack: boolean} = {renderTime: false, showCallStack: false};
+  static lastMessage: string;
+  //how many time the last message was repeated
+  static repeated: number;
+
+  private static inheritedValues: {renderTime: boolean, showCallStack: boolean, modeOverride?: LogLevel[]} = {renderTime: false, showCallStack: false};
 
   static getLogger(loggerName: string) {
     if (!this.loggers.get(loggerName)) {
@@ -45,6 +49,14 @@ export class LoggerFactory {
     });
   }
 
+  /**
+   * Limit the log modes that will show up on the loggers
+   */
+  static overrideModes(...logLevels: LogLevel[]) {
+    this.inheritedValues.modeOverride = logLevels;
+    this.loggers.forEach((logger) => logger.setModeOverride(...logLevels));
+  }
+
   static set shouldShowCallStack(bool: boolean) {
     if (this.inheritedValues.showCallStack == bool) return;
     this.inheritedValues.showCallStack = bool;
@@ -58,6 +70,7 @@ class Logger {
   private name: string;
   public renderTime: boolean;
   public showCallStack: boolean = false;
+  public modeOverride: LogLevel[] = [];//whatever is not in that array will not show up from this logger
 
   public getName() {
     return this.name;
@@ -83,97 +96,178 @@ class Logger {
     this.name = name;
   }
 
+  /**
+   * Limit the modes shown on this logger
+   */
+  setModeOverride(...logLevels: LogLevel[]) {
+    this.modeOverride = logLevels;
+  }
+
+  /**
+   * Add a mode to those shown on this logger
+   */
+  addModeOverride(...logLevels: LogLevel[]) {
+    for (let logLevel of logLevels) {
+      if (!this.modeOverride.includes(logLevel)) this.modeOverride.push(logLevel);
+    }
+  }
+
   info(message: any) {
-    this.log(typeof(message) == "string" ? message : JSON.stringify(message), logLevel.INFO);
+    this.log(typeof(message) == "string" ? message : JSON.stringify(message), LogLevel.INFO);
   }
   warn(message: any) {
-    this.log(typeof(message) == "string" ? message : JSON.stringify(message), logLevel.WARN);
+    this.log(typeof(message) == "string" ? message : JSON.stringify(message), LogLevel.WARN);
   }
   error(error: Error) {
-    this.log(this.showCallStack ? error.stack : error.message, logLevel.ERROR);
+    this.log(this.showCallStack ? error.stack : error.message, LogLevel.ERROR);
   }
   debug(message: any) {
-    this.log(typeof(message) == "string" ? message : JSON.stringify(message), logLevel.DEBUG);
+    this.log(typeof(message) == "string" ? message : JSON.stringify(message), LogLevel.DEBUG);
   }
 
   fatal(message: any) {
-    this.log(typeof(message) == "string" ? message : JSON.stringify(message), logLevel.FATAL);
+    this.log(typeof(message) == "string" ? message : JSON.stringify(message), LogLevel.FATAL);
   }
 
-  log(message: any, level: logLevel, bypassQueue: boolean = false) {
+  log(message: any, level: LogLevel, bypassQueue: boolean = false) {
     if (!finishedLoading && !bypassQueue) {
       loggerQueue.push({message, level, logger: this});
-      this.log("Added log to queue", logLevel.DEBUG, true);
+      this.log("Added log to queue", LogLevel.DEBUG, true);
       return;
     }
 
-    if (level == logLevel.DEBUG) {
-      if ((botcynx && !botcynx.isDebug) || process.env.environment != "debug") return;
+    if (this.modeOverride.length > 0 && !this.modeOverride.includes(level)) {
+      return;
     }
-    let prefix = level;
-    let out = this.getConsoleLevel(level);
-    out(
-      `${this.renderTime ? `[${this.currentTime}] ` : ""}${this.getPrefixColor(
-        level
-      )(`[${this.name}/${prefix}]`)} ${chalk.white(message)}`
-    );
+
+    if (level == LogLevel.DEBUG) {
+      if (((botcynx && !botcynx.isDebug) || process.env.environment != "debug") && !this.modeOverride.includes(LogLevel.DEBUG)) return;
+    }
+    const prefix = level;
+    const out = level.consoleLevel;
+    let m = `${this.renderTime ? `[${this.currentTime}] ` : ""}${level.prefixColor(`[${this.name}/${prefix}]`)} ${chalk.white(message)}`;
+    
+    if (LoggerFactory.lastMessage === m) {
+      LoggerFactory.repeated++;
+      this.clearLastLine();
+
+      //append it
+      m += ` (${LoggerFactory.repeated})`;
+      out(m);
+      return;
+    }
+
+    LoggerFactory.lastMessage = m;
+    LoggerFactory.repeated = 1;
+    out(m);
   }
 
-  table(message: object, level: logLevel) {
-    if (level == logLevel.DEBUG && !botcynx.isDebug()) return;
+  table(message: object, level: LogLevel) {
+    if (level == LogLevel.DEBUG && !botcynx.isDebug()) return;
     let prefix = level;
     let out = console.table;
 
-    this.getConsoleLevel(level)(
-      `${this.renderTime ? `[${this.currentTime}] ` : " "}${this.getPrefixColor(
-        level
-      )(`[${this.name}/${prefix}]`)}`
+    level.consoleLevel(
+      `${this.renderTime ? `[${this.currentTime}] ` : " "}${level.prefixColor(`[${this.name}/${prefix}]`)}`
     );
     out(message);
   }
 
-  private getConsoleLevel(level: logLevel) {
-    switch (level) {
-      case logLevel.DEBUG:
-      case logLevel.WARN: {
-        return console.warn;
-      }
-      case logLevel.ERROR:
-      case logLevel.FATAL: {
-        return console.error;
-      }
-      default: {
-        return console.log;
-      }
-    }
-  }
-
-  private getPrefixColor(level: logLevel) {
-    switch (level) {
-      case logLevel.DEBUG: {
-        return chalk.hex("#F4BC1C");
-      }
-      case logLevel.WARN: {
-        return chalk.hex("#F58216");
-      }
-      case logLevel.ERROR:
-      case logLevel.FATAL: {
-        return chalk.hex("#800000");
-      }
-      case logLevel.INFO: {
-        return chalk.greenBright;
-      }
-      default: {
-        return chalk.white;
-      }
-    }
+  private clearLastLine() {
+    process.stdout.moveCursor(0, -1);
+    process.stdout.clearLine(1);
   }
 }
 
-export enum logLevel {
-  INFO = "INFO",
-  WARN = "WARN",
-  DEBUG = "DEBUG",
-  ERROR = "ERROR",
-  FATAL = "FATAL",
+export class LogLevel {
+  //------ Instances ------//
+
+  static readonly INFO = new LogLevel(
+    "INFO",
+    chalk.greenBright,
+    console.log
+  );
+
+  static readonly WARN = new LogLevel(
+    "WARN",
+    chalk.hex("#F58216"),
+    console.warn
+  );
+
+  static readonly DEBUG = new LogLevel(
+    "DEBUG",
+    chalk.hex("#F4BC1C"),
+    console.warn
+  );
+
+  static readonly ERROR = new LogLevel(
+    "ERROR",
+    chalk.hex("#800000"),
+    console.error
+  );
+
+  static readonly FATAL = new LogLevel(
+    "FATAL",
+    chalk.hex("#800000"),
+    console.error
+  );
+
+  //------ Static Methods ------//
+
+  static get values(): LogLevel[] {
+    return [
+      this.INFO,
+      this.WARN,
+      this.DEBUG,
+      this.ERROR,
+      this.FATAL
+    ];
+  }
+
+  /**
+   * Converts a string to its corresponding Enum instance.
+   *
+   * @param string the string to convert to Enum
+   * @throws RangeError, if a string that has no corressonding Enum value was passed.
+   * @returns the matching Enum
+   */
+  static fromString(string: string): LogLevel {
+    // Works assuming the name property of the enum is identical to the variable's name.
+    const value = (this as any)[string];
+    if (value) {
+      return value;
+    }
+
+    throw new RangeError(
+      `Illegal argument passed to fromString(): ${string} does not correspond to any instance of the enum ${
+        (this as any).prototype.constructor.name
+      }`
+    );
+  }
+
+  //------ Constructor------//
+
+  private constructor(
+   /**
+    * The name of the instance; should be exactly the variable name,
+    * for serializing/deserializing simplicity.
+    */
+    public readonly name: string,
+    public readonly prefixColor: Chalk,
+    public readonly consoleLevel: Function
+  ) {}
+
+  //------ Methods ------//
+
+  /**
+   * Called when converting the Enum value to a string using JSON.Stringify.
+   * Compare to the fromString() method, which deserializes the object.
+   */
+  public toJSON() {
+    return this.name;
+  }
+
+  public toString() {
+    return this.toJSON();
+  }
 }

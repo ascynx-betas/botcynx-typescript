@@ -16,6 +16,51 @@ import { emojis } from "./emojis";
 import { checkLink } from "../events/linkReader";
 import { RepoProfile, RepositoryCacheHandler } from "./cache/repoCache";
 
+// Source : https://lowrey.me/encoding-decoding-base-62-in-es6-javascript/
+export const base62 = {
+  charset: '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''),
+  encode: (integer: number) => {
+    if (integer === 0) {
+      return 0;
+    }
+    let s = [];
+    while (integer > 0) {
+      s = [base62.charset[integer % 62], ...s];
+      integer = Math.floor(integer / 62);
+    }
+    return s.join('');
+  },
+  decode: (chars: string) => chars.split('').reverse()
+    .reduce((prev, curr, i) => prev + (base62.charset.indexOf(curr) * (62 ** i)), 0)
+};
+//
+
+/**
+ * @returns the likelyhood of a word trying to "impersonate" another word (used in an automod to check what is possibly a scam link)
+ * @author Ascynx
+ */
+export const similarityDetectionShortened = (word: string, testWord: string): {result: boolean; percentage: number } => {
+  const similarityArray: boolean[] = [];
+
+  for (let i = 0; i < testWord.length; i++) {
+    similarityArray.push(word.length > i && testWord[i] == word[i]);
+  }
+
+  let likelyhood = (100 / similarityArray.length) * similarityArray.filter((e) => e).length;
+  const overflowLength = word.length - testWord.length;
+
+  if (overflowLength >= 1) {
+    likelyhood -= (overflowLength * 5);//remove 5% per extra character
+  }
+
+  if (likelyhood < 0) {
+    likelyhood = 0;
+  }
+
+  //if it's above 95% it's likely it is a typo, if it's under 60% it's quite unlikely for it to be a scam link
+  return {result: (likelyhood <= 95 && likelyhood > 60), percentage: likelyhood};
+};
+
 export const similarityDetection = (
   word: string,
   testWord: string
@@ -42,11 +87,9 @@ export const similarityDetection = (
   let percentageOfSimilarities = (100 / similarityArray.length) * isTrue.length;
 
   const overflowLettersLength = LetterArray.length - testLetterArray.length;
+  //What is that supposed to accomplish?
   if (overflowLettersLength >= 1) {
-    if ((testLetterArray.length - overflowLettersLength) * 5 > 0)
-      percentageOfSimilarities =
-        percentageOfSimilarities -
-        (testLetterArray.length - overflowLettersLength) * 5;
+    if ((testLetterArray.length - overflowLettersLength) * 5 > 0) percentageOfSimilarities = percentageOfSimilarities - (testLetterArray.length - overflowLettersLength) * 5;
     if (percentageOfSimilarities < 0) percentageOfSimilarities = 0;
   }
 
@@ -120,19 +163,7 @@ export const sendInfoWebhook = async (options: {
   });
 };
 
-export function checkHypixelLinked(user: User, linked: String): boolean {
-  let tag = user.tag;
-
-  if (
-    linked == tag ||
-    linked == tag.toLowerCase() ||
-    linked == tag.toUpperCase()
-  ) {
-    return true;
-  }
-
-  return false;
-}
+export const checkHypixelLinked = (user: User, linked: String): boolean => (linked.toLowerCase() == user.tag.toLowerCase());
 
 const linkRegex =
   /((?:(https:\/\/)|(http:\/\/)|())(?<host>.{0,6})\.)?discord\.com\/channels\/(?<guild>[0-9]+)\/(?<channel>[0-9]+)\/(?<message>[0-9]+)(\/.*)?/im;
@@ -208,3 +239,58 @@ export const permissionTranslate = {
   USE_EMBEDDED_ACTIVITIES: "UseEmbeddedActivities",
   MODERATE_MEMBERS: "ModerateMembers",
 };
+
+class Enum {
+  //------ Instances ------//
+
+  //------ Static Methods ------//
+
+  static get values(): Enum[] {
+    return [];
+  }
+
+  /**
+   * Converts a string to its corresponding Enum instance.
+   *
+   * @param string the string to convert to Enum
+   * @throws RangeError, if a string that has no corressonding Enum value was passed.
+   * @returns the matching Enum
+   */
+  static fromString(string: string): Enum {
+    // Works assuming the name property of the enum is identical to the variable's name.
+    const value = (this as any)[string];
+    if (value) {
+      return value;
+    }
+
+    throw new RangeError(
+      `Illegal argument passed to fromString(): ${string} does not correspond to any instance of the enum ${
+        (this as any).prototype.constructor.name
+      }`
+    );
+  }
+
+  //------ Constructor------//
+
+  private constructor(
+   /**
+    * The name of the instance; should be exactly the variable name,
+    * for serializing/deserializing simplicity.
+    */
+    public readonly name: string
+  ) {}
+
+  //------ Methods ------//
+
+  /**
+   * Called when converting the Enum value to a string using JSON.Stringify.
+   * Compare to the fromString() method, which deserializes the object.
+   */
+  public toJSON() {
+    return this.name;
+  }
+
+  public toString() {
+    return this.toJSON();
+  }
+}

@@ -6,15 +6,7 @@ import EventEmitter from "events";
 import { HypixelAPIEvents } from "../structures/Event";
 import { LoggerFactory } from "./Logger";
 
-declare type Awaitable<T> = PromiseLike<T> | T;
-
-  declare interface HypixelEmitter {
-    on<K extends keyof HypixelAPIEvents>(event: K, listener: (...args: HypixelAPIEvents[K]) => Awaitable<void>): this;
-    on<S extends string | symbol>(
-    event: Exclude<S, keyof HypixelAPIEvents>,
-    listener: (...args: any[]) => Awaitable<void>,
-    ): this;
-  }
+//----- Classes -----//
 
 export class HypixelAPI extends EventEmitter implements HypixelEmitter {
     private LOGGER = LoggerFactory.getLogger("HYPIXEL");
@@ -162,6 +154,22 @@ export class HypixelAPI extends EventEmitter implements HypixelEmitter {
     }
 }
 
+export class HypixelError extends Error {
+    constructor(code: number, cause: string, thrownByAPI: boolean = true) {
+        let message: string;
+
+        if (thrownByAPI == true) {
+            message = `Hypixel API returned code ${code} for reason: ${cause}`;
+        } else {
+            message = `Stopped request with code ${code} for reason: ${cause}`;
+        }
+
+        super(message);
+    }
+}
+
+//----- Functions -----//
+
 export const getPlayerByUuid = async function (uuid: string) {
     const req = HypixelAPI.INSTANCE.createRequest("player", true, {uuid: uuid});
 
@@ -209,16 +217,13 @@ export const getProfiles = async function (uuid: string) {
     return profiles;
 }
 
-export class HypixelError extends Error {
-    constructor(code: number, cause: string, thrownByAPI: boolean = true) {
-        let message: string;
+//----- Types -----//
 
-        if (thrownByAPI == true) {
-            message = `Hypixel API returned code ${code} for reason: ${cause}`;
-        } else {
-            message = `Stopped request with code ${code} for reason: ${cause}`;
-        }
-
-        super(message);
-    }
+declare type Awaitable<T> = PromiseLike<T> | T;
+declare interface HypixelEmitter {
+    on<K extends keyof HypixelAPIEvents>(event: K, listener: (...args: HypixelAPIEvents[K]) => Awaitable<void>): this;
+    on<S extends string | symbol>(
+    event: Exclude<S, keyof HypixelAPIEvents>,
+    listener: (...args: any[]) => Awaitable<void>,
+    ): this;
 }

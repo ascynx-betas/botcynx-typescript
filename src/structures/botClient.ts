@@ -1,4 +1,4 @@
-import { Client, ClientEvents, Collection, Partials } from "discord.js";
+import { ApplicationCommand, Client, ClientEvents, Collection, Partials } from "discord.js";
 import * as fs from "fs";
 import {
   CommandType,
@@ -25,7 +25,7 @@ import { registerCooldownTask } from "../lib/Tasks/cooldownReset";
 import { registerGistReload } from "../lib/Tasks/gistLoadFail";
 import { PermissionFlagsBits } from "discord-api-types/v10";
 import { configModel } from "../models/config";
-import { LoggerFactory, logLevel } from "../lib";
+import { LoggerFactory, LogLevel } from "../lib";
 import { botcynx } from "..";
 import { clearCache } from "../lib/Tasks/slashInteractionReset";
 import {HypixelAPI} from "../lib";
@@ -86,13 +86,13 @@ export class BotClient extends Client {
 
   start() {
     if (process.env.mongooseConnectionString) {
-      this.logger.log("connecting to mongoose", logLevel.DEBUG);
+      this.logger.log("connecting to mongoose", LogLevel.DEBUG);
       connect(process.env.mongooseConnectionString);
     }
 
     this.registerModules();
     this.login(process.env.botToken).then(() =>
-      this.logger.log(chalk.green(`successfully logged in`), logLevel.INFO)
+      this.logger.log(chalk.green(`successfully logged in`), LogLevel.INFO)
     );
   }
 
@@ -329,7 +329,7 @@ export class BotClient extends Client {
         });
         for (let lCommand of this.whitelistedCommands.map((c) => c)) {
           try {
-            let existingCommands = this.guilds.cache.get(process?.env?.guildId).commands.cache.filter((dCommand) => dCommand.name == lCommand.name);
+            let existingCommands = this.guilds.cache.get(process?.env?.guildId).commands.cache.filter((gCommand) => gCommand.name == lCommand.name);
             if (existingCommands.size > 0 ) {
               if (!existingCommands.first().equals(lCommand, false).valueOf()) {
                 existingCommands.first().edit(lCommand);
@@ -362,7 +362,7 @@ export class BotClient extends Client {
       });
     });
 
-    this.logger.table(this.registerTable, logLevel.DEBUG);
+    this.logger.table(this.registerTable, LogLevel.DEBUG);
 
     //Events
     const eventFiles = await globPromise(`${__dirname}/../events/*{.ts,.js}`);
@@ -410,14 +410,14 @@ export class BotClient extends Client {
         chalk.redBright(
           `Registering commands to ${this.guilds.cache.get(guildId).name}`
         ),
-        logLevel.INFO
+        LogLevel.INFO
       );
     } else {
       this.application?.commands.set(commands);
 
       this.logger.log(
         chalk.green(`Registering global commands`),
-        logLevel.INFO
+        LogLevel.INFO
       );
     }
   }
@@ -449,7 +449,7 @@ export class BotClient extends Client {
     });
     this.logger.log(
       chalk.green(`Registering tags for (${guild.name}/${guildId})`),
-      logLevel.DEBUG
+      LogLevel.DEBUG
     );
     this.guilds.cache.get(guildId)?.commands.set(tags);
   }

@@ -9,6 +9,7 @@ import { isDisabled } from "../../../lib/command/commandInhibitors";
 import { emojis } from "../../../lib/emojis";
 import { Command } from "../../../structures/Commands";
 
+//TODO refactor to slash command
 export default new Command({
   name: "disable",
   aliases: ["d", "enable"],
@@ -66,7 +67,7 @@ export default new Command({
                 : "command.enable"
             )
             .insert("command", target)
-            .get("en-gb")}`
+            .get(message.guild.preferredLocale)}`
         )
         .setFooter({ text: `requested by ${message.author.tag}` });
 

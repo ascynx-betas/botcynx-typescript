@@ -79,6 +79,7 @@ export default new SlashCommand({
     const player = discord.player;
     if (discord) {
       discord = discord?.player?.socialMedia?.links?.DISCORD;
+      //TODO find out how that's gonna work with discord's @ update
       let isInCache = client.users.cache.filter((u) => u.tag === discord);
       if (isInCache.size > 0) {
         let user = isInCache.map((u) => u.toString());

@@ -59,10 +59,10 @@ export default new SlashCommand({
     });
     let info = uuidInfo[0];
 
-    let discord: any = await getPlayerByUuid(uuid).catch(() => null);
-    discord = discord.player.socialMedia.links.DISCORD;
+    let discord = await getPlayerByUuid(uuid);
+    let discordLinked = discord?.player?.socialMedia?.links?.DISCORD;
 
-    if (!discord)
+    if (!discordLinked)
       return interaction.followUp({
         content: `please link hypixel to your discord account\nyou can link it by following the steps in this video: https://i.gyazo.com/3a2358687dae9b4333fd2fef932e0a17.mp4`,
       });
@@ -75,7 +75,7 @@ export default new SlashCommand({
           content: `that account is already linked, if you want to change the linked account, use the update action`,
         });
 
-      if (checkHypixelLinked(interaction.user, discord)) {
+      if (checkHypixelLinked(interaction.user, discordLinked)) {
         new verifyModel({
           userId: userId,
           uuid,
@@ -109,7 +109,7 @@ export default new SlashCommand({
           content: `your account is already linked to that minecraft account`,
         });
 
-      if (checkHypixelLinked(interaction.user, discord)) {
+      if (checkHypixelLinked(interaction.user, discordLinked)) {
         verifyModel
           .updateOne(
             { minecraftuuid: `${uuid}` },

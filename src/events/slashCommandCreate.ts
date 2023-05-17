@@ -11,7 +11,7 @@ import {
   isOnCooldown,
   userPermissionInhibitor,
 } from "../lib/command/commandInhibitors";
-import { LoggerFactory, logLevel } from "../lib/Logger";
+import { LoggerFactory, LogLevel } from "../lib/Logger";
 
 const CommandLogger = LoggerFactory.getLogger("SLASH-COMMAND");
 
@@ -50,25 +50,25 @@ export default new Event(
         return interaction.reply("You have used a non existant command");
 
       //disabled commands
-      CommandLogger.log("isDisabled check", logLevel.DEBUG);
+      CommandLogger.log("isDisabled check", LogLevel.DEBUG);
       if (!(await isDisabled(command, interaction.guild))) {
         return interaction.reply("This command is disabled");
       }
 
-      CommandLogger.log("isDevOnly check", logLevel.DEBUG);
+      CommandLogger.log("isDevOnly check", LogLevel.DEBUG);
       if (command.devonly) {
         if (!userIsDev(interaction.user))
           return interaction.reply("this command is developer only");
       }
 
-      CommandLogger.log("isOnCooldown check", logLevel.DEBUG);
+      CommandLogger.log("isOnCooldown check", LogLevel.DEBUG);
       //cooldown
       if (command.cooldown && interaction.user.id != process.env.developerId) {
         if (!isOnCooldown(command, interaction.user))
           return interaction.reply("You are currently in cooldown");
       }
 
-      CommandLogger.log("botPermission check", logLevel.DEBUG);
+      CommandLogger.log("botPermission check", LogLevel.DEBUG);
       // if bot requires permissions
       if (command.botPermissions) {
         if (!botPermissionInhibitor(command, interaction.guild))
@@ -77,7 +77,7 @@ export default new Event(
           );
       }
 
-      CommandLogger.log("userPermission check", logLevel.DEBUG);
+      CommandLogger.log("userPermission check", LogLevel.DEBUG);
       //if user requires permission
       if (command.userPermissions) {
         if (
@@ -91,7 +91,7 @@ export default new Event(
           );
       }
 
-      CommandLogger.log("require check", logLevel.DEBUG);
+      CommandLogger.log("require check", LogLevel.DEBUG);
       if (command.require) {
         let RequireValue = await RequireTest(command.require);
         if (RequireValue == false)
@@ -100,11 +100,11 @@ export default new Event(
           });
       }
 
-      CommandLogger.log("sending interactionCommand event", logLevel.DEBUG);
-      if (!command.isModalCommand) await interaction.deferReply();
+      CommandLogger.log("sending interactionCommand event", LogLevel.DEBUG);
+      if (!command.isModalCommand) await interaction.deferReply({ephemeral: command.invisible});
       botcynx.emit("interactionCommandCreate", interaction);
 
-      CommandLogger.log("running command", logLevel.DEBUG);
+      CommandLogger.log("running command", LogLevel.DEBUG);
 
       await command.run({
           args: interaction.options as CommandInteractionOptionResolver,

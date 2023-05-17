@@ -1,26 +1,26 @@
 import * as fs from "fs";
-import { LoggerFactory, logLevel } from "./Logger";
+import { LogLevel, LoggerFactory } from "./Logger";
 
 export interface Localization {
   [key: string]: LocalizedString;
 }
 
 export class LocalizedString {
-  private strings: { [key: string]: string }; //language => value
+  private langs: { [key: string]: string }; //language => value
   private modifiers: Function[] = [];
 
   constructor(strings: { [key: string]: string }) {
-    this.strings = strings;
+    this.langs = strings;
   }
 
   public editBase(locale: string, edit: string): LocalizedString {
-    this.strings[locale.toLowerCase()] = edit;
+    this.langs[locale.toLowerCase()] = edit;
     return this;
   }
 
-  public insert(item: string, replace: string): LocalizedString {
-    this.modifiers.push((string) => {
-      return string.replace(`{${item}}`, replace);
+  public insert(key: string, replace: string): LocalizedString {
+    this.modifiers.push((string: string) => {
+      return string.replace(`{${key}}`, replace);
     });
     return this;
   }
@@ -31,10 +31,10 @@ export class LocalizedString {
   }
 
   public getWithoutMods(locale: string): string {
-    if (this.strings[locale.toLowerCase()])
-      return this.strings[locale.toLowerCase()];
+    if (this.langs[locale.toLowerCase()])
+      return this.langs[locale.toLowerCase()];
 
-    return this.strings["en-us"];
+    return this.langs["en-us"];
   }
 
   public get(locale: string) {
@@ -49,7 +49,7 @@ export class LocalizedString {
   }
 
   public toString() {
-    return this.strings.toString();
+    return this.langs.toString();
   }
 }
 
@@ -69,12 +69,6 @@ export class LocalizationHandler {
     return this.cache[key];
   }
 
-  /**
-   * @param language the language in which the value will be added
-   * @param key the key for the value
-   * @param value the value that will be given when the key is received
-   * @returns the result
-   */
   public addKey(language: string, key: string, value: string) {
     if (this.cache[key]) {
       this.cache[key].editBase(language.toLowerCase(), value);
@@ -102,7 +96,7 @@ export class LocalizationHandler {
   }
 
   public load(): LocalizationHandler {
-    this.logger.log("Started Loading", logLevel.DEBUG);
+    this.logger.log("Started Loading", LogLevel.DEBUG);
     let path = process.cwd() + "/lang";
     for (let dir of fs.readdirSync(path)) {
       let object = JSON.parse(
@@ -113,20 +107,20 @@ export class LocalizationHandler {
         this.addKey(dir.split(".")[0], key, v);
       }
     }
-    this.logger.log("Finished Loading", logLevel.DEBUG);
+    this.logger.log("Finished Loading", LogLevel.DEBUG);
     return this;
   }
 
   //convenience methods
-  toBuffer = (): Buffer => {
-    return Buffer.from(this.toJson());
+  toBuffer(): Buffer {
+    return Buffer.from(this.toJSON());
   };
 
-  toJson = (): string => {
+  toJSON(): string {
     return JSON.stringify(this.cache, null, 2);
   };
 
-  fromJson = (LocaleJson: string): LocalizationHandler => {
+  fromJSON(LocaleJson: string): LocalizationHandler {//deserialize
     this.cache = JSON.parse(LocaleJson);
     return this;
   };

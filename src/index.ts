@@ -1,7 +1,7 @@
 require("dotenv").config();
 import { HypixelAPI, loadAllCaches } from "./lib";
 import { LocalizationHandler } from "./lib/Lang";
-import { LoggerFactory, logLevel, postLoadingLogs } from "./lib/Logger";
+import { LoggerFactory, LogLevel, postLoadingLogs } from "./lib/Logger";
 import { FlagHandler, RequestHandler } from "./lib/messageCommandRequest";
 import { BotClient } from "./structures/botClient";
 
@@ -111,7 +111,7 @@ botcynx.on("finishedLoading", loadAllCaches);
 
 export const runPostLoadingEvents = async () => {
   finishedLoading = true;
-  botcynx.getLogger.log("Finished Loading", logLevel.DEBUG, true);
+  botcynx.getLogger.log("Finished Loading", LogLevel.DEBUG, true);
   botcynx.emit("finishedLoading");
 }
 

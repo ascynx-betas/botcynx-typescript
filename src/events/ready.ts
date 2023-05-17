@@ -3,7 +3,7 @@ import { getKeyInfo } from "../lib/HypixelAPIUtils";
 import { ticketBlockedName } from "../config";
 import chalk from "chalk";
 import { botcynx, runPostLoadingEvents } from "..";
-import { logLevel } from "../lib/Logger";
+import { LogLevel } from "../lib/Logger";
 
 type PostStartDataType = {
   maxTimeout: string;
@@ -32,8 +32,8 @@ export default new Event("ready", async () => {
   //sends to log the time it took for the bot to connect to the discord api
   console.timeEnd("Login time");
   //post start data setup
-  botcynx.getLogger.log(chalk.blue("----Status----"), logLevel.INFO);
-  botcynx.getLogger.log(chalk.green("Bot is now online"), logLevel.INFO);
+  botcynx.getLogger.log(chalk.blue("----Status----"), LogLevel.INFO);
+  botcynx.getLogger.log(chalk.green("Bot is now online"), LogLevel.INFO);
 
   postStartData.maxTimeout = "28 days";
   postStartData.ticketblockedNames = ticketBlockedName;
@@ -49,15 +49,15 @@ export default new Event("ready", async () => {
   process.env.guildId
     ? botcynx.getLogger.log(
         chalk.green("commands will be registered locally"),
-        logLevel.INFO
+        LogLevel.INFO
       )
     : botcynx.getLogger.log(
         chalk.red("Commands will be registered globally"),
-        logLevel.INFO
+        LogLevel.INFO
       );
 
   if (process.env.hypixelapikey) {
-    botcynx.getLogger.log(chalk.green("api key exists"), logLevel.INFO);
+    botcynx.getLogger.log(chalk.green("api key exists"), LogLevel.INFO);
     let data = await getKeyInfo();
     postStartData.hypixelapikey = data.success;
   }
