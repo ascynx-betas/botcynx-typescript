@@ -12,6 +12,7 @@ export * from "./Logger";
 export * from "./slashCommandRequestCache";
 export * from "./HypixelAPIUtils";
 export * from "./ModrinthAPIUtils";
+export * from "./ModrinthFileCache";
 
 export * from "./customEvents/commandCreate";
 export * from "./customEvents/messageCommandCreate";

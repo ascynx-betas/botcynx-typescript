@@ -69,6 +69,8 @@ type OutdatedMod = {
   modrinthURL?: string;
 }
 
+export const minecraftVersionRegex = /\d\.\d{1,2}(?:\.\d{1,2})?/;
+
 /**
  * @author Ascynx
  * @returns if the mod is outdated
@@ -76,7 +78,7 @@ type OutdatedMod = {
 export async function isModOutdated(mod: ModCollection, loader: Loader, minecraftVersion: string): Promise<OutdatedMod> {
   let outdated = {outdated: false, mod: mod};
   if (loader === Loader.VANILLA || loader === Loader.UNKNOWN) return;
-  if (!minecraftVersion.match(/\d\.\d{1,2}(?:\.\d{1,2})?/) || !mod.ID.match(/^[\w!@$()`.+,"\-']{3,64}$/)) {
+  if (!minecraftVersion.match(minecraftVersionRegex) || !mod.ID.match(/^[\w!@$()`.+,"\-']{3,64}$/)) {
     return outdated;//minecraft version is not valid or mod ID cannot be a slug
   }
   const modVersion = mod.version;

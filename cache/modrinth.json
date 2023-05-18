@@ -1,0 +1,36 @@
+{
+    "unofficial-monumenta-mod": {
+        "slug": "unofficial-monumenta-mod",
+        "projectID": "5GO3q639",
+        "title": "Unofficial Monumenta Mod",
+        "versions": [
+            {
+                "version_number": "1.8.1",
+                "loaders": ["fabric"],
+                "game_versions": ["1.18.2", "1.19.2", "1.19.3"]
+            },
+            {
+                "version_number": "1.7.0",
+                "loaders": ["fabric"],
+                "game_versions": ["1.18.2", "1.19.2"]
+            },
+            {
+                "version_number": "1.6.4",
+                "loaders": ["fabric"],
+                "game_versions": ["1.18.2"]
+            },
+            {
+                "version_number": "1.6.3",
+                "loaders": ["fabric"],
+                "game_versions": ["1.18.2"]
+            },
+            {
+                "version_number": "1.6.1",
+                "loaders": ["fabric"],
+                "game_versions": ["1.18.2"]
+            }
+        ],
+        "lastUpdated": 1684413051687
+    },
+    "unofficial_monumenta_mod": "&unofficial-monumenta-mod"
+}

@@ -3,6 +3,7 @@ import fetch, { Response } from "node-fetch";
 import { LogLevel, LoggerFactory } from "./Logger";
 import { Loader } from "./cache/crashFix";
 import { base62 } from "./utils";
+import { ModrinthFileCache, ModrinthModCached } from "./ModrinthFileCache";
 
 //----- Classes -----//
 
@@ -166,7 +167,7 @@ export const getProject = async (projectIdentifier: string): Promise<ModrinthPro
     return data.data as ModrinthProject;
 }
 
-export const getProjects = async (...projectIds: string[]): Promise<ModrinthProject[]> => {
+export const getProjects = async (...projectIds: string[]): Promise<ModrinthModCached[]|ModrinthProject[]> => {
     try {
         projectIds = projectIds.filter((v) => {
             v.split('').every((c, i) => {
@@ -178,6 +179,31 @@ export const getProjects = async (...projectIds: string[]): Promise<ModrinthProj
         return [];
     }
     if (projectIds.length == 0) return [];
+
+
+    //Cache stuff
+    const cachedData: ModrinthModCached[] = [];
+    for (let projectID of projectIds) {
+        if (ModrinthFileCache.INSTANCE.cache.has(projectID)) {
+            const project = ModrinthFileCache.INSTANCE.cache.get(projectID);
+            if (ModrinthFileCache.shouldUpdate(project)) break;
+            cachedData.push(project);
+        }
+    }
+
+    if (cachedData.length === projectIds.length) {
+        //if everything was found
+        return cachedData;
+    }
+
+    projectIds.filter((pID) => {
+        for (let cached of cachedData) {
+            if (cached.projectID !== pID) continue;
+            return true;
+        }
+        return false;
+    });
+    //end cache stuff
 
     const req = Modrinth.INSTANCE.createRequest("projects", {"ids": JSON.stringify(projectIds)});
 
@@ -195,6 +221,8 @@ export const getProjects = async (...projectIds: string[]): Promise<ModrinthProj
             return [];
         }
     }
+
+    //TODO update cache with stuff in data
 
     return data.data as ModrinthProject[];
 }
@@ -378,7 +406,7 @@ type ModrinthError = {
     description: string;
 }
 
-type ModrinthProject = {
+export type ModrinthProject = {
     slug: string;                           //Regex: ^[\w!@$()`.+,"\-']{3,64}$
     title: string;
     description: string;
@@ -416,14 +444,14 @@ type ModrinthProject = {
     featured_gallery?: string;
 }
 
-type ModrinthSearchResponse = {
+export type ModrinthSearchResponse = {
     hits: ModrinthProject[];
     offset: number;
     limit: number;
     total_hits: number;
 }
 
-type ModrinthVersion = {
+export type ModrinthVersion = {
     name: string;
     version_number: string;                  //Ideally Semantic versioning
     changelog?: string;
