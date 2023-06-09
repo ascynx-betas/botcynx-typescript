@@ -198,7 +198,7 @@ export const getProjects = async (...projectIds: string[]): Promise<ModrinthModC
 
     projectIds.filter((pID) => {
         for (let cached of cachedData) {
-            if (cached.projectID !== pID) continue;
+            if (cached.id !== pID) continue;
             return true;
         }
         return false;
@@ -222,7 +222,7 @@ export const getProjects = async (...projectIds: string[]): Promise<ModrinthModC
         }
     }
 
-    //TODO update cache with stuff in data
+    ModrinthFileCache.INSTANCE.updateProjects(...(data.data as ModrinthProject[]));
 
     return data.data as ModrinthProject[];
 }
@@ -250,6 +250,9 @@ export const getVersions = async (projectIdentifier: string, loader?: Loader, ga
         Modrinth.log(new ModrinthHttpError((data.data as ModrinthError).error ? (data.data as ModrinthError).description : `Error encounted in getVersions`, data.status, true), LogLevel.DEBUG);
         return [];
     }
+
+    //update cache
+    await ModrinthFileCache.INSTANCE.updateVersions(...(data.data as ModrinthVersion[]));
 
     return data.data as ModrinthVersion[];
 }
