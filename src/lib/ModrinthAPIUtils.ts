@@ -3,7 +3,7 @@ import fetch, { Response } from "node-fetch";
 import { LogLevel, LoggerFactory } from "./Logger";
 import { Loader } from "./cache/crashFix";
 import { base62 } from "./utils";
-import { ModrinthFileCache, ModrinthModCached } from "./ModrinthFileCache";
+import { ModrinthFileCache, ModrinthModCached, ModrinthModVersion } from "./ModrinthFileCache";
 
 //----- Classes -----//
 
@@ -35,8 +35,12 @@ export class Modrinth {
         return this.ReachedMax;
     }
 
-    //TODO add cache checking to dis
-    willRateLimit(requests: number) {
+    willRateLimit(requests: number, modIdentifiers?: string[]) {
+        for (let modIdentifier of modIdentifiers) {
+            let isProjectID = ModrinthFileCache.isProjectID(modIdentifier);
+            const shouldUpdate = ModrinthFileCache.shouldUpdate(isProjectID ? ModrinthFileCache.INSTANCE.getByID(modIdentifier) : ModrinthFileCache.INSTANCE.cache.get(modIdentifier));
+            requests -= shouldUpdate ? 0 : 1;
+        }
         return this.APICallsLastMinute + requests > this.rateLimit || this.ReachedMax;
     }
 
@@ -171,10 +175,7 @@ export const getProject = async (projectIdentifier: string): Promise<ModrinthPro
 export const getProjects = async (...projectIds: string[]): Promise<ModrinthModCached[]|ModrinthProject[]> => {
     try {
         projectIds = projectIds.filter((v) => {
-            v.split('').every((c, i) => {
-                const indexOf = base62.charset.indexOf(c);
-                if (indexOf == -1) throw new ModrinthHttpError(`Deserialization error: Invalid character '${c}' in base62 encoding at index ${i}`, 400, false);
-            });
+            ModrinthFileCache.isProjectID(v);
         });
     } catch (e) {
         return [];
@@ -185,8 +186,8 @@ export const getProjects = async (...projectIds: string[]): Promise<ModrinthModC
     //Cache stuff
     const cachedData: ModrinthModCached[] = [];
     for (let projectID of projectIds) {
-        if (ModrinthFileCache.INSTANCE.cache.has(projectID)) {
-            const project = ModrinthFileCache.INSTANCE.cache.get(projectID);
+        if (ModrinthFileCache.INSTANCE.getByID(projectID)) {
+            const project = ModrinthFileCache.INSTANCE.getByID(projectID);
             if (ModrinthFileCache.shouldUpdate(project)) break;
             cachedData.push(project);
         }
@@ -228,7 +229,7 @@ export const getProjects = async (...projectIds: string[]): Promise<ModrinthModC
     return data.data as ModrinthProject[];
 }
 
-export const getVersions = async (projectIdentifier: string, loader?: Loader, game_version?: string): Promise<ModrinthVersion[]> => {
+export const getVersions = async (projectIdentifier: string, loader?: Loader, game_version?: string): Promise<ModrinthVersion[] | ModrinthModVersion[]> => {
     const query = {};
     if (loader) {
         query["loaders"] = JSON.stringify([loader.name.toLowerCase()]);
@@ -238,6 +239,20 @@ export const getVersions = async (projectIdentifier: string, loader?: Loader, ga
         query["game_versions"] = JSON.stringify([game_version]);
     }
 
+    
+    //cache stuff
+    const cachedData: ModrinthModCached[] = [];
+    let isProjectID = ModrinthFileCache.isProjectID(projectIdentifier);
+    let project = isProjectID ? ModrinthFileCache.INSTANCE.getByID(projectIdentifier) : ModrinthFileCache.INSTANCE.cache.get(projectIdentifier);
+    if (project && !ModrinthFileCache.shouldUpdate(project) && project.versions.some((v) => v.game_versions.includes(game_version))) {
+        cachedData.push(project);
+    }
+
+    if (cachedData.length > 0) {
+        return cachedData[0].versions;
+    }
+    //end cache stuff
+    
     const req = Modrinth.INSTANCE.createRequest(`project/${projectIdentifier}/version`, query);
 
     const data = await Modrinth.INSTANCE.fetchModrinthAPI(req);

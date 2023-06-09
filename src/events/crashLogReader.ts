@@ -136,10 +136,12 @@ export default new Event("messageCreate", async (message) => {
       }
     }
 
-    const NotDependencyIDs = mods.filter((v) => !v?.isDependency).map((v) => v.ID);
-    if (!Modrinth.INSTANCE.willRateLimit(NotDependencyIDs.length)) {
-      const outdatedModsArray = (await returnOutdatedMods(mods.filter((v) => !v?.isDependency).map((v) => v), ModLoader.loader, ModLoader.mcVersion)).filter((v) => v.outdated);
-
+    console.time("test");
+    const NotDependencyIDs = mods.filter((v) => !v?.isDependency || (v.ID != "fabric-api" && v.ID.startsWith("fabric-"))).map((v) => v.ID);
+    if (!Modrinth.INSTANCE.willRateLimit(NotDependencyIDs.length, NotDependencyIDs)) {
+      //get mods that are outdated (will skip dependencies and fabric sub-apis)
+      const nonDependencyMods = mods.filter((v) => !(v?.isDependency || (v.ID.startsWith("fabric-") && v.ID != "fabric-api"))).map((v) => v);
+      const outdatedModsArray = (await returnOutdatedMods(nonDependencyMods, ModLoader.loader, ModLoader.mcVersion)).filter((v) => v.outdated);
       for (const outdatedMod of outdatedModsArray) {
         recommendedOutput.push(`Mod with id ${outdatedMod.mod.ID} seems to be outdated\n\t\tversion ${outdatedMod.mod.version} -> ${outdatedMod.latestVersion}\n\t\tModrinth URL: <${outdatedMod.modrinthURL}>`);
       }
@@ -148,6 +150,7 @@ export default new Event("messageCreate", async (message) => {
         `Bot client is currently rate limited, skipping version checks`
       );
     }
+    console.timeEnd("test");
 
     for (const fix of fixes) {
       let foundProblems = 0;

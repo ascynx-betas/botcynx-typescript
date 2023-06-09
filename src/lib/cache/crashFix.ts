@@ -2,6 +2,7 @@ import { Collection } from "discord.js";
 import { JsonCache, RepoLink } from "./cache";
 import { LoggerFactory } from "../Logger";
 import { getVersions } from "../ModrinthAPIUtils";
+import { ModrinthModVersion } from "../ModrinthFileCache";
 
 const LOGGER = LoggerFactory.getLogger("CRASHFIX");
 
@@ -86,7 +87,7 @@ export async function isModOutdated(mod: ModCollection, loader: Loader, minecraf
 
   if (!versions || versions.length === 0) return outdated;//received nothing
 
-  const remoteVersions = versions.filter((v) => v.version_number === modVersion);
+  const remoteVersions = (versions as ModrinthModVersion[]).filter((v) => v.version_number === modVersion);
 
   //doesn't have the current installed version (it could be another mod or a private release / modification)
   if (remoteVersions.length === 0) return {outdated: false, modrinthURL: `https://modrinth.com/mod/${mod.ID}`, mod: mod};

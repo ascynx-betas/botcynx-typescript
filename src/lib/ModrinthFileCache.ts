@@ -3,6 +3,7 @@ import * as fs from "fs";
 import { Loader, minecraftVersionRegex } from "./cache/crashFix";
 import { Collection } from "discord.js";
 import { ModrinthProject, ModrinthVersion, getProject } from "./ModrinthAPIUtils";
+import { base62 } from "./utils";
 
 //----- Classes -----//
 
@@ -33,6 +34,12 @@ export class ModrinthFileCache {
 
     public readonly cache = this.parse(this.read(ModrinthFileCache.FilePath));
 
+    static isProjectID(projectIdentifier: string): boolean {
+        return projectIdentifier.split('').every((c, i) => {
+            const indexOf = base62.charset.indexOf(c);
+            if (indexOf == -1) throw new Error(`Deserialization error: Invalid character '${c}' in base62 encoding at index ${i}`);
+        });
+    }
 
     getByID(projectID: string): ModrinthModCached | null {
         const projects = this.cache.filter((v) => v.id === projectID);
@@ -76,6 +83,7 @@ export class ModrinthFileCache {
 
     //----- Utility methods -----//
     static shouldUpdate(mod: ModrinthModCached) {
+        if (!mod) return false;
         //(last Updated + 1 day in milliseconds)
         return (mod.lastUpdated + 86400000) - Date.now() <= 0;
     }
