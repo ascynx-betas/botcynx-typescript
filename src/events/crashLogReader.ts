@@ -70,7 +70,7 @@ export default new Event("messageCreate", async (message) => {
 
     let AdditionalData = "";
     if (!log.match(/------Botcynx additional Data------/)) {
-      AdditionalData += `------Botcynx additional Data------`;
+      AdditionalData += `\n\n------Botcynx additional Data------`;
 
       if (ModLoader && (ModLoader.loader != Loader.UNKNOWN && ModLoader.loader != Loader.VANILLA)) {
         AdditionalData += `\n\tMod Loader: ${ModLoader.loader}${ModLoader.loaderVersion != "" ? ` ${ModLoader.loaderVersion}` : ""}`;

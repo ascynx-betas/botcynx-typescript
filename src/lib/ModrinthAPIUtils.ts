@@ -35,6 +35,7 @@ export class Modrinth {
         return this.ReachedMax;
     }
 
+    //TODO add cache checking to dis
     willRateLimit(requests: number) {
         return this.APICallsLastMinute + requests > this.rateLimit || this.ReachedMax;
     }
