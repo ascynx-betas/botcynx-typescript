@@ -81,7 +81,7 @@ function main(args: string[]) {
   botcynx.start();
 }
 
-function listenDebugAPI() {
+function listenDebugAPI(client: BotClient) {
   HypixelAPI.INSTANCE.on("reset", (data) => {
     if (!botcynx.isDebug()) return;
     HypixelAPI.INSTANCE.getLogger().debug(data);
@@ -112,7 +112,7 @@ botcynx.on("finishedLoading", loadAllCaches);
 export const runPostLoadingEvents = async () => {
   finishedLoading = true;
   botcynx.getLogger.log("Finished Loading", LogLevel.DEBUG, true);
-  botcynx.emit("finishedLoading");
+  botcynx.emit("finishedLoading", botcynx);
 }
 
 /**

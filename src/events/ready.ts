@@ -1,5 +1,5 @@
 import { Event } from "../structures/Event";
-import { getKeyInfo } from "../lib/HypixelAPIUtils";
+import { getCurrPlayerCount } from "../lib/HypixelAPIUtils";
 import { ticketBlockedName } from "../config";
 import chalk from "chalk";
 import { botcynx, runPostLoadingEvents } from "..";
@@ -58,7 +58,7 @@ export default new Event("ready", async () => {
 
   if (process.env.hypixelapikey) {
     botcynx.getLogger.log(chalk.green("api key exists"), LogLevel.INFO);
-    let data = await getKeyInfo();
+    let data = await getCurrPlayerCount();
     postStartData.hypixelapikey = data.success;
   }
 

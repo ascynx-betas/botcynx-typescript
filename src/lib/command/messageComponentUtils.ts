@@ -1,9 +1,6 @@
-import { APIActionRowComponent, APIButtonComponent, Collection, Message, MessageActionRowComponent, MessageType } from "discord.js";
+import { APIButtonComponent, Collection, Message, MessageActionRowComponent, MessageType } from "discord.js";
 import { ButtonResponseType, botcynxInteraction } from "../../typings/Command";
 import { botcynx } from "../..";
-import { LoggerFactory } from "../Logger";
-
-const LOGGER = LoggerFactory.getLogger("CommandCollector");
 
 export function getButtonResponseOf(component: MessageActionRowComponent): ButtonResponseType {
     let fields = component.customId.split(":");

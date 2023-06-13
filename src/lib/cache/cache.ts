@@ -1,10 +1,11 @@
 import { finishedLoading } from "../..";
+import { BotClient } from "../../structures/botClient";
 import { LoggerFactory } from "../Logger";
 import { linkContentPull } from "../repoPull";
 
 const loadLoggerQueue: Cache[] = [];
 
-export const loadAllCaches = async() => {
+export const loadAllCaches = async(client: BotClient) => {
   for (let loader of loadLoggerQueue) {
     await loader.reload();
   }

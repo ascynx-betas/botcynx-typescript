@@ -9,12 +9,16 @@ import {
   Message,
   GuildTextBasedChannel,
   ActionRowBuilder,
+  TextBasedChannel,
+  Guild,
 } from "discord.js";
 import { botcynx } from "..";
 import { getWebhook } from "./personal-modules/discordPlugin";
 import { emojis } from "./emojis";
 import { checkLink } from "../events/linkReader";
 import { RepoProfile, RepositoryCacheHandler } from "./cache/repoCache";
+import { configModel } from "../models/config";
+import { CommandType, UserContextType, MessageContextType, CommandSimili, MessageCommandType } from "../typings/Command";
 
 // Source : https://lowrey.me/encoding-decoding-base-62-in-es6-javascript/
 export const base62 = {
@@ -292,5 +296,14 @@ class Enum {
 
   public toString() {
     return this.toJSON();
+  }
+}
+
+export function sendToServerLog(logchannel: string, embed: Embed | EmbedBuilder) {
+  if (logchannel != null && embed != null) {
+    return (botcynx.channels.cache.get(logchannel) as TextBasedChannel).send({
+      allowedMentions: {parse: []},
+      embeds: [embed]
+    });
   }
 }

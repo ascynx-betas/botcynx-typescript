@@ -53,7 +53,7 @@ const isDisabled = async function (command: CommandType | UserContextType | Mess
 };
 
 /**
- * Allows to see if the user is the for developer
+ * Allows to see if the user is the developer
  * @param user - The user affected
  * @returns {boolean} - Whether it failed or not. (true = passed, false = failed)
  */

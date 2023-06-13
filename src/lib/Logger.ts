@@ -1,10 +1,11 @@
 import chalk, { Chalk } from "chalk";
 import { Collection } from "discord.js";
 import { botcynx, finishedLoading } from "..";
+import { BotClient } from "../structures/botClient";
 
 const loggerQueue: {message: string, level: LogLevel, logger: Logger}[] = [];
 
-export const postLoadingLogs = () => {
+export const postLoadingLogs = (client: BotClient) => {
   for (let queueItem of loggerQueue) {
     queueItem.logger.log(queueItem.message, queueItem.level);
   }
