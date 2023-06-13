@@ -220,9 +220,6 @@ export const getProfiles = async function (uuid: string) {
     let profiles: Collection<string, Profile> = new Collection();
 
     //sort by last saved profile
-    profiles.sort((pA, pB) => {
-        return pB.last_save - pA.last_save;
-    })
 
     for (let profile of data?.profiles) {
         profiles.set(profile.cute_name, profile);
