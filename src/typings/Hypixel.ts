@@ -459,6 +459,7 @@ export type Profile = {
     balance: number;
     transactions: Transation[];
   };
+  selected: boolean;
   game_mode?: "island" | "ironman" | "bingo"; //if none then it's normal gamemode
 };
 type Bid = {

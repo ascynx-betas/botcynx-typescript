@@ -108,9 +108,9 @@ export default new WhitelistedCommand({
     let profile = args.getString("profile")
       ? args.getString("profile").toLowerCase()
       : hypixelData
-          .sort(
-            (acc, curr) =>
-              curr.last_save - acc.last_save
+          .filter(
+            (acc) =>
+              acc.selected
           )
           .first()
           .cute_name.toLowerCase();
@@ -130,15 +130,12 @@ export default new WhitelistedCommand({
         });
       member = profiles.first().members[uuid];
     } else {
-      let profiles = hypixelData?.sort(
-        (acc, curr) =>
-          curr.last_save - acc.last_save
-      );
-      if (profiles.size < 1)
+      let profile = hypixelData?.filter((acc) => acc.selected);
+      if (profile.size < 1)
         return interaction.followUp({
           content: `Couldn't find a profile for user`,
         });
-      member = profiles.first().members[uuid];
+      member = profile.first().members[uuid];
     }
 
     if (!newWhitelistedRoles.getRoleFunction(role.id))
