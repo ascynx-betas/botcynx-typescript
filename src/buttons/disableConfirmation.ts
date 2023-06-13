@@ -5,6 +5,7 @@ import {
 } from "discord.js";
 import { configModel } from "../models/config";
 import { ButtonResponse } from "../structures/Commands";
+import { localeHandler } from "..";
 
 export default new ButtonResponse({
   category: "disable",
@@ -38,9 +39,7 @@ export default new ButtonResponse({
 
         const embed = new EmbedBuilder()
           .setTitle("Success")
-          .setDescription(
-            `successfully removed ${command} from disabled commands`
-          );
+          .setDescription(localeHandler.getLang("command.enabled").insert("command", command).get(interaction.guildLocale));
 
         interaction.update({
           embeds: [embed],
@@ -68,7 +67,7 @@ export default new ButtonResponse({
 
         const embed = new EmbedBuilder()
           .setTitle("Success")
-          .setDescription(`successfully added ${command} to disabled commands`);
+          .setDescription(localeHandler.getLang("command.disabled").insert("command", command).get(interaction.guildLocale));
 
         interaction.update({
           embeds: [embed],
@@ -128,7 +127,7 @@ export default new ButtonResponse({
         const embed = new EmbedBuilder()
           .setTitle("Success")
           .setDescription(
-            `successfully removed ${command} from global disabled commands`
+            localeHandler.getLang("command.global.enabled").insert("command", command).get(interaction.guildLocale)
           );
 
         interaction.update({
@@ -173,7 +172,7 @@ export default new ButtonResponse({
         const embed = new EmbedBuilder()
           .setTitle("Success")
           .setDescription(
-            `successfully added ${command} to global disabled commands`
+            localeHandler.getLang("command.global.disabled").insert("command", command).get(interaction.guildLocale)
           );
 
         interaction.update({

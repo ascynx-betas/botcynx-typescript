@@ -1,9 +1,8 @@
-import { Embed, EmbedBuilder, GuildMember, TextBasedChannel } from "discord.js";
-import { botcynx } from "..";
+import { EmbedBuilder, GuildMember } from "discord.js";
 import { configModel } from "../models/config";
 import { compareTest } from "../lib/personal-modules/testFor";
 import { Event } from "../structures/Event";
-import { isDisabled } from "../lib/command/commandInhibitors";
+import { isDisabled, sendToServerLog } from "../lib";
 
 export default new Event(
   "guildMemberUpdate",
@@ -21,7 +20,7 @@ export default new Event(
       guildId: guild.id,
     });
 
-    if (!isDisabled({name: "roleLinked"}, guild)) return;
+    if (!await isDisabled({name: "roleLinked"}, guild)) return;
 
     let { trigger, removable, bypass, logchannel } = config;
 
@@ -54,7 +53,7 @@ export default new Event(
 
       const embed = RoleDiffEmbedCreator(roleDiffs, newMember);
       
-      return send(logchannel, embed);
+      return sendToServerLog(logchannel, embed);
     }
 
     if (
@@ -74,7 +73,7 @@ export default new Event(
         const embed = RoleDiffEmbedCreator(roleDiffs, newMember);
         embed.setTitle("RoleLinked - Diff");
 
-        send(logchannel, embed);
+        sendToServerLog(logchannel, embed);
         return;
       };
 
@@ -89,19 +88,10 @@ export default new Event(
       embed.setTitle("RoleLinked - Diff");
 
 
-      send(logchannel, embed);
+      sendToServerLog(logchannel, embed);
     }
   }
 );
-
-function send(logchannel: string, embed: Embed | EmbedBuilder) {
-  if (logchannel != null && embed != null) {
-    return (botcynx.channels.cache.get(logchannel) as TextBasedChannel).send({
-      allowedMentions: {parse: []},
-      embeds: [embed]
-    });
-  }
-}
 
 function RoleDiffEmbedCreator(roleDiff: RoleDiff[], member: GuildMember) {
   const embed = new EmbedBuilder();

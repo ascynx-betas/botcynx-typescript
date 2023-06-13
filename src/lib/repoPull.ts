@@ -1,17 +1,35 @@
 import fetch from "node-fetch";
 import { botcynx } from "..";
-type repoError = {
+import { CachedQuery, RepoProfile, RepositoryCacheHandler } from "./cache/repoCache";
+type RepoError = {
   code: number;
   cause: string;
 };
+
 class GitError extends Error {
-  possibilities: object[];
-  constructor(message: string, possibilities: object[]) {
+  localError: boolean;
+  constructor(message: string, localError = false) {
     super(message);
+    this.localError = localError;
+  }
+
+  public static from(repoError: RepoError, url?: string) {
+    return new this(`Github api returned error ${repoError.code} with cause ${repoError.cause}${url ? ` on url ${url}` : ""}`, false);
+  }
+}
+
+class GitContentError extends GitError {
+  possibilities: object[];
+  constructor(message: string, possibilities: object[], localError = false) {
+    super(message, localError);
     this.possibilities = possibilities;
   }
 }
-const gitFetchJson = async (url: string) => {
+
+/**
+ * @throws {GitError}
+ */
+const gitFetchJson = async (url: string): Promise<any> => {
   const body = await fetch(url, {
     headers: {
       Authorization: `token ${process.env.githubToken}`,
@@ -20,19 +38,22 @@ const gitFetchJson = async (url: string) => {
   });
   const json = await body.json();
   if (json.ok == false) {
-    const err: repoError = {
+    const err: RepoError = {
       code: json.status,
       cause: json.statusText || "unknown",
     };
-    return err;
+    throw GitError.from(err, url);
   }
   if (json.message) {
-    let err: repoError = { code: 404, cause: json.message };
-    return err;
+    let err: RepoError = { code: 404, cause: json.message };
+    throw GitError.from(err, url);
   }
   return json;
 };
 
+/**
+ * @throws {GitError}
+ */
 const repoInfoPull = async (owner: string, repo: string) => {
   let requestUrl = `https://api.github.com/repos/${owner}/${repo}`;
 
@@ -45,14 +66,12 @@ const repoInfoPull = async (owner: string, repo: string) => {
  * @param repo - The repository's name
  * @param path - The path of the file
  * @returns - An Error with the reason or the content of the file
+ * @throws {GitError}
  */
 const repoContentPull = async (owner: string, repo: string, path: string) => {
   let requestUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
 
   const content = await gitFetchJson(requestUrl);
-  if (content.code) {
-    throw new Error(`${content.code} ${content.cause}`);
-  }
 
   if (content.length > 1) {
     let types: string[] = [];
@@ -61,11 +80,11 @@ const repoContentPull = async (owner: string, repo: string, path: string) => {
       types.push(dir.type);
       possibilities.push({ name: dir.name, path: dir.path, type: dir.type });
     });
-    throw new GitError(`${repo}${path} is a directory`, possibilities);
+    throw new GitContentError(`${repo}${path} is a directory`, possibilities);
   } else {
     const toDecode = content.content;
     if (typeof toDecode == "undefined")
-      throw new Error(`content of file does not exist`);
+      throw new GitError(`content of file does not exist`, true);
 
     const decoded = Buffer.from(toDecode, "base64");
     decoded.toString();
@@ -74,13 +93,13 @@ const repoContentPull = async (owner: string, repo: string, path: string) => {
   }
 };
 
+/** 
+ * @throws {GitError}
+*/
 const linkContentPull = async (link: string) => {
   let requestUrl = link;
 
   const content = await gitFetchJson(requestUrl);
-  if (content.code) {
-    throw new Error(`${content.code} ${content.cause}`);
-  }
 
   if (content.length > 1) {
     let types: string[] = [];
@@ -89,11 +108,11 @@ const linkContentPull = async (link: string) => {
       types.push(dir.type);
       possibilities.push({ name: dir.name, path: dir.path, type: dir.type });
     });
-    throw new GitError(`provided path is a directory`, possibilities);
+    throw new GitContentError(`provided path is a directory`, possibilities);
   } else {
     const toDecode = content.content;
     if (typeof toDecode == "undefined")
-      throw new Error(`content of file does not exist`);
+      throw new GitError(`content of file does not exist`, true);
 
     const decoded = Buffer.from(toDecode, "base64");
     decoded.toString();
@@ -105,11 +124,18 @@ const linkContentPull = async (link: string) => {
 //search with name
 
 const searchRepositories = async (query: string) => {
+  if (RepositoryCacheHandler.INSTANCE.hasQuery(query)) {
+    return RepositoryCacheHandler.INSTANCE.getQuery(query);
+  }
   let requestUrl = `https://api.github.com/search/repositories?q=${query}`;
 
   const data = await gitFetchJson(requestUrl);
 
-  return data;
+  const items: RepoProfile[] = [];
+  data.items.forEach((item: RepoItem) => {
+    items.push(new RepoProfile(item));
+  });
+  return RepositoryCacheHandler.INSTANCE.addCachedQuery(new CachedQuery(query, ...items));
 };
 
 export {

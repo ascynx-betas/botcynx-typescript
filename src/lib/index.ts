@@ -11,7 +11,8 @@ export * from "./messageCommandRequest";
 export * from "./Logger";
 export * from "./slashCommandRequestCache";
 export * from "./HypixelAPIUtils";
-export * from "./soopyAPI";
+export * from "./ModrinthAPIUtils";
+export * from "./ModrinthFileCache";
 
 export * from "./customEvents/commandCreate";
 export * from "./customEvents/messageCommandCreate";
@@ -21,6 +22,7 @@ export * from "./command/commandInhibitors";
 export * from "./cache/cache";
 export * from "./cache/crashFix";
 export * from "./cache/scamlink";
+export * from "./cache/repoCache";
 
 export * from "./personal-modules/index";
 

@@ -3,8 +3,9 @@ import fetch from "node-fetch";
 import {
   checkIfLog,
   crashFixCache,
-  getML,
+  Loader,
   getMods,
+  returnOutdatedMods,
 } from "../lib/cache/crashFix";
 import { HasteUtils } from "../lib/hasteUtils";
 import {
@@ -15,6 +16,7 @@ import {
 } from "discord.js";
 import { containsLink, isLink } from "../lib/personal-modules/testFor";
 import { isDisabled } from "../lib/command/commandInhibitors";
+import { Modrinth } from "../lib";
 
 export default new Event("messageCreate", async (message) => {
   if (message.author.bot || !message.guild) return;
@@ -63,19 +65,19 @@ export default new Event("messageCreate", async (message) => {
   }
 
   for (const log of logs) {
-    const mods = getMods(log);
-    const ModLoader = getML(log);
+    const ModLoader = Loader.getML(log);
+    const mods = getMods(log, ModLoader.loader);
 
     let AdditionalData = "";
-    if (!log.match(/Botcynx additional Data/)) {
-      AdditionalData += `\n\n\tBotcynx additional Data:`;
+    if (!log.match(/------Botcynx additional Data------/)) {
+      AdditionalData += `\n\n------Botcynx additional Data------`;
 
-      if (ModLoader && ModLoader.loader != "") {
-        AdditionalData += `\n\n\tMod Loader: ${ModLoader.loader}${ModLoader.loaderVersion != "" ? ` ${ModLoader.loaderVersion}` : ""}`;
+      if (ModLoader && (ModLoader.loader != Loader.UNKNOWN && ModLoader.loader != Loader.VANILLA)) {
+        AdditionalData += `\n\tMod Loader: ${ModLoader.loader}${ModLoader.loaderVersion != "" ? ` ${ModLoader.loaderVersion}` : ""}`;
       }
 
       if (mods.size > 0) {
-        AdditionalData += `\n\tMods: ${mods.map((mod) => mod.ID).join(", ")}`;
+        AdditionalData += `\n\tMods:\n\t${mods.filter((mod) => !mod.isDependency).map((mod) => `${mod?.name ? mod.name : mod.ID} ${mod.version}`).join(",\n\t")}`;
       }
     }
 
@@ -88,7 +90,7 @@ export default new Event("messageCreate", async (message) => {
     let recommendedOutput: string[] = [];
     let clientData: string[] = [];
 
-    if (ModLoader.loader == "Feather") {
+    if (ModLoader.loader === Loader.FEATHER) {
       if (message.author.id == process.env.developerId) {
         recommendedOutput.push("Feather client is unsupported, issues that occur while using it must be reported to its support team.");
       } else {
@@ -123,7 +125,7 @@ export default new Event("messageCreate", async (message) => {
     const fixes = crashFixCache.data.fixes ? crashFixCache.data.fixes : []; //type 1 => solution //type 2 => recommendations //type 0 => informations;
 
     if (ModLoader) {
-      if (ModLoader.loader && ModLoader.loader != "") {
+      if (ModLoader.loader && ModLoader.loader != Loader.UNKNOWN) {
         clientData.push(
         `user is using ${ModLoader.loader} ${ModLoader.loaderVersion}`
         );
@@ -132,8 +134,23 @@ export default new Event("messageCreate", async (message) => {
       if (ModLoader.mcVersion && ModLoader.mcVersion != "") {
         clientData.push(`user is on minecraft version ${ModLoader.mcVersion}`);
       }
-
     }
+
+    console.time("test");
+    const NotDependencyIDs = mods.filter((v) => !v?.isDependency || (v.ID != "fabric-api" && v.ID.startsWith("fabric-"))).map((v) => v.ID);
+    if (!Modrinth.INSTANCE.willRateLimit(NotDependencyIDs.length, NotDependencyIDs)) {
+      //get mods that are outdated (will skip dependencies and fabric sub-apis)
+      const nonDependencyMods = mods.filter((v) => !(v?.isDependency || (v.ID.startsWith("fabric-") && v.ID != "fabric-api"))).map((v) => v);
+      const outdatedModsArray = (await returnOutdatedMods(nonDependencyMods, ModLoader.loader, ModLoader.mcVersion)).filter((v) => v.outdated);
+      for (const outdatedMod of outdatedModsArray) {
+        recommendedOutput.push(`Mod with id ${outdatedMod.mod.ID} seems to be outdated\n\t\tversion ${outdatedMod.mod.version} -> ${outdatedMod.latestVersion}\n\t\tModrinth URL: <${outdatedMod.modrinthURL}>`);
+      }
+    } else {
+      clientData.push(
+        `Bot client is currently rate limited, skipping version checks`
+      );
+    }
+    console.timeEnd("test");
 
     for (const fix of fixes) {
       let foundProblems = 0;
@@ -175,6 +192,7 @@ export default new Event("messageCreate", async (message) => {
       const status = Statuses[i];
       if (status == null) continue;
 
+      //E means Errored
       if (status.search(/.E.*/) != -1) {
         extraLogOutput.push(
           `${IDs[i]} ran into an error, please contact its support team with this log.`

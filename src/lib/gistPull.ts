@@ -3,7 +3,7 @@ import fetch from "node-fetch";
 import { botcynx } from "..";
 import { coolPeople } from "./coolPeople";
 
-type githubFileResponse = {
+type GithubFileResponse = {
   [key: string]: {
     filename: string;
     type: string;
@@ -26,7 +26,7 @@ export const gistJSONPull = async (link: string) => {
     const text = await body.text();
     const json = JSON.parse(text);
 
-    const files: githubFileResponse = json.files;
+    const files: GithubFileResponse = json.files;
     let contents: Collection<string, string> = new Collection();
     Object.keys(files).forEach((keyFile) => {
       let content = files[keyFile].content;
@@ -50,7 +50,7 @@ export const updateCoolPeople = async (link: string) => {
     const text = await body.text();
     const json = JSON.parse(text);
 
-    const files: githubFileResponse = json.files;
+    const files: GithubFileResponse = json.files;
     const file = files[Object.keys(files)[0]];
     const content = file.content;
     let coolPeople: coolPeople = JSON.parse(content);

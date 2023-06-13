@@ -1,10 +1,10 @@
 import { ApplicationCommandOptionType } from "discord.js";
 import { ticketBlockedName } from "../../../config";
 import { tagModel } from "../../../models/tag";
-import { slashCommand } from "../../../structures/Commands";
+import { SlashCommand } from "../../../structures/Commands";
 import { CommandType } from "../../../typings/Command";
 
-export default new slashCommand({
+export default new SlashCommand({
   name: "tag",
   description: "manage tags",
   userPermissions: ["ManageMessages"],

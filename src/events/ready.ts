@@ -1,12 +1,11 @@
 import { Event } from "../structures/Event";
-import { getKeyInfo } from "../lib/HypixelAPIUtils";
+import { getCurrPlayerCount } from "../lib/HypixelAPIUtils";
 import { ticketBlockedName } from "../config";
 import chalk from "chalk";
-import { sendInfoWebhook } from "../lib/utils";
-import { botcynx, finishLoading } from "..";
-import { logLevel } from "../lib/Logger";
+import { botcynx, runPostLoadingEvents } from "..";
+import { LogLevel } from "../lib/Logger";
 
-type postStartDataType = {
+type PostStartDataType = {
   maxTimeout: string;
   ticketblockedNames: string[];
   mongooseconnectionstring: boolean;
@@ -17,7 +16,7 @@ type postStartDataType = {
   githubtoken: boolean;
 };
 
-export let postStartData: postStartDataType = {
+export let postStartData: PostStartDataType = {
   maxTimeout: "",
   ticketblockedNames: [],
   mongooseconnectionstring: false,
@@ -29,12 +28,12 @@ export let postStartData: postStartDataType = {
 };
 
 export default new Event("ready", async () => {
-  await finishLoading();
+  await runPostLoadingEvents();
   //sends to log the time it took for the bot to connect to the discord api
   console.timeEnd("Login time");
   //post start data setup
-  botcynx.getLogger.log(chalk.blue("----Status----"), logLevel.INFO);
-  botcynx.getLogger.log(chalk.green("Bot is now online"), logLevel.INFO);
+  botcynx.getLogger.log(chalk.blue("----Status----"), LogLevel.INFO);
+  botcynx.getLogger.log(chalk.green("Bot is now online"), LogLevel.INFO);
 
   postStartData.maxTimeout = "28 days";
   postStartData.ticketblockedNames = ticketBlockedName;
@@ -50,27 +49,17 @@ export default new Event("ready", async () => {
   process.env.guildId
     ? botcynx.getLogger.log(
         chalk.green("commands will be registered locally"),
-        logLevel.INFO
+        LogLevel.INFO
       )
     : botcynx.getLogger.log(
         chalk.red("Commands will be registered globally"),
-        logLevel.INFO
+        LogLevel.INFO
       );
 
   if (process.env.hypixelapikey) {
-    botcynx.getLogger.log(chalk.green("api key exists"), logLevel.INFO);
-    let data = await getKeyInfo();
-    if (data.success === true) postStartData.hypixelapikey = true;
-    if (data.success === false) {
-      postStartData.hypixelapikey = false; //set value of hypixelApiKey to invalid
-      botcynx.getLogger.log(
-        chalk.red("invalid api key\nreason: " + data.cause),
-        logLevel.ERROR
-      );
-      sendInfoWebhook({
-        message: `<@${process.env.developerId}>, API key invalid, reason: ${data.cause}`,
-      });
-    }
+    botcynx.getLogger.log(chalk.green("api key exists"), LogLevel.INFO);
+    let data = await getCurrPlayerCount();
+    postStartData.hypixelapikey = data.success;
   }
 
   postStartData.loglink = process.env.webhookLogLink ? true : false;

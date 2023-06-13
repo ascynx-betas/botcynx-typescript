@@ -9,7 +9,7 @@ export class Event<Key extends keyof extendedClientEvents> {
 }
 
 export interface extendedClientEvents extends ClientEvents {
-  interactioncommandCreate: [interaction: botcynxInteraction];
+  interactionCommandCreate: [interaction: botcynxInteraction];
   messageCommandCreate: [message: Message];
   finishedLoading: any;
 } //add custom events here
@@ -18,5 +18,6 @@ export interface HypixelAPIEvents {
   reset: [data: {lastReset: number, APICallsLastMinute: number, ReachedMax: boolean, activityLog: {[key: string]: number}}];
   rateLimit: [data: {eventType: "server" | "client"}];
   serverRateLimit: [data: {}];
-  clientRateLimit: [data: {}]
+  clientRateLimit: [data: {}];
+  invalidAPIKey: [data: undefined];
 }

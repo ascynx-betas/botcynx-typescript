@@ -11,9 +11,9 @@ import {
   getStatus,
 } from "../../../lib/HypixelAPIUtils";
 import { getUuidbyUsername } from "../../../lib/personal-modules/mojang";
-import { slashCommand } from "../../../structures/Commands";
+import { SlashCommand } from "../../../structures/Commands";
 
-export default new slashCommand({
+export default new SlashCommand({
   name: "hypixel",
   description: "send informations about a user",
   require: ["hypixelApiKey", "mongooseConnectionString"],
@@ -79,6 +79,7 @@ export default new slashCommand({
     const player = discord.player;
     if (discord) {
       discord = discord?.player?.socialMedia?.links?.DISCORD;
+      //TODO find out how that's gonna work with discord's @ update
       let isInCache = client.users.cache.filter((u) => u.tag === discord);
       if (isInCache.size > 0) {
         let user = isInCache.map((u) => u.toString());

@@ -1,4 +1,4 @@
-import { Client, ClientEvents, Collection, Partials } from "discord.js";
+import { ApplicationCommand, Client, ClientEvents, Collection, Partials } from "discord.js";
 import * as fs from "fs";
 import {
   CommandType,
@@ -6,9 +6,9 @@ import {
   MessageCommandType,
   MessageContextType,
   ButtonResponseType,
-  commandCooldown,
+  CommandCooldown,
   WhitelistedCommands,
-  modalResponseType,
+  ModalResponseType,
 } from "../typings/Command";
 import glob from "glob";
 import { promisify } from "util";
@@ -16,7 +16,7 @@ import {
   RegisterCommandsOptions,
   registerModulesOptions,
 } from "../typings/Client";
-import { Event } from "./Event";
+import { Event, extendedClientEvents } from "./Event";
 import { connect } from "mongoose";
 import { tagModel } from "../models/tag";
 import { reload } from "../lib";
@@ -25,14 +25,15 @@ import { registerCooldownTask } from "../lib/Tasks/cooldownReset";
 import { registerGistReload } from "../lib/Tasks/gistLoadFail";
 import { PermissionFlagsBits } from "discord-api-types/v10";
 import { configModel } from "../models/config";
-import { LoggerFactory, logLevel } from "../lib";
+import { LoggerFactory, LogLevel } from "../lib";
 import { botcynx } from "..";
 import { clearCache } from "../lib/Tasks/slashInteractionReset";
 import {HypixelAPI} from "../lib";
+import { RepositoryCacheHandler } from "../lib/cache/repoCache";
 
 const globPromise = promisify(glob);
 
-export class botClient extends Client {
+export class BotClient extends Client {
   //dynamic Collections
   slashCommands: Collection<string, CommandType> = new Collection();
   userContextCommands: Collection<string, UserContextType> = new Collection();
@@ -43,12 +44,12 @@ export class botClient extends Client {
   buttonCommands: Collection<string, ButtonResponseType> = new Collection();
   whitelistedCommands: Collection<string, WhitelistedCommands> =
     new Collection();
-  cooldowns: Collection<string, commandCooldown> = new Collection();
+  cooldowns: Collection<string, CommandCooldown> = new Collection();
   tasks: Collection<string, NodeJS.Timer> = new Collection();
-  modals: Collection<string, modalResponseType> = new Collection();
+  modals: Collection<string, ModalResponseType> = new Collection();
 
   //static values
-  private static instance: botClient;
+  private static instance: BotClient;
   package: any = JSON.parse(fs.readFileSync("package.json", "utf-8"));
   public readonly userAgent = `${this.package.name}/${this.version}${process.env.environment == "dev" ? "-dev" : ""}`;
 
@@ -74,9 +75,9 @@ export class botClient extends Client {
     super({ intents: 65535, partials: [Partials.Channel, Partials.Message] });
   }
 
-  static getInstance(): botClient {
-    if (!botClient.instance) botClient.instance = new botClient();
-    return botClient.instance;
+  static getInstance(): BotClient {
+    if (!BotClient.instance) BotClient.instance = new BotClient();
+    return BotClient.instance;
   }
 
   getUserAgent(): string {
@@ -85,13 +86,13 @@ export class botClient extends Client {
 
   start() {
     if (process.env.mongooseConnectionString) {
-      this.logger.log("connecting to mongoose", logLevel.DEBUG);
+      this.logger.log("connecting to mongoose", LogLevel.DEBUG);
       connect(process.env.mongooseConnectionString);
     }
 
     this.registerModules();
     this.login(process.env.botToken).then(() =>
-      this.logger.log(chalk.green(`successfully logged in`), logLevel.INFO)
+      this.logger.log(chalk.green(`successfully logged in`), LogLevel.INFO)
     );
   }
 
@@ -101,6 +102,14 @@ export class botClient extends Client {
 
   public isDebug(): boolean {
     return this.debug;
+  }
+
+  public emitLater<K extends keyof extendedClientEvents, E extends keyof ClientEvents>(event: K, ...args: extendedClientEvents[K|E]) {
+    const task = setInterval(() => {
+      clearInterval(task);
+      //make it think it's one of its own events :)
+      this.emit(event as unknown as E, ...args as ClientEvents[E]);
+    }, 1000);
   }
 
   private registerTable: { type: string; name: string; registered: boolean }[] =
@@ -263,7 +272,7 @@ export class botClient extends Client {
     modalFiles.forEach(async (filePath) => {
       this.registerModule({
         path: filePath,
-        callback: function (data: modalResponseType) {
+        callback: function (data: ModalResponseType) {
           botcynx.modals.set(data.name, data);
         },
         type: "modal",
@@ -308,6 +317,7 @@ export class botClient extends Client {
       guildsWithTags = [...new Set(guildsWithTags)];
       guildsWithTags.forEach((guild) => this.registerTags(guild));
       //register commands
+      //TODO check commands to make sure they aren't the same and if they are then don't try to register them again **SHOULD CHECK BOTH IN LOCAL REGISTERING AND GLOBAL REGISTERING
       if (!process?.env?.guildId)
         this.registerCommands({
           commands: this.ArrayOfSlashCommands,
@@ -317,12 +327,19 @@ export class botClient extends Client {
           commands: this.ArrayOfSlashCommands,
           guildId: process.env.guildId,
         });
-        for (let command of this.whitelistedCommands.map((c) => c)) {
+        for (let lCommand of this.whitelistedCommands.map((c) => c)) {
           try {
-            command.register({
-              client: this,
-              guild: this.guilds.cache.get(process?.env?.guildId),
-            });
+            let existingCommands = this.guilds.cache.get(process?.env?.guildId).commands.cache.filter((gCommand) => gCommand.name == lCommand.name);
+            if (existingCommands.size > 0 ) {
+              if (!existingCommands.first().equals(lCommand, false).valueOf()) {
+                existingCommands.first().edit(lCommand);
+              }
+            } else {
+              lCommand.register({
+                client: this,
+                guild: this.guilds.cache.get(process?.env?.guildId),
+              });
+            }
           } catch (e) {}
         }
       }
@@ -345,7 +362,7 @@ export class botClient extends Client {
       });
     });
 
-    this.logger.table(this.registerTable, logLevel.DEBUG);
+    this.logger.table(this.registerTable, LogLevel.DEBUG);
 
     //Events
     const eventFiles = await globPromise(`${__dirname}/../events/*{.ts,.js}`);
@@ -371,13 +388,14 @@ export class botClient extends Client {
     });
 
     //Tasks
-    this.tasks.set("cooldown", await registerCooldownTask(this)); //register cooldown timer id
-    this.tasks.set("slashCommandCache", await clearCache());
-    this.tasks.set("hypixelApiReset", HypixelAPI.INSTANCE.task);
+    this.tasks.set("cooldown", await registerCooldownTask(this));                 //register cooldown timer id
+    this.tasks.set("slashCommandCache", await clearCache());                      //Clear interactions when dropped
+    this.tasks.set("hypixelApiReset", HypixelAPI.INSTANCE.task);                  //Reset api calls clientside
+    this.tasks.set("githubRepoResetDirt", RepositoryCacheHandler.INSTANCE.task);  //Reset "dirty" repositories
   }
 
   async killTasks() {
-    // kill all registered tasks, what did you expect?
+    // kill all registered tasks, what did you expect? -> Killswitches are always useful
     for (let task of this.tasks.map((t) => t)) {
       clearInterval(task);
       this.tasks.delete(this.tasks.findKey((t) => t == task));
@@ -392,18 +410,17 @@ export class botClient extends Client {
         chalk.redBright(
           `Registering commands to ${this.guilds.cache.get(guildId).name}`
         ),
-        logLevel.INFO
+        LogLevel.INFO
       );
     } else {
       this.application?.commands.set(commands);
 
       this.logger.log(
         chalk.green(`Registering global commands`),
-        logLevel.INFO
+        LogLevel.INFO
       );
     }
   }
-
 
   async registerTags(guildId: string) {
     const guild = this.guilds.cache.get(guildId);
@@ -432,7 +449,7 @@ export class botClient extends Client {
     });
     this.logger.log(
       chalk.green(`Registering tags for (${guild.name}/${guildId})`),
-      logLevel.DEBUG
+      LogLevel.DEBUG
     );
     this.guilds.cache.get(guildId)?.commands.set(tags);
   }

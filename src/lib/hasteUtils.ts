@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 import { botcynx } from "..";
 
-interface hastebinRes {
+interface HastebinRes {
   key: string;
 }
 
@@ -19,7 +19,7 @@ export class HasteUtils {
   static async post(content: string) {
     for (const url of this.urls) {
       try {
-        const res: hastebinRes = await (
+        const res: HastebinRes = await (
           await fetch(`${url}/documents`, {
             method: "POST",
             body: content,

@@ -1,13 +1,13 @@
-import { slashCommand } from "../../../structures/Commands";
+import { SlashCommand } from "../../../structures/Commands";
 import {
   ActionRowBuilder,
   Colors,
   EmbedBuilder,
-  SelectMenuBuilder,
+  StringSelectMenuBuilder,
 } from "discord.js";
 import { emojis } from "../../../lib/emojis";
 
-export default new slashCommand({
+export default new SlashCommand({
   name: "serverconfig",
   description:
     "Allows a server administrator to see the configuration of the server",
@@ -23,8 +23,8 @@ export default new slashCommand({
       .setColor(Colors.Blue)
       .setTimestamp(Date.now());
 
-    const row = new ActionRowBuilder<SelectMenuBuilder>().addComponents(
-      new SelectMenuBuilder()
+    const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
+      new StringSelectMenuBuilder()
         .addOptions([
           {
             label: "roleLinked configuration",

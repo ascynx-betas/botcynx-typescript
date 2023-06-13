@@ -5,9 +5,9 @@ import {
   ButtonStyle,
 } from "discord.js";
 import { setButtonRows } from "../../../lib/personal-modules/discordPlugin";
-import { slashCommand } from "../../../structures/Commands";
+import { SlashCommand } from "../../../structures/Commands";
 
-export default new slashCommand({
+export default new SlashCommand({
   name: "bot-info",
   description: "gives informations about the bot and it's creator",
   category: "information",

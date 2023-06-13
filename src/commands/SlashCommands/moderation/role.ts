@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType } from "discord.js";
-import { slashCommand } from "../../../structures/Commands";
+import { SlashCommand } from "../../../structures/Commands";
 
-export default new slashCommand({
+export default new SlashCommand({
   name: "role",
   description: "adds or removes a role from the target",
   userPermissions: ["ManageRoles"],

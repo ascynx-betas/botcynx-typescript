@@ -1,0 +1,542 @@
+{
+  "unofficial-monumenta-mod": {
+    "slug": "unofficial-monumenta-mod",
+    "id": "5GO3q639",
+    "title": "Unofficial Monumenta Mod",
+    "versions": [
+      {
+        "game_versions": [
+          "1.18.2",
+          "1.19.2",
+          "1.19.3"
+        ],
+        "version_number": "1.8.1",
+        "loaders": [
+          "Fabric"
+        ]
+      },
+      {
+        "game_versions": [
+          "1.18.2",
+          "1.19.2"
+        ],
+        "version_number": "1.7.0",
+        "loaders": [
+          "Fabric"
+        ]
+      },
+      {
+        "game_versions": [
+          "1.18.2"
+        ],
+        "version_number": "1.6.4",
+        "loaders": [
+          "Fabric"
+        ]
+      },
+      {
+        "game_versions": [
+          "1.18.2"
+        ],
+        "version_number": "1.6.3",
+        "loaders": [
+          "Fabric"
+        ]
+      },
+      {
+        "game_versions": [
+          "1.18.2"
+        ],
+        "version_number": "1.6.1",
+        "loaders": [
+          "Fabric"
+        ]
+      },
+      {
+        "loaders": [
+          "Fabric"
+        ],
+        "game_versions": [
+          "1.18.2"
+        ],
+        "version_number": "1.8.1"
+      },
+      {
+        "loaders": [
+          "Fabric"
+        ],
+        "game_versions": [
+          "1.18.2"
+        ],
+        "version_number": "1.7.0"
+      },
+      {
+        "loaders": [
+          "Fabric"
+        ],
+        "game_versions": [
+          "1.18.2"
+        ],
+        "version_number": "1.6.4"
+      },
+      {
+        "loaders": [
+          "Fabric"
+        ],
+        "game_versions": [
+          "1.18.2"
+        ],
+        "version_number": "1.6.3"
+      }
+    ],
+    "lastUpdated": 1686334131771
+  },
+  "unofficial_monumenta_mod": "&unofficial-monumenta-mod",
+  "advancedchatcore": {
+    "id": "1l6k9gvT",
+    "slug": "advancedchatcore",
+    "title": "AdvancedChatCore",
+    "versions": [
+      {
+        "loaders": [
+          "Fabric"
+        ],
+        "game_versions": [
+          "1.18.2"
+        ],
+        "version_number": "1.5.0-1.18.2"
+      }
+    ],
+    "lastUpdated": 1686334123978
+  },
+  "advancedchatfilters": {
+    "id": "c6fx2vMe",
+    "slug": "advancedchatfilters",
+    "title": "AdvancedChatFilters",
+    "versions": [],
+    "lastUpdated": 1686334124436
+  },
+  "advancedchathud": {
+    "id": "lBFvglCF",
+    "slug": "advancedchathud",
+    "title": "AdvancedChatHUD",
+    "versions": [
+      {
+        "loaders": [
+          "Fabric"
+        ],
+        "game_versions": [
+          "1.18.2"
+        ],
+        "version_number": "1.18.2-1.3.2"
+      },
+      {
+        "loaders": [
+          "Fabric"
+        ],
+        "game_versions": [
+          "1.18.2"
+        ],
+        "version_number": "1.18.2-1.3.1"
+      }
+    ],
+    "lastUpdated": 1686334124802
+  },
+  "appleskin": {
+    "id": "EsAfCjCV",
+    "slug": "appleskin",
+    "title": "AppleSkin",
+    "versions": [
+      {
+        "loaders": [
+          "Fabric",
+          "Quilt"
+        ],
+        "game_versions": [
+          "1.18.2"
+        ],
+        "version_number": "fabric-mc1.18.2-2.4.1"
+      }
+    ],
+    "lastUpdated": 1686334125181
+  },
+  "cloth-config": {
+    "id": "9s6osm5g",
+    "slug": "cloth-config",
+    "title": "Cloth Config API",
+    "versions": [
+      {
+        "loaders": [
+          "Fabric"
+        ],
+        "game_versions": [
+          "1.18",
+          "1.18.1",
+          "1.18.2"
+        ],
+        "version_number": "6.3.81"
+      },
+      {
+        "loaders": [
+          "Fabric"
+        ],
+        "game_versions": [
+          "1.18",
+          "1.18.1",
+          "1.18.2"
+        ],
+        "version_number": "6.2.62"
+      }
+    ],
+    "lastUpdated": 1686334125949
+  },
+  "entityculling": {
+    "id": "NNAgCjsB",
+    "slug": "entityculling",
+    "title": "Entity Culling",
+    "versions": [
+      {
+        "loaders": [
+          "Fabric"
+        ],
+        "game_versions": [
+          "1.18.2"
+        ],
+        "version_number": "1.6.1-1.18.2"
+      }
+    ],
+    "lastUpdated": 1686334126372
+  },
+  "konkrete": {
+    "id": "J81TRJWm",
+    "slug": "konkrete",
+    "title": "Konkrete",
+    "versions": [
+      {
+        "loaders": [
+          "Fabric"
+        ],
+        "game_versions": [
+          "1.18",
+          "1.18.1",
+          "1.18.2"
+        ],
+        "version_number": "1.6.1-1.18-1.18.2-fabric"
+      },
+      {
+        "loaders": [
+          "Fabric"
+        ],
+        "game_versions": [
+          "1.18",
+          "1.18.1",
+          "1.18.2"
+        ],
+        "version_number": "1.6.0-1.18-1.18.2-fabric"
+      }
+    ],
+    "lastUpdated": 1686334127814
+  },
+  "lazydfu": {
+    "id": "hvFnDODi",
+    "slug": "lazydfu",
+    "title": "LazyDFU",
+    "versions": [],
+    "lastUpdated": 1686334128354
+  },
+  "memoryleakfix": {
+    "id": "NRjRiSSD",
+    "slug": "memoryleakfix",
+    "title": "Memory Leak Fix",
+    "versions": [
+      {
+        "loaders": [
+          "Fabric",
+          "Quilt"
+        ],
+        "game_versions": [
+          "1.17",
+          "1.17.1",
+          "1.18",
+          "1.18.1",
+          "1.18.2",
+          "1.19",
+          "1.19.1",
+          "1.19.2",
+          "1.19.3",
+          "1.19.4"
+        ],
+        "version_number": "v1.0.0"
+      },
+      {
+        "loaders": [
+          "Fabric",
+          "Quilt"
+        ],
+        "game_versions": [
+          "1.18",
+          "1.18.1",
+          "1.18.2"
+        ],
+        "version_number": "v0.8.0-1.18.2"
+      },
+      {
+        "loaders": [
+          "Fabric",
+          "Quilt"
+        ],
+        "game_versions": [
+          "1.18.2"
+        ],
+        "version_number": "v0.7.0-1.18"
+      },
+      {
+        "loaders": [
+          "Fabric"
+        ],
+        "game_versions": [
+          "1.18.2"
+        ],
+        "version_number": "v0.5.4-1.18"
+      },
+      {
+        "loaders": [
+          "Fabric"
+        ],
+        "game_versions": [
+          "1.18.2"
+        ],
+        "version_number": "v0.5.3-1.18"
+      },
+      {
+        "loaders": [
+          "Fabric"
+        ],
+        "game_versions": [
+          "1.18.2"
+        ],
+        "version_number": "v0.5.2-1.18"
+      },
+      {
+        "loaders": [
+          "Fabric"
+        ],
+        "game_versions": [
+          "1.18.2"
+        ],
+        "version_number": "v0.5.1-1.18"
+      },
+      {
+        "loaders": [
+          "Fabric"
+        ],
+        "game_versions": [
+          "1.18",
+          "1.18.1",
+          "1.18.2"
+        ],
+        "version_number": "v0.3.5"
+      },
+      {
+        "loaders": [
+          "Fabric"
+        ],
+        "game_versions": [
+          "21w37a",
+          "21w38a",
+          "21w39a",
+          "21w40a",
+          "21w41a",
+          "21w42a",
+          "21w43a",
+          "21w44a",
+          "1.18-pre1",
+          "1.18-pre2",
+          "1.18-pre3",
+          "1.18-pre4",
+          "1.18-pre5",
+          "1.18-pre6",
+          "1.18-pre7",
+          "1.18-pre8",
+          "1.18-rc1",
+          "1.18-rc2",
+          "1.18-rc3",
+          "1.18-rc4",
+          "1.18",
+          "1.18.1-pre1",
+          "1.18.1-rc1",
+          "1.18.1-rc2",
+          "1.18.1-rc3",
+          "1.18.1",
+          "22w03a",
+          "22w05a",
+          "22w06a",
+          "22w07a",
+          "1.18.2-pre1",
+          "1.18.2-pre2",
+          "1.18.2-pre3",
+          "1.18.2-rc1",
+          "1.18.2"
+        ],
+        "version_number": "v0.3.4"
+      },
+      {
+        "loaders": [
+          "Fabric"
+        ],
+        "game_versions": [
+          "21w37a",
+          "21w38a",
+          "21w39a",
+          "21w40a",
+          "21w41a",
+          "21w42a",
+          "21w43a",
+          "21w44a",
+          "1.18-pre1",
+          "1.18-pre2",
+          "1.18-pre3",
+          "1.18-pre4",
+          "1.18-pre5",
+          "1.18-pre6",
+          "1.18-pre7",
+          "1.18-pre8",
+          "1.18-rc1",
+          "1.18-rc2",
+          "1.18-rc3",
+          "1.18-rc4",
+          "1.18",
+          "1.18.1-pre1",
+          "1.18.1-rc1",
+          "1.18.1-rc2",
+          "1.18.1-rc3",
+          "1.18.1",
+          "22w03a",
+          "22w05a",
+          "22w06a",
+          "22w07a",
+          "1.18.2-pre1",
+          "1.18.2-pre2",
+          "1.18.2-pre3",
+          "1.18.2-rc1",
+          "1.18.2"
+        ],
+        "version_number": "v0.3.3"
+      },
+      {
+        "loaders": [
+          "Fabric"
+        ],
+        "game_versions": [
+          "1.18",
+          "1.18.1",
+          "1.18.2"
+        ],
+        "version_number": "v0.3.2"
+      },
+      {
+        "loaders": [
+          "Fabric"
+        ],
+        "game_versions": [
+          "1.18",
+          "1.18.1",
+          "1.18.2"
+        ],
+        "version_number": "v0.3.1"
+      }
+    ],
+    "lastUpdated": 1686334129362
+  },
+  "modmenu": {
+    "id": "mOgUt4GM",
+    "slug": "modmenu",
+    "title": "Mod Menu",
+    "versions": [
+      {
+        "loaders": [
+          "Fabric",
+          "Quilt"
+        ],
+        "game_versions": [
+          "1.18.2"
+        ],
+        "version_number": "3.2.5"
+      },
+      {
+        "loaders": [
+          "Fabric",
+          "Quilt"
+        ],
+        "game_versions": [
+          "1.18.2"
+        ],
+        "version_number": "3.2.4"
+      },
+      {
+        "loaders": [
+          "Fabric",
+          "Quilt"
+        ],
+        "game_versions": [
+          "1.18.2"
+        ],
+        "version_number": "3.2.3"
+      },
+      {
+        "loaders": [
+          "Fabric",
+          "Quilt"
+        ],
+        "game_versions": [
+          "1.18.2"
+        ],
+        "version_number": "3.2.2"
+      },
+      {
+        "loaders": [
+          "Fabric",
+          "Quilt"
+        ],
+        "game_versions": [
+          "1.18.2"
+        ],
+        "version_number": "3.2.1"
+      },
+      {
+        "loaders": [
+          "Fabric",
+          "Quilt"
+        ],
+        "game_versions": [
+          "1.18.2"
+        ],
+        "version_number": "3.1.1"
+      },
+      {
+        "loaders": [
+          "Fabric"
+        ],
+        "game_versions": [
+          "1.18.2"
+        ],
+        "version_number": "3.1.0"
+      }
+    ],
+    "lastUpdated": 1686334129793
+  },
+  "starlight": {
+    "id": "H8CaAYZC",
+    "slug": "starlight",
+    "title": "Starlight (Fabric)",
+    "versions": [],
+    "lastUpdated": 1686334130983
+  },
+  "tooltipfix": {
+    "id": "2RKFTmiB",
+    "slug": "tooltipfix",
+    "title": "ToolTipFix",
+    "versions": [],
+    "lastUpdated": 1686334131391
+  }
+}

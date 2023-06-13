@@ -3,5 +3,9 @@
   "delete": "Voulez vous supprimer {item} ?",
   "error": "Une erreur est survenue, {error}",
   "command.disable": "Est ce que vous voulez désactiver {command} ?",
-  "command.enable": "Voulez vous activer {command} ?"
+  "command.enable": "Voulez vous activer {command} ?",
+  "command.disabled": "Désactivé {command}",
+  "command.enabled": "Activé {command}",
+  "command.global.disabled": "Désactivé {command} globalement",
+  "command.global.enabled": "Activé {command} globalement"
 }

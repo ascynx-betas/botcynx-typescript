@@ -1,9 +1,9 @@
 import { ApplicationCommandOptionType, EmbedBuilder } from "discord.js";
 import { configModel } from "../../../models/config";
 import { compareTest } from "../../../lib/personal-modules/testFor";
-import { slashCommand } from "../../../structures/Commands";
+import { SlashCommand } from "../../../structures/Commands";
 
-export default new slashCommand({
+export default new SlashCommand({
   name: "reload",
   description: "runs the configuration of the current server",
   require: ["mongooseConnectionString"],
