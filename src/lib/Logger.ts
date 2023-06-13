@@ -65,7 +65,17 @@ export class LoggerFactory {
       logger.showCallStack = true;
     })
   }
-}
+
+  private static MOVE_CURSOR = true;
+
+  static canMoveCursor(): boolean {
+    return LoggerFactory.MOVE_CURSOR;
+  }
+  static setMoveCursor(bool: boolean) {
+    LoggerFactory.MOVE_CURSOR = bool;
+  }
+
+ }
 
 class Logger {
   private name: string;
@@ -175,6 +185,15 @@ class Logger {
   }
 
   private clearLastLine() {
+    if (!LoggerFactory.canMoveCursor()) {
+      return;
+    }
+
+    if (!process.stdout.moveCursor) {
+      LoggerFactory.setMoveCursor(false);
+      return;
+    }
+
     process.stdout.moveCursor(0, -1);
     process.stdout.clearLine(1);
   }

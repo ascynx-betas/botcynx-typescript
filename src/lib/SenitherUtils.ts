@@ -53,9 +53,7 @@ export class Senither {
 
         for (let pData of data) {
             let profileData = pData[1];
-            if (profileData.last_save == null) {
-                continue;
-            }
+
 
             const profile: ProfileMember = profileData["members"][minUUID];
 
@@ -63,10 +61,6 @@ export class Senither {
             result.push({
                 id: profileData.profile_id,
                 name: profileData.cute_name,
-                last_save_at: {
-                    time: profileData.last_save,
-                    date: new Date(profileData.last_save)
-                },
                 weight: 0,
                 weight_overflow: 0,
                 fairy_souls: profile?.fairy_souls_collected || 0,
@@ -93,12 +87,11 @@ export class Senither {
         return result;
     }
 
-    public static mergeSkyblockProfileAndPlayer(profile: { id: string; name: string; last_save_at: any; weight: any; weight_overflow: number; fairy_souls: number; skills: any; slayers: any; dungeons: any; pets: any; coins: { bank: number; purse: number; }; }, player: Player) {
+    public static mergeSkyblockProfileAndPlayer(profile: { id: string; name: string; weight: any; weight_overflow: number; fairy_souls: number; skills: any; slayers: any; dungeons: any; pets: any; coins: { bank: number; purse: number; }; }, player: Player) {
         return {
             id: profile.id,
             name: profile.name,
             username: player.player.displayname,
-            last_save_at: profile.last_save_at,
             weight: profile.weight,
             weight_overflow: profile.weight_overflow,
             fairy_souls: profile.fairy_souls,

@@ -460,7 +460,6 @@ export type Profile = {
     transactions: Transation[];
   };
   game_mode?: "island" | "ironman" | "bingo"; //if none then it's normal gamemode
-  last_save: number;
 };
 type Bid = {
   auction_id: string;

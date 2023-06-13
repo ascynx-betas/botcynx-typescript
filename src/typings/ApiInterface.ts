@@ -149,10 +149,6 @@ export type senitherProfile = {
   id: string;
   name: string;
   username: string;
-  last_save_at: {
-    time: number;
-    date: string;
-  };
   weight: number;
   weight_overflow: number;
   fairy_souls: number;
