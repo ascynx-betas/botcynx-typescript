@@ -5,7 +5,8 @@ import {
   Colors,
   EmbedBuilder,
 } from "discord.js";
-import { coolPeopleUUID, coolTypeToEmojis } from "../lib/coolPeople";
+import { coolPeopleUUID } from "../lib/coolPeople";
+import { coolTypeToEmojis } from "../lib";
 import { getUsername } from "../lib/personal-modules/mojang";
 import {
   extractWeight,

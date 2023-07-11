@@ -28,15 +28,6 @@ export let coolPeopleUUID: coolPeople = {
   abc61a592d4843ffb2c9feb85a33f94f: "friend", //TheCarotte
 };
 
-export let coolTypeToEmojis = {
-  developer: "<:code:930047081983402004>",
-  "youtube rank": "<:youtube:931875731821174816>",
-  "other developer": "<a:coder:931875934318002227>",
-  "cool person": "<:coolcat:931876119647510530>",
-  friend: "<:removefrend:912730760404959272>",
-  staff: "<:verified_mod:931876321129283584>",
-};
-
 export const reload = async () => {
   const update = await updateCoolPeople(gistLink).catch((e) => e);
   if (update instanceof Error) return update;

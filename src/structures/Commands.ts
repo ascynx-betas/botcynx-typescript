@@ -103,35 +103,31 @@ class BaseCommand {
    */
   public isOnCooldown = function (user: User): boolean {
     const time = this.command.cooldown * 1000; //set seconds to milliseconds
-    let userCooldowns = botcynx.cooldowns.get(
+    const userCooldowns = botcynx.cooldowns.get(
       `${user.id}-${this.command.name}`
     );
 
-    if (typeof userCooldowns != "undefined") {
-      let cooldown = userCooldowns.timestamp;
+    if (typeof userCooldowns !== "undefined") {
+      const endTime = userCooldowns.timestamp;
 
-      if (cooldown > Date.now()) {
+      if (endTime > Date.now()) {
         //still in cooldown
         return false;
-      } else {
-        //ended
-
-        botcynx.cooldowns.delete(`${user.id}-${this.command.name}`);
-        const newCoolDown = new CommandCooldown(
-          user.id,
-          time,
-          this.command.name
-        );
-        botcynx.cooldowns.set(`${user.id}-${this.command.name}`, newCoolDown);
-        return true;
       }
-    } else {
-      //doesn't exist
-
-      const newCoolDown = new CommandCooldown(user.id, time, this.command.name);
+      //ended
+      botcynx.cooldowns.delete(`${user.id}-${this.command.name}`);
+      const newCoolDown = new CommandCooldown(
+        user.id,
+        time,
+        this.command.name
+      );
       botcynx.cooldowns.set(`${user.id}-${this.command.name}`, newCoolDown);
       return true;
     }
+    //does not exist
+    const newCoolDown = new CommandCooldown(user.id, time, this.command.name);
+    botcynx.cooldowns.set(`${user.id}-${this.command.name}`, newCoolDown);
+    return true;
   };
 
   public isAdminOrHigherThanBot = function (user: GuildMember) {

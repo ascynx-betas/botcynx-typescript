@@ -3,11 +3,18 @@ import { Collection } from "discord.js";
 import { botcynx, finishedLoading } from "..";
 import { BotClient } from "../structures/botClient";
 
-const loggerQueue: {message: string, level: LogLevel, logger: Logger}[] = [];
+const loggerQueue: {message: string | object, level: LogLevel, logger: Logger, table?: boolean}[] = [];
 
 export const postLoadingLogs = (client: BotClient) => {
   for (let queueItem of loggerQueue) {
-    queueItem.logger.log(queueItem.message, queueItem.level);
+    if (queueItem.table) {
+      if (typeof queueItem.message !== "object") {
+        throw new TypeError("Logger#table does not support strings");
+      }
+      queueItem.logger.table(queueItem.message as object, queueItem.level);
+    } else {
+      queueItem.logger.log(queueItem.message, queueItem.level);
+    }
   }
   //clear array
   loggerQueue.length = 0;
@@ -173,8 +180,20 @@ class Logger {
     out(m);
   }
 
-  table(message: object, level: LogLevel) {
-    if (level == LogLevel.DEBUG && !botcynx.isDebug()) return;
+  table(message: object, level: LogLevel, bypassQueue: boolean = false) {
+    if (!finishedLoading && !bypassQueue) {
+      loggerQueue.push({message, level, logger: this, table: true});
+      this.log("Added log to queue", LogLevel.DEBUG, true);
+      return;
+    }
+
+    if (this.modeOverride.length > 0 && !this.modeOverride.includes(level)) {
+      return;
+    }
+
+    if (level == LogLevel.DEBUG) {
+      if (((botcynx && !botcynx.isDebug) || process.env.environment != "debug") && !this.modeOverride.includes(LogLevel.DEBUG)) return;
+    }
     let prefix = level;
     let out = console.table;
 
@@ -254,7 +273,7 @@ export class LogLevel {
   static fromString(string: string): LogLevel {
     // Works assuming the name property of the enum is identical to the variable's name.
     const value = (this as any)[string];
-    if (value) {
+    if (value && value instanceof this) {
       return value;
     }
 

@@ -116,11 +116,11 @@ export class LocalizationHandler {
     return Buffer.from(this.toJSON());
   };
 
-  toJSON(): string {
+  toJSON(): string {//deserialize
     return JSON.stringify(this.cache, null, 2);
   };
 
-  fromJSON(LocaleJson: string): LocalizationHandler {//deserialize
+  fromJSON(LocaleJson: string): LocalizationHandler {//serialize
     this.cache = JSON.parse(LocaleJson);
     return this;
   };

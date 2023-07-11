@@ -65,8 +65,8 @@ export default new Event("messageCreate", async (message) => {
 
   //require values
   if (command.require) {
-    let RequireValue = await RequireTest(command.require);
-    if (RequireValue == false) return;
+    let requireValue = RequireTest(command.require);
+    if (!requireValue) return;
   }
   if (message.guild) {
     const globalConfig = await configModel.findOne({ guildId: "global" });

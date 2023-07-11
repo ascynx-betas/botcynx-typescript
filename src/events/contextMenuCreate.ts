@@ -68,8 +68,8 @@ export default new Event("interactionCreate", async (interaction) => {
       });
 
     if (command.require) {
-      let RequireValue = await RequireTest(command.require);
-      if (RequireValue == false)
+      let requireValue = RequireTest(command.require);
+      if (!requireValue)
         return interaction.reply({
           content: `Client cannot run this command as it's missing required values`,
           ephemeral: command.invisible,

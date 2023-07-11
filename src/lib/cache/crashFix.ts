@@ -288,7 +288,7 @@ export class Loader {
 
   static fromString(string: string): Loader {
     const value = (this as any)[string];
-    if (value) {
+    if (value && value instanceof this) {
       return value;
     }
 

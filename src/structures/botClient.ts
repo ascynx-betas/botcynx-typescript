@@ -1,4 +1,4 @@
-import { ApplicationCommand, Client, ClientEvents, Collection, Partials } from "discord.js";
+import { ApplicationCommandDataResolvable, Client, ClientEvents, Collection, Partials } from "discord.js";
 import * as fs from "fs";
 import {
   CommandType,
@@ -13,8 +13,8 @@ import {
 import glob from "glob";
 import { promisify } from "util";
 import {
-  RegisterCommandsOptions,
   registerModulesOptions,
+  tagTableElement,
 } from "../typings/Client";
 import { Event, extendedClientEvents } from "./Event";
 import { connect } from "mongoose";
@@ -40,7 +40,7 @@ export class BotClient extends Client {
   messageContextCommands: Collection<string, MessageContextType> =
     new Collection();
   commands: Collection<string, MessageCommandType> = new Collection();
-  ArrayOfSlashCommands = new Collection();
+  ArrayOfSlashCommands: Collection<string, {name: string}> = new Collection();
   buttonCommands: Collection<string, ButtonResponseType> = new Collection();
   whitelistedCommands: Collection<string, WhitelistedCommands> =
     new Collection();
@@ -85,6 +85,8 @@ export class BotClient extends Client {
   }
 
   start() {
+    //TODO remove overrides when done with testing
+    this.logger.addModeOverride(LogLevel.DEBUG, LogLevel.INFO, LogLevel.ERROR, LogLevel.WARN);
     if (process.env.mongooseConnectionString) {
       this.logger.log("connecting to mongoose", LogLevel.DEBUG);
       connect(process.env.mongooseConnectionString);
@@ -112,7 +114,7 @@ export class BotClient extends Client {
     }, 1000);
   }
 
-  private registerTable: { type: string; name: string; registered: boolean }[] =
+  private registerTable: { type: string; name: string; registered: boolean, note?: string }[] =
     [];
 
   async registerModule(options: registerModulesOptions) {
@@ -120,25 +122,51 @@ export class BotClient extends Client {
     let name = "";
     let type = options.type;
 
-    if (options.type == "command") {
-      if (!data.name) return;
-      name = data.name;
-    } else if (options.type == "modal") {
-      if (!data.name || !data.run) return;
-      name = data.name;
-    } else if (options.type == "button") {
-      if (!data.category) return;
-      name = data.customId
-        ? data.category + ":" + data.customId
-        : data.category;
-    }
-
     try {
+      switch (type) {
+        case "command": {
+          if (!data.name) return;
+          name = data.name;
+          break;
+        }
+        case "modal": {
+          if (!data.name || !data.run) return;
+          name = data.name;
+          break;
+        }
+        case "button": {
+          if (!data.category) return;
+          name = data.customId
+          ? data.category + ":" + data.customId
+          : data.category; 
+          break;
+        }
+        default: {
+          throw new TypeError(`Module type ${type} is not a registered type`);
+        }
+      }
+
       options.callback(data);
       this.registerTable.push({ type, name, registered: true });
     } catch (e) {
       console.log(e);
-      this.registerTable.push({ type, name, registered: false });
+      let NOTE = "";
+
+      if (e instanceof TypeError && e.message.startsWith("Module")) {
+        NOTE = "Module Type does not exist";
+      } else {
+        NOTE = "Error in callback";
+      }
+
+      if (!name) {
+        if (data.name) {
+          name = data.name;
+        } else {
+          name = "UNKNOWN"
+        }
+      }
+
+      this.registerTable.push({ type, name: name, registered: false, note: NOTE });
     }
   }
 
@@ -300,49 +328,7 @@ export class BotClient extends Client {
     });
 
     this.on("ready", async () => {
-      //check globally disabled commands
-      let config = await configModel.findOne({ guildId: "global" });
-      this.ArrayOfSlashCommands.forEach((c: any) => {
-        if (config.disabledCommands.includes(c.name)) {
-          c.default_member_permissions = String(
-            PermissionFlagsBits.Administrator
-          );
-          botcynx.ArrayOfSlashCommands.set(c.name, c);
-        }
-      });
-
-      //register tags
-      let guildsWithTags: any = await tagModel.find();
-      guildsWithTags = guildsWithTags.map((g) => g.guildId);
-      guildsWithTags = [...new Set(guildsWithTags)];
-      guildsWithTags.forEach((guild) => this.registerTags(guild));
-      //register commands
-      //TODO check commands to make sure they aren't the same and if they are then don't try to register them again **SHOULD CHECK BOTH IN LOCAL REGISTERING AND GLOBAL REGISTERING
-      if (!process?.env?.guildId)
-        this.registerCommands({
-          commands: this.ArrayOfSlashCommands,
-        });
-      else {
-        this.registerCommands({
-          commands: this.ArrayOfSlashCommands,
-          guildId: process.env.guildId,
-        });
-        for (let lCommand of this.whitelistedCommands.map((c) => c)) {
-          try {
-            let existingCommands = this.guilds.cache.get(process?.env?.guildId).commands.cache.filter((gCommand) => gCommand.name == lCommand.name);
-            if (existingCommands.size > 0 ) {
-              if (!existingCommands.first().equals(lCommand, false).valueOf()) {
-                existingCommands.first().edit(lCommand);
-              }
-            } else {
-              lCommand.register({
-                client: this,
-                guild: this.guilds.cache.get(process?.env?.guildId),
-              });
-            }
-          } catch (e) {}
-        }
-      }
+      await this.updateDisabledCommands();
 
       if (reload()) registerGistReload(); //attempt to reload coolPeople list / if it fails register the error Task
     });
@@ -402,55 +388,153 @@ export class BotClient extends Client {
     }
   }
 
-  async registerCommands({ commands, guildId }: RegisterCommandsOptions) {
-    if (guildId) {
-      this.guilds.cache.get(guildId)?.commands.set(commands);
+  async updateDisabledCommands() {
+    let config = await configModel.findOne({ guildId: "global" });
+    this.ArrayOfSlashCommands.forEach((c: any) => {
+      if (config.disabledCommands.includes(c.name)) {
+        c.default_member_permissions = String(
+          PermissionFlagsBits.Administrator
+        );
+        botcynx.ArrayOfSlashCommands.set(c.name, c);
+      }
+    });
+    
+    //update commands.
+    await this.updateCommands(process?.env?.guildId == undefined);
+  }
 
+  async registerTags() {
+    const tagTable: tagTableElement[] = [];//guildId, tag name, status (updated|created)
+
+    let taggedGuilds = await tagModel.find();
+
+    const guildTags: Collection<string, Collection<string, CommandType>> = new Collection();
+
+    taggedGuilds.forEach((g) => {
+      let tagObject = guildTags.get(g.guildId);
+      if (!tagObject) {
+        guildTags.set(g.guildId, new Collection());
+        tagObject = guildTags.get(g.guildId);
+      }
+
+      tagObject.set(g.name, {
+        name: g.name,
+        description: g.description,
+        category: "tag",
+        run: async ({ interaction, client }) => {
+          interaction.followUp({
+            content: g.text,
+            allowedMentions: { parse: [] },
+          });
+        }
+       });
+     });
+
+     for (const guildId of guildTags.keys()) {
+       const tags = guildTags.get(guildId);
+       const guild = this.guilds.cache.get(guildId);
+       if (!guild) continue;
+       this.logger.debug(`Checking tags for ${guild.name}/${guildId}`);
+
+      if (tags.size > 0) {
+         //update command cache.
+         await guild.commands.fetch();
+       }
+
+      for (const tagName of tags.keys()) {
+        const localTag = tags.get(tagName);
+
+         const tableElement: tagTableElement = {
+           guild: guildId,
+           tag: localTag.name,
+           status: "UNKNOWN"
+         };
+
+         try {
+           let guildCommand = guild.commands.cache.filter((command) => command.name === tagName).first();
+           if (guildCommand) {
+             if (!guildCommand.equals(localTag, false).valueOf()) {
+               guildCommand.edit(localTag);
+
+               tableElement.status = "EDITED";
+               tableElement["note"] = "Command existed and different";
+             } else {
+               tableElement.status = "EQUAL";
+              tableElement["note"] = "Command existed and was equal to local version";
+            }
+          } else {
+            //command is undefined
+            guild.commands.create(localTag);
+
+            tableElement.status = "CREATED";
+             tableElement["note"] = "Command did not exist";
+           }
+         } catch (error) {
+          tableElement.status = "ERRORED";
+          tableElement["note"] = "Command did not exist";
+        }
+
+        tagTable.push(tableElement);
+       }
+     }
+
+    this.logger.table(tagTable, LogLevel.DEBUG);
+  }
+
+  async updateCommands (updateLocally: boolean) {
+    if (updateLocally) {
+      if (!process?.env?.guildId) {
+        throw new Error("Missing Guild Id in the process environment values");
+      }
+
+      const guild = this.guilds.cache.get(process?.env?.guildId);
       this.logger.log(
         chalk.redBright(
-          `Registering commands to ${this.guilds.cache.get(guildId).name}`
+          `Registering commands to ${this.guilds.cache.get(process?.env?.guildId).name}`
         ),
         LogLevel.INFO
       );
-    } else {
-      this.application?.commands.set(commands);
 
+      //update local command cache.
+      await guild.commands.fetch();
+      
+      for (const lCommand of this.ArrayOfSlashCommands.map((command) => command)) {
+        try {
+          let guildCommands = guild.commands.cache.filter((gCommand) => gCommand.name == lCommand.name);
+          if (guildCommands.size == 0) {
+            guild.commands.create(lCommand as ApplicationCommandDataResolvable);
+          } else {
+            if (!guildCommands.first().equals(lCommand as any, false).valueOf()) {
+              await guildCommands.first().edit(lCommand as any);
+            }
+          }
+        } catch (error) {
+          this.logger.error(error);
+        }
+      }
+    } else {
       this.logger.log(
         chalk.green(`Registering global commands`),
         LogLevel.INFO
       );
+
+      //Load command cache
+      await this.application.commands.fetch();
+
+      for (const command of this.ArrayOfSlashCommands.map((command) => command)) {
+        try {
+          let appCommands = this.application.commands.cache.filter((appCommand) => appCommand.name == command.name);
+          if (appCommands.size == 0) {
+            this.application.commands.create(command as ApplicationCommandDataResolvable);
+          } else {
+            if (!appCommands.first().equals(command as any, false).valueOf()) {
+              await appCommands.first().edit(command as any);
+            } 
+          }
+        } catch (error) {
+          this.logger.error(error);
+        }
+      }
     }
-  }
-
-  async registerTags(guildId: string) {
-    const guild = this.guilds.cache.get(guildId);
-    if (!guild) return;
-
-    const tags: any = new Collection();
-    let guildTags = await tagModel.find({
-      guildId: guildId,
-    });
-    if (guildTags.length == 0) return;
-    guildTags.forEach((tag) => {
-      let command: CommandType = {
-        name: tag.name,
-        description: tag.description,
-        category: "tag",
-
-        run: async ({ interaction, client }) => {
-          interaction.followUp({
-            content: tag.text,
-            allowedMentions: { parse: [] },
-          });
-        },
-      };
-      this.ArrayOfSlashCommands.set(command.name, command);
-      tags.set(command.name, command);
-    });
-    this.logger.log(
-      chalk.green(`Registering tags for (${guild.name}/${guildId})`),
-      LogLevel.DEBUG
-    );
-    this.guilds.cache.get(guildId)?.commands.set(tags);
   }
 }

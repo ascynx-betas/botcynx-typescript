@@ -14,8 +14,8 @@ import {
   getFatterProfile,
   getSpecifiedProfile,
 } from "../../../lib/personal-modules/senither";
-import { uuid } from "../../../typings/ApiInterface";
-import { coolPeopleUUID, coolTypeToEmojis } from "../../../lib/coolPeople";
+import { coolPeopleUUID } from "../../../lib/coolPeople";
+import { coolTypeToEmojis } from "../../../lib";
 import { botcynx } from "../../../index";
 
 export default new SlashCommand({
@@ -42,7 +42,7 @@ export default new SlashCommand({
   run: async ({ interaction, client }) => {
     let username: string = interaction.options.getString("username");
     let profile: string = interaction.options.getString("profile");
-    let uuid: uuid | string;
+    let uuid: string;
     let data: any;
 
     if (!username) {
@@ -63,7 +63,6 @@ export default new SlashCommand({
         return interaction.followUp({
           content: `please enter the username of the person you want to see the weight of`,
         });
-      uuid = (uuid as uuid).id;
     } else {
       const data = await getPlayerByUuid(uuid as string).catch((e) => botcynx.getLogger.error(e));
 

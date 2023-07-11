@@ -167,7 +167,17 @@ export const sendInfoWebhook = async (options: {
   });
 };
 
-export const checkHypixelLinked = (user: User, linked: String): boolean => (linked.toLowerCase() == user.tag.toLowerCase());
+const usernameToOldFormat = (username: string): string => {
+  if (username.endsWith("#0")) {
+    //new format (tag returns username#0)
+    return username += "000";
+  } else {
+    //old format (still username#discriminator)
+    return username;
+  }
+};
+
+export const checkHypixelLinked = (user: User, linked: String): boolean => (linked?.toLowerCase() == usernameToOldFormat(user.tag.toLowerCase()));
 
 const linkRegex =
   /((?:(https:\/\/)|(http:\/\/)|())(?<host>.{0,6})\.)?discord\.com\/channels\/(?<guild>[0-9]+)\/(?<channel>[0-9]+)\/(?<message>[0-9]+)(\/.*)?/im;

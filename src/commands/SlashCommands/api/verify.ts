@@ -42,12 +42,11 @@ export default new SlashCommand({
     const userId = interaction.user.id;
     const action = interaction.options.getString("action");
 
-    let uuid: any = await getUuidbyUsername(username).catch(() => null);
+    let uuid: string = await getUuidbyUsername(username).catch(() => null);
     if (uuid == null)
       return interaction.followUp({
         content: `Either account does not exist or I couldn't retrieve it from the API`,
       });
-    uuid = uuid.id;
 
     if (!uuid)
       return interaction.followUp({

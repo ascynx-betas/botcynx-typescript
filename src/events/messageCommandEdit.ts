@@ -43,8 +43,8 @@ export default new Event(
     if (!command) return;
 
     if (command.require) {
-      let RequireValue = await RequireTest(command.require);
-      if (RequireValue == false) return;
+      let requireValue = RequireTest(command.require);
+      if (!requireValue) return;
     }
     const globalConfig = await configModel.findOne({ guildId: "global" });
     if (!(await isDisabled(command, newMessage?.guild)))

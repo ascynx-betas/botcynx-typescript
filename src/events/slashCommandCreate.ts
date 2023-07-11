@@ -93,8 +93,8 @@ export default new Event(
 
       CommandLogger.log("require check", LogLevel.DEBUG);
       if (command.require) {
-        let RequireValue = await RequireTest(command.require);
-        if (RequireValue == false)
+        let requireValue = RequireTest(command.require);
+        if (!requireValue)
           return interaction.reply({
             content: `Client missing requirement to run this command.`,
           });

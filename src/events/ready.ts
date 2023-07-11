@@ -1,6 +1,6 @@
 import { Event } from "../structures/Event";
 import { getCurrPlayerCount } from "../lib/HypixelAPIUtils";
-import { ticketBlockedName } from "../config";
+import { maxTimeout, ticketBlockedName } from "../config";
 import chalk from "chalk";
 import { botcynx, runPostLoadingEvents } from "..";
 import { LogLevel } from "../lib/Logger";
@@ -35,7 +35,7 @@ export default new Event("ready", async () => {
   botcynx.getLogger.log(chalk.blue("----Status----"), LogLevel.INFO);
   botcynx.getLogger.log(chalk.green("Bot is now online"), LogLevel.INFO);
 
-  postStartData.maxTimeout = "28 days";
+  postStartData.maxTimeout = maxTimeout;
   postStartData.ticketblockedNames = ticketBlockedName;
 
   postStartData.mongooseconnectionstring = process.env.mongooseConnectionString

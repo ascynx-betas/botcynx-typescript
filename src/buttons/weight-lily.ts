@@ -9,7 +9,8 @@ import { ButtonResponse } from "../structures/Commands";
 import lilyweight from "lilyweight";
 import { APIEmbedField } from "discord.js";
 import { getUsername } from "../lib/personal-modules/mojang";
-import { coolPeopleUUID, coolTypeToEmojis } from "../lib/coolPeople";
+import { coolPeopleUUID } from "../lib/coolPeople";
+import { coolTypeToEmojis } from "../lib";
 
 let lily = new lilyweight(process.env.hypixelapikey);
 

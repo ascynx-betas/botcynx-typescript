@@ -1,9 +1,19 @@
 import fetch from "node-fetch";
 import { botcynx } from "../..";
 import { profile, uuid } from "../../typings/ApiInterface";
+import { Collection } from "discord.js";
+
+const nameToUUIDMap = new Collection<string, string>();
+
+const getNameUUIDMap = () => {
+  return nameToUUIDMap.clone();
+}
 
 const getUuidbyUsername = async function (username: string) {
   username = username.toLowerCase().trim();
+  if (nameToUUIDMap.has(username)) {
+    return nameToUUIDMap.get(username);
+  }
 
   let uriComponent = encodeURIComponent(username);
   let Url = `https://api.mojang.com/users/profiles/minecraft/${uriComponent}`;
@@ -14,7 +24,7 @@ const getUuidbyUsername = async function (username: string) {
       let data: any = await body.text();
       if (typeof data === "undefined" || !data) return null;
       let result: uuid = JSON.parse(data);
-      return result;
+      return result.id;
     }
   );
 };
@@ -35,23 +45,11 @@ const getProfilebyUuid = async function (uuid: string) {
   );
 };
 
-const fetchJSON = async (url) => {
-  const body = await fetch(url, {
-    headers: { "user-agent": botcynx.getUserAgent() },
-  });
-  const json = await body.json();
-  if (json.success === false)
-    throw Error("Request to API Failed: " + json.error);
-  return json;
+const getUsername = async (uuid: string): Promise<string> => {
+  if (nameToUUIDMap.some((v) => v == uuid)) {
+    return nameToUUIDMap.filter((v) => v === uuid).firstKey();
+  }
+  return (await getProfilebyUuid(uuid)).name;
 };
 
-const getUsername = async (uuid): Promise<String> =>
-  (
-    await fetchJSON(
-      `https://api.mojang.com/user/profile/${encodeURIComponent(
-        uuid.toLowerCase().trim()
-      )}`
-    )
-  ).name;
-
-export { getProfilebyUuid, getUuidbyUsername, getUsername };
+export { getProfilebyUuid, getUuidbyUsername, getUsername, getNameUUIDMap };

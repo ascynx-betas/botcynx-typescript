@@ -4,7 +4,7 @@ import {
   Colors,
   ApplicationCommandOptionType,
 } from "discord.js";
-import { coolPeopleUUID, coolTypeToEmojis } from "../../../lib/coolPeople";
+import { coolPeopleUUID } from "../../../lib/coolPeople";
 import { verifyModel } from "../../../models/verifyModel";
 import {
   getPlayerByUuid,
@@ -12,6 +12,7 @@ import {
 } from "../../../lib/HypixelAPIUtils";
 import { getUuidbyUsername } from "../../../lib/personal-modules/mojang";
 import { SlashCommand } from "../../../structures/Commands";
+import { coolTypeToEmojis } from "../../../lib";
 
 export default new SlashCommand({
   name: "hypixel",
@@ -30,7 +31,7 @@ export default new SlashCommand({
 
   run: async ({ interaction, client }) => {
     let username = interaction.options.getString("username");
-    let uuid: any;
+    let uuid: string;
     if (!username) {
       const userId = interaction.user.id;
 
@@ -49,11 +50,8 @@ export default new SlashCommand({
 
     if (typeof uuid === "undefined") {
       uuid = await getUuidbyUsername(username).catch(() => null);
-
       if (uuid == null)
         return interaction.followUp({ content: `couldn't fetch uuid` });
-
-      uuid = uuid.id;
     } else {
       const data = await getPlayerByUuid(uuid).catch(() => null);
       username = data.player?.displayname;

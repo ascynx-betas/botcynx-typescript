@@ -63,31 +63,33 @@ const userIsDev = function (user: User): boolean {
   return true;
 };
 
+/**
+ * If the command is on cooldown for the user or not
+ * @param command - The command instantiated
+ * @param {User} user - The user affected
+ * @returns {boolean} - Whether it failed or not. (true = passed, false = failed)
+ */
 const isOnCooldown = function (command: CommandType | UserContextType | MessageContextType | MessageCommandType, user: User): boolean {
   const time = command.cooldown * 1000; //set seconds to milliseconds
   let userCooldowns = botcynx.cooldowns.get(`${user.id}-${command.name}`);
 
   if (typeof userCooldowns != "undefined") {
-    let cooldown = userCooldowns.timestamp;
+    let endTime = userCooldowns.timestamp;
 
-    if (cooldown > Date.now()) {
+    if (endTime > Date.now()) {
       //still in cooldown
       return false;
-    } else {
-      //ended
-
-      botcynx.cooldowns.delete(`${user.id}-${command.name}`);
-      const newCooldown = new CommandCooldown(user.id, time, command.name);
-      botcynx.cooldowns.set(`${user.id}-${command.name}`, newCooldown);
-      return true;
     }
-  } else {
-    //doesn't exist
-
+    //ended
+    botcynx.cooldowns.delete(`${user.id}-${command.name}`);
     const newCooldown = new CommandCooldown(user.id, time, command.name);
     botcynx.cooldowns.set(`${user.id}-${command.name}`, newCooldown);
     return true;
   }
+  //doesn't exist
+  const newCooldown = new CommandCooldown(user.id, time, command.name);
+  botcynx.cooldowns.set(`${user.id}-${command.name}`, newCooldown);
+  return true;
 };
 
 const isAdminOrHigherThanBot = function (user: GuildMember) {
