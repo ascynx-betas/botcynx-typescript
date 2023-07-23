@@ -177,7 +177,11 @@ const usernameToOldFormat = (username: string): string => {
   }
 };
 
-export const checkHypixelLinked = (user: User, linked: String): boolean => (linked?.toLowerCase() == usernameToOldFormat(user.tag.toLowerCase()));
+export const checkHypixelLinked = (user: User, linked: String): boolean => 
+  linked?.toLowerCase().match(/#\d{1,4}$/) ?
+  linked?.toLowerCase() == usernameToOldFormat(user.tag.toLowerCase()) :
+  linked?.toLowerCase() == user.username.toLowerCase();
+
 
 const linkRegex =
   /((?:(https:\/\/)|(http:\/\/)|())(?<host>.{0,6})\.)?discord\.com\/channels\/(?<guild>[0-9]+)\/(?<channel>[0-9]+)\/(?<message>[0-9]+)(\/.*)?/im;
