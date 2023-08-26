@@ -98,6 +98,12 @@ export default new WhitelistedCommand({
       });
     }
 
+    if (!uuid) {
+      return interaction.followUp({
+        content: `Could not get uuid for account with username: ${username}`
+      });
+    }
+
     let hypixelData = await getProfiles(uuid);
 
     if (!hypixelData || hypixelData.size == 0)

@@ -38,19 +38,13 @@ export default new Command({
       if (su.includes(Id)) {
         //remove
 
-        configModel.updateOne(
-          {
-            guildId: message.guild.id,
-          },
-          { $pull: { su: `${Id}` } },
-          function (err) {
-            if (err)
+        configModel.updateOne({ guildId: message.guildId }, { $pull: { su: Id } })
+          .exec().catch((_err) => {
               return request.send({
                 content: `there was an error while removing super user from <@${Id}>`,
                 allowedMentions: { parse: ["everyone", "roles"] },
               });
-          }
-        );
+        });
 
         request.send({
           content: `successfully removed <@${Id}> from ${message.guild.name}'s super user list`,
@@ -59,19 +53,13 @@ export default new Command({
       } else {
         //add
 
-        configModel.updateOne(
-          {
-            guildId: message.guild.id,
-          },
-          { $addToSet: { su: `${Id}` } },
-          function (err) {
-            if (err)
-              return request.send({
-                content: `there was an error while giving super user to <@${Id}>`,
-                allowedMentions: { parse: ["everyone", "roles"] },
-              });
-          }
-        );
+        configModel.updateOne({ guildId: message.guildId }, { $addToSet: { su: Id } })
+          .exec().catch((_err) => {
+            return request.send({
+              content: `there was an error while giving super user to <@${Id}>`,
+              allowedMentions: { parse: ["everyone", "roles"] }
+            })
+          });
 
         request.send({
           content: `successfully added <@${Id}> to ${message.guild.name}'s super user list`,
@@ -85,19 +73,13 @@ export default new Command({
       if (config.su.includes(Id)) {
         //remove
 
-        configModel.updateOne(
-          {
-            guildId: "global",
-          },
-          { $pull: { su: `${Id}` } },
-          function (err) {
-            if (err)
-              return request.send({
-                content: `there was an error while removing super user from <@${Id}>`,
-                allowedMentions: { parse: ["everyone", "roles"] },
-              });
-          }
-        );
+        configModel.updateOne({ guildId: "global" }, { $pull: { su: Id } })
+          .exec().catch((_err) => {
+            return request.send({
+              content: `there was an error while removing super user from <@${Id}>`,
+              allowedMentions: { parse: ["everyone", "roles"] }
+            });
+          });
 
         request.send({
           content: `successfully removed <@${Id}> from global super user list`,
@@ -106,19 +88,13 @@ export default new Command({
       } else {
         //add
 
-        configModel.updateOne(
-          {
-            guildId: "global",
-          },
-          { $addToSet: { su: `${Id}` } },
-          function (err) {
-            if (err)
-              return request.send({
-                content: `there was an error while giving super user to <@${Id}>`,
-                allowedMentions: { parse: ["everyone", "roles"] },
-              });
-          }
-        );
+        configModel.updateOne({ guildId: "global" }, { $addToSet: { su: Id } })
+          .exec().catch((_err) => {
+            return request.send({
+              content: `there was an error while giving super user to <@${Id}>`,
+              allowedMentions: { parse: ["everyone", "roles"] },
+            });
+          })
 
         request.send({
           content: `successfully added <@${Id}> to global super user list`,

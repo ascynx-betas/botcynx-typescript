@@ -161,7 +161,7 @@ export default new SlashCommand({
       await tagModel.deleteOne({
         guildId: guild.id,
         name: name,
-      });
+      }).exec();
 
       const command = interaction.guild.commands.cache.filter(
         (c) => c.name === name
@@ -185,17 +185,21 @@ export default new SlashCommand({
           name: name,
         })[0].description;
       }
+
       const command = {
         name: name,
         description: description,
       };
+
       tagModel.updateOne(
         { guildId: guild.id, name: name },
         { $set: { text: response, description: description } }
-      );
+      ).exec();
+
       const commandId = client.guilds.cache
         .get(guild.id)
         .commands.cache.get(name).id;
+
       return client.guilds.cache
         .get(guild.id)
         .commands.edit(commandId, command)

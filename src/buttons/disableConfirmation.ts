@@ -22,20 +22,17 @@ export default new ButtonResponse({
       const guildConfig = config[0];
       if (guildConfig.disabledCommands.includes(command)) {
         configModel.updateOne(
-          { guildId: interaction.guild.id },
-          { $pull: { disabledCommands: command } },
-          function (err) {
-            if (err) {
-              const embed = new EmbedBuilder()
-                .setDescription(
-                  "there was an error while removing the command from disabled commands"
-                )
-                .setTitle("Error")
-                .setFooter({ text: `E` });
-              return interaction.update({ embeds: [embed], components: [] });
-            }
-          }
-        );
+          { guildId: interaction.guildId },
+          { $pull: { disabledCommands: command } }
+        ).exec().catch((_err) => {
+          const embed = new EmbedBuilder()
+          .setDescription(
+            "there was an error while removing the command from disabled commands"
+          )
+          .setTitle("Error")
+          .setFooter({ text: `E` });
+        return interaction.update({ embeds: [embed], components: [] });
+        });
 
         const embed = new EmbedBuilder()
           .setTitle("Success")
@@ -51,9 +48,7 @@ export default new ButtonResponse({
           {
             guildId: interaction.guild.id,
           },
-          { $addToSet: { disabledCommands: command } },
-          function (err) {
-            if (err) {
+          { $addToSet: { disabledCommands: command } }).exec().catch((_err) => {
               const embed = new EmbedBuilder()
                 .setDescription(
                   "there was an error while disabling that command"
@@ -61,9 +56,7 @@ export default new ButtonResponse({
                 .setTitle("Error")
                 .setFooter({ text: `E` });
               return interaction.update({ embeds: [embed], components: [] });
-            }
-          }
-        );
+        });
 
         const embed = new EmbedBuilder()
           .setTitle("Success")
@@ -88,20 +81,17 @@ export default new ButtonResponse({
         //remove command
 
         configModel.updateOne(
-          { guildId: "global" },
-          { $pull: { disabledCommands: command } },
-          function (err) {
-            if (err) {
-              const embed = new EmbedBuilder()
+          { guildId: "global"},
+          { $pull: { disabledCommands: command } }
+        ).exec().catch((_err) => {
+          const embed = new EmbedBuilder()
                 .setDescription(
                   "there was an error while removing the command from disabled commands"
                 )
                 .setTitle("Error")
                 .setFooter({ text: `E` });
               return interaction.update({ embeds: [embed], components: [] });
-            }
-          }
-        );
+        });
 
         const c = client.application.commands.cache
           .filter((c) => c.name == command)
@@ -137,22 +127,18 @@ export default new ButtonResponse({
         });
       } else {
         //add command
-
         configModel.updateOne(
-          { guildId: "global" },
-          { $addToSet: { disabledCommands: command } },
-          function (err) {
-            if (err) {
-              const embed = new EmbedBuilder()
+          { guildId: "global"},
+          { $addToSet: { disabledCommands: command } }
+        ).exec().catch((_err) => {
+          const embed = new EmbedBuilder()
                 .setDescription(
                   "there was an error while disabling that command"
                 )
                 .setTitle("Error")
                 .setFooter({ text: `E` });
               return interaction.update({ embeds: [embed], components: [] });
-            }
-          }
-        );
+        });
 
         const c = client.application.commands.cache
           .filter((c) => c.name == command)

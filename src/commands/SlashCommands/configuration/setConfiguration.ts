@@ -81,21 +81,18 @@ export default new SlashCommand({
 
     if (type === "bypass") {
       const roleId = role.id;
-      if (guildConfig.bypass.includes(roleId))
+      if (guildConfig.bypass.includes(roleId)) {
         return interaction.followUp({
           content: `bypass already contains this role, if you want to delete it, please use the /delconfig command`,
         });
+      }
 
-      configModel.updateOne(
-        { guildId: `${guildId}` },
-        { $addToSet: { bypass: `${roleId}` } },
-        function (err: any) {
-          if (err)
-            return interaction.followUp({
-              content: `there was an error while trying to update the configuration, please try again later`,
-            });
-        }
-      );
+      configModel.updateOne({ guildId: guildId}, { $addToSet: { bypass: roleId } })
+        .exec().catch((_err) => {
+          return interaction.followUp({
+            content: `there was an error while trying to update the configuration, please try again later`,
+          });
+      });
 
       interaction.followUp({
         content: `${role} has been successfully added to ${type}`,
@@ -103,21 +100,18 @@ export default new SlashCommand({
       });
     } else if (type === "trigger") {
       const roleId = role.id;
-      if (guildConfig.trigger.includes(roleId))
+      if (guildConfig.trigger.includes(roleId)) {
         return interaction.followUp({
           content: `trigger already contains this role, if you want to remove it, please use the /delconfig command`,
         });
+      }
 
-      configModel.updateOne(
-        { guildId: guildId },
-        { $addToSet: { trigger: `${roleId}` } },
-        function (err: any) {
-          if (err)
-            return interaction.followUp({
-              content: `there was an error while trying to update the configuration, please try again later`,
-            });
-        }
-      );
+      configModel.updateOne({ guildId: guildId }, { $addToSet: { trigger: roleId } })
+        .exec().catch((_err) => {
+          return interaction.followUp({
+            content: `there was an error while trying to update the configuration, please try again later`,
+          });
+      });
 
       interaction.followUp({
         content: `${role} has successfully been added to ${type}`,
@@ -125,21 +119,18 @@ export default new SlashCommand({
       });
     } else if (type === "removable") {
       const roleId = role.id;
-      if (guildConfig.removable.includes(roleId))
+      if (guildConfig.removable.includes(roleId)) {
         return interaction.followUp({
           content: `removable already contains this role, if you want to remove it, please use the /delconfig command`,
         });
+      }
 
-      configModel.updateOne(
-        { guildId: guildId },
-        { $addToSet: { removable: `${roleId}` } },
-        function (err: any) {
-          if (err)
-            return interaction.followUp({
-              content: `there was an error while trying to update the configuration, please try again later`,
-            });
-        }
-      );
+      configModel.updateOne({ guildId: guildId }, { $addToSet: { removable: roleId } })
+        .exec().catch((_err) => {
+          return interaction.followUp({
+            content: `there was an error while trying to update the configuration, please try again later`,
+          });
+      });
 
       interaction.followUp({
         content: `${role} has successfully been added to ${type}`,
@@ -147,21 +138,18 @@ export default new SlashCommand({
       });
     } else if (type === "logChannel") {
       let logChannel = channel.id;
-      if (guildConfig.logchannel == `${logChannel}`)
+      if (guildConfig.logchannel == `${logChannel}`) {
         return interaction.followUp({
           content: `the current Logging channel is the same as the one you're trying to set it to`,
         });
+      }
 
-      configModel.updateOne(
-        { guildId: guildId },
-        { $set: { logchannel: `${logChannel}` } },
-        function (err: any) {
-          if (err)
-            return interaction.followUp({
-              content: `there was an error while trying to update the configuration, please try again later`,
-            });
-        }
-      );
+      configModel.updateOne({ guildId: guildId}, { $set: { logchannel: logChannel } })
+        .exec().catch((_err) => {
+          return interaction.followUp({
+            content: `there was an error while trying to update the configuration, please try again later`,
+          });
+      });
 
       interaction.followUp({
         content: `the new Logging channel is ${logChannel}, modifications after this one will also be logged there`,
@@ -169,24 +157,21 @@ export default new SlashCommand({
     } else if (type == "blockChannel") {
       const channelId = channel.id;
 
-      if (guildConfig.blocked.includes(channelId))
+      if (guildConfig.blocked.includes(channelId)) {
         return interaction.followUp({
           content: `${channel} is already blocked, if you want to unblock it, please use the /delconfig command`,
         });
+      }
 
-      configModel.updateOne(
-        { guildId: guildId },
-        { $addToSet: { blocked: `${channelId}` } },
-        function (err: any) {
-          if (err)
-            return interaction.followUp({
-              content: `there was an error while trying to update the configuration, please try again later`,
-            });
-        }
-      );
+      configModel.updateOne({ guildId: guildId }, { $addToSet: { blocked: channelId } })
+        .exec().catch((_err) => {
+          return interaction.followUp({
+            content: `there was an error while trying to update the configuration, please try again later`,
+          });
+      });
 
       interaction.followUp({
-        content: `${channel} is now blocked, any person that tries to use the bot's link reader on a link that leads to that channel, will be ignored`,
+        content: `${channel} is now blocked, any message linking to that channel, will not be showed by me.`,
       });
     } else interaction.followUp({ content: `type is not supported` });
 

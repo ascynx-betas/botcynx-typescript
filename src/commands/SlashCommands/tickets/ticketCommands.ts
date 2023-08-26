@@ -248,16 +248,12 @@ export default new SlashCommand({
                 })
               );
           } else if (edit === "welcome_message") {
-            ticketModel.updateOne(
-              { guildId: `${guildId}, name: ${config}` },
-              { $set: { welcomemessage: `${change || undefined}` } },
-              function (err: any) {
-                if (err)
-                  return interaction.followUp({
-                    content: `there was an error while trying to update, please try again later`,
-                  });
-              }
-            );
+            ticketModel.updateOne({ guildId: guildId, name: config }, { $set: { welcomemessage: change || "undefined" } })
+              .exec().catch((_err) => {
+                return interaction.followUp({
+                  content: `there was an error while trying to update, please try again later`,
+                });
+            });
             return interaction.followUp({
               content: `successfully changed welcome message`,
             });
@@ -302,16 +298,19 @@ export default new SlashCommand({
         return interaction.followUp({ content: `ticket does not exist` });
       ticketModel
         .deleteOne({ guildId: guildId, name: config })
+        .exec()
         .then(async () => {
           const message = await (
             interaction.guild.channels.cache.get(
               existing[0].channel
             ) as GuildTextBasedChannel
           ).messages.fetch(existing[0].linkedmessage);
-          if (!message)
+          if (!message) {
             return interaction.followUp({
               content: `I could not delete the linked message, please do it yourself`,
             });
+          }
+
           message
             .delete()
             .then(() =>

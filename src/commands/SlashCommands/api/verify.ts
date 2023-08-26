@@ -109,20 +109,12 @@ export default new SlashCommand({
         });
 
       if (checkHypixelLinked(interaction.user, discordLinked)) {
-        verifyModel
-          .updateOne(
-            { minecraftuuid: `${uuid}` },
-            {
-              $set: { userId: `${userId}` },
-              function(err: any) {
-                if (err)
-                  return interaction.followUp({
-                    content: `there was an error while trying to update, please try again later`,
-                  });
-              },
-            }
-          )
-          .then(() => {
+        verifyModel.updateOne({ minecraftuuid: uuid }, { $set: { userId: userId } })
+          .exec().catch((_err) => {
+            return interaction.followUp({
+              content: `there was an error while trying to update, please try again later`,
+            });
+          }).then((_res) => {
             return interaction.followUp({
               content: `successfully updated linked account`,
             });

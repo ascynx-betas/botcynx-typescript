@@ -20,5 +20,5 @@ export default new Event("guildDelete", (guild) => {
   });
 
   const guildId = guild.id;
-  configModel.deleteOne({ guildId: guildId });
+  configModel.deleteOne({ guildId: guildId }).exec();
 });

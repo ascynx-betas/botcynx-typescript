@@ -78,22 +78,19 @@ export default new SlashCommand({
     if (type === "bypass") {
       const roleId = role.id;
 
-      if (!guildConfig.bypass.includes(roleId))
+      if (!guildConfig.bypass.includes(roleId)) {
         return interaction.followUp({
           content: `${role} isn't a bypass role, if you want to add it, use the /setconfig command`,
           allowedMentions: { parse: [] },
         });
+      }
 
-      configModel.updateOne(
-        { guildId: `${guildId}` },
-        { $pull: { bypass: `${roleId}` } },
-        function (err: any) {
-          if (err)
-            return interaction.followUp({
-              content: `there was an error, please try again later`,
-            });
-        }
-      );
+      configModel.updateOne({ guildId: guildId}, { $pull: { bypass: roleId}})
+        .exec().catch((_err) => {
+          return interaction.followUp({
+            content: `there was an error, please try again later`,
+          });
+      });
 
       interaction.followUp({
         content: `the changes to ${type} have been made, it may take some time before the changes take effect`,
@@ -101,22 +98,19 @@ export default new SlashCommand({
     } else if (type === "removable") {
       const roleId = role.id;
 
-      if (!guildConfig.removable.includes(roleId))
+      if (!guildConfig.removable.includes(roleId)) {
         return interaction.followUp({
           content: `${role} isn't a removable role, if you want to add it, use the /setconfig command`,
           allowedMentions: { parse: [] },
         });
+      }
 
-      configModel.updateOne(
-        { guildId: `${guildId}` },
-        { $pull: { removable: `${roleId}` } },
-        function (err: any) {
-          if (err)
-            return interaction.followUp({
-              content: `there was an error, please try again later`,
-            });
-        }
-      );
+      configModel.updateOne( { guildId: guildId }, { $pull: { removable: roleId } })
+        .exec().catch((_err) => {
+          return interaction.followUp({
+            content: `there was an error, please try again later`,
+          });
+      });
 
       interaction.followUp({
         content: `the changes to ${type} have been made, it may take some time before the changes take effect`,
@@ -124,50 +118,44 @@ export default new SlashCommand({
     } else if (type === "trigger") {
       const roleId = role.id;
 
-      if (!guildConfig.trigger.includes(roleId))
+      if (!guildConfig.trigger.includes(roleId)) {
         return interaction.followUp({
           content: `${role} isn't a trigger role, if you want to add it, use the /setconfig command`,
           allowedMentions: { parse: [] },
         });
+      }
 
-      configModel.updateOne(
-        { guildId: `${guildId}` },
-        { $pull: { trigger: `${roleId}` } },
-        function (err: any) {
-          if (err)
-            return interaction.followUp({
-              content: `there was an error, please try again later`,
-            });
-        }
-      );
+      configModel.updateOne({ guildId: guildId }, { $pull: { trigger: roleId } })
+        .exec().catch((_err) => {
+          return interaction.followUp({
+            content: `there was an error, please try again later`,
+          });
+      });
 
       interaction.followUp({
         content: `the changes to ${type} have been made, it may take some time before the changes take effect`,
       });
     } else if (type === "blockchannel") {
       let channelId = channel.id;
-      if (!guildConfig.blocked.includes(channelId))
+      if (!guildConfig.blocked.includes(channelId)) {
         return interaction.followUp({
           content: `${channel} is not blocked, if you want to block it use the /setconfig command`,
         });
+      }
 
-      configModel.updateOne(
-        { guildId: `${guildId}` },
-        { $pull: { blocked: `${channelId}` } },
-        function (err: any) {
-          if (err)
-            return interaction.followUp({
-              content: `there was an error, please try again later`,
-            });
-        }
-      );
+      configModel.updateOne({ guildId: guildId }, { $pull: { blocked: channelId } })
+        .exec().catch((_err) => {
+          return interaction.followUp({
+            content: `there was an error, please try again later`,
+          });
+      });
 
       interaction.followUp({
         content: `the changes to ${type} have been made, it may take some time before the changes take effect`,
       });
-    } else
+    } else {
       return interaction.followUp({ content: `${type} is not recognized` });
-
+    }
     if (guildConfig.logchannel) {
       const log = interaction.guild.channels.cache.get(guildConfig.logchannel);
       if (!log) return;
