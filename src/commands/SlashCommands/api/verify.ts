@@ -37,10 +37,10 @@ export default new SlashCommand({
   ],
 
   run: async ({ interaction }) => {
-    const username = interaction.options.getString("username");
+    const username = interaction.options.get("username")?.value as string;
     const userTag = interaction.user.tag;
     const userId = interaction.user.id;
-    const action = interaction.options.getString("action");
+    const action = interaction.options.get("action")?.value as string;
 
     let uuid: string = await getUuidbyUsername(username).catch(() => null);
     if (uuid == null)

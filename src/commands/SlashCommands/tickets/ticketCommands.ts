@@ -98,10 +98,10 @@ export default new SlashCommand({
 
   run: async ({ interaction, client }) => {
     const action = interaction.options.getSubcommand();
-    const config = interaction.options.getString("config-name");
-    const target = interaction.options.getUser("user");
-    const change = interaction.options.getString("change");
-    const edit = interaction.options.getString("edit");
+    const config = interaction.options.get("config-name")?.value as string;
+    const target = interaction.options.get("user")?.user;
+    const change = interaction.options.get("change")?.value as string;
+    const edit = interaction.options.get("edit")?.value as string;
     const guildId = interaction.guild.id;
     const channel = interaction.channel;
 

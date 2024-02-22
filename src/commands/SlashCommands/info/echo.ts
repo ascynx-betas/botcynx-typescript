@@ -28,9 +28,9 @@ export default new SlashCommand({
   ],
 
   run: async ({ client, interaction }) => {
-    const message = interaction.options.getString("message");
-    const user = interaction.options.getUser("target");
-    const channel = interaction.options.getChannel("channel");
+    const message = interaction.options.get("message")?.value;
+    const user = interaction.options.get("target")?.user;
+    const channel = interaction.options.get("channel")?.channel;
     if (user) {
       user
         .send({
@@ -44,7 +44,7 @@ export default new SlashCommand({
         .catch(() => interaction.followUp("Cannot send DM to specified user"));
     } else if (channel) {
       (channel as TextChannel)
-        .send({ content: message, allowedMentions: { parse: [] } })
+        .send({ content: (message as string), allowedMentions: { parse: [] } })
         .then(() => {
           interaction
             .followUp({ content: `sent message in ${channel}` })
@@ -56,7 +56,7 @@ export default new SlashCommand({
           )
         );
     } else {
-      interaction.followUp({ content: message });
+      interaction.followUp({ content: (message as string) });
     }
   },
 });

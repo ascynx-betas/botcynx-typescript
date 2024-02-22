@@ -49,11 +49,11 @@ export default new SlashCommand({
   ],
 
   run: async ({ client, interaction }) => {
-    const type = interaction.options.getString("type");
+    const type = interaction.options.get("type")?.value;
     const guildId = interaction.guild.id;
     const guild = interaction.guild;
-    const channel = interaction.options.getChannel("channel");
-    const role = interaction.options.getRole("role");
+    const channel = interaction.options.get("channel")?.channel;
+    const role = interaction.options.get("role")?.role;
 
     const config = await configModel.find({
       guildId: guildId,

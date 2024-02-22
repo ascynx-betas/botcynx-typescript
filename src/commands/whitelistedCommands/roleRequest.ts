@@ -49,8 +49,8 @@ export default new WhitelistedCommand({
   ],
   require: ["hypixelApiKey", "mongooseConnectionString"],
   run: async ({ client, interaction, args }) => {
-    let username: string = args.getString("username");
-    let role = args.getRole("role");
+    let username: string = args.get("username")?.value as string;
+    let role = args.get("role")?.role;
     let uuid: any | string;
     let verified: boolean;
 
@@ -111,8 +111,8 @@ export default new WhitelistedCommand({
         content: `Error 404: no informations found. Try again later.`,
       });
 
-    let profile = args.getString("profile")
-      ? args.getString("profile").toLowerCase()
+    let profile = (args.get("profile")?.value as string)
+      ? (args.get("profile")?.value as string).toLowerCase()
       : hypixelData
           .filter(
             (acc) =>
@@ -123,15 +123,15 @@ export default new WhitelistedCommand({
 
     let member;
 
-    if (args.getString("profile") != null) {
+    if (args.get("profile") != null) {
       let profiles = hypixelData?.filter(
         (profile) =>
           profile.cute_name.toLowerCase() ==
-          args.getString("profile").toLowerCase()
+          (args.get("profile")?.value as string).toLowerCase()
       );
       if (profiles.size < 1)
         return interaction.followUp({
-          content: `${args.getString("profile")} couldn't be found.`,
+          content: `${args.get("profile")?.value} couldn't be found.`,
           allowedMentions: { parse: [] },
         });
       member = profiles.first().members[uuid];

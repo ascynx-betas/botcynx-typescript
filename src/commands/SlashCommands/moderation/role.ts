@@ -23,8 +23,8 @@ export default new SlashCommand({
   ],
 
   run: async ({ interaction, client }) => {
-    const role = interaction.options.getRole("role");
-    const target = interaction.options.getUser("user");
+    const role = interaction.options.get("role")?.role;
+    const target = interaction.options.get("user")?.user;
     const roleId = role.id;
 
     const guildMember = interaction.guild.members.cache.get(target.id);

@@ -85,8 +85,6 @@ export class BotClient extends Client {
   }
 
   start() {
-    //TODO remove overrides when done with testing
-    this.logger.addModeOverride(LogLevel.DEBUG, LogLevel.INFO, LogLevel.ERROR, LogLevel.WARN);
     if (process.env.mongooseConnectionString) {
       this.logger.log("connecting to mongoose", LogLevel.DEBUG);
       connect(process.env.mongooseConnectionString);
@@ -400,7 +398,7 @@ export class BotClient extends Client {
     });
     
     //update commands.
-    await this.updateCommands(process?.env?.guildId == undefined);
+    await this.updateCommands(process?.env?.guildId !== undefined);
   }
 
   async registerTags() {
@@ -481,7 +479,7 @@ export class BotClient extends Client {
     this.logger.table(tagTable, LogLevel.DEBUG);
   }
 
-  async updateCommands (updateLocally: boolean) {
+  async updateCommands(updateLocally: boolean) {
     if (updateLocally) {
       if (!process?.env?.guildId) {
         throw new Error("Missing Guild Id in the process environment values");

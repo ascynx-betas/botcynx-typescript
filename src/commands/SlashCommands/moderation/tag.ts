@@ -76,9 +76,9 @@ export default new SlashCommand({
   ],
 
   run: async ({ interaction, client }) => {
-    const response = interaction.options.getString("response");
-    let description = interaction.options.getString("description");
-    let name: string = interaction.options.getString("name");
+    const response = interaction.options.get("response")?.value as string;
+    let description = interaction.options.get("description")?.value as string;
+    let name: string = interaction.options.get("name")?.value as string;
     const subCommand = interaction.options.getSubcommand();
     const guild = interaction.guild;
     name.toLowerCase();

@@ -50,10 +50,10 @@ export default new SlashCommand({
 
   run: async ({ interaction }) => {
     const guildId = interaction.guildId;
-    const setupChannel = interaction.options.getChannel("channel");
-    const name = interaction.options.getString("config-name");
-    const welcomeMessage = interaction.options.getString("welcome-message");
-    const welcomeButton = interaction.options.getString("description");
+    const setupChannel = interaction.options.get("channel")?.channel;
+    const name = interaction.options.get("config-name")?.value as string;
+    const welcomeMessage = interaction.options.get("welcome-message")?.value as string;
+    const welcomeButton = interaction.options.get("description")?.value as string;
     let botPermissions = (
       await interaction.guild.members.me
     ).permissions.toArray();

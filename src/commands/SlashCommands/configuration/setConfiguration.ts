@@ -52,9 +52,9 @@ export default new SlashCommand({
   ],
 
   run: async ({ interaction, client }) => {
-    const role = interaction.options.getRole("role");
-    const type = interaction.options.getString("type");
-    const channel = interaction.options.getChannel("channel");
+    const role = interaction.options.get("role")?.role;
+    const type = interaction.options.get("type")?.value;
+    const channel = interaction.options.get("channel")?.channel;
     const guild = interaction.guild;
     const guildId = guild.id;
 

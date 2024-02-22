@@ -47,14 +47,14 @@ export default new WhitelistedCommand({
     invisible: true,
 
     run: async ({ interaction, client }) => {
-        const file = interaction.options.getAttachment("jar");
+        const file = interaction.options.get("jar")?.attachment;
         if (!file.name.endsWith("jar")) {
             interaction.reply({content: "The file provided is not a jar", ephemeral: true});
             return;
         }
 
-        let loader = interaction.options.getString("loader");
-        let minecraftversion = interaction.options.getString("version");
+        let loader = interaction.options.get("loader")?.value as string;
+        let minecraftversion = interaction.options.get("version")?.value as string;
         if (minecraftversion && !minecraftversion.match(/\d\.\d{1,2}(?:\.\d{1,2})?/)) {
             interaction.reply({content: `The Minecraft version is not valid`});
             return;

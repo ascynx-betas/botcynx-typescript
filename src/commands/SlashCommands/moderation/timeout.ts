@@ -31,9 +31,9 @@ export default new SlashCommand({
   ],
 
   run: async ({ interaction }) => {
-    let target = interaction.options.getUser("user");
-    let time: string | number = interaction.options.getString("time");
-    let reason = interaction.options.getString("reason");
+    let target = interaction.options.get("user")?.user;
+    let time: string | number = (interaction.options.get("time")?.value as string);
+    let reason = interaction.options.get("reason")?.value as string;
     if (time === null) time = "1 hour";
 
     let timeForTimeout = ms(time);

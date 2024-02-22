@@ -30,7 +30,10 @@ export default new SlashCommand({
   ],
 
   run: async ({ interaction, client }) => {
-    let username = interaction.options.getString("username");
+    let usernameOption = interaction.options.get("username", false)?.value as string;
+    
+    let username = usernameOption;
+
     let uuid: string;
     if (!username) {
       const userId = interaction.user.id;
