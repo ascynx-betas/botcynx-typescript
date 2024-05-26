@@ -95,7 +95,8 @@ export default new Command({
 
     if (activeFlags.includes("attachment")) {
       for (const [, { url }] of message.attachments) {
-        if (!url.endsWith(".txt") && !url.endsWith(".js"))
+        const parsedURL = new URL(url);
+        if (!parsedURL.pathname.endsWith(".txt") && !parsedURL.pathname.endsWith(".js"))
           return await request.send({
             content: `when using the attachment flag, please attach a .js / .txt file`,
           });

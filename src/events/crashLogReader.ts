@@ -40,7 +40,8 @@ export default new Event("messageCreate", async (message) => {
   let logs: string[] = [];
 
   for (const [, { url }] of message.attachments) {
-    if (!url.endsWith(".txt") && !url.endsWith(".log")) return;
+    const parsedURL = new URL(url);
+    if (!parsedURL.pathname.endsWith(".txt") && !parsedURL.pathname.endsWith(".log")) return;
 
     const log = await (await fetch(url)).text();
     if (!checkIfLog(log)) return;

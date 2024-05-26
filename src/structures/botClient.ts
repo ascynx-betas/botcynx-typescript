@@ -1,4 +1,4 @@
-import { ApplicationCommandDataResolvable, Client, ClientEvents, Collection, Partials } from "discord.js";
+import { ApplicationCommandDataResolvable, Client, ClientEvents, Collection, GuildTextBasedChannel, Partials } from "discord.js";
 import * as fs from "fs";
 import {
   CommandType,
