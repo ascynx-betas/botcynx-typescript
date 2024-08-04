@@ -1,7 +1,7 @@
 import { botcynx, messageRequestHandler } from "..";
 import { configModel } from "../models/config";
 import { Event } from "../structures/Event";
-import { RequireTest } from "../lib/personal-modules/commandHandler";
+import { canExecute } from "../lib/personal-modules/commandHandler";
 import {
   botPermissionInhibitor,
   isDisabled,
@@ -65,7 +65,7 @@ export default new Event("messageCreate", async (message) => {
 
   //require values
   if (command.require) {
-    let requireValue = RequireTest(command.require);
+    let requireValue = canExecute(command.require);
     if (!requireValue) return;
   }
   if (message.guild) {

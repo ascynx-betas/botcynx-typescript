@@ -1,5 +1,6 @@
 import { Command } from "../../../structures/Commands";
 import { exec, execSync } from "child_process";
+import { Embed, EmbedBuilder, GuildTextBasedChannel } from "discord.js";
 import { escape } from "querystring";
 
 export default new Command({
@@ -51,7 +52,7 @@ export default new Command({
             }
 
             let buildStdOut = execSync("npm run build");
-            execSync("pm2 restart ")
+            execSync(`pm2 restart botcynx-${process.env.environment}`);
         })
     }
 });

@@ -49,6 +49,10 @@ export class LoggerFactory {
     return this.loggers.get(loggerName);
   }
 
+  static loggerExists(loggerName: string): boolean {
+    return this.loggers.get(loggerName) != undefined;
+  }
+
   static set shouldRenderTime(bool: boolean) {
     if (this.inheritedValues.renderTime === bool) return;
     this.inheritedValues.renderTime = bool;
@@ -63,6 +67,18 @@ export class LoggerFactory {
   static overrideModes(...logLevels: LogLevel[]) {
     this.inheritedValues.modeOverride = logLevels;
     this.loggers.forEach((logger) => logger.setModeOverride(...logLevels));
+  }
+
+  /**
+   * Allow a certain log mode to show up on all loggers.
+   */
+  static addOverrides(...logLevels: LogLevel[]) {
+    let intermediary = [];
+    if (this.inheritedValues.modeOverride) {
+      intermediary = this.inheritedValues.modeOverride;//use intermediary value in the case mode overrides haven't been set.
+    }
+    this.inheritedValues.modeOverride = [...new Set([...intermediary, ...logLevels])];
+    this.loggers.forEach((logger) => logger.addModeOverride(...logLevels));
   }
 
   static set shouldShowCallStack(bool: boolean) {

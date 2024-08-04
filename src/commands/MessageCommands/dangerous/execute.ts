@@ -17,7 +17,7 @@ export default new Command({
   advancedFlags: true,
 
   run: async ({ client, message, args, request }) => {
-    if (args.length == 0) return;
+    if (args.length == 0 && request.getFlags().length == 0) return;
 
     const token = process.env.botToken;
     const mongooseConnectionString = process.env.mongooseConnectionString;

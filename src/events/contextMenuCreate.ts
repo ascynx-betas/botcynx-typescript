@@ -2,13 +2,13 @@ import { botcynx } from "..";
 import { Event } from "../structures/Event";
 import { MessageContextType, UserContextType } from "../typings/Command";
 import { CommandInteractionOptionResolver, GuildMember } from "discord.js";
-import { RequireTest } from "../lib/personal-modules/commandHandler";
 import {
   botPermissionInhibitor,
   isDisabled,
   isOnCooldown,
   userPermissionInhibitor,
 } from "../lib/command/commandInhibitors";
+import { canExecute } from "../lib";
 
 export default new Event("interactionCreate", async (interaction) => {
   if (interaction.isContextMenuCommand()) {
@@ -68,7 +68,7 @@ export default new Event("interactionCreate", async (interaction) => {
       });
 
     if (command.require) {
-      let requireValue = RequireTest(command.require);
+      let requireValue = canExecute(command.require);
       if (!requireValue)
         return interaction.reply({
           content: `Client cannot run this command as it's missing required values`,

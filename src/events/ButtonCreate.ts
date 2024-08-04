@@ -6,7 +6,7 @@ import {
   ActionRow,
   MessageActionRowComponent,
 } from "discord.js";
-import { RequireTest } from "../lib";
+import { canExecute } from "../lib";
 import {
   botPermissionInhibitor,
   userPermissionInhibitor,
@@ -62,7 +62,7 @@ export default new Event("interactionCreate", async (interaction) => {
     }
 
     if (command.require) {
-      let requireValue = RequireTest(command.require);
+      let requireValue = canExecute(command.require);
       if (!requireValue)
         return interaction.followUp({
           content: `Client cannot run this command as it's missing required values`,
@@ -140,7 +140,7 @@ export default new Event("interactionCreate", async (interaction) => {
     }
 
     if (button.require) {
-      let RequireValue = RequireTest(button.require);
+      let RequireValue = canExecute(button.require);
       if (!RequireValue)
         return interaction.followUp({
           content: `the client in which this command has been called, doesn't have the required values to execute this command`,

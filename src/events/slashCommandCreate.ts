@@ -2,7 +2,6 @@ import { botcynx } from "..";
 import { Collection, CommandInteractionOptionResolver } from "discord.js";
 import { Event } from "../structures/Event";
 import { botcynxInteraction, CommandType } from "../typings/Command";
-import { RequireTest } from "../lib/personal-modules/commandHandler";
 import { tagModel } from "../models/tag";
 import {
   botPermissionInhibitor,
@@ -12,6 +11,7 @@ import {
   userPermissionInhibitor,
 } from "../lib/command/commandInhibitors";
 import { LoggerFactory, LogLevel } from "../lib/Logger";
+import { canExecute } from "../lib";
 
 const CommandLogger = LoggerFactory.getLogger("SLASH-COMMAND");
 
@@ -48,6 +48,10 @@ export default new Event(
       }
       if (!command)
         return interaction.reply("You have used a non existant command");
+
+
+      CommandLogger.log("Received request, sending defer response.", LogLevel.DEBUG);
+      if (!command.isModalCommand) await interaction.deferReply({ephemeral: command.invisible});
 
       //disabled commands
       CommandLogger.log("isDisabled check", LogLevel.DEBUG);
@@ -93,7 +97,7 @@ export default new Event(
 
       CommandLogger.log("require check", LogLevel.DEBUG);
       if (command.require) {
-        let requireValue = RequireTest(command.require);
+        let requireValue = canExecute(command.require);
         if (!requireValue)
           return interaction.reply({
             content: `Client missing requirement to run this command.`,
@@ -101,11 +105,9 @@ export default new Event(
       }
 
       CommandLogger.log("sending interactionCommand event", LogLevel.DEBUG);
-      if (!command.isModalCommand) await interaction.deferReply({ephemeral: command.invisible});
       botcynx.emit("interactionCommandCreate", interaction);
 
       CommandLogger.log("running command", LogLevel.DEBUG);
-
       await command.run({
           args: interaction.options as CommandInteractionOptionResolver,
           client: botcynx,

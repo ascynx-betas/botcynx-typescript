@@ -1,13 +1,10 @@
-export interface ctResult {
+export interface compareResults {
   success: boolean;
   breakingcount?: number;
 }
 
-export const compareTest = function (arr1: string[], arr2: string[]) {
-  let output: {
-    success: boolean,
-    breakingcount?: number
-  } = {success: false};
+export const compareTest = function (arr1: string[], arr2: string[]): compareResults {
+  let output: compareResults = {success: false};
   const breakingPoints = [];
 
   out:

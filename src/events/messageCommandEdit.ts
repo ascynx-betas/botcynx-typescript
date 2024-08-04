@@ -7,9 +7,8 @@ import {
   userPermissionInhibitor,
 } from "../lib/command/commandInhibitors";
 import { configModel } from "../models/config";
-import { RequireTest } from "../lib/personal-modules/commandHandler";
 import { Event } from "../structures/Event";
-import { Request } from "../lib";
+import { Request, canExecute } from "../lib";
 
 export default new Event(
   "messageUpdate",
@@ -43,7 +42,7 @@ export default new Event(
     if (!command) return;
 
     if (command.require) {
-      let requireValue = RequireTest(command.require);
+      let requireValue = canExecute(command.require);
       if (!requireValue) return;
     }
     const globalConfig = await configModel.findOne({ guildId: "global" });

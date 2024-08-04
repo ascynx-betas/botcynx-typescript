@@ -18,6 +18,8 @@ import { containsLink, isLink } from "../lib/personal-modules/testFor";
 import { isDisabled } from "../lib/command/commandInhibitors";
 import { Modrinth } from "../lib";
 
+const LOG_HEADER = "------ Botcynx additional Data ------";
+
 export default new Event("messageCreate", async (message) => {
   if (message.author.bot || !message.guild) return;
   let botPermissions = message.guild.members.me.permissions.toArray();
@@ -66,12 +68,14 @@ export default new Event("messageCreate", async (message) => {
   }
 
   for (const log of logs) {
+    const alreadyExamined = log.split("\n").includes(LOG_HEADER);
+
     const ModLoader = Loader.getML(log);
     const mods = getMods(log, ModLoader.loader);
 
     let AdditionalData = "";
-    if (!log.match(/------Botcynx additional Data------/)) {
-      AdditionalData += `\n\n------Botcynx additional Data------`;
+    if (!alreadyExamined) {
+      AdditionalData += `\n\n${LOG_HEADER}`;
 
       if (ModLoader && (ModLoader.loader != Loader.UNKNOWN && ModLoader.loader != Loader.VANILLA)) {
         AdditionalData += `\n\tMod Loader: ${ModLoader.loader}${ModLoader.loaderVersion != "" ? ` ${ModLoader.loaderVersion}` : ""}`;
@@ -123,7 +127,7 @@ export default new Event("messageCreate", async (message) => {
         if (message.deletable) message.delete();
       } catch (ignore) {}
 
-    const fixes = crashFixCache.data.fixes ? crashFixCache.data.fixes : []; //type 1 => solution //type 2 => recommendations //type 0 => informations;
+    const fixes = crashFixCache?.data?.fixes ? crashFixCache?.data?.fixes : []; //type 1 => solution //type 2 => recommendations //type 0 => informations;
 
     if (ModLoader) {
       if (ModLoader.loader && ModLoader.loader != Loader.UNKNOWN) {
@@ -144,7 +148,7 @@ export default new Event("messageCreate", async (message) => {
       const nonDependencyMods = mods.filter((v) => !(v?.isDependency || (v.ID.startsWith("fabric-") && v.ID != "fabric-api"))).map((v) => v);
       const outdatedModsArray = (await returnOutdatedMods(nonDependencyMods, ModLoader.loader, ModLoader.mcVersion)).filter((v) => v.outdated);
       for (const outdatedMod of outdatedModsArray) {
-        recommendedOutput.push(`Mod with id ${outdatedMod.mod.ID} seems to be outdated\n\t\tversion ${outdatedMod.mod.version} -> ${outdatedMod.latestVersion}\n\t\tModrinth URL: <${outdatedMod.modrinthURL}>`);
+        recommendedOutput.push(`Mod with id ${outdatedMod.mod.ID} appears to be outdated\n\t\tversion ${outdatedMod.mod.version} -> ${outdatedMod.latestVersion}\n\t\tAssociated Modrinth URL: <${outdatedMod.modrinthURL}>`);
       }
     } else {
       clientData.push(

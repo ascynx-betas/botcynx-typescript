@@ -326,12 +326,16 @@ export class ModrinthFileCache {
             //||cachedVersions.filter((v) => v.version_number === version.version_number) !== version; //could be useful if new informations are added to version cache.
         });
 
-        cachedData.versions.push(...newVersions);
+        if (newVersions.length > 0) {
+            if (!cachedData.versions) {
+                versions = [];
+            }
+            cachedData.versions.push(...newVersions);
+        }
+        
         cachedData.lastUpdated = Date.now();
 
         this.cache.set(cachedData.slug, cachedData);
-
-        Buffer.from("test").toString("ascii");
     }
 
 

@@ -9,16 +9,13 @@ import {
   Message,
   GuildTextBasedChannel,
   ActionRowBuilder,
-  TextBasedChannel,
-  Guild,
+  TextBasedChannel
 } from "discord.js";
 import { botcynx } from "..";
 import { getWebhook } from "./personal-modules/discordPlugin";
 import { emojis } from "./emojis";
 import { checkLink } from "../events/linkReader";
 import { RepoProfile, RepositoryCacheHandler } from "./cache/repoCache";
-import { configModel } from "../models/config";
-import { CommandType, UserContextType, MessageContextType, CommandSimili, MessageCommandType } from "../typings/Command";
 
 // Source : https://lowrey.me/encoding-decoding-base-62-in-es6-javascript/
 export const base62 = {
@@ -44,13 +41,19 @@ export const base62 = {
  * @author Ascynx
  */
 export const similarityDetectionShortened = (word: string, testWord: string): {result: boolean; percentage: number } => {
-  const similarityArray: boolean[] = [];
+  let letCount = 0;
+  let simCount = 0;
 
   for (let i = 0; i < testWord.length; i++) {
-    similarityArray.push(word.length > i && testWord[i] == word[i]);
+    if (word.length > i) {
+      if (testWord[i] == word[i]) {
+        simCount++;
+      }
+      letCount++;
+    }
   }
 
-  let likelyhood = (100 / similarityArray.length) * similarityArray.filter((e) => e).length;
+  let likelyhood = (100 / letCount) * simCount;
   const overflowLength = word.length - testWord.length;
 
   if (overflowLength >= 1) {
